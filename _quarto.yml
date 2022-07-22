@@ -18,10 +18,13 @@ book:
     - publicrecords.qmd
     - r-basics.qmd
     - replication.qmd
+    - aggregates.qmd
     - mutating.qmd
     - workingwithdates.qmd
-    - aggregates.qmd
-
+    - filters.qmd
+    - datacleaning-part-i.qmd
+    - datacleaning-part-ii.qmd
+    - open-refine.qmd
 
 format:
   html:
