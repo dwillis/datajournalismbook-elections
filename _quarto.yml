@@ -25,6 +25,7 @@ book:
     - datacleaning-part-i.qmd
     - datacleaning-part-ii.qmd
     - open-refine.qmd
+    - pdfs.qmd
 
 format:
   html:
