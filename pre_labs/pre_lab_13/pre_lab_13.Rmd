@@ -1,0 +1,194 @@
+---
+title: "pre_lab_13.Rmd"
+author: "sean mussenden"
+date: "11/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Basic Stats: Linear Regression and The T-Test
+
+A month into the Covid-19 pandemic, in April 2020, Reveal, an investigative reporting outfit, [wrote a story based on original data analysis showing that a disproportionate share of PPP loans](https://revealnews.org/article/bailout-money-bypasses-hard-hit-new-york-california-for-north-dakota-nebraska/) were going to states that Donald Trump won in 2016. In North Dakota, a state that gave a higher share of its vote to Trump than all but three states, 58 percent of small businesses got PPP loans.  In Democratic-leaning New York, which was hit hard in the pandemic's first wave, only 18 percent of small businesses received loans.  They wrote:
+
+"Reveal’s analysis found that businesses in states that Trump won in 2016 received a far greater share of the small-business relief funds than those won by his Democratic rival, Hillary Clinton. Eight of the top 10 recipient states – ranked according to the proportion of each state’s businesses that received funding – went to Trump in 2016. Meanwhile, seven of the bottom 10 states, where the lowest proportion of businesses received funding, went to Clinton. Taken together, 32% of businesses in states that Trump won got Paycheck Protection Program dollars, we found, compared with 22% of businesses in states that went to Clinton."
+
+It continued: "The figures were so stark that they sparked concerns of political interference. Rep. Jackie Speier, a California Democrat who serves on the House Oversight and Reform Committee, said the data raise questions about whether stimulus dollars were deliberately funneled to states that voted for Trump and have Republican governors."
+
+The story didn't present any evidence of political meddling.  Instead, it offered the results of several lines of data analysis that attempted to answer this central question: did red states get a bigger slice of the PPP pie than blue states?
+
+Mostly, it used basic descriptive statistics, calculating rates, ranking states and computing averages. But the data set it used also presents an opportunity to use two slightly more advanced statistical analysis methods to look for patterns: linear regression, to examine relationships, and a t.test, to confirm the statistical validity of an average between two groups. So, let's do that here.
+
+First, let's load libraries.  We're going to load janitor, the tidyverse and a new package, [corrr](https://corrr.tidymodels.org/), which will help us do linear regression a bit easier than base R.
+
+### Task 1: Load libraries and settings
+**Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use.
+
+```{r}
+# install.packages('corrr')
+library(janitor)
+library(tidyverse)
+library(corrr)
+```
+
+Now let's load the data we'll be using. It has five fields:
+
+* state_name
+* vote_2016: whether Trump or Clinton won the state's electoral vote.
+* pct_trump: the percentage of the vote Trump received in the state.
+* businesses_receiving_ppe_pct: the percentage of the state's small businesses that received a PPP loan.
+* ppe_amount_per_employee: the average amount of money provided by PPP per small business employee in the state.
+
+
+### Task 2: Read in data
+**Task** Run the following code and describe the dataframe it outputs.
+**Answer**
+```{r}
+
+reveal_data <- read_rds("data/reveal_data.rds")
+
+reveal_data
+
+```
+
+# Linear Regression
+
+Let's start with this question: did small businesses in states that voted more strongly for Trump get loans at higher rate than small businesses in Democratic states.  We can answer it by examining the relationship or correlation between two variables, pct_trump and businesses_receiving_ppe_pct.  How much do they move in tandem? Do states with more Trump support see bigger average PPP loans? Do extra Trumpy states get even more? Do super blue states get the least?
+
+Let's start by plotting them to get a sense of the pattern.
+
+### Task 3: Plot data
+**Task** Run the following code. Describe the plot. What do you see?
+**Answer**
+```{r}
+
+reveal_data %>%
+  ggplot() +
+  geom_point(aes(x=pct_trump,y=businesses_receiving_ppe_pct)) +
+  geom_smooth(aes(x=pct_trump,y=businesses_receiving_ppe_pct), method="lm")
+
+```
+It's a bit messy, but we can see something of a pattern here in the blob of dots.  Generally, the dots are moving from the lower left (less Trumpy states that got loans at a lower rate) to upper right (red states that got loans at a higher rate).  The blue "line of best fit" shows the general direction of the relationship.
+
+Let's test another variable, the average amount of money provided by PPP per small business employee in the state.
+
+### Task 4: Plot data
+**Task** Run the following code. Describe the plot. What do you see?
+**Answer**
+```{r}
+
+reveal_data %>%
+  ggplot() +
+  geom_point(aes(x=pct_trump,y=ppe_amount_per_employee)) +
+  geom_smooth(aes(x=pct_trump,y=ppe_amount_per_employee), method="lm")
+
+```
+This one is a bit messier.  There may be a slight upward slope in this blob of dots, but it's not quite as apparent.  It seems less certain that there's a relationship between these two variables.
+
+We can be a bit more precise by calculating a statistic called the correlation coefficient, also called "r".  r is a value between 1 and -1. An r of 1 indicates a strong positive correlation.  
+
+An increase in air temperature and air conditioning use at home is strongly-positively correlated: the hotter it gets, the more we have to use air conditioning.  If we were to plot those two variables, we might not get 1, but we'd get close to it.
+
+An r of -1 indicates a strong negative correlation. An increase in temperature and home heating use is strongly negatively correlated: the hotter it gets, the less heat we use indoors. We might not hit -1, but we'd probably get close to it.
+
+A correlation of 0 indicates no relationship.  
+
+All r values will fall somewhere on this scale, and how to interpret them isn't always straightforward. They're best used to give general guidance when exploring patterns.
+
+We can calculate r with a function from the corrr package called "correlate()".  First, we remove the non-numeric values from our reveal_data (state name and a binary vote_2016 column), then we correlate.   
+
+### Task 5: Correlate data
+**Task** Run the following code. Describe the table output. What do you see?
+**Answer**
+```{r}
+reveal_data %>%
+  select(-state_name, -vote_2016) %>%
+  correlate() %>%
+  select(term, pct_trump)
+
+
+#glimpse(reveal_data)
+```
+The table this function produces generally confirms our interpretation of the two graphs above.  The relationship between a state's pct_trump and ppe_amount_per employee is positive, but at .22 (on a scale of -1 to 1), the relationship isn't particularly strong.  That's why the second graphic above was messier than the first.  
+
+The relationship between businesses in a state receiving ppe and the state's Trump vote is a bit stronger, if still moderate, .52 (on a scale of -1 to 1).  Is this finding statistically valid?  We can get a general sense of that by calculating the p-value of this correlation, a test of statistical significance. For that, we can use the cor.test function.
+
+
+### Task 6: Correlate data
+**Task** Run the following code. Describe the model output. What do you see?
+**Answer**
+```{r}
+
+cor.test(reveal_data$pct_trump, reveal_data$businesses_receiving_ppe_pct)
+
+```
+
+This output is quite a bit uglier, but for our purposes there are two key pieces of information from this chunk of unfamiliar words.  First, it shows the correlation calculated above: r 0.5218.  Two, it shows the p-value, which is 0.00008607. That's very low, as far as p-values go, which indicates that there's a very slim chance that our finding is a statistical aberration.
+
+Now let's test the other one, the relationship between the pct_trump and the ppe_amount_per_employee.
+
+### Task 7: Correlate data
+**Task** Run the following code. Describe the model output. What do you see?
+**Answer**
+```{r}
+
+cor.test(reveal_data$pct_trump, reveal_data$ppe_amount_per_employee)
+
+```
+
+Again, it shows our r value of .22, which was weaker.  And the p-value here is a much larger 0.12. That indicates a higher chance of our finding being a statistical aberration, high enough that I wouldn't rely on its validity.  
+
+p < .05 is accepted in many scientific disciplines -- and by many data journalists -- as the cutoff for statistical significance.  But there's heated debate about that level, and some academics question whether p-values should be relied on so heavily.  
+
+And to be clear, a low p-value does not prove that we've found what we set out to find.  There's nothing on this graph or in the regression model output that proves that Trump's administration tipped the scales in favor of states that voted for it. It's entirely possible that there's some other variable -- or variables -- not considered here that explain this pattern.  
+
+All we know is that we've identified a potentially promising pattern, worthy of additional reporting and analysis to flesh out.
+
+# T-tests
+
+Let's suppose we want to ask a related set of questions: did Trump states get higher ppp loan amounts per employee than states won by Clinton?  Or did a larger percentage of businesses in states won by Trump receive, on average, a higher rate of PPP loans on average than states won by Clinton.
+
+We can do this because, in our data, we have a column with two possible categorical values, Clinton or Trump, for each state.
+
+We could just calculate the averages like we're used to doing.
+
+
+### Task 8: Average data
+**Task** Run the following code. Describe the table. What do you see?
+**Answer**
+```{r}
+reveal_data %>%
+  group_by(vote_2016) %>%
+  summarise(
+    mean_ppp_amount_per_employee = mean(ppe_amount_per_employee),
+    mean_businesses_receiving_ppe_pct = mean(businesses_receiving_ppe_pct)
+  )
+
+```
+Examining this, it appears that in both categories there's a difference.  
+
+The average amount of ppp loans per employee in Clinton states is smaller than Trump states (6,000 to 5,700).  And the average percentage of businesses that got loans in Trump states was larger -- 37% -- than Clinton states -- 28%.  Should we report these as meaningful findings?  
+
+A t-test can help us answer that question.  It can tell us where there's a statistically significant difference between the means of two groups. Have we found a real difference, or have we chanced upon a statistical aberration?  Let's see by calculating it for the average loan amount.
+
+### Task 9: Run t-test
+**Task** Run the following code. Describe the output. What do you see?
+**Answer**
+```{r}
+t.test(ppe_amount_per_employee ~ vote_2016, data = reveal_data)
+```
+We see our two means, for Trump and Clinton, the same as we calculated above. The t-value is approximately 1, the p-value here is .2295, both of which should which should give us pause that we've identified something meaningful. [More on t-tests here](https://conjointly.com/kb/statistical-student-t-test/)
+
+Let's try the percentage of businesses getting ppp loans.
+
+### Task 10: Run t-test
+**Task** Run the following code. Describe the output. What do you see?
+**Answer**
+```{r}
+t.test(businesses_receiving_ppe_pct ~ vote_2016, data = reveal_data)
+```
+
+This is a bit more promising. T is much stronger -- about 3 -- and the p-value is .002.  Both of these should give us assurance that we've found something statistically meaningful.  Again, this doesn't prove that Trump is stacking the deck for states.  It just suggests there's a pattern worth following up on.

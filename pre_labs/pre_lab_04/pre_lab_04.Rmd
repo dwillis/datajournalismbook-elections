@@ -1,0 +1,191 @@
+---
+title: "pre_lab_04.Rmd"
+author: "derek willis"
+date: "8/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Points to hit
+1. Review of third lab questions/problems.
+2. Demonstration of combining and merging
+
+## Chapter 10
+
+### Task 1: Load libraries and settings
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library and turn off scientific notation.  
+
+```{r}
+# turn off sci notation
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+```
+
+### Task 2: Load data
+Let's say that we have county population estimates for three different years - 2010, 2015 and 2020 - in three different files. They have the same record layout and the same number of counties.
+
+**Task** Load the three CSV population estimate files. Do they have the same column structure?
+**Answer**
+
+```{r}
+popestimate_2010 <- read_csv("data/popestimate_2010.csv")
+```
+
+```{r}
+popestimate_2015 <- read_csv("data/popestimate_2015.csv")
+```
+
+```{r}
+popestimate_2020 <- read_csv("data/popestimate_2020.csv")
+```
+
+
+### Task 3: Using bind_rows
+**Task** Combine the three files into a single data frame using the bind_rows function. Add a description of what this code does to your reference notebook.
+
+```{r}
+# bind_rows with list
+estimates <- bind_rows(list(popestimate_2010, popestimate_2015, popestimate_2020))
+View(estimates)
+```
+
+## Joining data
+
+### Task 4: Loading data
+**Task** Load the Maryland PPP data and a CSV file with NAICS codes. How many rows are in maryland_ppp?
+**Answer**
+
+```{r}
+maryland_ppp <- read_csv("data/ppp_applications_md.csv")
+```
+
+```{r}
+naics_codes <- read_csv('data/naics_codes.csv')
+```
+
+### Task 5: Join Them
+**Task** Run the following code to join the PPP data to the NAICS codes using the common column naics_code as the key. How many rows are there now?
+**Answer**
+
+```{r}
+# with nrow included to match row total
+maryland_ppp %>% left_join(naics_codes, by="naics_code") %>% select(name, naics_code, title) %>% nrow()
+```
+### Task 6: Looking at Joined Data
+**Task** Examine the combined data
+
+```{r}
+# without nrow
+maryland_ppp %>% left_join(naics_codes) %>% select(name, naics_code, title)
+```
+
+### Task 7: Assign Joined Data to New Dataframe
+**Task** Create a new dataframe with PPP and NAICS data joined together. Add a description of what this code does to your reference notebook.
+
+```{r}
+maryland_ppp_with_naics <- maryland_ppp %>% left_join(naics_codes)
+```
+
+### Task 8: Load the ZCTA Data
+**Task** Load the Zip Code Tabulation Area data for Maryland
+
+```{r}
+maryland_zcta <- read_csv('data/maryland_zcta.csv')
+```
+
+### Task 9: Join ZCTA to PPP Data
+**Task** Join the ZCTA data to the our PPP & NAICS data. What's the error message you get? What do you think it means? Add a description of what this code does to your reference notebook.
+**Answer**
+
+```{r}
+# join on zip - but there's a problem
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
+```
+### Task 10: Fix ZCTA Data
+**Task** Fix the ZCTA file by changing the datatype. Add a description of what this code does to your reference notebook.
+
+```{r}
+maryland_zcta <- maryland_zcta %>% mutate(across(ZCTA5N, as.character))
+```
+
+### Task 11: Join ZCTA to PPP Data and Check
+**Task** Join the ZCTA data to the our PPP & NAICS data. Examine the columns in the new dataframe - does every row have demographic data? HINT: Use the >> character to browse columns
+**Answer**
+
+```{r}
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
+View(maryland_ppp_with_naics_and_demographics)
+```
+
+### Task 12: Make a Zip5 Column, Join ZCTA to PPP Data and Check Again
+**Task** Make a zip5 column and join again. Examine the new dataframe - now does every row have demographic data?
+**Answer**
+
+```{r}
+# make a zip5 column and redo the join
+maryland_ppp_with_naics <- maryland_ppp_with_naics %>% mutate(zip5 = str_sub(zip, 1, 5))
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip5"="ZCTA5N"))
+```
+
+### Task 13: Asking Demographic Questions
+**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic Black population, and calculate the average and median amounts for those loans. Put your answers below.
+**Answer**
+
+```{r}
+# zcta with > 50% non-Hispanic Black population
+maryland_ppp_with_naics_and_demographics %>%
+  filter(PNHB > 50) %>%
+  summarize(
+    count = n(),
+    avgamount = mean(amount),
+    medamount = median(amount))
+```
+
+
+### Task 14: Asking Demographic Questions
+**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic white population, and calculate the average and median amounts for those loans. Put your answers below.
+**Answer**
+
+```{r}
+# zcta with > 50% non-Hispanic white population
+maryland_ppp_with_naics_and_demographics %>%
+  filter(PNHW > 50) %>%
+  summarize(
+    count = n(),
+    avgamount = mean(amount),
+    medamount = median(amount))
+```
+
+### Task 15: Asking Demographic Questions
+**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic Black population, grouped by rural or urban status, and calculate the average and median amounts for those loans. Put your answers below.
+**Answer**
+
+```{r}
+# zcta with > 50% non-Hispanic Black population grouped by rural/urban
+maryland_ppp_with_naics_and_demographics %>%
+  filter(PNHB > 50) %>%
+  group_by(rural_urban_indicator) %>%
+  summarize(
+    count = n(),
+    avgamount = mean(amount),
+    medamount = median(amount))
+```
+
+### Task 16: Asking Demographic Questions
+**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic white population, grouped by rural or urban status, and calculate the average and median amounts for those loans. Put your answers below.
+**Answer**
+
+```{r}
+# zcta with > 50% non-Hispanic white population grouped by rural/urban
+maryland_ppp_with_naics_and_demographics %>%
+  filter(PNHW > 50) %>%
+  group_by(rural_urban_indicator) %>%
+  summarize(
+    count = n(),
+    avgamount = mean(amount),
+    medamount = median(amount))
+```

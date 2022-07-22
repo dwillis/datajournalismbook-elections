@@ -1,0 +1,115 @@
+---
+title: "lab_06"
+author: "derek willis"
+date: "8/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+* Tabula
+
+## Load libraries and establish settings
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse.
+library(tidyverse)
+```
+
+## Get Our PDF
+
+We'll be working with the [Maryland Statistical Handbook](https://planning.maryland.gov/MSDC/Documents/md-statistical-handbook.pdf) from the state Department of Planning. It's not tiny (44MB), and you'll want to download it to a place you'll remember (like your Downloads folder).
+
+## Setup Tabula
+
+Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the Statistical Handbook file and click "open", and then click the "Import button" in Tabula. This will take a minute or two.
+
+Let's go to page 30 of the PDF, Table 2A, "International Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". This is _net migration_, meaning it shows the total number of people moving to Maryland and its regions/jurisdictions _minus_ the total number of people leaving the same, divided into 12-month periods from July to July. In Tabula, draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV (it should be called `tabula-md-statistical-handbook.csv` by default) to your Downloads folder.
+
+## Cleaning up the data in R
+
+Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)):
+
+```{r}
+international_migration <- read_csv('tabula-md-statistical-handbook.csv', skip=2, col_names=c("jurisdiction", "july_2011", "july_2012", "july_2013", "july_2014", "july_2015", "july_2016", "july_2017", "july_2018", "july_2019", "total"))
+```
+
+Add a column for the type of migration ("international") and populate it:
+
+```{r}
+international_migration <- international_migration %>% mutate(type='international')
+```
+
+## Answer questions
+
+Q1. Which region and county/city below the state level accounted for the largest percentage of international migration overall?  You'll need to add and populate columns representing percent of total using `mutate`.
+A1. Suburban Washington (62.8%). Montgomery County (36.8%).
+
+```{r}
+international_migration %>%
+  mutate(pct_total=(total/198996)*100) %>%
+  select(jurisdiction, pct_total) %>%
+  arrange(desc(pct_total))
+```
+
+Q2. Write a sentence or two that describes the data you produced in A1. Treat this as if you were trying to convey the most important part.
+A2. International migrants to Maryland during the past 10 years were drawn mostly to the suburbs surrounding Washington, D.C., which accounted for more than six of every 10 foreign residents that moved to the state between July 2010 and July 2019.
+
+Q3. Which region & jurisdiction had the biggest percentage change for international migration between July 2018 and July 2017? The formula for percentage change is easy to remember: (New-Old)/Old.
+A3. Calvert County's international migrants declined 76 percent (albeit from a small population), and the Southern Maryland region declined 58.5 percent.
+
+```{r}
+international_migration %>%
+  mutate(pct_change=((july_2018-july_2017)/july_2017)*100) %>%
+  select(jurisdiction, pct_change) %>%
+  arrange(pct_change)
+```
+
+Q4. What's your best guess as to why these declines occurred, and in those area in particular?
+A4. One answer is that with the advent of the Trump administration, controls on international migration tightened.
+
+## Back to Tabula
+
+Let's go to page 31 of the PDF, Table 2B, "Domestic Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". In Tabula, hit the "Clear All Selections" button and then draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV to your Downloads folder (let's rename it to `tabula-md-statistical-handbook-domestic.csv`).
+
+## Cleaning up the data in R
+
+Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner:
+
+```{r}
+domestic_migration <- read_csv('tabula-md-statistical-handbook-domestic.csv', skip=2, col_names=c("jurisdiction", "july_2011", "july_2012", "july_2013", "july_2014", "july_2015", "july_2016", "july_2017", "july_2018", "july_2019", "total"))
+```
+
+Add a column for the type of migration ("domestic") and populate it:
+
+```{r}
+domestic_migration <- domestic_migration %>% mutate(type='domestic')
+```
+
+## Answer questions
+Q5. Which Maryland individual jurisdiction saw the largest net decrease in domestic migration overall?
+A5. Baltimore City, with -62,834, with Prince George's County not far behind at -60,167.
+
+```{r}
+domestic_migration %>%
+  select(jurisdiction, total) %>%
+  arrange(total)
+```
+
+Q6. How many regions & jurisdictions had net positive migration for July 2017, July 2018 and July 2019?
+A6. 14, including the Southern Maryland and Upper Eastern Shore regions.
+
+```{r}
+domestic_migration %>%
+  filter(july_2017 > 0 & july_2018 > 0 & july_2019 > 0) %>%
+  select(jurisdiction, july_2017, july_2018, july_2019)
+```
+
+Q7. How would you describe this data? Is there a county or region that stands out, and why?
+A7. Frederick and Charles stand out for consistent growth, and Caroline for trending downwards.

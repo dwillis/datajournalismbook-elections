@@ -1,0 +1,209 @@
+---
+title: "pre_lab_10.Rmd"
+author: "derek willis"
+date: "9/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Task 1: Load libraries and settings
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library
+
+```{r}
+library(tidyverse)
+```
+
+### Task 2: Get PPP Data on Lender Types
+
+First, let's get some data and work with it. Let's use a cleaned-up version of 2021 PPP loan totals by type of lender that we generated in Chapter 13. Let's look at it.
+
+**Task** Load the cleaned-up lender totals CSV file
+
+```{r}
+lender_types <- read_csv("data/lender_totals_2021.csv")
+```
+
+### Task 3: Log into Datawrapper
+**Task** Log into [datawrapper.de](https://www.datawrapper.de/). Once logged in, you'll click on New Chart.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper1.png"))
+```
+
+### Task 4: Upload the CSV File
+
+The first thing we'll do is upload the lender types CSV that's in the pre_lab_10/data folder.
+
+**Task** Click on XLS/CSV and upload the lender_totals_2021.csv file.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/datawrapper2.png"))
+```
+
+### Task 5: Inspect the Data
+
+Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly.
+
+**Task** Look at the uploaded data, then click on the "Proceed" button.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper3.png"))
+```
+
+### Task 6: Make a Chart
+
+Now we make a chart. Bar chart comes up by default, which is good, because with totals, that's what we have.
+
+**Task** Click on Refine. The first option we want to change is the Number Format, because we have currency figures to display and we want to make it as easy as possible for readers to understand what we're displaying. Datawrapper has an excellent reference for its [custom formats](https://academy.datawrapper.de/article/207-custom-number-formats-that-you-can-display-in-datawrapper) that you can consult. Let's choose `$0.[00]a`, which adds a dollar sign and abbreviates larger amounts:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper4.png"))
+```
+
+### Task 7: Annotate the Chart
+
+Now we need to annotate our charts. Every chart needs a title, a source line and a credit line. Most need chatter (called `description` here).
+
+**Task** Click on the "Annotate" tab to get add the title and description. Really think about the title and description: the title is like a headline and the description is provides some additional context. Another way to think about it: the title is the most important lesson from the graphic, and the description could be the next most important lesson or could provide more context to the title.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper5.png"))
+```
+
+### Task 7: Publish the Chart
+
+**Task** Click the "Publish & Embed" tab, then click on the "PNG" icon. Finally, click the "Download image" button and save that file in the pre_lab_10 folder.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper7.png"))
+```
+
+Some publication systems allow for the embedding of HTML into a post or a story. Some don't. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there's always a way to export your chart as a PNG file, which you can upload like any photo.
+
+**Answer** Copy the url of the graphic you published here.
+
+### Task 8: Make a Choropleth Map
+
+Let's create a choropleth map - one that shows variations between the total number of approved PPP applications across Maryland counties. First, we'll need to generate that data using our collection of Maryland PPP loans.
+
+**Task** Run the following code to load the Maryland PPP loans data.
+
+```{r}
+maryland_ppp <- read_rds("data/pre_lab_10.rds")
+```
+
+**Task** First, we'll create a dataframe that has county (jurisdiction) level counts of approved applications. Run the following code to do that. There are some mistakes in the data, so we're going to remove those with a filter after doing the counting.
+**Answer** Describe what the code below is doing and the output.
+
+```{r}
+md_counties <- maryland_ppp %>%
+    group_by(project_county_name) %>%
+    summarise(count=n())
+```
+
+**Task** Let's deal with those seemingly extraneous records that don't appear to be MD PPP applications:
+**Answer** Describe what the code below is doing and the output.
+
+```{r}
+md_counties <- maryland_ppp %>%
+    group_by(project_county_name) %>%
+    summarise(count=n()) %>%
+    filter(count > 6)
+```
+
+In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a [FIPS Code](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our maryland_ppp dataframe doesn't have a FIPS code for each county, but this is a solved problem thanks to the Tigris library. Let's install it:
+
+**Task** Install and load the Tigris library
+
+```{r}
+install.packages('tigris')
+library(tigris)
+```
+
+Once we've done that, we have access to a dataframe containing all fips codes:
+
+**Task** Save fips codes into a dataframe and isolate the Maryland codes
+```{r}
+all_fips <- fips_codes %>% as_tibble()
+md_fips <- all_fips %>% filter(state == 'MD')
+```
+
+Looks good, but there are two issues: Datawrapper expects a 5-digit FIPS code (the state code plus the county code, so "24001" for Allegany County) and the county names don't match the `project_county_name` in the PPP data. Let's fix the first issue - adding a full FIPS code based on its components using the function `str_c`, which concatenates multiple strings:
+
+**Task** Generate full FIPS codes
+**Answer** Describe the contents of the new `fips_code` column
+
+```{r}
+md_fips <- md_fips %>% mutate(fips_code = str_c(state_code, county_code))
+```
+
+Now we'll deal with the county names in `md_counties`. They are all caps and contain no punctuation, we could:
+
+1. Change counties in `md_counties` to match `md_fips`
+2. Change counties in `md_fips` to match `md_counties`
+
+Let's do the latter. We'll use mutate to create an uppercase version of the name, remove " COUNTY", replace the quotemarks with nothing and change St. Mary's so it matches the PPP data:
+
+**Task** Change the county names in `md_fips`
+
+```{r}
+md_fips <- md_fips %>% mutate(match_county = str_to_upper(county)) %>%
+   mutate(match_county = str_replace(match_county, ' COUNTY', '')) %>%
+   mutate(match_county = str_replace(match_county, "'", "")) %>%
+   mutate(match_county = str_replace(match_county, "ST. MARY", "SAINT MARY"))
+```
+
+**Task** Now we'll join `md_counties` and `md_fips` together using our new `match_county` column:
+**Answer** Describe here what you see in `md_counties_with_fips`
+
+```{r}
+md_counties_with_fips <- md_counties %>%
+  left_join(md_fips, by=c('project_county_name'='match_county'))
+View(md_counties_with_fips)
+```
+
+**Task** Then we'll write `md_counties_with_fips` to a CSV in the data folder using write_csv:
+
+```{r}
+write_csv(md_counties_with_fips, "data/md_counties.csv")
+```
+
+**Task** Go back to Datawrapper and click on "New Map". Click on "Choropleth map" and then choose "USA >> Counties (2018)" for the map base and click the Proceed button.
+
+**Task** Now we can upload the `md_counties.csv` file we just saved using the Upload File button. It should look like the following image:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper8.png"))
+```
+
+We'll need to make sure that Datawrapper understands what the data is and where the FIPS code is.
+
+**Task** Click on the "Match" tab and make sure that yours looks like the image below:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_datawrapper9.png"))
+```
+
+**Task** Click the "Proceed" button (you should have to click it twice, since the first time it will tell you that there's no data for 3,199 counties - the rest of the U.S.). That will take you to the Visualize tab.
+
+You'll see that the map currently is of the whole nation, and we only have Maryland data. Let's fix that.
+
+**Task** Look for "Hide regions without data" under Appearance, and click the slider icon to enable that feature. You should see a map zoomed into Maryland with some counties in various colors.
+**Answer** Describe the changes from the previous map
+
+But it's a little rough visually, so let's clean that up.
+
+**Task** Look for the "Show color legend" label and add a caption for the legend, which is the horizontal bar under the title. It represents the extent of the data from smallest number of loans to largest. Then click on the "Annotate" tab to add a title, description, data source and byline. The title should represent the headline, while the description should be a longer phrase that tells people what they are looking at.
+
+That's better, but check out the tooltip by hovering over a county. It's not super helpful. Let's change the tooltip behavior to show the county name and a better-formatted number.
+
+**Task** Click the "Customize tooltips" button so it expands down. Change {{ fips }} to {{ county }} and {{ count }} to {{ FORMAT(count, "0,0.[00]")}}
+**Answer** Describe the changes from the previous map
+
+Ok, that looks better. Let's publish!
+
+**Task** Click the "Proceed" button until you get to the "Publish & Embed" tab, then click "Publish Now". Copy the URL and paste it below.
+**Answer** Put the URL of your map here.

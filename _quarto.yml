@@ -1,0 +1,35 @@
+project:
+  type: book
+
+book:
+  title: "Data Journalism with R and the Tidyverse"
+  subtitle: "Code, data and visuals for storytellers"
+  author: "Matt Waite & Sarah Cohen (original authors); updated by Derek Willis and Sean Mussenden"
+  date: "7/13/2022"
+  chapters:
+    - index.qmd
+    - start-story.qmd
+    - start-math.qmd
+    - xl-intro.qmd
+    - xl-refresher.qmd
+    - xl-filter-sort.qmd
+    - xl-formulas.qmd
+    - xl-practice-noc.qmd
+    - publicrecords.qmd
+    - r-basics.qmd
+    - replication.qmd
+    - mutating.qmd
+    - workingwithdates.qmd
+    - aggregates.qmd
+
+
+format:
+  html:
+    theme: simplex
+  pdf:
+    documentclass: scrreprt
+  epub:
+    cover-image: cover.png
+
+editor: visual
+

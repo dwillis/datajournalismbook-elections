@@ -1,0 +1,114 @@
+---
+title: "pre_lab_05.Rmd"
+author: "sean mussenden"
+date: "8/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructor demonstration points to hit
+1. Ensure students install refinr package and load it.
+2. Show students how to download and install Open Refine and confirm install before they leave class.
+
+
+## Chapter 11
+
+### Task 1: Install refinr package
+**Task** Run the following code in the gray-colored codeblock below to install refinr.
+
+```{r}
+install.packages('refinr')
+```
+
+### Task 2: Load libraries and settings
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse, janitor, and refinr and  turn off scientific notation.  
+```{r}
+# turn off sci notation
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+library(refinr)
+```
+
+### Task 3: Load data
+**Task** Run the following code to load the zipped-up Maryland PPP loans data. How many records are in this table?
+**Answer**
+
+```{r}
+# Load data
+md_loans <- read_csv("data/ppp_loans_md.csv.zip")
+
+# Display it
+md_loans
+
+```
+
+### Task 4: Group and count to identify problems in city column
+**Task** Run the following code to group and count records in the city column, and filter to examine only cities that start with A. Name a problem that you see that is preventing proper grouping.
+**Answer**
+
+```{r}
+# Now let's try and group and count the number of loans by city. To make it a bit more manageable, let's use another string function from `stringr` and filter for cities that start with the uppercase "A" or lowercase "a" using the function `str_detect()` with a regular expression.  
+
+# The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "a" OR (the vertical "|", called a pipe, means OR) an uppercase "A".  
+
+md_loans %>%
+  group_by(city) %>%
+  summarise(
+    count=n()
+  ) %>%
+  filter(str_detect(city, "^a|^A")) %>%
+  arrange(city)
+```
+
+### Task 5: Use refinr to clean the city_clean field.
+**Task** Run the following code to make a copy of the city field called city_clean, then use the `key_collision_merge` function from refinr to attempt to standarize similar values. Store it as a new object called clean_md_loans.  Click the black arrow on the table to examine the city and city_clean columns.  Looking at the results on the first page only (first 10 rows), name two changes the refinr package made, by comparing city to city_clean.
+**Answer**
+
+```{r}
+cleaned_md_loans <- md_loans %>%
+  mutate(city_clean=key_collision_merge(city)) %>%
+  select(id:city, city_clean, everything())
+
+cleaned_md_loans
+
+```
+
+### Task 6: Filter cleaned_md_loans to examine cities that start with A
+**Task** Run the following code to group by city_clean and city, then filter for cities that start with A. Name three changes the refinr function made.  
+**Answer**
+
+```{r}
+cleaned_md_loans %>%
+  group_by(city_clean, city) %>%
+  summarise(
+    count=n()
+  ) %>%
+  filter(str_detect(city, "^a|^A")) %>%
+  arrange(city)
+```
+### Task 7: Use a different refinr method to clean the city_clean field.
+**Task** Run the following code to use the n_gram_merge() function to clean the data, then group by city_clean and city to examine cities that start with A. Look at the differences. Does the changes it made vary substantially from the previous use of key_collision_merge?
+**Answer**
+
+```{r}
+cleaned_md_loans <- md_loans %>%
+  mutate(city_clean=n_gram_merge(city)) %>%
+  select(id:city, city_clean, everything())
+
+
+cleaned_md_loans %>%
+  group_by(city_clean, city) %>%
+  summarise(
+    count=n()
+  ) %>%
+  filter(str_detect(city, "^a|^A")) %>%
+  arrange(city)
+
+
+```
+### Task 8: Follow the directions in the textbook to use Open Refine
+**Task** Follow the directions in the textbook to upload ppp_loans_md.csv.zip to Open Refine. Follow the instructions to clean as many cities as the Open Refine clustering tool can identify.  In class, I will come around to look at the Open Refine project you created to do this.

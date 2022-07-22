@@ -1,0 +1,93 @@
+---
+title: "lab_02"
+author: "derek willis"
+date: "8/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
+library(tidyverse)
+library(lubridate)
+```
+
+## Load Data
+
+Let's keep working with West Virginia loans contained in the PPP loans data.  
+
+```{r}
+west_virginia_ppp <- read_rds("data/lab_02.rds")
+```
+
+## Examine Data
+
+## Answer questions
+
+**Q1** Create a new column that divides the loan amounts into the following options - under_10k, 10k_50k, 50k_100k, 100k_500k, 500k_1m, 1m_plus - and calculates how many loans are in each group. How would you describe the distribution of loans in a sentence?
+A1. The 10k-50k group has 15,089, the most of any group. More than 2/3rds of loans are for less than $50,000, with only a few hundred over $1 million, suggesting that the program reached actual small businesses.
+
+```{r}
+west_virginia_ppp %>%
+  mutate(
+    amount_option = case_when(
+      amount < 10000 ~ 'under_10k',
+      amount >= 10000 & amount < 50000 ~ '10k_50k',
+      amount >= 50000 & amount < 100000 ~ '50k_100k',
+      amount >= 100000 & amount < 500000 ~ '100k_500k',
+      amount >= 500000 & amount < 1000000 ~ '500k_1m',
+      amount >= 1000000 ~ '1m_plus'
+    )
+  ) %>%
+  group_by(amount_option) %>%
+  summarise(
+    total_loans = n()
+  ) %>%
+  arrange(desc(total_loans))
+```
+
+Q2. Which servicing lenders have the most loans with undisbursed amounts greater than 0?
+A2. Davis Trust Company tops the list with 12.
+
+```{r}
+west_virginia_ppp %>%
+  filter(undisbursed_amount > 0) %>%
+  group_by(servicing_lender_name, servicing_lender_state) %>%
+  summarise(
+    total_loans = n()
+  ) %>%
+  arrange(desc(total_loans))
+```
+
+Q3. What are some potential reasons why a loan might not be paid out? What questions does that circumstance raise for you?
+A3. An applicant might apply not knowing if they needed the loan and then decline it. Or the lender might decide not to fund the loan for some reason - lack of information or something suspicious. Lots of potential questions here, including how often this has happened and whether undisbursed loans have some patterns.
+
+Q4. Which month in 2021 had the most loans approved?
+A4. March 2021, with 4,394.
+
+```{r}
+west_virginia_ppp %>%
+  filter(date_approved > '2020-12-31') %>%
+  mutate(Month = floor_date(date_approved, "month")) %>%
+  group_by(Month) %>%
+  summarise(total = n()) %>%
+  arrange(desc(total))
+```
+
+Q5. How many loans went to West Virginia applicants that listed the maximum number of jobs retained (500)? Which one had the earliest approved date?
+A5. There were 10 applicants that listed 500 jobs retained. J. AUSTIN HEATING & COOLING, INC, which was approved on April 8, 2020, had the earliest approved date.
+
+```{r}
+west_virginia_ppp %>%
+  filter(jobs_retained == 500) %>%
+  arrange(date_approved) %>%
+  select(name, amount, date_approved)
+```

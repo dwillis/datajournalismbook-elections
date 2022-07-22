@@ -1,0 +1,89 @@
+---
+title: "lab_03"
+author: "sean mussenden"
+date: "8/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse here
+
+# Load janitor here
+
+```
+
+## Load data
+```{r}
+# Write code to load the WV slice of the ppp loan data here and call it wv_ppp_loans.
+# The data is called lab_03.rds, and is in the same folder as lab_03.Rmd (this data notebook)
+
+
+```
+
+## Answer questions
+
+Q1: Which five cities located in Kanawha County, West Virginia, got the largest _number_ of loans? How many did each get? To answer this question, you'll have to clean the very messy "city" field.
+
+Note: To answer this question, you'll need to see every variation of the "city" column in Kanawha County, and then fully clean the city field for those cities. Hint: once cleaned, the dataframe that counts the number of loans by city should have 38 distinct cities for Kanawha County.
+
+A1:
+```{r}
+
+# Write your code in this codeblock.
+
+```
+
+Q2: Find the 5-digit ZIP code in West Virginia that had the highest total amount of loans (by dollar value). What is the name of the business that got the largest loan (by dollar value) in that zip code? Write up a short paragraph that also answers these questions:
+
+* Where in West Virginia is this ZIP code located?
+* How much was the business' loan for?
+* How much of that loan was forgiven?
+* Which number is bigger, the loan amount or the forgiveness amount? Can you explain the discrepancy?
+
+A2:
+
+```{r}
+# Hint
+# First, create a dataframe that shows the top 5-digit ZIP code by total dollar amount
+# Second, use the top ZIP code to create a separate dataframe that shows the business with the biggest loan in that ZIP code.
+
+```
+
+Q3: Five business entities owned by the spouse of a member of West Virginia's U.S. House delegation got PPP loans. Write up a paragraph that answers the following questions.   
+
+  * What are the businesses' names?
+  * What do the businesses do?
+  * How much money did the five businesses receive in total?
+  * What percentage of the total loan amount have been forgiven?
+  * How did the U.S. House member vote on the legislation initially author zing the PPP loan program.
+
+Feel free to add any interesting "color" (little interesting details) you find in your research.  
+
+Some hints to help you answer this question:
+
+* West Virginia's three U.S. House members are listed [here](https://www.govtrack.us/congress/members/WV#representatives)
+* To find businesses they or their families own, you can search for financial disclosure forms for U.S. House members [here](https://disclosures-clerk.house.gov/PublicDisclosure/FinancialDisclosure#Search).
+  * To speed things up, here are direct links to the three U.S. House members most recent financial disclosures, which I found by searching the site linked above.
+  * [Rep. 1](https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2020/10042042.pdf)
+  * [Rep. 2](https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2020/10040330.pdf)
+  * [Rep. 3](https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2020/10042734.pdf)
+* When you examine the disclosure forms, there may be lots of stock sales and retirement accounts mixed in.  Ignore those. In the table in the disclosure forms, look for "Partnership" or "C-Corp" in the column named "Income Type"
+* This is a link to details on passage of the [CARES ACT](https://www.congress.gov/bill/116th-congress/house-bill/748). You can find a link to how the House voted by clicking on a link from [this page](https://www.congress.gov/bill/116th-congress/house-bill/748/actions).
+
+A3:
+
+```{r}
+
+# Hint
+# First, create a dataframe that only has loans to those five companies
+# Second, use that newly created dataframe to calculate total loan amount and percentage forgiven for those companies
+
+```

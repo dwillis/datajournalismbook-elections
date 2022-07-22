@@ -1,0 +1,436 @@
+---
+title: "lab_05"
+author: "Sean Mussenden"
+date: "8/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## About this lab
+
+To complete this lab, you need to:
+* run existing code as directed (look for **Task**).
+* modify existing code as directed (look for **Task**).
+* write code in empty codeblocks provided to answer questions included (look for **Q**).
+* write out the answer in the form of a complete sentence in the space given (look for **A**).
+
+When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+## Load libraries and establish settings
+
+You'll need to load two packages for this: the tidyverse and janitor.
+
+**Task** load these two packages.
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
+library(tidyverse)
+library(janitor)
+
+```
+
+## Load Data
+
+You'll need to load three data sets for this:
+
+* The West Virginia slice of the PPP loan data (lab_05.rds).
+* A "lookup table" that allows you to translate NAICS (industry) numeric codes to industry titles (naics_codes.csv).
+* A table of West Virginia population by county (American Community Survey, 2019 5-year averages) (wv_population_county.csv).
+
+All three data sets are in the data folder.  Write code to load the three in the codeblock below.
+
+**Task** Create a codeblock below, then read the data sets in in and assign them to appropriate variable names. There's a fourth data set you'll use in this lab, too, of selected loans in ZIP Code 25401. But there's no need to load it now.
+
+```{r}
+# Load the WV PPP loan data table
+west_virginia_ppp <- read_rds('data/lab_05.rds')
+
+# Load the NAICS lookup table
+naics_codes <- read_csv('data/naics_codes.csv')
+
+# Load the West Virginia population by county table
+wv_population_county <- read_csv("data/wv_population_county.csv")
+
+```
+
+## Answer questions
+
+**Q1.**  In the data folder, there is a csv called zip_25401_loan_sample.csv.  It contains a sample of loans from West Virginia ZIP Code 25401.
+
+As we read earlier this semester, [multiple loan applications coming from multiple businesses at the same residential street address](https://www.nytimes.com/2021/08/17/business/ppp-fraud-covid.html) might point to fraud. Or it could alert us to companies that used [multiple corporate entities to get more money than envisioned](https://www.propublica.org/article/different-names-same-address-how-big-businesses-got-government-loans-meant-for-small-businesses) by the original law that authorized the program.   
+
+You are going to examine this data to see if we can find a lot of loans coming from the same address.  Here's the problem: the street address field is pretty messy.  The same address appears with minor variations --  "1003 Sushruta Dr" vs "1003 SUSHRUTA DR" -- that will prevent proper grouping.
+
+First, upload the data into Open Refine and standardize/clean the address field - make sure to make a copy of that column to work on and to try all of the options for clustering. If you've done it properly, you should have 65 discrete addresses.
+
+Then export the data from Open Refine, and move it to the proper folder.
+
+Next, load it in the codeblock below, assigning it to an appropriate variable name.
+
+Then answer these questions:
+* What is the street address in this data that has the most loans?
+* How many loans are there at that street address?
+* What are the names of the businesses at that address?
+
+**A1.**  126 E Burke St. in Martinsburg has 6, more than any other address in this sample. The businesses are DREW HOLDINGS LLC, BRIX27 LLC, ABRAHAM ASHTON, HUB CO-OP LLC (2X), RONIN PROPERTIES LLC.
+
+```{r}
+
+#####
+## Step 0: Process to create this practice sample of loans from ZIP 25401 that will be uploaded to Open Refine
+## This section not necessary to complete problem.
+## Just there for instructor understanding of what's in the dataframe.
+## We're not using all records in 25401 because it would have taken too long to clean in Open Refine.
+#####
+
+# Create a dataframe of loans in Berekely County and ZIP 25401. 413 records.
+berkeley_25401_ppp <- west_virginia_ppp %>%
+  filter(project_county_name == "BERKELEY") %>%
+  mutate(zip5=str_sub(zip,start=1L, end=5L)) %>%
+  filter(zip5=="25401") %>%
+  mutate(address_clean = str_to_title(address))
+
+# Identify addresses that (with some grouping problems) appear more than once. 66 distinct addresses.
+berkeley_25401_multiple <- berkeley_25401_ppp %>%
+  group_by(address_clean) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  filter(n>1) %>%
+  select(address_clean) %>%
+  distinct()
+
+# Filtering join to only keep select ZIPS identified in previous function. 142 records in this sample.
+berkeley_25401_ppp <- berkeley_25401_ppp %>%
+  inner_join(berkeley_25401_multiple) %>%
+  select(-address_clean)
+
+# Write sample out as csv
+write_csv(berkeley_25401_ppp,"data/zip_25401_loan_sample.csv")
+
+#####
+## Step 1: Upload to Open Refine, Clean, Export.
+## This is the first step students will do.  
+#####
+
+# Launch Open Refine
+# Choose file zip_25401_loan_sample.csv
+# Hit next to upload data
+# Click create project
+# Make copy of address column called address_clean.  Click dropdown arrow next to address_clean > edit column > add column based on this column. When window pops up, type address_clean in "New column name" field and click OK button.
+# Click dropdown arrow next to address_clean > Facet > Text facet
+# On left sidebar click "cluster"
+# Use various cleaning functions until city inconsistency grouping problems are resolved.
+# Should have 65 distinct addresses at end of cleaning.  
+# Click "export" > comma separated value >
+# Move to proper folder with the rest of your data in the GitHub repo.
+# Change the name to something like zip_25401_loan_sample_open_refine.csv
+
+#####
+## Step 2: Upload to Open Refine, Clean, Export.
+## This is the first step students will do.  
+#####
+
+## Read in data, fix most capitalization issues by applying str_to_title
+zip_25401_loan_sample_open_refine <- read_csv("data/zip_25401_loan_sample_open_refine.csv") %>%
+  mutate(address_clean = str_to_title(address_clean))
+
+#####
+## Step 3: Determine street address with most loans in this sample. 126 E Burke St. has 6.
+#####
+
+zip_25401_loan_sample_open_refine %>%
+  group_by(address_clean) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+#####
+## Step 4: Examine loans to 126 E Burke St
+## DREW HOLDINGS LLC, BRIX27 LLC, ABRAHAM ASHTON, HUB CO-OP LLC (2X), RONIN PROPERTIES LLC
+#####
+
+zip_25401_loan_sample_open_refine %>%
+  filter(address_clean == "126 E Burke St")
+
+
+```
+**Q2.** Do some web research on the businesses that answered question 1.  
+
+Google the street address.  Google the business names and search for their corporate records on [Open Corporates](https://opencorporates.com/). Be sure to find the website of the name of the company that appears twice in the list of businesses and develop an understanding of what it does.
+
+Based on your research, does it seem suspicious that this collection of businesses all got loans using the same address? Why or why not. Use specific facts identified in your research to support your position.
+
+**A2.** It's hard to say for sure without much more reporting. There's some evidence for and against suspicion. Hub Co-Op is based at 126 E. Burke Street. It appears to be a co-working space, which leases office space at low-rates to very small companies, including startups. So it does seem normal that several otherwise unrelated businesses that share office space could have applied for loans.  However, a search of Open Corporates shows that most of these businesses do seem connected beyond just sharing office space. A person named Robert Johnson is a member or agent on every single company, and they seem to share the same attorney who helped register the companies, [Abraham Ashton](https://www.linkedin.com/in/abraham-ashton-0a660815), who is listed as the "organizer" for dozens of organizations. At any rate, it would be a mistake to publish these findings without doing a lot more reporting to understand the context.
+
+* [Drew Holdings](https://opencorporates.com/companies/us_wv/363638)
+* [BRIX27, LLC](https://opencorporates.com/companies/us_wv/370554)
+* [Hub Co-Op](https://opencorporates.com/companies/us_wv/338359)
+* [Ronin Properties LLC](https://opencorporates.com/companies/us_wv/362157)
+
+
+**Q3.** Start by using the West Virginia slice of the PPP loan data that you loaded at the start of the lab to create a subset of PPP loans in West Virginia's second largest county (which you can find in wv_population_county). And then use that table you created to answer the following questions:
+
+* Which city in that county had the highest number of loans?
+* In that city, which industry title had more loans than any other industry title?
+
+Requirement: you MUST export a dataframe of PPP loans from R Studio at some point in the process (not necessarily at the beginning!), load it into Open Refine, clean the city column, export it from Open Refine, and reimport into R Studio. To export data, you will use the write_csv() function.
+
+Guidance: there are a lot of steps you'll need to take to answer this question. You may or may not find it helpful to write out in English what you plan to do step-by-step before you start writing code.   
+
+**A3.** Martinsburg, the biggest city in Berekley County, West Virginia, had more loans than any other city in that county.  The "full-service restaurants" industry had more approved loans than any other industry, just ahead of real estate agents and child care providers.
+```{r}
+
+# Below are two approaches to answering this question here.  Approach A makes heavy use of the familiar filter() function. Approach B makes heavy use of a new-to-you type of join, inner_join(), to do a "filtering join".
+
+###############
+#### Approach A (Less Advanced): Relying on filter()
+###############
+
+#####
+### Step 1: Identify West Virginia's second largest county
+#####
+
+## Sort population table
+wv_population_county_sorted <- wv_population_county %>%
+  arrange(desc(population_2019))
+
+## Display it.  Berkeley County is #2 with 115K people.
+wv_population_county_sorted
+
+#####
+### Step 2: Create a table of Berkeley County loans
+#####
+
+berkeley_ppp <- west_virginia_ppp %>%
+  filter(project_county_name == "BERKELEY")
+
+#####
+### Step 3: Identify city in Berkeley County that got the most loans.
+#####
+
+## Group by city and county
+berkeley_top_city <- berkeley_ppp %>%
+  group_by(city) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+## Display to notice city field needs cleaning in order to group properly.
+berkeley_top_city
+
+#####
+### Step 4: Export data to Open Refine, clean city field and reimport to R Studio.
+#####
+
+## Export Berkeley loan data to Open Refine
+write_csv(berkeley_ppp,"data/berkeley_ppp.csv")
+
+## Open Refine Cleaning Steps
+# Launch Open Refine
+# Choose file berkeley_ppp.csv
+# Hit next to upload data
+# Click create project
+# Make copy of city column called city_clean.  Click dropdown arrow next to city > edit column > add column based on this column. When window pops up, type city_clean in "New column name" field and click OK button.
+# Click dropdown arrow next to city_clean > Facet > Text facet
+# On left sidebar click "cluster"
+# Use various cleaning functions until city inconsistency grouping problems are resolved.
+# Click "export" > comma separated value >
+# Move to proper folder with the rest of your data in the GitHub repo.
+# Change the name to something like berkeley_ppp_open_refine.csv
+
+## Reimport cleaned Open Refine data, do some further cleaning if desired to fix capitalization.
+
+berkeley_ppp <- read_csv("data/berkeley_ppp_open_refine.csv") %>%
+  mutate(city_clean = str_to_title(city_clean))
+
+#####
+### Step 5: Identify top city in Berkeley County.
+#####
+
+## Group by cleaned city column and count loans, sort descending
+berkeley_ppp_cities <- berkeley_ppp %>%
+  group_by(city_clean) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+## Display it. Martinsburg with 1166 approved loans.
+wv_population_county_sorted
+
+#####
+### Step 6: Create a Martinsburg only PPP loans table
+#####
+
+martinsburg_ppp <- berkeley_ppp %>%
+  filter(city_clean == "Martinsburg")
+
+#####
+### Step 7: Examine top industries in Martinsburg
+#####
+
+# Join to naics lookup table, group by industry title, count sort descending
+martinsburg_ppp_industries <- martinsburg_ppp %>%
+  left_join(naics_codes) %>%
+  group_by(title) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+# Display it.
+martinsburg_ppp_industries
+
+###############
+#### Approach B (More advanced): Relying on inner_join() to do "filtering joins"
+###############
+
+#####
+### Step 1: Identify West Virginia's second largest county
+#####
+
+## Sort population table, keep the second row using slice, keep only the county column, convert county to uppercase to match ppp data for join
+wv_second_county <- wv_population_county %>%
+  arrange(desc(population_2019)) %>%
+  slice(2) %>%
+  select(county) %>%
+  mutate(county = str_to_upper(county))
+
+## Display it.  Berkeley County is #2 with 115K people.
+wv_second_county
+
+#####
+### Step 2: Create a table of Berkeley County loans
+#####
+
+berkeley_ppp <- west_virginia_ppp %>%
+  inner_join(wv_second_county,by=c("project_county_name" = "county"))
+
+#####
+### Step 3: Identify city in Berkeley County that got the most loans.
+#####
+
+## Group by city and county
+berkeley_top_city <- berkeley_ppp %>%
+  group_by(city) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+## Display to notice city field needs cleaning in order to group properly.
+berkeley_top_city
+
+#####
+### Step 4: Export data to Open Refine, clean city field and reimport to R Studio.
+#####
+
+## Export Berkeley loan data to Open Refine
+write_csv(berkeley_ppp,"data/berkeley_ppp.csv")
+
+## Open Refine Cleaning Steps
+# Launch Open Refine
+# Choose file berkeley_ppp.csv
+# Hit next to upload data
+# Click create project
+# Make copy of city column called city_clean.  Click dropdown arrow next to city > edit column > add column based on this column. When window pops up, type city_clean in "New column name" field and click OK button.
+# Click dropdown arrow next to city_clean > Facet > Text facet
+# On left sidebar click "cluster"
+# Use various cleaning functions until city inconsistency grouping problems are resolved.
+# Click "export" > comma separated value >
+# Move to proper folder with the rest of your data in the GitHub repo.
+# Change the name to something like berkeley_ppp_open_refine.csv
+
+## Reimport cleaned Open Refine data, do some further cleaning if desired to fix capitalization.
+
+berkeley_ppp <- read_csv("data/berkeley_ppp_open_refine.csv") %>%
+  mutate(city_clean = str_to_title(city_clean))
+
+#####
+### Step 5: Identify top city in Berkeley County.
+#####
+
+## Group by cleaned city column and count loans, sort descending
+berkeley_top_city <- berkeley_ppp %>%
+  group_by(city_clean) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count)) %>%
+  slice(1) %>%
+  select(city_clean)
+
+## Display it. Martinsburg with 1166 approved loans.
+berkeley_top_city
+
+#####
+### Step 6: Create a Martinsburg only PPP loans table
+#####
+
+martinsburg_ppp <- berkeley_ppp %>%
+  inner_join(berkeley_top_city)
+
+#####
+### Step 7: Examine top industries in Martinsburg
+#####
+
+# Join to naics lookup table, group by industry title, count sort descending
+martinsburg_ppp_industries <- martinsburg_ppp %>%
+  left_join(naics_codes) %>%
+  group_by(title) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+
+# Display it.
+martinsburg_ppp_industries
+```
+
+**Q4.** What are your two best hypotheses, which you'd need to confirm with reporting and further analysis, that explain why that industry is at the top of the list?
+**A4.** Here are four ideas, though you may think of others.   
+
+* Full-service restaurants may just be more common than other types of businesses in Martinsburg. If businesses in all industries were equally likely to apply for a loan -- which may not be a safe assumption to make! -- then it would make sense that more restaurants equals more loans.
+* Restaurants may have been more likely than businesses in other industries to apply for multiple loans with different lenders, leading to multiple records in the PPP data. For example, SISSY'S FAMILY RESTAURANT LLC, MOTHER SHUCKERS CRAB SHACK, LAS TRANCAS OF MARTINSBURG INC. and several others have two loans of differing amounts on different dates at the same address. Is this true of other big industries?
+* Sit-down restaurants were particularly vulnerable during the pandemic, especially the early months, as public health measures in many states limited or prevent in-restaurant dining. The economic hit may have driven restaurant owners to seek help with more urgency than in other industries.
+* The position of restaurants at the top may just be an artifact of using fine-grained NAICS data.
+
+**Q5.** Start with a table of loans to all businesses in the city and industry that answered question 3. Answer the following questions:
+* What is the name of the business that got the highest approved loan amount?
+* How much was it for?
+* When was it approved?
+* How many jobs does the data say were retained?
+* Is there a difference between the business' name in the PPP data and the name its customers know it by? If so, what is that name?
+* How many locations does this business have?
+* Did one of its locations close during the pandemic, either before or after it got the loan?
+
+Hint: you will not find the answers to the last three questions in the data.  You could call them directly to get that information, but I don't want you to do that for this assignment.  Instead, do some web research. I would start by Googling the company name from the data and looking at the page that comes up for the business from at http://apps.sos.wv.gov/. I would use information I found on that page and use info about the company from Google, the [Wayback machine](https://archive.org/web/) (which lets you look at older versions of a company's website), Yelp, and Facebook.
+
+**A5.** "COTTLE CHRISTI L LLC" got the highest approved loan amount, $280,434. The loan was approved on Feb. 17, 2021, nearly a full year after the pandemic started.
+
+The data says it allowed the company to retain 94 jobs, more than any other full service restaurant in town.
+
+Based on web research, "COTTLE CHRISTI L LLC" appears to be the corporate holding company for a small chain of restaurants, according to its page on the [West Virginia Secretary of State Corporate Lookup] ](http://apps.sos.wv.gov/business/corporations/organization.aspx?org=338507).
+
+According to the corporate page, the business has several "DBA" or "Doing Business As" names, including several variations of Kitzie's (Kitzie's Cafe, Kitzie's Cafe II, Kitzie's of Inwood, Kitzie's of Spring Mills, Kitzie's Restaurant & Lounge) and Riverbend Bar & Grill. The "termination date" for one of the DBA names, "Kitzie's of Inwood" suggests it may have closed after the pandemic started, in May 2020.
+
+A Google search for A Google search for "kitzie's wv" gets us to the website for [Kitzie's Restaurant & Lounge](http://www.kitziesrestaurant.com/").  It shows two locations in Martinsburg ("Spring Mills" and "Martinsburg").  Using the "Wayback Machine" at Archive.org, we can see how the restaurant's website changed over time.  This is how it [looked in January 2019](https://web.archive.org/web/20190115061057/http://www.kitziesrestaurant.com/), showing a third location in Inwood, WV.  By [June 2019](https://web.archive.org/web/20190618194756/http://www.kitziesrestaurant.com/) though, the Inwood location no longer appeared. Yelp users also [reported the Inwood location appears to be closed](https://www.yelp.com/biz/kitzies-inwood-inwood), with the last review left in March 2019. We'd have to call to confirm, but it appears the location closed before the pandemic started.  
+
+```{r}
+
+martinsburg_ppp_restaurants <- martinsburg_ppp %>%
+  left_join(naics_codes) %>%
+  filter(str_detect(title,"Full-Service Restaurants")) %>%
+  arrange(desc(amount))
+
+martinsburg_ppp_restaurants
+```

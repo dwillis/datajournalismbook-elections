@@ -1,0 +1,409 @@
+city,count,sum
+Aberdeen,141,3849.66
+Aberdeen Proving Ground,3,75
+Abingdon,237,5007
+Accident,6,300
+Accokeek,26,552
+Adamstown,18,523
+Adelphi,11,274
+Allen,10,610
+Annapolis,2536,108677.8
+Aquasco,2,75
+Arbutus,9,85
+Arnold,238,11758.87
+Ashton,17,335
+Avenue,14,470
+Baldwin,133,4676
+baltimore,3,30
+Baltimore,2319,79376.52
+BALTIMORE,6,105
+Barnesville,1,29
+Barstow,7,134
+Barton,1,25
+Beallsville,4,185
+Bel Air,1014,26438.4
+Bel Alton,9,135
+Belcamp,34,1101
+Beltsville,313,3703.34
+Benedict,4,310
+Benson,1,25
+Berlin,189,6330.5
+Berwyn Heights,6,135
+Bethesda,727,139757.2
+Betterton,3,72
+Big Pool,3,201
+Bishopville,50,2030
+Bladensburg,3,75
+Boonsboro,156,7778.94
+Bowie,670,20129.18
+Boyds,72,3297
+Bozman,2,135
+Brandywine,39,462
+Brentwood,8,115
+Brinklow,5,180
+Brookeville,101,2603.22
+Brooklandville,2,700
+Brooklyn,68,1795
+Brooklyn Park,4,100
+Brunswick,32,816.24
+Bryans Road,60,331.49
+Bryantown,12,367
+Buckeystown,44,214
+Burtonsville,48,1296
+Bushwood,18,1133
+Cabin John,33,1798
+California,434,8360.35
+Callaway,4,90
+Cambridge,94,2683.99
+Camp Springs,2,30
+Capitol Heights,57,1561
+Cascade,1,20.22
+Catonsville,1292,27265.99
+Cecilton,3,75
+Centreville,79,3551
+Charlestown,1,1
+Charlotte Hall,18,540
+Chase,1,50
+Cheltenham,1,25
+Chesapeake Beach,59,1714.76
+Chesapeake City,41,1370
+Chester,88,4262.76
+Chestertown,174,2835.45
+Chestnut Hill Cove,4,165
+Cheverly,47,2274
+Chevy chase,1,25
+Chevy Chase,332,133225.1
+Chewsville,2,10
+Childs,5,115
+Church Creek,3,3
+Church Hill,15,265
+Churchton,146,1357
+Churchville,50,1247
+Clarksburg,398,8334.56
+Clarksville,71,8870.12
+Clear Spring,31,870.66
+Clements,2,10
+Clinton,74,1033
+Cobb Island,5,120
+Cockeysville,118,16313
+Colesville,5,115
+College Park,441,3378.6
+Colora,9,175.22
+Coltons Point,3,538
+Columbia,582,13306.19
+Conowingo,13,211
+Cooksville,2,90
+Cordova,17,310
+Cresaptown,1,50
+Crisfield,63,4404
+Crofton,313,11181
+Crownsville,188,9243
+Crumpton,1,1
+Cumberland,289,12370.22
+Curtis Bay,8,128
+Damascus,113,4041
+Dameron,16,725
+Darlington,35,928.46
+Darnestown,112,3265.6
+Davidsonville,82,11915.28
+Dayton,1,75
+Deale,25,14400
+Delmar,26,503
+Denton,49,857.5
+Derwood,152,7397.84
+Dickerson,2,150
+District Heights,8,210
+Drayden,5,275
+Dundalk,254,5761
+Dunkirk,62,3101.16
+Earleville,11,228
+East new market,3,60
+East New Market,4,148
+Easton,311,27290.07
+Eden,20,585
+Edgemere,7,345
+Edgewater,208,22471.14
+Edgewood,91,2261
+Eldersburg,52,1590.22
+Elk Mills,3,92
+Elkridge,127,2082.44
+ELKRIDGE,1,45
+Elkton,683,11987.68
+Ellerslie,5,124
+Ellicott City,1471,21916.06
+Emmitsburg,72,1817.44
+Essex,211,5129.24
+Fairmount Heights,2,5
+Fairplay,5,640
+Fallston,129,3850
+Faulkner,3,105
+Federalsburg,28,815
+Finksburg,250,3641.61
+forest hill,2,50
+Forest Hill,142,4043.15
+Forestville,5,120
+Fork,2,20
+Fort George G Meade,3,40
+Fort Howard,2,30
+Fort Meade,10,435.22
+Fort Washington,256,10988
+frederick,2,25.3
+Frederick,1791,40158.1
+Freeland,38,752.34
+Friendship,6,135
+Friendsville,65,1536
+Frostburg,131,2348
+Fruitland,14,265
+Ft Washington,4,171
+Fulton,13,775
+Funkstown,6,151
+Gaithersburg,1031,30342.04
+Galena,121,2855.75
+Galesville,7,93.46
+Gambrills,64,3048
+Gapland,1,100
+Germantown,442,17838
+Gibson Island,13,1985
+Girdletree,2,70.22
+Glen Arm,55,2054
+Glen Burnie,520,11625.83
+Glen Echo,1,50
+Glenarden,3,1350
+Glenelg,11,280
+Glenn Dale,19,950
+Glenwood,53,3326
+Glyndon,2,28
+Goldsboro,11,68.4
+Govans,3,75
+Grantsville,49,436
+Grasonville,62,2574
+Great Mills,93,2017.51
+Greenbelt,16,910
+Greensboro,39,130
+Gwynn Oak,34,328.44
+Hagerstown,3823,30769.34
+Halethorpe,113,2421.66
+Hampstead,102,3956.28
+Hancock,37,440.38
+Hanover,84,2875
+Harwood,18,481
+Havre de Grace,47,870.75
+Havre De Grace,333,7234.66
+Hebron,28,1520
+Henderson,3,115
+Highland,9,207.03
+Hollywood,88,2633.27
+Hughesville,137,3581.76
+Hunt Valley,68,1298
+Huntingtown,291,7134
+Hurlock,12,307
+Hyattsville,407,6353.22
+Hydes,12,456
+Idlewylde,6,190
+Ijamsville,116,7508.22
+Indian Head,130,3420.76
+Ingleside,4,37
+Issue,1,25
+Jarrettsville,127,2252
+Jefferson,41,1181
+Jessup,29,710
+Joppa,205,4206.02
+Keedysville,41,1505.44
+Kennedyville,102,1713.48
+Kensington,143,12025.48
+Keymar,39,1055.52
+Kingsville,45,1186.22
+Knoxville,38,1778.22
+La Plata,283,5387.48
+Landover Hills,2,53
+Lanham,83,1475.76
+Largo,3,1750
+Laurel,1093,13509.82
+Lavale,11,318.5
+Laytonsville,11,1730
+Leonardtown,111,5412.1
+Lexington Park,210,5403.61
+Libertytown,10,321
+Lineboro,2,30
+Linthicum,9,120
+Linthicum Heights,72,2329.98
+Lonaconing,29,465
+Lothian,297,6325.01
+Lusby,69,2096
+Lutherville,18,806
+Lutherville Timonium,570,13618.72
+Lutherville-Timonium,27,330
+Manchester,171,4424.23
+Mardela Springs,6,76
+Marion Station,14,854
+Marriottsville,80,1974.5
+Maryland City,5,193
+Massey,1,25
+Maugansville,19,625.22
+Mc Henry,15,896
+McHenry,3,85
+Mechanicsville,176,4674
+MECHANICSVILLE,30,1620
+Middle River,231,6638.43
+Middletown,213,4522.22
+Midlothian,13,463
+Millersville,148,5382.33
+Millington,2,50
+Mitchellville,7,475
+Monkton,50,2325.26
+Monrovia,68,1127.5
+Montgomery Village,148,2436.72
+Mount Airy,372,10875.41
+MOUNT AIRY,3,300
+Mount Rainier,6,165
+Mt Airy,53,609.5
+Mt Lake Park,7,540
+Myersville,74,913.44
+Nanjemoy,17,605
+New Market,137,3541.72
+New Windsor,139,1958.25
+Newark,6,150
+Newburg,20,245
+Newcomb,2,30
+North Beach,29,870
+NORTH BEACH,15,570
+North Bethesda,114,2868.02
+North East,88,1807
+North Potomac,165,7103.61
+Nottingham,629,11337.5
+Oakland,121,6276.5
+Ocean City,242,6238.47
+Ocean Pines,63,1457
+Odenton,216,5423.72
+Oldtown,16,110
+Olney,142,7714.44
+Owings,74,4349
+Owings Mills,184,4131.9
+Oxford,22,3325
+Oxon Hill,10,1385
+Parkton,115,5726.79
+Parkville,1250,14195.17
+Parsonsburg,56,826.98
+Pasadena,597,13576.77
+Perry Hall,81,2647
+Perryman,3,30
+Perryville,82,1354
+Philadephia,2,10
+Phoenix,57,1928
+Pikesville,144,3783.03
+Piney Point,17,581.78
+Pittsville,9,21
+Pocomoke City,69,1118
+Point Of Rocks,6,170
+Pomfret,6,142
+Poolesville,442,3673.77
+Port Deposit,70,2963
+Port Republic,54,1287.94
+Port Tobacco,86,1215
+Potomac,809,94114.21
+preston,37,2019
+Preston,31,1001
+Prince Frederick,160,3783.5
+Princess Anne,20,460
+Pylesville,35,691
+Quantico,6,60
+Queen Anne,1,250
+Queenstown,32,866.22
+Randallstown,60,453.22
+Rawlings,15,288
+Reisterstown,304,8142.96
+Rhodesdale,6,77.5
+Ridge,14,960
+Ridgely,8,240
+Rising Sun,574,7054.39
+Riva,20,439
+Riverdale,93,3323
+Riverdale Park,2,2
+Rock Hall,245,3557.5
+Rockville,1023,39807.23
+Rocky Ridge,5,198
+Rohrersville,9,203
+Rosedale,172,1753.79
+Royal Oak,9,1804
+Sabillasville,4,515
+Saint Inigoes,4,100
+Saint Leonard,38,8750
+Saint Michaels,59,4220
+Salisbury,444,11384.94
+Sandy Spring,22,532
+Savage,3,80
+Scotland,1,15
+Secretary,11,39
+Severn,358,8238.59
+Severna Park,301,12612.67
+Shady Side,75,1876
+Sharpsburg,27,772
+Sherwood,2,2950
+Sherwood Forest,1,10
+Silver Spring,1461,65393.78
+Simpsonville,2,200
+Smithsburg,48,1492.22
+Snow Hill,36,772.25
+Solomons,108,2320.24
+Sparks,25,1682.5
+Sparks Glencoe,42,1580.31
+Sparrows Point,12,340
+Spencerville,22,118
+Springdale,3,36
+St Michaels,8,325
+Stevenson,35,1587.49
+Stevensville,183,8460.72
+Stockton,3,150
+Stoney Beach,29,228
+Street,126,3590.97
+Sudlersville,42,713.22
+Suitland,45,600.06
+Sunderland,3,60
+Swan Point,2,50
+Swanton,26,1071
+Sykesville,908,67475.99
+Takoma Park,8,475.22
+Tall Timbers,2,56.22
+Taneytown,59,1456
+Temple Hills,59,1311.22
+Thurmont,212,3564
+Tilghman,5,95
+Timonium,242,3046.18
+Towson,476,23765.59
+Tracys Landing,6,210
+Trappe,18,751.5
+Tyaskin,23,401
+Union Bridge,33,819
+University Park,5,50
+Upper Falls,1,35
+Upper Marlboro,519,21590.94
+Upperco,33,2545.22
+UpperMarlboro,3,105
+Valley Lee,1,20
+Waldorf,255,9504.66
+Walkersville,129,7861.38
+Warwick,6,330
+Washington Grove,414,667
+Welcome,20,211
+West Friendship,45,2327.22
+West River,32,760
+Westernport,1,5
+Westminster,507,14574.59
+WESTMINSTER,12,162
+Westover,290,3535.98
+Whaleyville,3,75
+Wheaton,2,15
+White Hall,216,2568
+White Marsh,39,3647.87
+White Plains,38,646
+Whiteford,7,500
+Willards,24,810
+Williamsport,26,1019
+Windsor Mill,87,2728.24
+Wittman,6,150
+Woodbine,108,9624
+Woodsboro,40,636.72
+Woodstock,58,2094.76
+Woolford,16,277.5
+Worton,6,220
+Wye Mills,2,95

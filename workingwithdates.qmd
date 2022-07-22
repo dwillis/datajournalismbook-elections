@@ -1,0 +1,63 @@
+# Working with dates
+
+One of the most frustrating things in data is working with dates. Everyone has a different opinion on how to record them, and every software package on the planet has to sort it out. Dealing with it can be a little ... confusing. And every dataset has something new to throw at you. So consider this an introduction.
+
+First, there's the right way to display dates in data. Most of the rest of the world knows how to do this, but Americans aren't taught it. The correct way to display dates is the following format: YYYY-MM-DD, or 2022-09-15. Any date that looks different should be converted into that format when you're using R.
+
+Luckily, this problem is so common that the Tidyverse has an entire library for dealing with it: [lubridate](https://lubridate.tidyverse.org/).
+
+
+We're going to do this two ways. First I'm going to show you how to use base R to solve a tricky problem. And then we'll use a library called `lubridate` to solve a more common and less tricky problem. And then we'll use a new library to solve most of the common problems before they start. If it's not already installed, just run `install.packages('lubridate')`
+
+## Making dates dates again
+
+First, we'll import `tidyverse` like we always do and our newly-installed lubridate.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+Let's start with a dataset of campaign expenses from Maryland political committees:
+
+```{r}
+maryland_expenses <- read_csv("data/maryland_expenses.csv")
+
+head(maryland_expenses)
+```
+
+Take a look at that first column, expenditure_date. It *looks* like a date, but see the `<chr` right below the column name? That means R thinks it's actually a character column. What we need to do is make it into an actual date column, which lubridate is very good at doing. It has a variety of functions that match the format of the data you have. In this case, the current format is `m/d/y`, and the lubridate function is called `mdy` that we can use with mutate:
+
+```{r}
+maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditure_date))
+
+head(maryland_expenses)
+```
+Now look at the expenditure_date column: R says it's a date column and it looks like we want it to: YYYY-MM-DD. Accept no substitutes.
+
+Lubridate has functions for basically any type of character date format: mdy, ymd, even datetimes like ymd_hms.
+
+That's less code and less weirdness, so that's good.
+
+But to get clean data, I've installed a library and created a new field so I can now start to work with my dates. That seems like a lot, but don't think your data will always be perfect and you won't have to do these things.
+
+Still, there's got to be a better way. And there is.
+
+Fortunately, `readr` anticipates some date formatting and can automatically handle many of these issues (indeed it uses lubridate under the hood). When you are importing a CSV file, be sure to use `read_csv`, not `read.csv`.
+
+But you're not done with lubridate yet. It has some interesting pieces parts we'll use elsewhere.
+
+For example, in spreadsheets you can extract portions of dates - a month, day or year - with formulas. You can do the same in R with lubridate. Let's say we wanted to add up the total amount spent in each month in our Maryland expenses data.
+
+We could use formatting to create a Month field but that would group all the Aprils ever together. We could create a year and a month together, but that would give us an invalid date object and that would create problems later. Lubridate has something called a floor date that we can use.
+
+So to follow along here, we're going to use mutate to create a month field, group by to lump them together, summarize to count them up and arrange to order them. We're just chaining things together.
+
+```{r}
+maryland_expenses %>%
+  mutate(month = floor_date(expenditure_date, "month")) %>%
+  group_by(month) %>%
+  summarise(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))
+```
+So the month of June 2022 had the most expenditures by far in this data. We'll be learning more about the calendar of campaigns and how it impacts campaign finance data.

@@ -1,0 +1,417 @@
+---
+title: "pre_lab_03.Rmd"
+author: ""
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen=999)
+```
+
+## About this notebook
+
+This notebook contains code and explanatory text that your should review and run as you read through chapters 10 and 11 of the course textbook, "Data Journalism with R and the Tidyverse". Answer questions and edit the document as directed.
+
+Running this notebook will help you understand key data analysis methods and concepts that you will put into practice during this week's lab.  
+
+When you are finished running the code in this notebook, you will push changes to your course GitHub repo, and upload the link to ELMS as instructed.
+
+## Instructor in class demonstration outline
+
+Work through the code below, chapter by chapter.
+
+## Chapter 10
+
+### Task 1: Load libraries and settings
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library and turn off scientific notation.  
+
+```{r}
+# Remove scientific notation
+options(scipen=999)
+# Load the tidyverse   
+library(tidyverse)
+```
+
+### Task 2: Load data
+**Task** Load the PPP loan dataset by running the following code. We'll use the guess_max() function as an argument to use the first 10 rows to set the data type. What does the first line of the red Warning message that prints out when you load the data say? Answer below.
+**Answer**
+
+```{r}
+ppp_maryland_loans <- read_csv("ppp_loans_md.csv.zip", guess_max=10)
+
+```
+
+### Task 3: Check for problems on load
+**Task** Check for problems that occurred when loading the ppp loan data for Maryland by running the following code.  How many problems were there, as shown by the number of rows in the output table showing errors? Answer below.
+**Answer**
+
+```{r}
+
+problems(ppp_maryland_loans)
+
+```
+
+### Task 4: Reload data
+**Task** Run the following codeblock to reload the data, using every row to set the data types. Does it show any parsing errors when you run? Answer below
+**Answer**
+
+```{r}
+ppp_maryland_loans <- read_csv("ppp_loans_md.csv.zip", guess_max=195865)
+```
+
+### Task 5: Examine the data with glimpse
+**Task** Run the following codeblock to glimpse the data.  What data type is the "amount" field?  What data type is the "name" field? What data type is the id column? Answer below.
+**Answer**
+```{r}
+glimpse(ppp_maryland_loans)
+```
+### Task 6: Change the "id" field data type
+**Task** Run the following codeblock to change the data type of the "id" field from a number (dbl) to a character, and then glimpse the data, to see the change. Add a description of what this code does to your reference notebook.     
+
+```{r}
+ppp_maryland_loans <- ppp_maryland_loans %>%
+  mutate(id = as.character(id))
+
+glimpse(ppp_maryland_loans)
+```
+
+### Task 7: Examine the franchise column for missing values.
+**Task** Run the following codeblock to group by franchise_name, count the number of loans, then sort from highest to lowest on count. How many loans are there where franchise_name is NA? How many loans are there where the franchise_name is "Subway"? Answer below.
+**Answer**:
+
+```{r}
+
+ppp_maryland_loans %>%
+  group_by(franchise_name) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+```
+### Task 8: Examine the forgiveness_amount column for missing values.
+**Task** Run the following codeblock to group by forgiveness_amount, count the number of loans, then sort from highest to lowest on count. How many loans are there where forgiveness_amount is NA? Answer below.
+**Answer**:
+
+```{r}
+ppp_maryland_loans %>%
+  group_by(forgiveness_amount) %>%
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+```
+
+### Task 9: Examine the forgiveness_date column for missing values.
+**Task** Run the following codeblock to group by forgiveness_date, count the number of loans, then sort from highest to lowest on count and filter to only show NA values. How many loans are there where forgiveness_date is NA? Is it the same as the number for forgiveness_amount? Answer below.
+**Answer**:
+
+```{r}
+ppp_maryland_loans %>%
+  group_by(forgiveness_date) %>%
+  summarise(
+    count=n()
+  ) %>%
+  filter(is.na(forgiveness_date)) %>%
+  arrange(desc(count))
+```
+
+### Task 10: Examine forgiveness_date and forgiveness_amount together
+**Task** Run the following codeblock to group by forgiveness_date and forgiveness_amount, count the number of loans, then sort from highest to lowest on count and filter to only show NA values. How many loans are there where forgiveness_date and forgiveness_amount is NA? Is it the same as the number for forgiveness_amount and forgiveness_amount run separately in the codeblocks above? What can you conclude from Answer below.
+**Answer**:
+
+```{r}
+ppp_maryland_loans %>%
+  group_by(forgiveness_amount, forgiveness_date) %>%
+  summarise(
+    count=n()
+  ) %>%
+  filter(is.na(forgiveness_date)) %>%
+  arrange(desc(count))
+
+```
+### Task 11: Install lubridate
+**Task** Run the following codeblock to install the lubridate package.
+```{r}
+install.packages('lubridate')
+```
+
+### Task 12: Load lubridate
+**Task** Run the following code to load the lubridate library.
+
+```{r}
+library(lubridate)
+```
+
+### Task 13: Look for date gaps in data
+**Task** Run the following codeblock to create a new column called "month_year_approved" that extracts the month and year from the "date_approved" column.  Group by the new "month_year_approved" column, count, and sort by "month_year_approved". How many loans are there in the data for October 2020? Answer below. Add a description of what this code does to your reference notebook.
+**Answer**
+```{r}
+ppp_maryland_loans %>%
+  mutate(month_year_approved = floor_date(date_approved, "month")) %>%
+  group_by(month_year_approved) %>%
+   summarise(
+    count=n()
+  ) %>%
+  arrange(month_year_approved)
+```
+
+### Task 14: Check for suspicious outliers
+**Task** Run the following codeblock to find the largest and smallest loans in the data, by using summarise() without grouping. How much is the largest loan for? How much is the smallest loan for? Are either of these suspicious to you? Why or why not? Answer below.
+**Answer**
+```{r}
+
+ppp_maryland_loans %>%
+  summarise(max_amount = max(amount),
+            min_amount= min(amount))
+```
+
+
+### Task 15: Look at smallest loans
+**Task** Run the following codeblock to examine all loans under $100. How many are there? Answer below.
+**Answer**
+```{r}
+
+ppp_maryland_loans %>%
+ filter(amount < 100)
+```
+
+### Task 16: Look for internal consistency
+**Task** Run the following codeblock to examine all loans under $100 and look at whether the various fields with amounts align. Do they? Answer below.
+**Answer**
+
+```{r}
+
+ppp_maryland_loans %>%
+ filter(amount < 100) %>%
+  select(name, amount, initial_approval_amount, current_approval_amount, payroll_proceed)
+```
+
+## Chapter 11
+
+### Task 1: Install janitor
+**Task** Run the following codeblock to install the janitor package.
+```{r}
+install.packages('janitor')
+```
+
+### Task 2: Load janitor and the tidyverse
+**Task** Run the following code to load the tidyverse and janitor.
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+### Task 3: Load Arnold, Maryland demonstration data
+**Task** Run the following codeblock to load a demonstration slice of the data for Arnold, Maryland. How many rows are in this demonstration data set?
+**Answer**
+
+```{r}
+arnold_md_loans <- read_rds("arnold_md_loans.rds")
+```
+
+### Task 4: Examine the data with glimpse
+**Task** Run the following codeblock to glimpse the data.  What data type is the "amount" field? Answer below.
+**Answer**
+```{r}
+glimpse(arnold_md_loans)
+```
+
+And let's examine the full data set.
+
+### Task 5: Examine the data table
+**Task** Run the following codeblock to examine the data. Name three problems the book chapter says exist in this data set that could prevent us from answering questions?  Answer below
+**Answer**
+
+```{r}
+arnold_md_loans
+```
+
+### Task 6: Use clean_names()
+**Task** Run the following codeblock to use the `clean_names()` function from janitor to standardize column names. How does the function change the name of the column "1_id"? Answer below. Add a description of what this code does to your reference notebook.
+**Answer**
+
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names()
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+```
+
+### Task 7: Use rename()
+**Task** Run the following codeblock to use the clean_names() function from janitor to standardize column names and then use rename() to change the "x1_id" column. Add a description of what this code does to your reference notebook.
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id)
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+
+```
+
+### Task 8: Try summarizing the amount column
+**Task** Run the following codeblock to attempt to add up the amount of all loans. What does the error say when you run this code? What do you think it means? Answer below.
+**Answer**
+
+```{r}
+# cleaning function
+total_arnold_md_loans <- cleaned_arnold_md_loans %>%
+  summarise(total_amount = sum(amount))
+
+# display the cleaned dataset
+total_arnold_md_loans
+
+
+```
+### Task 9: Change data type for amount
+**Task** Run the following codeblock to attempt to change the datatype for the amount field to a number. What is the new data type (three letter code) for amount? Answer below.
+**Answer**
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount))
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```
+### Task 10: Try again to summarize the amount column
+**Task** Run the following codeblock to add up the amount of all loans in this data.  What is the total? Answer below.
+**Answer**
+```{r}
+# cleaning function
+total_arnold_md_loans <- cleaned_arnold_md_loans %>%
+  summarise(total_amount = sum(amount))
+
+# display the cleaned dataset
+total_arnold_md_loans
+
+
+```
+
+### Task 11: Check for duplicate rows
+**Task** Run the following codeblock to check for duplicate rows using get_dupes().  How many are there? What is the business name? Answer below.
+**Answer**
+
+```{r}
+cleaned_arnold_md_loans %>%
+  get_dupes()
+```
+
+### Task 12: Check for duplicate rows
+**Task** Run the following codeblock to use distinct() to get rid of duplicate rows. How many rows does the new dataframe have? Answer below. Add a description of what this code does to your reference notebook.
+**Answer**
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount)) %>%
+  distinct()
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```
+
+### Task 13: Clean up ZIP code
+**Task** Run the following codeblock to use str_sub() to convert the ZIP codes that have nine digits to five digits, standardizing the field. Add a description of what this code does to your reference notebook.
+**Answer**
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount)) %>%
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L))
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```
+
+### Task 14: Clean up city field
+**Task** Run the following codeblock to use str_tot_title() to standarize capitalization in the "city" field. How many mispellings of Arnold remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount)) %>%
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city))
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```
+
+
+### Task 15: Clean up city field more with case_when()
+**Task** Run the following codeblock to use case_when() to fix misspellings of Arnold in the "city" field. How many mispellings of Arnold remain after running this code? Answer below.
+**Answer**
+
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount)) %>%
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city)) %>%
+  mutate(city = case_when(
+    city == "Anold" ~ "Arnold",
+    TRUE ~ city
+  ))
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```
+
+### Task 16: Clean up city field more with case_when()
+**Task** Run the following codeblock to use case_when() to fix misspellings of Arnold in the "city" field using both the exact match method and the str_detect() method. How many mispellings of Arnold remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
+**Answer**
+```{r}
+# cleaning function
+cleaned_arnold_md_loans <- arnold_md_loans %>%
+  clean_names() %>%
+  rename(id = x1_id) %>%
+  mutate(amount = as.numeric(amount)) %>%
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city)) %>%
+  mutate(city = case_when(
+    city == "Anold" ~ "Arnold",
+    str_detect(city,"^Arnl") ~ "Arnold",
+    TRUE ~ city
+  ))
+
+
+# display the cleaned dataset
+cleaned_arnold_md_loans
+
+```

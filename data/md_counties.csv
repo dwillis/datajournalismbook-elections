@@ -1,0 +1,25 @@
+project_county_name,count,state,state_code,state_name,county_code,county,fips_code
+ALLEGANY,1293,MD,24,Maryland,001,Allegany County,24001
+ANNE ARUNDEL,17336,MD,24,Maryland,003,Anne Arundel County,24003
+BALTIMORE,28789,MD,24,Maryland,005,Baltimore County,24005
+BALTIMORE CITY,20004,MD,24,Maryland,510,Baltimore city,24510
+CALVERT,1870,MD,24,Maryland,009,Calvert County,24009
+CAROLINE,828,MD,24,Maryland,011,Caroline County,24011
+CARROLL,4040,MD,24,Maryland,013,Carroll County,24013
+CECIL,1686,MD,24,Maryland,015,Cecil County,24015
+CHARLES,4398,MD,24,Maryland,017,Charles County,24017
+DORCHESTER,1082,MD,24,Maryland,019,Dorchester County,24019
+FREDERICK,6666,MD,24,Maryland,021,Frederick County,24021
+GARRETT,1196,MD,24,Maryland,023,Garrett County,24023
+HARFORD,6300,MD,24,Maryland,025,Harford County,24025
+HOWARD,12011,MD,24,Maryland,027,Howard County,24027
+KENT,673,MD,24,Maryland,029,Kent County,24029
+MONTGOMERY,38781,MD,24,Maryland,031,Montgomery County,24031
+PRINCE GEORGES,34408,MD,24,Maryland,033,Prince George's County,24033
+QUEEN ANNES,1852,MD,24,Maryland,035,Queen Anne's County,24035
+SAINT MARYS,1809,MD,24,Maryland,037,St. Mary's County,24037
+SOMERSET,380,MD,24,Maryland,039,Somerset County,24039
+TALBOT,1886,MD,24,Maryland,041,Talbot County,24041
+WASHINGTON,3338,MD,24,Maryland,043,Washington County,24043
+WICOMICO,2718,MD,24,Maryland,045,Wicomico County,24045
+WORCESTER,2512,MD,24,Maryland,047,Worcester County,24047

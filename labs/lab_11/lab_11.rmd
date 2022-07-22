@@ -1,0 +1,65 @@
+---
+title: "lab_11"
+author: "sean mussenden"
+date: "8/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+* A Census API key
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab. You'll need tidyverse, tidycensus, janitor, sf and tigris, and you'll also need to install your census API key.
+
+## Load data
+
+**Task** Create a codeblock and load the WV slice of the PPP loan data, which is in the data folder and is called lab_11.rds.
+
+## Questions
+
+**Q1.** You are interested in doing some reporting on how West Virginia companies in the "Mining, Quarrying, and Oil and Gas Extraction" industry (https://www.naics.com/six-digit-naics/?code=21) used PPP loans during the pandemic (West Virginia is a big coal mining state).  
+
+Then produce a choropleth map that shows West Virginia counties shaded according to the total amount of loans to that industry per 100,000 population.
+
+Use the magma color palette, and shade on a "log" scale. Also produce a table that shows the total amount of loans per 100,000 population for each county, ranked from highest to lowest, along with the total amount of loans and the total number of loans.
+
+Then answer these questions:
+
+* Based on the map, what region of the state appears to have gotten more loans in this industry? What geographic pattern do you notice in the data?
+* Based on the table, what county got the highest total loan amount? What was the total amount per 100K population, the total amount of loans (not population adjusted), how many loans were there, and what's the population?
+
+**A1.**
+
+**Q2.** You want to understand WHY the spatial pattern you saw above exists.  So you grab a shapefile with the latitude and longitude coordinates of every mine permit in West Virginia from the state Department of Environmental Protection.
+
+Here's the url: https://tagis.dep.wv.gov/arcgis/rest/services/WVDEP_enterprise/mining_reclamation/MapServer/0/query?where=1%3D1&outFields=*&geometry=&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&f=json
+
+(It's in a slightly different format than the .shp file in the lab. It's another type of shapefile called "geojson".  It will work just the same, though, despite that difference. You can read it directly into R without manually downloading it, by putting the url in the st_read() function we learned about in this week's prelab.)
+
+This data includes both currently operating mines and old ones that have closed.  You want to examine only mines that have a permit expiration date after Sept. 1, 2021.
+
+Make a map with a point for each one of these mine permits and put a blank map with the outline of West Virginia counties (which you can get from Tigris) behind it.
+
+What spatial pattern do you see? How does it compare to the spatial pattern in the first map you made?
+
+**A2.**
+
+**Q3.** To confirm the spatial comparison you identified in question 2, let's create a new map that layers the mine location points on top of our PPP choropleth map we created in question 1. What do you notice about the number of mines in the county that has the highest total loan amount per 100K?
+
+**A3.**
+
+**Q4.** Starting from the original WV ppp dataframe, examine the loans to companies in "Mining, Quarrying, and Oil and Gas Extraction" in the county with the highest total loan amount per 100K (you can use the table you created in question 1 to identify the top county).
+
+* What single company accounts for the biggest chunk of the total loan amount?
+* What specific industry are they in, based on their 6-digit NAICS code? Look them up on the web. What services do they provide?
+* How many jobs did they save, according to the data?
+* What's your hypothesis for why a company in their specific industry would need to seek a PPP loan during the pandemic?
+
+**A4.**
+-30-

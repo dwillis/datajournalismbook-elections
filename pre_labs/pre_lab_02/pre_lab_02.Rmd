@@ -1,0 +1,333 @@
+---
+title: "pre_lab_02.Rmd"
+author: "Derek Willis"
+date: "7/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Points to hit
+1. Review of first lab and questions/problems.
+2. Review GitHub
+3. Demonstration of mutate, filtering and dates
+
+### Task 1: Load libraries
+**Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
+
+```{r}
+# turn off sci notation
+options(scipen=999)
+library(tidyverse)
+library(lubridate) # look up lubridate and describe its uses in your reference notebook
+```
+
+### Task 2: Load data
+**Task** Load the Maryland 2018 Primary Election county results dataset by running the following codeblock.
+
+```{r}
+primary_18 <- read_csv('data/maryland_primary_2018.csv')
+```
+
+### Task 3: Glimpse data
+**Task** Run the following codeblock to use head(), summary(), colnames() and glimpse() to get a sense of the data, some of the values in each field/variable/column, and the data types of each field/variable/column. Add a description of what these do to your reference notebook.
+
+```{r}
+head(primary_18)
+summary(primary_18)
+colnames(primary_18)
+glimpse(primary_18)
+```
+
+### Task 4: Mutate
+**Task** Let's add a new column based on an existing column. Run the following code to create a new column called `percent_election_day` based on a calculation using two existing columns.
+
+```{r}
+primary_18 %>%
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  mutate(
+  percent_election_day = election_day/votes
+)
+```
+
+Describe what you think this code is doing below.
+
+**Answer** 
+
+### Task 5: Better percentage calculation
+**Task** Run the following code to make our new column called `percent_payroll` show a percentage instead of a decimal.
+
+```{r}
+# make it a percentage
+primary_18 %>%
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  mutate(
+  percent_election_day = (election_day/votes)*100
+)
+```
+
+### Task 6: Mutate with ordering
+**Task** Run the following code to order by our new column. Add a description of what this code does to your reference notebook.
+
+```{r}
+# better ordering?
+primary_18 %>%
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  mutate(
+  percent_election_day = (election_day/votes)*100
+)  %>% arrange(desc(percent_election_day))
+```
+
+How did the answer change from the previous task, and why?
+
+**Answer**
+
+
+### Task 7: Mutate with ordering, part 2
+**Task** Run the following code to order by our new column, but in ascending order
+
+```{r}
+# actual better ordering
+primary_18 %>%
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  mutate(
+  percent_election_day = (election_day/votes)*100
+)  %>% arrange(percent_election_day)
+```
+
+Is this a more interesting or useful answer? Why?
+
+**Answer**
+
+### Task 8: Standardize existing data using mutate
+
+Mutate is also useful for standardizing data - for example, making different spellings of, say, cities into a single one.
+
+Let's load some campaign contribution data - in this case Maryland donors to Republican committees via WinRed's online platform earlier this year - and take a look at the `city` column in our data:
+
+```{r eval=FALSE}
+maryland_cities <- read_csv("data/winred_md_cities.csv")
+maryland_cities
+```
+
+You'll notice that there's a mix of styles: "Baltimore" and "BALTIMORE" for example. R will think those are two different cities, and that will mean that any aggregates we create based on city won't be accurate.
+
+So how can we fix that? Mutate - it's not just for math! And a function called `str_to_upper` that will convert a character column into all uppercase. Now we can say exactly how many donations came from Baltimore (I mean, of course, BALTIMORE).
+
+**Task** Run the following code:
+
+```{r}
+standardized_maryland_cities <- maryland_cities %>%
+  mutate(
+    upper_city = str_to_upper(city)
+)
+```
+
+**Task** Search the Internet for tidyverse functions similar to str_to_upper. Name at least two and describe what they do.
+
+**Answer**
+
+
+There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
+
+### Task 9: Create a new column using case_when
+
+Mutate is even more useful when combined with some additional functions. Let's focus on individual contributions from Maryland donors via WinRed; we'd like to group their donations by amount into one of four categories:
+
+1. Under $100
+2. $101-$499
+3. $500-$2,900
+4. More than $2,901
+
+Mutate can make that happen by creating a new column and putting in a category value _based on the amount_ of each record. First, let's load some individual contributions:
+
+**Task** Run the following code to load the data and inspect it.
+
+```{r}
+maryland_winred <- read_csv("data/winred_md_q2_2022.csv")
+
+head(maryland_winred)
+```
+
+Now that we've gotten a look, we can use `case_when` to give our new category column a value using some standard numeric logic.
+
+**Task** Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
+
+**Answer** 
+
+```{r}
+maryland_winred_categories <- maryland_winred %>%
+  mutate(
+    amount_category = case_when(
+        amount < 100 ~ "Less than $100",
+        amount >= 100 & amount <= 500 ~ "Between $100 and $500",
+        amount > 500 & amount <= 2900 ~ "Between $501 and $2900",
+        amount > 2900 ~ "More than $2,900"
+      )
+  )
+head(maryland_winred_categories)
+```
+
+There's a lot going on here, so let's unpack it. It starts out as a typical mutate statement, but case_when introduces some new things. Each line is basically a filter followed by `~` and then a value for the new column for records that match that filter. Here is [more detail](https://www.sharpsightlabs.com/blog/case-when-r/) on using `case_when`.
+
+We can then use our new `amount_category` column in group_by statements to make summarizing easier.
+
+**Task** Run the following code.
+
+```{r}
+maryland_winred_categories %>% 
+  group_by(amount_category) %>% 
+  summarize(total_amount = sum(amount)) %>% 
+  arrange(desc(total_amount))
+```
+
+What's the largest category in terms of dollar amount?
+
+**Answer** 
+
+Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
+
+## Filter and Select
+
+More often than not, we have more data than we want. Sometimes we need to be rid of that data. In `dplyr`, there's two ways to go about this: filtering and selecting.
+
+**Filtering creates a subset of the data based on criteria**. All records where the amount is greater than 150,000. All records that match "College Park". Something like that. **Filtering works with rows -- when we filter, we get fewer rows back than we start with.**
+
+**Selecting simply returns only the fields named**. So if you only want to see city and amount, you select those fields. When you look at your data again, you'll have two columns. If you try to use one of your columns that you had before you used select, you'll get an error. **Selecting works with columns. You will have the same number of records when you are done, but fewer columns of data to work with.**
+
+Now we'll import a dataset of county-level election results from Maryland's 2018 primary that is in the data folder in this chapter's pre-lab directory. It has results from all across the state, so one place to begin is by looking at individual jurisdictions - Maryland has 23 counties and one independent city, Baltimore. Let's start by loading tidyverse and reading in the Maryland data.
+
+The data we want to filter on is in `jurisdiction`. So we're going to use filter and something called a comparison operator. We need to filter all records equal to "Prince George's". The comparison operators in R, like most programming languages, are == for equal to, != for not equal to, > for greater than, >= for greater than or equal to and so on.
+
+**Be careful: `=` is not `==` and `=` is not "equal to". `=` is an assignment operator in most languages -- how things get named.**
+
+### Task 10: Filter by county
+**Task** Run the following code to limit our 2018 primary results data to Prince George's County.
+
+```{r}
+prince_georges <- primary_18 %>% filter(jurisdiction == "Prince George's")
+
+head(prince_georges)
+```
+
+And just like that, we have just Prince George's results, which we can verify looking at the head, the first six rows.
+
+### Task 11: Select
+
+We also have more data than we might want. For example, we may only want to work with the office, district, candidate name, party and votes.
+
+To simplify our dataset, we can use select.
+
+**Task** Run the following code.
+
+```{r}
+selected_prince_georges <- prince_georges %>% select(office, district, name_raw, party, votes)
+
+head(selected_prince_georges)
+```
+
+And now we only have five columns of data for whatever analysis we might want to do.
+
+Notice that we made a new variable to hold the result. Why is that important?
+
+**Answer** 
+
+### Task 12: Combining filters
+
+So let's say we wanted to see all the candidates for governor and the number of votes each received in Prince George's County. We can do this a number of ways. The first is we can chain together a whole lot of filters.
+
+**Task** Run the following code
+
+```{r}
+prince_georges_governor <- primary_18 %>% filter(jurisdiction == "Prince George's") %>% filter(office == "Governor / Lt. Governor")
+
+nrow(prince_georges_governor)
+```
+
+That gives us 10 applicants. But that's repetitive, no? We can do better using boolean operators -- AND and OR. In this case, AND is `&` and OR is `|`.
+
+**Task** Run the following code
+
+```{r}
+and_prince_georges <- primary_18 %>% filter(jurisdiction == "Prince George's" & office == "Governor / Lt. Governor")
+
+nrow(and_prince_georges)
+```
+So AND gives us the same answer we got before. What does using the OR operator give us?
+
+**Task** Run the following code
+
+```{r}
+or_prince_georges <- primary_18 %>% filter(jurisdiction == "Prince George's" | office == "Governor / Lt. Governor")
+
+nrow(or_prince_georges)
+```
+So there's 355 rows that are EITHER in Prince George's OR are governor results. OR is additive; AND is restrictive.
+
+A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes.
+
+## Dates
+The key to working with dates is that R needs to know that the column containing the date has a datatype of date (or datetime for timestamps). Regular R will guess, and the tidyverse will make a better guess.
+
+Let's start with a dataset of campaign expenses from Maryland political committees:
+
+```{r}
+maryland_expenses <- read_csv("data/maryland_expenses.csv")
+
+head(maryland_expenses)
+```
+
+Take a look at that first column, expenditure_date. It *looks* like a date, but see the `<chr` right below the column name? That means R thinks it's actually a character column. What we need to do is make it into an actual date column, which lubridate is very good at doing. It has a variety of functions that match the format of the data you have. In this case, the current format is `m/d/y`, and the lubridate function is called `mdy` that we can use with mutate:
+
+### Task 12: Turning a character date into a real date
+
+**Task** Run the following code and describe the change in the expenditure_date column.
+
+```{r}
+maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditure_date))
+
+head(maryland_expenses)
+```
+
+**Answer:**
+
+
+Lubridate has functions for basically any type of character date format: mdy, ymd, even datetimes like ymd_hms.
+
+That's less code and less weirdness, so that's good.
+
+But to get clean data, I've installed a library and created a new field so I can now start to work with my dates. That seems like a lot, but don't think your data will always be perfect and you won't have to do these things.
+
+Still, there's got to be a better way. And there is.
+
+Fortunately, `readr` anticipates some date formatting and can automatically handle many of these issues (indeed it uses lubridate under the hood). When you are importing a CSV file, be sure to use `read_csv`, not `read.csv`.
+
+### Task 13: Creating a new date column from existing dates
+
+But you're not done with lubridate yet. It has some interesting pieces parts we'll use elsewhere.
+
+For example, in spreadsheets you can extract portions of dates - a month, day or year - with formulas. You can do the same in R with lubridate. Let's say we wanted to add up the total amount spent in each month in our Maryland expenses data.
+
+We could use formatting to create a Month field but that would group all the Aprils ever together. We could create a year and a month together, but that would give us an invalid date object and that would create problems later. Lubridate has something called a floor date that we can use.
+
+So to follow along here, we're going to use mutate to create a month field, group by to lump them together, summarize to count them up and arrange to order them. We're just chaining things together.
+
+**Task** Run the following code
+
+
+```{r}
+maryland_expenses %>%
+  mutate(month = floor_date(expenditure_date, "month")) %>%
+  group_by(month) %>%
+  summarise(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))
+```
+
+So the month of June 2022 had the most expenditures by far in this data. We'll be learning more about the calendar of campaigns and how it impacts campaign finance data.
+
+Describe the values in the new `month` column - what do you think is going on there?
+
+**Answer**
+

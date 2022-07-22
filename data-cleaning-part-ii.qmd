@@ -1,0 +1,276 @@
+# Data Cleaning Part II: Janitor
+
+The bane of every data analyst's existence is data cleaning. 
+
+Every developer, every data system, every agency, the all have opinions about how data gets collected. Some decisions make sense from the outside. Some decisions are based entirely on internal politics: who is creating the data, how they are creating it, why they are creating it. Is it automated? Is it manual? Are data normalized? Are there free form fields where users can just type into or does the system restrict them to choices? 
+
+Your journalistic questions -- what you want the data to tell you -- is almost never part of that equation. 
+
+So cleaning data is the process of fixing issues in your data so you can answer the questions you want to answer. Data cleaning is a critical step that you can't skip past. A standard metric is that 80 percent of the time working with data will be spent cleaning and verifying data, and 20 percent the more exciting parts like analysis and visualization.  
+
+The tidyverse has a lot of built-in tools for data cleaning.  We're also going to make use of a new library, called `janitor` that has a bunch of great functions for cleaning data.  Let's load those now. 
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+Now let's load a tiny slice of our Maryland WinRed contributions. To make the cleaning demonstration in this chapter easier, this dataset only has 14 rows, all from Conowingo, Maryland.
+
+```{r}
+conowingo <- read_rds("data/conowingo.rds")
+```
+
+Let's glimpse it to get a sense of it, to examine the column data types and possible values. 
+
+```{r}
+glimpse(conowingo)
+```
+
+And let's examine the full data set. 
+
+```{r}
+conowingo
+```
+
+There are a number of issues with this data set that might get in the way of asking questions and receiving accurate answers. They are:
+
+* The column headers are inconsistently styled (note: I've purposely dirtied these up, which is why they look different than previous versions of this data we've loaded).  The first column "1_linenumber" starts with a number. The "NAME" column is all caps, while the rest are lowercase. And "address one" has a space in it. Those problems will make them hard to analyze, to refer to in functions we write. 
+* The amount column is stored as a character, not a number. If we try to do math to it -- say, calculate the average loan size -- it won't work. 
+* There's a fully duplicated row -- a common problem in data sets.  The first row is exactly the same as the second. 
+* The city field has five different forms -- including misspellings -- of Arnold. If we wanted to group and count the number of loans in Arnold, this inconsistency would not let us do that correctly. 
+* The zip field mixes five digit ZIP codes and nine digit ZIP codes.  If we wanted to group and count the number of loans in a given ZIP code, this inconsistency would not let us do that correctly. 
+* The street address field is inconsistent. It has multiple variations of Merry Knoll Lane. 
+
+Let's get cleaning.  Our goal will be to build up one block of code that does all the necessary cleaning in order to answer this question: what is the total amount of contributions from Conowingo, MD in ZIP code 21918?
+
+## Cleaning headers
+
+One of the first places we can start with cleaning data is cleaning the column names (or headers). 
+
+Every system has their own way of recording headers, and every developer has their own thoughts of what a good idea is within it. R is most happy when headers are lower case, without special characters. 
+
+If column headers start with a number, or have a space in between two words, you have to set them off with backticks when using them in a function. Generally speaking, we want one word (or words separated by an underscore), all lowercase, that don't start with numbers.  
+
+The `janitor` library makes fixing headers trivially simple with the function `clean_names()`
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names()
+
+# display the cleaned dataset
+cleaned_conowingo
+
+  
+```
+
+This function changed `LAST_NAME` to `last_name`.  It put an underscore in `address_one` to get rid of the space.  And it changed `1_linenumber` to `x1_linenumber`. That last one was an improvement -- it no longer starts with a number -- but it's still kind of clunky. 
+
+We can use a tidyverse function `rename()` to fix that. Let's just call it `linenumber`. NOTE: when using `rename()`, the _new_ name comes first.
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber)
+
+# display the cleaned dataset
+cleaned_conowingo
+```
+
+## Changing data types
+
+Right now, the amount column is stored as a character.  Do you see the little `<chr>` under the amount column in the table above?  If we wanted to do math to it, we'd get an error, like so. 
+
+```{r, error=TRUE}
+# cleaning function
+total_conowingo <- cleaned_conowingo %>%
+  summarise(total_amount = sum(amount))
+
+# display the cleaned dataset
+total_conowingo
+
+  
+```
+We got an "invalid 'type' (character)" error.  So let's fix that using the mutate() function in concert with as.numeric().  We'll reuse the same column name, so it overwrites it.  
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount))
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+Notice that the amount has been converted to a `<dbl>`, which is short for double, a number format.  When we attempt to add up all of the amounts to create a total, this time it works fine. 
+
+```{r}
+# cleaning function
+total_conowingo <- cleaned_conowingo %>%
+  summarise(total_amount = sum(amount))
+
+# display the cleaned dataset
+total_conowingo
+
+  
+```
+## Duplicates
+
+One of the most difficult problems to fix in data is duplicate records in the data. They can creep in with bad joins, bad data entry practices, mistakes -- all kinds of reasons. A duplicated record isn't always there because of an error, but you need to know if it's there before making that determination.
+
+So the question is, do we have any records repeated? 
+
+Here we'll use a function called `get_dupes` from the janitor library to check for fully repeated records in our cleaned data set.   
+
+```{r}
+cleaned_conowingo %>% 
+  get_dupes()
+```
+
+In this case, a contribution by Derrick Hamilton in our table is fully duplicated. Every field is identical in each. 
+
+We can fix this by adding the function `distinct()` to our cleaning script.  This will keep only one copy of each unique record in our table 
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct()
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+## Cleaning strings
+
+The rest of the problems with this data set all have to do with inconsistent format of values in a few of the columns.  To fix these problems, we're going to make use of mutate() and a new function, `case_when()` in concert with "string functions" -- special functions that allow us to clean up columns stored as character strings. The tidyverse package `stringr` has lots of useful string functions, more than we'll learn in this chapter. 
+
+Let's start by cleaning up the zip field. Remember, three of rows had a five-digit ZIP code, while two had a nine-digit ZIP code, separated by a hyphen.
+
+We're going to write code that tells R to keep the first five digits on the left, and get rid of anything after that by using `mutate()` in concert with `str_sub()`, from the `stringr` package. 
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L))
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+Let's break down this line of code. It says: take the value in each zip column and extract the first character on the left (1L) through the fifth character on the left (5L), and then use that five-digit zip to overwrite the zip column. 
+
+We'll use a different set of functions to standardize how we standardize the different flavors of the word "Conowingo" in the city column.  Let's start by changing every value to title case -- first letter uppercase, subsequent letters lowercase -- using the `str_to_title()` function from `stringr`.  
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city))
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+That was enough to standardize two values (CONOWINGO and conowingo).  The only ones that remain are the two clear misspellings (Conowing and Conowingoo). To fix those, we're going to do some manual editing.  And for that, we're going to use `case_when()`, a function that let's us say if a value meets a certain condition, then change it, and if it doesn't, don't change it.   
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city)) %>%
+  mutate(city = case_when(
+    city == "Conowing" ~ "Conowingo",
+    TRUE ~ city
+  ))
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+This is a little complex, so let's break it down.  
+
+What the code above says, in English, is this:  Look at all the values in the city column. If the value is "Conowing", then (that's what the "~" means, then) replace it with the word "Conowingo". If it's anything other than that (that's what "TRUE" means, otherwise), then keep the existing value in that column. 
+
+We could fix "Conowingoo" by adding another line inside that function, that looks identical:  ```city == "Conowingoo" ~ "Conowingo"```. Like so.  
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city)) %>%
+  mutate(city = case_when(
+    city == "Conowing" ~ "Conowingo",
+    city == "Conowingoo" ~ "Conowingo",
+    TRUE ~ city
+  ))
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+
+Instead of specifying the exact value, we can also solve the problem by using something more generalizable, using a function called str_detect(), which allows us to search parts of words. 
+
+The second line of our case_when() function below now says, in English: look in the city column. If you find that one of the values starts with "Conowing"  (the "^" symbol means "starts with"), then (the tilde ~ means then) change it to "Conowingo".  
+
+```{r}
+# cleaning function
+cleaned_conowingo <- conowingo %>%
+  clean_names() %>% 
+  rename(linenumber = x1_linenumber) %>% 
+  mutate(amount = as.numeric(amount)) %>% 
+  distinct() %>%
+  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+  mutate(city = str_to_title(city)) %>%
+  mutate(city = case_when(
+    str_detect(city,"^Conowing") ~ "Conowingo",
+    TRUE ~ city
+  ))
+  
+
+# display the cleaned dataset
+cleaned_conowingo
+
+```
+By using str_detect(city,"^Conowing"), we pick up any values that start with "Conowing", so it would change all four of these. If we used city == "Conowing", it would only pick up one.  
+
+Lastly, there's the issue with inconsistent spelling of Merry Knoll Lane in the street address column.  Do we need to clean this? 
+
+Remember the motivating question that's driving us to do this cleaning: what is the total amount of contributions from Conowingo, MD in ZIP code 21918?
+
+We don't need the street_address field to answer that question.  So we're not going to bother cleaning it.  
+
+That's a good approach for the future. A good rule of thumb is that you should only spend time cleaning fields that are critical to the specific analysis you want to do.  

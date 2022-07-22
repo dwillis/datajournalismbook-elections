@@ -1,0 +1,85 @@
+# Cleaning Data Part IV: PDFs
+
+The next circle of Hell on the Dante's Inferno of Data Journalism is the PDF. Governments everywhere love the PDF and publish all kinds of records in a PDF. The problem is a PDF isn't a data format -- it's a middle finger, saying I've Got Your Accountability Right Here, Pal.
+
+It's so ridiculous that there's a constellation of tools that do nothing more than try to harvest tables out of PDFs. There are online services like [CometDocs](https://www.cometdocs.com/) where you can upload your PDF and point and click your way into an Excel file. There are mobile device apps that take a picture of a table and convert it into a spreadsheet. But one of the best is a tool called [Tabula](https://tabula.technology/). It was build by journalists for journalists.
+
+There is a version of Tabula that will run inside of R -- a library called Tabulizer -- but the truth is I'm having the hardest time installing it on my machine, which leads me to believe that trying to install it across a classroom of various machines would be disastrous. The standalone version works just fine, and it provides a useful way for you to see what's actually going on.
+
+Unfortunately, harvesting tables from PDFs with Tabula is an exercise in getting your hopes up, only to have them dashed. We'll start with an example.
+
+## Easy does it
+
+Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://elections.maryland.gov/press_room/2020_stats/Eligible%20Active%20Voters%20by%20County%20-%20PG20.pdf).
+
+[Download and install Tabula](https://tabula.technology/). Tabula works much the same way as Open Refine does -- it works in the browser by spinning up a small webserver in your computer.
+
+When Tabula opens, you click browse to find the PDF on your computer somewhere, and then click import. After it imports, click autodetect tables. You'll see red boxes appear around what Tabula believes are the tables. You'll see it does a pretty good job at this.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/md_voters.png"))
+```
+
+Now you can hit the green "Preview & Export Extracted Data" button on the top right. You should see something very like this:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/md_voters2.png"))
+```
+
+You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R:
+
+```{r}
+voters_by_county <- read_csv("data/tabula-Eligible Active Voters by County - PG20.csv")
+
+voters_by_county
+```
+
+Boom - we're good to go.
+
+## When it looks good, but needs a little fixing
+
+Here's a slightly more involved PDF. Check out the table on page 4 of [this SBA PDF](https://www.sba.gov/sites/default/files/2021-06/PPP_Report_Public_210531-508.pdf).
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_1.png"))
+```
+
+Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).
+
+Now let's repeat the steps we did to import the PDF into Tabula and autodetect the tables. Page 4 should look like this:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_2.png"))
+```
+
+We just want the table on page 4, which shows 2021 loan activity by type of lender, so hit the "Clear All Selections" button to remove the red boxes. Now, in Tabula, let's draw a box around the table on page 4. Click and drag to draw the box.
+
+Now you can hit the green "Preview & Export Extracted Data" button on the top right. You should see something very like this:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/ppp_3.png"))
+```
+
+You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R:
+
+```{r}
+lender_types <- read_csv("data/tabula-PPP_Report_Public_210531-508.csv")
+
+lender_types
+```
+
+## Cleaning up the data in R
+
+The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape.
+
+See the "Net Dollars" column? Thanks to the dollar signs, R doesn't recognize those values as numbers. The column names seem ok, but having spaces in them is a pain. Let's fix that by re-importing it and calling `mutate` so that the new `net_dollars` column is numeric.
+
+```{r}
+lender_types <- read_csv("data/tabula-PPP_Report_Public_210531-508.csv", skip=1, col_names=c("type", "count", "approved", "net_dollars"))
+lender_types <- lender_types %>% mutate(net_dollars=as.numeric(parse_number(net_dollars)))
+lender_types
+```
+
+All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
+
+Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.

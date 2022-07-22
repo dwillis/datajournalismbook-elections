@@ -1,0 +1,187 @@
+# Data Cleaning Part I: Data smells
+
+Any time you are given a dataset from anyone, you should immediately be suspicious. Is this data what I think it is? Does it include what I expect? Is there anything I need to know about it? Will it produce the information I expect?
+
+One of the first things you should do is give it the smell test. 
+
+Failure to give data the smell test [can lead you to miss stories and get your butt kicked on a competitive story](https://source.opennews.org/en-US/learning/handling-data-about-race-and-ethnicity/).
+
+With data smells, we're trying to find common mistakes in data. [For more on data smells, read the GitHub wiki post that started it all](https://github.com/nikeiubel/data-smells/wiki/Ensuring-Accuracy-in-Data-Journalism). Some common data smells are:
+
+* Missing data or missing values
+* Gaps in data
+* Wrong type of data
+* Outliers
+* Sharp curves
+* Conflicting information within a dataset
+* Conflicting information across datasets
+* Wrongly derived data
+* Internal inconsistency
+* External inconsistency
+* Wrong spatial data
+* Unusable data, including non-standard abbreviations, ambiguous data, extraneous data, inconsistent data
+
+Not all of these data smells are detectable in code. You may have to ask people about the data. You may have to compare it to another dataset yourself. Does the agency that uses the data produce reports from the data? Does your analysis match those reports? That will expose wrongly derived data, or wrong units, or mistakes you made with inclusion or exclusion.
+
+But with several of these data smells, we can do them first, before we do anything else. 
+
+We're going to examine three here as they apply to some precinct-level election results data: wrong type, missing data and gaps in data.  
+
+## Wrong Type
+
+First, let's look at **Wrong Type Of Data**. 
+
+We can sniff that out by looking at the output of `readr`. 
+
+Let's load the tidyverse.  
+
+```{r}
+
+# Remove scientific notation
+options(scipen=999)
+# Load the tidyverse
+library(tidyverse)
+
+```
+
+Then let's load some precinct-level election results data from Texas for the 2020 general election. 
+
+This time, we're going to load the data in a CSV format, which stands for comma separated values and is essentially a fancy structured text file. Each column in the csv is separated -- "delimited" -- by a comma from the next column.
+
+We're also going to introduce a new argument to our function that reads in the data, read_csv(), called "guess_max". As R reads in the csv file, it will attempt to make some calls on what "data type" to assign to each field: number, character, date, and so on. The "guess_max" argument says: look at the values in the whatever number of rows we specify before deciding which data type to assign. In this case, we'll pick 10. 
+
+```{r}
+# Load the data
+texas_precinct_20 <- read_csv("data/tx_precinct_2020.csv", guess_max=10)
+
+```
+
+Pay attention to the red warning that signals "one or more parsing issues." It advises us to run the problems() function to see what went wrong.  Let's do that. 
+
+```{r}
+
+problems(texas_precinct_20)
+
+```
+
+It produces a table of all the parsing problems. It has 1,640 rows, which means we have that many problems.  In almost every case here, the `readr` library has guessed that a given column was of a "logical" data type -- True or False. It did it based on very limited information -- only 1,000 rows.  So, when it hit a value that looked like a date, or a character string, it didn't know what to do.  So it just didn't read in that value correctly. 
+
+The easy way to fix this is to set the guess_max argument higher. It will take a little longer to load, but we'll use every single row in the data set to guess the column type -- 476,915
+
+```{r}
+texas_precinct_20 <- read_csv("data/tx_precinct_2020.csv", guess_max=476915)
+```
+This time, we got no parsing failures.  And if we examine the data types `readr` assigned to each column using glimpse(), they generally make sense. 
+
+```{r}
+glimpse(texas_precinct_20)
+```
+
+Things that should be characters -- like state, city, name -- are characters (chr). Things that should be numbers (dbl) -- like amount -- are numbers. Date columns -- like date_approved -- are stored as dates. 
+
+There are some minor problems. The election_day column is a good example.  It read in as a number (chr), even though there clearly are numbers in it judging from our initial inspection. Here's why: the original file has a single value in that column that is "5+".
+
+```{r}
+texas_precinct_20 %>% filter(election_day == "5+")
+```
+Because this is just one result that's weird, we can fix it by comparing the other votes Castaneda received in Anderson to the county totals for her. The difference should be what that "5+" value should be. I've done those calculations and it turns out that 49 is the actual likely value.
+
+We can fix that pretty easily, by changing that value to "49" using `case_when` and then using `mutate` to make the entire column numeric.
+
+```{r}
+
+texas_precinct_20 <- texas_precinct_20 %>%
+  mutate(election_day = case_when(
+    election_day == '5+' ~ '49',
+    TRUE ~ election_day
+  ))
+
+texas_precinct_20 <- texas_precinct_20 %>% mutate(election_day = as.numeric(election_day))
+
+```
+
+When we glimpse() the dataframe again, it's been changed
+
+```{r}
+
+glimpse(texas_precinct_20)
+
+```
+
+Now we've got numbers in the election_day column that we can add.
+
+## Missing Data
+
+The second smell we can find in code is **missing data**. 
+
+We can do that by grouping and counting columns. In addition to identifying the presence of NA values, this method will also give us a sense of the distribution of values in those columns. 
+
+Let's start with the "mail" column, which represents the number of votes a candidate received in a precinct from ballots cast by mail. The following code groups by the mail column, counts the number in each group, and then sorts from highest to lowest.   
+There are 402,345 NA values in this column. This is most of our rows, so that should give us some pause. Either counties didn't report votes by mail as a separate category or called it something else. This will impact how we can describe the data.
+
+```{r}
+
+texas_precinct_20 %>% 
+  group_by(mail) %>% 
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+```
+Now let's try the "provisional" column, which represents the number of accepted provisional votes cast. In this case, there are 135,073 NA values. The rest have different dollar amounts.  
+
+```{r}
+
+texas_precinct_20 %>% 
+  group_by(provisional) %>% 
+  summarise(
+    count=n()
+  ) %>%
+  arrange(desc(count))
+```
+The number of NA values - 473,381 - is even higher, which should give us confidence that most Texas counties did not report provisional votes at the precinct level. Like with mail votes, this helps define the constraints we have to work under with this data.   
+
+## Gaps in data
+
+Let's now look at **gaps in data**. It's been my experience that gaps in data often have to do with time, but there are other potential gaps, too. To illustrate those, we're going to introduce some voter registration data from Yadkin County, North Carolina. Let's load it and take a look:
+
+```{r}
+yadkin_voters <- read_csv("data/yadkin_voters.csv")
+```
+Each row represents a current or previously registered voter in the county, along with information about that person and the political jurisdictions they reside in. When we talk about gaps, often they indicate the administrative boundaries. Here's an example: let's find the most recent `registr_dt` in this dataset:
+
+```{r}
+yadkin_voters %>% arrange(desc(registr_dt))
+```
+It's July 14, 2022. That means that this dataset doesn't have any records newer than that, so if we were describing it we'd need to include that information. What about the most recent `birth_year`?
+
+```{r}
+yadkin_voters %>% arrange(desc(birth_year))
+```
+Lots of 2004 records in there, which makes sense, since those folks are just becoming eligible to vote in North Carolina, where the minimum age is 18. In other words, we shouldn't see records in here where the "birth_year" is greater than 2004. If we do, we should ask some questions.
+
+It's good to be aware of all gaps in data, but they don't always represent a problem. 
+
+## Supicious Outliers 
+
+Any time you are going to focus on a column for analysis, you should check for suspicious values. Are there any unusually large values or unusually small values?  Are there any values that should not exist in the data?
+
+Finally, let's first look at "registr_dt" again, so we can see if there's any missing months, or huge differences in the number of registrations by month. If we're going to work with dates, we should have `lubridate` handy for `floor_date`. 
+
+```{r}
+library(lubridate)
+```
+
+The `floor_date` function will allow us to group by month, instead of a single day. 
+
+```{r}
+yadkin_voters %>% 
+  mutate(registration_month = floor_date(registr_dt, "month")) %>%
+  group_by(registration_month) %>% 
+   summarise(
+    count=n()
+  ) %>%
+  arrange(registration_month)
+```
+
+So, uh, if this data is accurate, then we have 13 registered voters who are more than 120 years old in Yadkin County. What's the most likely explanation for this? Some data systems have placeholder values when certain information isn't known or available. The next oldest registration month is from 1933, which seems plausible.
