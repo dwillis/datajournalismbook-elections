@@ -26,6 +26,7 @@ book:
     - datacleaning-part-ii.qmd
     - open-refine.qmd
     - pdfs.qmd
+    - merging.qmd
 
 format:
   html:
