@@ -27,6 +27,10 @@ book:
     - open-refine.qmd
     - pdfs.qmd
     - merging.qmd
+    - rvest.qmd
+    - census.qmd
+    - visualizing-for-reporting.qmd
+    - geographic-basics.qmd
 
 format:
   html:

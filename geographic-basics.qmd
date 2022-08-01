@@ -1,0 +1,170 @@
+# Geographic data basics
+
+Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like per capita rates, or looked at how data changes over time.
+
+Another way we can look at the data is geographically. Is there a spatial pattern to our data? Can we learn anything by using distance as a metric? What if we merge non-geographic data into geographic data?
+
+The bad news is that there isn't a One Library To Rule Them All when it comes to geo queries in R. But there's one emerging, called Simple Features, that is very good.
+
+Go to the console and install it with `install.packages("sf")`
+
+To understand geographic queries, you have to get a few things in your head first:
+
+1. Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
+2. Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
+3. Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
+4. See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/geolayers.jpg"))
+```
+
+## Importing and viewing data
+
+Let's start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.
+
+```{r}
+library(tidyverse)
+library(sf)
+library(janitor)
+```
+
+First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ESRI, which created the most widely-used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
+
+So more often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified.
+
+The data we're going to be working with is a file from the Maryland Citizens Redistricting Commission showing data about political districts in the state and their demographic characteristics. 
+
+When you do, it should look something like this:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/geolayers2.png"))
+```
+
+Simlar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our hospitals data. And then glimpse it to look at the columns.
+
+```{r}
+blocks <- st_read("~/Downloads/Census_Blocks.shp")
+
+glimpse(blocks)
+```
+
+This looks like a normal dataframe, and mostly it is.  We have one row per Census block - the smallest geographic census unit - and each column is some feature of that block: the census tract, county and state it is located in and more.  What sets this data apart from other dataframes we've used is the last column, "geometry", which is of a new data type.  It's not a character or a number, it's a "MULTIPOLYGON", which is composed of a shape that, when we plot it on a map, will be highlighted. If you've ever filled in a "connect the dots" picture by drawing lines between points, in order to reveal a hidden shape, then you're familiar with the concept.
+
+You can see the [full description of the data](https://redistricting.maryland.gov/Documents/Data/DataDictionary.pdf).
+
+Let's look at just Baltimore City census blocks. Good news -- `sf` plays very nicely with the tidyverse, so we can filter data the way we are accustomed. The County column represents what is called a FIPS code, which is a unique code for a geographic unit like state or county. All Maryland FIPS codes begin with "24", which is the code for the state as a whole.
+
+```{r}
+baltimore_city_blocks <- blocks %>%
+  filter(County == "24510")
+
+baltimore_city_blocks
+```
+
+We have 10,025 blocks, according to this data. Now we can try to get a sense of the population in them. In how many blocks does the number of Hispanic population 18 and over exceed both non-Hispanic white 18 and over population and non-Hispanic Black 18 and over population?
+
+```{r}
+baltimore_city_blocks %>%
+  filter(Adj_H18__P > Adj_NH18__ & Adj_H18__P > Adj_NH18_1) 
+```
+
+So there are 386 Census blocks with adult Hispanic population greater than either white or Black adult population. Where are they? We can simply plot them on a longitude-latitude grid using ggplot.
+
+```{r}
+baltimore_hispanic_blocks <- baltimore_city_blocks %>%
+  filter(Adj_H18__P > Adj_NH18__ & Adj_H18__P > Adj_NH18_1) 
+```
+
+
+```{r}
+baltimore_hispanic_blocks %>%
+  ggplot() +
+  geom_sf() +
+  theme_minimal()
+```
+
+Each shape is a Census block.
+
+If you know anything about the shape of Baltimore, you can kinda identify it here. The untouched area in the lower right is probably the harbor, right? But this map is not exactly ideal. It would help to have a state and county map layered underneath of it, to help make sense of the spatial nature of this data.
+
+This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland jurisdiction outlines.
+
+Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census.  The package is called `tigris` and it's developed by the same person who made `tidycensus`.
+
+In the console, install tigris with the install packages function
+
+Then load it:
+
+```{r}
+library(tigris)
+```
+
+Now, let's use the counties() function from tigris to pull down a shapefile of all U.S. counties.
+
+```{r}
+
+counties <- counties()
+
+glimpse(counties)
+```
+
+This looks pretty similar to our Census blocks shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column.
+
+This county shapefile has all 3233 U.S. counties.  We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties.  There is no STATE column, but there is a STATEFP column, with each number representing a state.  Maryland's FP number is 24.
+
+```{r}
+md_counties <- counties %>%
+  filter(STATEFP == "24")
+
+```
+
+To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
+
+```{r}
+md_counties %>%
+  ggplot() +
+  geom_sf() +
+  theme_minimal()
+```
+
+Hey, look, it's Maryland! Of course, we just need Baltimore City, so let's get that:
+
+```{r}
+baltimore_city <- md_counties %>%
+  filter(COUNTYFP == "510")
+```
+
+
+With this map, we can layer our Census block data.
+
+Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
+
+We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe.  We have two to plot now, so it's easier this way.
+
+```{r}
+ggplot() +
+  geom_sf(data=baltimore_city) +
+  geom_sf(data=baltimore_hispanic_blocks) +
+  theme_minimal()
+```
+What can we tell from this?
+
+Well, Census blocks where adult Hispanic population outnumbers both white and Black adult population are clustered in the city's eastern and southwestern areas. There are fewer such blocks in the northern parts of the city.
+
+This is a pretty blunt visualization. Not all Census blocks are equally sized. Some have more people than the others, for example.
+
+We can get a sense of where the largest Hispanic populations are, by changing the color of the shapes according to the number of people. We do this by setting the aesthetic -- or aes -- to use the Adj_H18__P column inside of the geom_sf function.  To make the differences easier to see, we're going to change the fill of the city white, too, and use a special color palette, viridis magma. We're also going to make the shapes slightly bigger.
+
+
+```{r}
+
+ggplot() +
+  geom_sf(data=baltimore_city, fill="white") +
+  geom_sf(data=baltimore_hispanic_blocks, aes(color=Adj_H18__P), size=2) +
+  scale_colour_viridis_b(option="magma") +
+  theme_minimal()
+
+```
+
+With these changes, what else can we make out here?  Well, definitely the eastern and southwestern blocks have larger Hispanic populations, and then there's the northwest corner that stands out, too. You should have questions.
