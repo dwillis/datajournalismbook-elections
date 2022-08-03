@@ -74,7 +74,7 @@ There's some things you should know about it:
 
 ## What we'll cover
 
--   Spreadsheets
+-   Google Sheets
 -   Public records and open data
 -   R Basics
 -   Replication
@@ -89,7 +89,6 @@ There's some things you should know about it:
 -   Cleaning IV: Pulling Data from PDFs
 -   Joins
 -   Basic data scraping
--   Intermediate data scraping
 -   Getting data from APIs: Census
 -   Visualizing for reporting: Basics
 -   Visualizing for reporting: Publishing
@@ -97,6 +96,5 @@ There's some things you should know about it:
 -   Geographic queries
 -   Geographic visualization
 -   Text analysis basics
--   Text analysis
 -   Writing with and about data
 -   Data journalism ethics
