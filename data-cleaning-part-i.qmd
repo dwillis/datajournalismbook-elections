@@ -53,15 +53,12 @@ We're also going to introduce a new argument to our function that reads in the d
 ```{r}
 # Load the data
 texas_precinct_20 <- read_csv("data/tx_precinct_2020.csv", guess_max=10)
-
 ```
 
 Pay attention to the red warning that signals "one or more parsing issues." It advises us to run the problems() function to see what went wrong.  Let's do that. 
 
 ```{r}
-
 problems(texas_precinct_20)
-
 ```
 
 It produces a table of all the parsing problems. It has 1,640 rows, which means we have that many problems.  In almost every case here, the `readr` library has guessed that a given column was of a "logical" data type -- True or False. It did it based on very limited information -- only 1,000 rows.  So, when it hit a value that looked like a date, or a character string, it didn't know what to do.  So it just didn't read in that value correctly. 
@@ -77,7 +74,7 @@ This time, we got no parsing failures.  And if we examine the data types `readr`
 glimpse(texas_precinct_20)
 ```
 
-Things that should be characters -- like state, city, name -- are characters (chr). Things that should be numbers (dbl) -- like amount -- are numbers. Date columns -- like date_approved -- are stored as dates. 
+Things that should be characters -- like county, precinct, candidate -- are characters (chr). Things that should be numbers (dbl) -- like votes -- are numbers.
 
 There are some minor problems. The election_day column is a good example.  It read in as a number (chr), even though there clearly are numbers in it judging from our initial inspection. Here's why: the original file has a single value in that column that is "5+".
 
@@ -153,7 +150,9 @@ Each row represents a current or previously registered voter in the county, alon
 ```{r}
 yadkin_voters %>% arrange(desc(registr_dt))
 ```
-It's July 14, 2022. That means that this dataset doesn't have any records newer than that, so if we were describing it we'd need to include that information. What about the most recent `birth_year`?
+It's July 14, 2022. That means that this dataset doesn't have any records newer than that, so if we were describing it we'd need to include that information. 
+
+What about the most recent `birth_year`?
 
 ```{r}
 yadkin_voters %>% arrange(desc(birth_year))
@@ -162,7 +161,7 @@ Lots of 2004 records in there, which makes sense, since those folks are just bec
 
 It's good to be aware of all gaps in data, but they don't always represent a problem. 
 
-## Supicious Outliers 
+## Suspicious Outliers 
 
 Any time you are going to focus on a column for analysis, you should check for suspicious values. Are there any unusually large values or unusually small values?  Are there any values that should not exist in the data?
 
