@@ -161,9 +161,9 @@ ggplot() +
 ```
 
 
-Better, but this is a pretty blunt visualization. Not all Census blocks are equally sized. Some have more people than the others, for example.
+Better, but this is a pretty blunt visualization. Not all Census blocks are equally sized. Some have more people than the others, for example. It's hard to differentiate that here.
 
-We can get a sense of where the largest Hispanic populations are, by changing the color of the shapes according to the number of people. We do this by setting the aesthetic -- or aes -- to use the Adj_H18__P column inside of the geom_sf function.  To make the differences easier to see, we're going to change the fill of the city white, too, and use a special color palette, viridis magma. We're also going to make the shapes slightly bigger.
+We can get a sense of where the largest Hispanic populations are, by changing the color of the shapes according to the number of people. We do this by setting the aesthetic -- or aes -- to use the Adj_H18__POP column inside of the geom_sf function.  To make the differences easier to see, we're going to change the fill of the city white, too, and use a special color palette, viridis magma. We're also going to make the shapes slightly bigger.
 
 
 ```{r}
