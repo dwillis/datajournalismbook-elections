@@ -1,7 +1,7 @@
 ---
 title: "lab_02"
 author: "derek willis"
-date: "8/24/2021"
+date: "8/09/2022"
 output: html_document
 ---
 
@@ -22,72 +22,70 @@ library(lubridate)
 
 ## Load Data
 
-Let's keep working with West Virginia loans contained in the PPP loans data.  
+Let's keep working with the slice of WinRed contribution data from West Virginia.  
 
 ```{r}
-west_virginia_ppp <- read_rds("data/lab_02.rds")
+wv_winred_contribs <- read_rds("data/lab_02.rds")
 ```
 
 ## Examine Data
 
 ## Answer questions
 
-**Q1** Create a new column that divides the loan amounts into the following options - under_10k, 10k_50k, 50k_100k, 100k_500k, 500k_1m, 1m_plus - and calculates how many loans are in each group. How would you describe the distribution of loans in a sentence?
-A1. The 10k-50k group has 15,089, the most of any group. More than 2/3rds of loans are for less than $50,000, with only a few hundred over $1 million, suggesting that the program reached actual small businesses.
+**Q1** Create a new column that divides the contribution amounts into the following options - less than $10, $10-$25, $26-$50, $51_$100, $101-$500, $501 and up - and calculates how many contributions are in each group. How would you describe the distribution of contributions in a sentence?
+A1. The two largest groups are for contributions of $25 or less, with only a few dozen contributions that are larger than $500.
 
 ```{r}
-west_virginia_ppp %>%
+wv_winred_contribs %>%
   mutate(
-    amount_option = case_when(
-      amount < 10000 ~ 'under_10k',
-      amount >= 10000 & amount < 50000 ~ '10k_50k',
-      amount >= 50000 & amount < 100000 ~ '50k_100k',
-      amount >= 100000 & amount < 500000 ~ '100k_500k',
-      amount >= 500000 & amount < 1000000 ~ '500k_1m',
-      amount >= 1000000 ~ '1m_plus'
+    amount_group = case_when(
+      amount < 10 ~ 'under_10',
+      amount >= 10 & amount <= 25 ~ '10_25',
+      amount > 25 & amount <= 50 ~ '26_50',
+      amount > 50 & amount <= 100 ~ '51_100',
+      amount > 100 & amount <= 500 ~ '101_500',
+      amount > 500 ~ '501_plus'
     )
   ) %>%
-  group_by(amount_option) %>%
+  group_by(amount_group) %>%
   summarise(
-    total_loans = n()
+    total = n()
   ) %>%
-  arrange(desc(total_loans))
+  arrange(desc(total))
 ```
 
-Q2. Which servicing lenders have the most loans with undisbursed amounts greater than 0?
-A2. Davis Trust Company tops the list with 12.
+Q2. Which West Virginia donors made the most contributions of less than $10? You'll need to use a combination of columns to get unique donors.  
+A2. The Rev. Dr. John Almond of Beckley made at least 293 contributions of less than $10, more than 100 more than the next most-frequent donor, Franco Colonna of South Charleston.
 
 ```{r}
-west_virginia_ppp %>%
-  filter(undisbursed_amount > 0) %>%
-  group_by(servicing_lender_name, servicing_lender_state) %>%
+wv_winred_contribs %>%
+  filter(amount < 10) %>% 
+  group_by(last_name, first_name, address_one, city) %>%
   summarise(
-    total_loans = n()
+    total = n()
   ) %>%
-  arrange(desc(total_loans))
+  arrange(desc(total))
 ```
 
-Q3. What are some potential reasons why a loan might not be paid out? What questions does that circumstance raise for you?
-A3. An applicant might apply not knowing if they needed the loan and then decline it. Or the lender might decide not to fund the loan for some reason - lack of information or something suspicious. Lots of potential questions here, including how often this has happened and whether undisbursed loans have some patterns.
+Q3. What questions do the results of Q2 raise in your mind? How could you use the data to explore them?
+A3. Potential questions might include who Almond and Colonna give to and how frequently, or why a pastor gives political contributions (there's no prohibition, but many clergy avoid it). Is there a pattern of giving among the most frequent donors? We could use the dates, recipients and amounts to help explore these questions.
 
-Q4. Which month in 2021 had the most loans approved?
-A4. March 2021, with 4,394.
+Q4. Which month saw the most contributions?
+A4. June 2022, with 4,636.
 
 ```{r}
-west_virginia_ppp %>%
-  filter(date_approved > '2020-12-31') %>%
-  mutate(Month = floor_date(date_approved, "month")) %>%
+wv_winred_contribs %>%
+  mutate(Month = floor_date(date, "month")) %>%
   group_by(Month) %>%
   summarise(total = n()) %>%
   arrange(desc(total))
 ```
 
-Q5. How many loans went to West Virginia applicants that listed the maximum number of jobs retained (500)? Which one had the earliest approved date?
-A5. There were 10 applicants that listed 500 jobs retained. J. AUSTIN HEATING & COOLING, INC, which was approved on April 8, 2020, had the earliest approved date.
+Q5. How many contributions of $2,900 - the individual maximum donation - were there, and who did they go to? How many of the recipients are from West Virginia? Do some googling to find out.
+A5. There are 6 contributions of $2,900, and three of them went to Carol Miller, while one each went to David McKinley, Ryan Zinke and Steven Palazzo. Miller and McKinley are from WV.
 
 ```{r}
-west_virginia_ppp %>%
-  filter(jobs_retained == 500) %>%
-  arrange(date_approved) %>%
-  select(name, amount, date_approved)
+wv_winred_contribs %>%
+  filter(amount == 2900) %>%
+  arrange(date)
 ```

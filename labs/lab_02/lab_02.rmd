@@ -1,7 +1,7 @@
 ---
 title: "lab_02"
 author: "derek willis"
-date: "8/24/2021"
+date: "8/09/2022"
 output: html_document
 ---
 
@@ -9,76 +9,52 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## About this lab
-
-To complete this lab, you need to:
-* run existing code as directed (look for **Task**).
-* modify existing code as directed (look for **Task**).
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
-
-When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
-
 ## Load libraries and establish settings
-
-**Task** Run the codeblock below to load the Tidyverse and Lubridate. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
-
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse and lubridate
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
 library(tidyverse)
 library(lubridate)
 ```
 
 ## Load Data
 
-Let's keep working with West Virginia loans contained in the PPP loans data.  
-
-**Task** Run the codeblock below to load the data.
+Let's keep working with the slice of WinRed contribution data from West Virginia.  
 
 ```{r}
-west_virginia_ppp <- read_rds("data/lab_02.rds")
+wv_winred_contribs <- read_rds("data/lab_02.rds")
 ```
 
 ## Examine Data
 
 ## Answer questions
 
-**Q1** Create a new column that divides the loan amounts into the following options - under_10k, 10k_50k, 50k_100k, 100k_500k, 500k_1m, 1m_plus - and calculates how many loans are in each group. How would you describe the distribution of loans in a sentence?
-Hint: You will need to use `case_when` to make this work.
-**A1** [write your answer here]
+**Q1** Create a new column that divides the contribution amounts into the following options - less than $10, $10-$25, $26-$50, $51_$100, $101-$500, $501 and up - and calculates how many contributions are in each group. How would you describe the distribution of contributions in a sentence?
+A1. 
 
 ```{r}
-# Write the code to produce your answer here
-
 ```
 
-**Q2** Some of the loans appear not to have been paid out - there is a column representing the amount of money that hasn't been disbursed to the applicant. Which servicing lenders have the most loans with undisbursed amounts greater than 0?
-**A2** [write your answer here]
+Q2. Which West Virginia donors made the most contributions of less than $10? You'll need to use a combination of columns to get unique donors.  
+A2. 
 
 ```{r}
-# Write the code to produce your answer here
-
 ```
 
-**Q3** What are some potential reasons why a loan might not be paid out? What questions does that circumstance raise for you?
-**A3** [write your answer here]
+Q3. What questions do the results of Q2 raise in your mind? How could you use the data to explore them? No code here, just your questions.
+A3. 
 
-
-**Q4** Which month in 2021 had the most loans approved?
-**A4** [write your answer here]
+Q4. Which month saw the most contributions?
+A4. 
 
 ```{r}
-# Write the code to produce your answer here
-
 ```
 
-**Q5** How many loans went to West Virginia applicants that listed the maximum number of jobs retained (500)? Which one had the earliest approved date?
-**A5** [write your answer here]
+Q5. How many contributions of $2,900 - the individual maximum donation - were there, and who did they go to? How many of the recipients are from West Virginia? Do some googling to find out.
+A5. 
 
 ```{r}
-# Write the code to produce your answer here
-
 ```
