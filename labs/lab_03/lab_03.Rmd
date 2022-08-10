@@ -23,7 +23,7 @@ options(scipen=999)
 ## Load data
 ```{r}
 # Write code to load MD slice of FEC House candidate contribution data and call it md_contribs.
-# The data is called lab_03.rds, and is in the same folder as lab_03.Rmd (this data notebook)
+# The data is called lab_03.rds, and is in the data folder alongside lab_03.Rmd (this data notebook)
 
 
 ```
