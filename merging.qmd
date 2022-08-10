@@ -112,4 +112,18 @@ maryland_population_with_voters_and_demographics %>%
 
 Here, Howard and Montgomery County stand out in terms of the percentage of Asian population 18 and over. The jurisdictions with the highest percentage of Democrats - Prince George's and Baltimore City - have small Asian populations.
 
+Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let's walk through an example of that using some demographic data by zip code.
+
+```{r}
+maryland_zcta <- read_csv('data/maryland_zcta.csv')
+glimpse(maryland_zcta)
+```
+You can see that ZCTA5N, the column representing the Zip Code Tabulation Area, is a numeric column. But should it be? Do we ever want to know the average zip code in Maryland? Zip codes and ZCTAs look like numbers but really are character columns. Let's change that so that we can be sure to join them correctly with other data where the zip codes are not numbers. We'll use `mutate`:
+
+```{r}
+maryland_zcta <- maryland_zcta %>% mutate(across(ZCTA5N, as.character))
+```
+
+What's happening here is that we're telling R to take all of the values in the ZCTA5N column and make them "as.character". If we wanted to change a column to numeric, we'd do "as.numeric". When you join two dataframes, the join columns _must_ be the same datatype.
+
 Joining datasets allows you to expand the range and sophistication of questions you're able to ask. It is one of the most powerful tools in a journalist's toolkit.
