@@ -26,21 +26,21 @@ library(lubridate)
 ```
 
 ### Task 2: Load data
-Let's say that we have county population estimates for three different years - 2010, 2015 and 2020 - in three different files. They have the same record layout and the same number of counties.
+Let's say that we have Maryland county voter registration data from three different elections in three different files. They have the same record layout and the same number of counties (plus Baltimore City).
 
 **Task** Load the three CSV population estimate files. Do they have the same column structure?
 **Answer**
 
 ```{r}
-popestimate_2010 <- read_csv("data/popestimate_2010.csv")
+county_voters_2016 <- read_csv("data/county_voters_2016.csv")
 ```
 
 ```{r}
-popestimate_2015 <- read_csv("data/popestimate_2015.csv")
+county_voters_2018 <- read_csv("data/county_voters_2018.csv")
 ```
 
 ```{r}
-popestimate_2020 <- read_csv("data/popestimate_2020.csv")
+county_voters_2020 <- read_csv("data/county_voters_2020.csv")
 ```
 
 
@@ -49,143 +49,84 @@ popestimate_2020 <- read_csv("data/popestimate_2020.csv")
 
 ```{r}
 # bind_rows with list
-estimates <- bind_rows(list(popestimate_2010, popestimate_2015, popestimate_2020))
-View(estimates)
+county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018, county_voters_2020))
+View(county_voters_combined)
 ```
 
 ## Joining data
 
-### Task 4: Loading data
-**Task** Load the Maryland PPP data and a CSV file with NAICS codes. How many rows are in maryland_ppp?
+### Task 4: Loading population data
+**Task** Load the Maryland 2020 county population data
 **Answer**
 
 ```{r}
-maryland_ppp <- read_csv("data/ppp_applications_md.csv")
+maryland_population <- read_csv('data/maryland_population_2020.csv')
 ```
 
-```{r}
-naics_codes <- read_csv('data/naics_codes.csv')
-```
-
-### Task 5: Join Them
-**Task** Run the following code to join the PPP data to the NAICS codes using the common column naics_code as the key. How many rows are there now?
+### Task 5: Join population and voter data
+**Task** Run the following code to join Maryland population data and the 2020 voter registration data together using the common column county as the key. How many rows are there now? How many *should* there be?
 **Answer**
 
 ```{r}
-# with nrow included to match row total
-maryland_ppp %>% left_join(naics_codes, by="naics_code") %>% select(name, naics_code, title) %>% nrow()
+# with nrow included to show row total
+maryland_population %>% left_join(county_voters_2020, by="COUNTY") %>% nrow()
 ```
 ### Task 6: Looking at Joined Data
 **Task** Examine the combined data
 
 ```{r}
 # without nrow
-maryland_ppp %>% left_join(naics_codes) %>% select(name, naics_code, title)
+maryland_population %>% left_join(county_voters_2020, by="COUNTY")
 ```
 
 ### Task 7: Assign Joined Data to New Dataframe
 **Task** Create a new dataframe with PPP and NAICS data joined together. Add a description of what this code does to your reference notebook.
 
 ```{r}
-maryland_ppp_with_naics <- maryland_ppp %>% left_join(naics_codes)
+maryland_population_with_voters <- maryland_population %>% left_join(county_voters_2020)
 ```
 
-### Task 8: Load the ZCTA Data
-**Task** Load the Zip Code Tabulation Area data for Maryland
+### Task 8: Add the Demographic Data
+**Task** Load the Maryland demographic data
 
 ```{r}
-maryland_zcta <- read_csv('data/maryland_zcta.csv')
+maryland_demographics <- read_csv('data/maryland_demographics.csv')
 ```
 
-### Task 9: Join ZCTA to PPP Data
+### Task 9: Join demographic data to combined voting/population data
 **Task** Join the ZCTA data to the our PPP & NAICS data. What's the error message you get? What do you think it means? Add a description of what this code does to your reference notebook.
 **Answer**
 
 ```{r}
 # join on zip - but there's a problem
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
-```
-### Task 10: Fix ZCTA Data
-**Task** Fix the ZCTA file by changing the datatype. Add a description of what this code does to your reference notebook.
-
-```{r}
-maryland_zcta <- maryland_zcta %>% mutate(across(ZCTA5N, as.character))
+maryland_population_with_voters_and_demographics <- maryland_population_with_voters %>% left_join(maryland_demographics, by=c("COUNTY"="NAME"))
 ```
 
-### Task 11: Join ZCTA to PPP Data and Check
-**Task** Join the ZCTA data to the our PPP & NAICS data. Examine the columns in the new dataframe - does every row have demographic data? HINT: Use the >> character to browse columns
+### Task 10: Asking Demographic Questions
+**Task** Using mutate, let's find the county with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county. Put your answers below.
 **Answer**
 
 ```{r}
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
-View(maryland_ppp_with_naics_and_demographics)
-```
-
-### Task 12: Make a Zip5 Column, Join ZCTA to PPP Data and Check Again
-**Task** Make a zip5 column and join again. Examine the new dataframe - now does every row have demographic data?
-**Answer**
-
-```{r}
-# make a zip5 column and redo the join
-maryland_ppp_with_naics <- maryland_ppp_with_naics %>% mutate(zip5 = str_sub(zip, 1, 5))
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip5"="ZCTA5N"))
-```
-
-### Task 13: Asking Demographic Questions
-**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic Black population, and calculate the average and median amounts for those loans. Put your answers below.
-**Answer**
-
-```{r}
-# zcta with > 50% non-Hispanic Black population
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHB > 50) %>%
-  summarize(
-    count = n(),
-    avgamount = mean(amount),
-    medamount = median(amount))
+maryland_population_with_voters_and_demographics %>%
+  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>% 
+  arrange(desc(pct_black_18_plus)) %>% 
+  select(COUNTY, pct_black_18_plus, pct_dems)
 ```
 
 
-### Task 14: Asking Demographic Questions
-**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic white population, and calculate the average and median amounts for those loans. Put your answers below.
+### Task 11: Asking Demographic Questions
+**Task** Now let's find the county with the highest 18+ Asian population as a percentage of all population 18 and over and also the percentage of Democrats in that county. How do these results compare to the previous task? Put your answers below.
 **Answer**
 
 ```{r}
-# zcta with > 50% non-Hispanic white population
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHW > 50) %>%
-  summarize(
-    count = n(),
-    avgamount = mean(amount),
-    medamount = median(amount))
+maryland_population_with_voters_and_demographics %>%
+  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>% 
+  arrange(desc(pct_asian_18_plus)) %>% 
+  select(COUNTY, pct_asian_18_plus, pct_dems)
 ```
 
 ### Task 15: Asking Demographic Questions
-**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic Black population, grouped by rural or urban status, and calculate the average and median amounts for those loans. Put your answers below.
+**Task** Come up with 2 other questions that you could ask of this data, with the caveat that they can't be variations of the ones above.
 **Answer**
 
-```{r}
-# zcta with > 50% non-Hispanic Black population grouped by rural/urban
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHB > 50) %>%
-  group_by(rural_urban_indicator) %>%
-  summarize(
-    count = n(),
-    avgamount = mean(amount),
-    medamount = median(amount))
-```
 
-### Task 16: Asking Demographic Questions
-**Task** Find the number of PPP loans that went to ZCTAs with more than 50% non-Hispanic white population, grouped by rural or urban status, and calculate the average and median amounts for those loans. Put your answers below.
-**Answer**
-
-```{r}
-# zcta with > 50% non-Hispanic white population grouped by rural/urban
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHW > 50) %>%
-  group_by(rural_urban_indicator) %>%
-  summarize(
-    count = n(),
-    avgamount = mean(amount),
-    medamount = median(amount))
-```
