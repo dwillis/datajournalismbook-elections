@@ -1,7 +1,7 @@
 ---
 title: "lab_04"
 author: "derek willis"
-date: "8/24/2021"
+date: "8/11/2022"
 output: html_document
 ---
 
@@ -9,121 +9,89 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## About this lab
-
-To complete this lab, you need to:
-* run existing code as directed (look for **Task**).
-* modify existing code as directed (look for **Task**).
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
-
-When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
-
 ## Load libraries and establish settings
-
-**Task** Run the codeblock below to load the Tidyverse. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
-
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse.
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
 library(tidyverse)
 ```
 
-## Load Data
+## Getting Started
 
-Let's keep working with Maryland loan applications contained in the PPP data.
+Let's keep working with Maryland contribution data. In this exercise we're going to explore the relationship between campaign contribution and what researchers call "economic connectedness" - basically the degree to which people have cross-class friendships - that is detailed in [this New York Times piece](https://www.nytimes.com/interactive/2022/08/01/upshot/rich-poor-friendships.html). You should read that before proceeding, and look at [Social Capital](https://www.socialcapital.org/), the site that explores the data. If you search Social Capital for a zip code (20742, for example), you'll see that it will say that 70.1 percent of low socioeconomic status individuals' friends are high income. The actual data you'll load will display this score as double the percentage that's displayed. Just keep that in mind.
 
-**Task** Read in the lab_04.rds file and assign it to the variable `maryland_ppp`.
+Let's start by reading in our Maryland U.S. House contribution data, which is in the lab_04.rds file in your data folder.
 
-```{r}
-# add code here to accomplish the task
-```
-
-To answer the questions below, you'll need to join both the NAICS code data and the ZCTA demographic data from the pre-lab. There's a particular set of steps you'll need to perform to make that work properly, so take your time and check your work.
-
-First, let's load the NAICS code CSV file we have in the data folder:
-
-**Task** Read in the naics_codes.csv file and assign it to the variable `naics_codes`.
 
 ```{r}
-# add code here to accomplish the task
+# read in the rds file
 ```
 
-Next join the two and then create a 5-character `zip5` column that we can use to join to the ZCTA data:
+To answer the questions below, you'll need to make a dataframe with the number of contributions and total amount for every 5-digit zip code, and then calculate the average donation. Then you'll join that dataframe to data containing economic connectedness scores for every zip code in Maryland. There's a particular set of steps you'll need to perform to make this work properly.
 
-**Task** Write code to join the maryland_ppp and naics_codes data, assigning the result to a new variable. Then add a new `zip5` column.
+First, let's create the dataframe with totals by each 5-digit Maryland zip code. Hint: if your zip code column contains values longer than 5 digits, you can extract substrings of a specified length.
 
 ```{r}
-# add code here to accomplish the task
+
 ```
 
-Let's add the Zip Code Tabulation Area dataset. You'll need to make the `ZCTA5N` column a character column, not a numeric one.
-
-**Task** Read in the Zip Code Tabulation Area dataset in the data folder and change the datatype of the `ZCTA5N` column to character. IMPORTANT: you can see what the column names represent by checking the data documentation, which can be found here: https://geodata.md.gov/imap/rest/services/Demographics/MD_CensusData/FeatureServer/1. You will need to refer to this to answer the questions below.
+Next, let's load the economic connectedness data, which is in the data folder as `maryland_ec_data.csv`:
 
 ```{r}
-# add code here to accomplish the task
+
 ```
 
-Now we can join the PPP data to the ZCTA data:
-
-**Task** Join the Maryland PPP data (with NAICS already joined) with the ZCTA data, specifying the join column in both dataframes.
+Next join the two dataframes on your 5-digit zip code. If you encounter an error, check to see if it's like one contained in the pre_lab.
 
 ```{r}
-# add code here to accomplish the task
+
 ```
+
 
 ## Answer questions
 
-**Q1** What are the top 5 industries (using the NAICS title) with the most PPP applications in Maryland?
-**A1** [write your answer here]
+Q1. Look at the joined dataframe - what do you notice about the rows, and what are your options for dealing with it? You don't have to have code here, but you can add it if it helps your answer.
+A1. 
+
+Q2. Organize the dataframe so that you see the zip code with the greatest number of contributions first. What is that zip code and what is the economic connectedness value (`ec_zip`)? Where is the zip code located?
+A2. 
 
 ```{r}
-# Write the code to produce your answer here
-```
-
-**Q2** What are the top industries (using the NAICS title) with the most PPP applications in Maryland where the loan amount is more than $150,000?
-**A2** [write your answer here]
-
-```{r}
-# Write the code to produce your answer here
 
 ```
 
-**Q3** Which Maryland zip code with at least 20 percent non-Hispanic Asian population had the largest sum of PPP loans? Also show the number (count) of loans.
-**A3** [write your answer here]
+Q3. A lower ec_zip score means less economic connectedness in that zip code. How many zip codes had more than 1 contribution and a ec_zip score of less than 1? What zip code had the lowest ec_zip score and where is that? How could you learn more about the contributions made from that zip code - you don't need to write code to answer this part, just write a sentence or two about what you would do.
+A3. 
 
 ```{r}
-# Write the code to produce your answer here
 
 ```
 
-**Q4** Which Maryland zip code had the largest sum of loans where the reported race of the applicant was "Asian", and what is the percentage of non-Hispanic Asian population in that zip code? Also show the number (count) of loans.
-**A4** [write your answer here]
+Q4. Do Maryland zip codes with lower economic connectedness scores also have lower average contributions? Explain, in code and in text below, how you would answer that and what you can conclude? If you're not sure about the code, be sure to write out the process.
+A4: 
 
 ```{r}
-# Write the code to produce your answer here
 
 ```
 
-**Q5** What might explain why 20850 has a significant Asian population (23.5%) and only 240 of the 3,186 loans (7.5%) are to Asian applicants?
-**A5** [write your answer here]
+Q5. The Social Capital data also includes a `volunteering_rate_zip` score, which is the percentage of Facebook users in that zip code who are members of a group predicted to be about volunteering or activism. How many Maryland zip codes have a volunteering rate of at least 0.10 (10%) and at least 5 contributions and what county has the most such zip codes? Which large population counties do not appear on this list?
 
+HINT: To get county names, you can use the `county` column in your dataframe to join it to `md_counties.csv` in your data folder after you read that file in. Look for the column in that CSV file that has identical values to the `county` column.
 
-**Q6** Check to see if any Maryland zip codes that have loans where the PPP data lists the applicant as being Asian BUT are located in a zip code that does not appear to have Asian population according to the ZCTA data. How many loans do they have and what is the total amount? Take a look at these zip codes - what could explain this?
-**A6** [write your answer here]
+A5. 
 
 ```{r}
-# Write the code to produce your answer here
 
 ```
 
-**Q7** How many industries have exactly one loan in the data (hint: you can filter _after_ using `summarise` on any totals you create). From a newsworthiness standpoint, which of these is most worthy of further exploration, and why?
-**A7** [write your answer here]
+Q6. Using code, find a zip code in the data that has more than a single contribution but no `ec_zip` score. If you can't figure out the code to show that, tell me in your answer how you would do it in a more manual way. Find that zip code on the Social Capital site and tell me where it is and what the site says about the lack of an economic connectedness score. What kind of community is it demographically? You may use whatever research skills you have to answer this last part.
+A6. 
+
 
 ```{r}
-# Write the code to produce your answer here
 
 ```
+

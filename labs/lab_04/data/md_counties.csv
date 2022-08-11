@@ -1,0 +1,25 @@
+state,state_code,state_name,county_code,county_name,fips_code
+MD,24,Maryland,1,Allegany County,24001
+MD,24,Maryland,3,Anne Arundel County,24003
+MD,24,Maryland,5,Baltimore County,24005
+MD,24,Maryland,510,Baltimore city,24510
+MD,24,Maryland,9,Calvert County,24009
+MD,24,Maryland,11,Caroline County,24011
+MD,24,Maryland,13,Carroll County,24013
+MD,24,Maryland,15,Cecil County,24015
+MD,24,Maryland,17,Charles County,24017
+MD,24,Maryland,19,Dorchester County,24019
+MD,24,Maryland,21,Frederick County,24021
+MD,24,Maryland,23,Garrett County,24023
+MD,24,Maryland,25,Harford County,24025
+MD,24,Maryland,27,Howard County,24027
+MD,24,Maryland,29,Kent County,24029
+MD,24,Maryland,31,Montgomery County,24031
+MD,24,Maryland,33,Prince George's County,24033
+MD,24,Maryland,35,Queen Anne's County,24035
+MD,24,Maryland,37,St. Mary's County,24037
+MD,24,Maryland,39,Somerset County,24039
+MD,24,Maryland,41,Talbot County,24041
+MD,24,Maryland,43,Washington County,24043
+MD,24,Maryland,45,Wicomico County,24045
+MD,24,Maryland,47,Worcester County,24047
