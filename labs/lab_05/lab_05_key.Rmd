@@ -40,7 +40,8 @@ library(janitor)
 
 You'll need to load three data sets for this:
 
-* The West Virginia slice of the PPP loan data (lab_05.rds).
+* A slice of federal campaign contribution data from College Park (lab_05.rds).
+
 * A "lookup table" that allows you to translate NAICS (industry) numeric codes to industry titles (naics_codes.csv).
 * A table of West Virginia population by county (American Community Survey, 2019 5-year averages) (wv_population_county.csv).
 
@@ -49,14 +50,9 @@ All three data sets are in the data folder.  Write code to load the three in the
 **Task** Create a codeblock below, then read the data sets in in and assign them to appropriate variable names. There's a fourth data set you'll use in this lab, too, of selected loans in ZIP Code 25401. But there's no need to load it now.
 
 ```{r}
-# Load the WV PPP loan data table
-west_virginia_ppp <- read_rds('data/lab_05.rds')
+# Load the College Park contributions data table
+college_park_contributions <- read_rds('data/lab_05.rds')
 
-# Load the NAICS lookup table
-naics_codes <- read_csv('data/naics_codes.csv')
-
-# Load the West Virginia population by county table
-wv_population_county <- read_csv("data/wv_population_county.csv")
 
 ```
 
