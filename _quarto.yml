@@ -30,6 +30,7 @@ book:
     - rvest.qmd
     - census.qmd
     - visualizing-for-reporting.qmd
+    - visualizing-for-publication.qmd
     - geographic-basics.qmd
 
 format:
