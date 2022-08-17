@@ -1,0 +1,25 @@
+jurisdiction,cox_schulz_diff,state,state_code,state_name,county_code,county,fips_code
+Allegany,30.58400221422641,MD,24,Maryland,001,Allegany County,24001
+Anne Arundel,-1.4321953281894118,MD,24,Maryland,003,Anne Arundel County,24003
+Baltimore City,-5.822168087697932,MD,24,Maryland,510,Baltimore city,24510
+Baltimore County,-0.31161697520268317,MD,24,Maryland,005,Baltimore County,24005
+Calvert,23.978494623655923,MD,24,Maryland,009,Calvert County,24009
+Caroline,27.890818858560788,MD,24,Maryland,011,Caroline County,24011
+Carroll,2.2005584212767992,MD,24,Maryland,013,Carroll County,24013
+Cecil,17.13929219600726,MD,24,Maryland,015,Cecil County,24015
+Charles,32.16043755697356,MD,24,Maryland,017,Charles County,24017
+Dorchester,44.44127708095781,MD,24,Maryland,019,Dorchester County,24019
+Frederick,5.799971707455093,MD,24,Maryland,021,Frederick County,24021
+Garrett,38.079969822708414,MD,24,Maryland,023,Garrett County,24023
+Harford,9.4819391634981,MD,24,Maryland,025,Harford County,24025
+Howard,-12.485199315879486,MD,24,Maryland,027,Howard County,24027
+Kent,-8.349236641221381,MD,24,Maryland,029,Kent County,24029
+Montgomery,1.0215808964372353,MD,24,Maryland,031,Montgomery County,24031
+Prince George's,12.44747138095928,MD,24,Maryland,033,Prince George's County,24033
+Queen Anne's,8.100558659217876,MD,24,Maryland,035,Queen Anne's County,24035
+Saint Mary's,13.529563645752646,MD,24,Maryland,037,St. Mary's County,24037
+Somerset,62.13776722090262,MD,24,Maryland,039,Somerset County,24039
+Talbot,8.254918733960647,MD,24,Maryland,041,Talbot County,24041
+Washington,17.991631799163176,MD,24,Maryland,043,Washington County,24043
+Wicomico,28.602799890200387,MD,24,Maryland,045,Wicomico County,24045
+Worcester,27.37702068486008,MD,24,Maryland,047,Worcester County,24047
