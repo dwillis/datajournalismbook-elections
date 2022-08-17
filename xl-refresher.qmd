@@ -8,21 +8,19 @@ Spreadsheets are everywhere, so it's worth re-learning how to use them well. Rep
 
 -   To perform simple, straightforward analysis on data and share with team members. This is becoming less common as more reporters learn programming languages, but it's still common in newsrooms to share data, especially through Google Sheets.
 
-This guide will use Excel rather than Google sheets because it is a little easier to work with larger datasets and is still available in most newsrooms. But the Google Sheets has essentially the same capabilities and is easier to share with teammates. They also have a few features lacking in Excel when it comes to getting data from the Web
-
-(This guide is done using a Mac. Windows machines will be a little different, mainly because you'll have more choices in most menus. The Mac CMD key is the same as the Windows CTL key.)
+(This guide is done using a Mac. Windows machines will be a little different, mainly because you'll have more choices in most menus. The Mac CMD key is the same as the Windows CNTL key.)
 
 Some reporters flinch at typing in 30 or 100 entries into a spreadsheet. You shouldn't. If you learn to take notes in a structured way, you'll always be able to find and verify your work. If you try to calculate a sum of 30 numbers on a calculator, you'll have to type them all in at least twice anyway. Also, getting used to these easy tasks on a spreadsheet keeps your muscles trained for when you need to do more.
 
-## Re-learning Excel from the ground up
+## Re-learning Sheets from the ground up
 
 ### The spreadsheet grid
 
 ::: {.pl-2rem .float-right .col-md-4}
-![](images/xl-refresher-battleship.png)
+![](images/sheets-refresher-battleship.png)
 :::
 
-When you start up a spreadsheet, you'll see letters across the top and numbers down the side. If you ever played Battleship, you'll recognize the idea -- every little square, or cell, is referenced by the intersection of its column letter and row number:
+When you start up a spreadsheet (try entering sheet.new into your browser!), you'll see letters across the top and numbers down the side. If you ever played Battleship, you'll recognize the idea -- every little square, or cell, is referenced by the intersection of its column letter and row number:
 
 B2 is the cell that is currently active. You can tell because it's outlined in the sheet and it's shown on the upper left corner.
 
@@ -30,7 +28,6 @@ B2 is the cell that is currently active. You can tell because it's outlined in t
 
 |                                                                                                                                                                                          |                                                |
 |------------------------------------------------------|------------------|
-| **BFWPS**: The Big Fat White Plus Sign. This is the default shape, and you can never get into trouble when you see it                                                                    | ![BFwPS](images/xl-refresher-bfwps.png)        |
 | **The Copy Tool**, or the thin black cross. When you see this, you'll copy anything that's selected. This can be good or bad.                                                            | ![copy](images/xl-refresher-copy.png)          |
 | **The Evil Hand**. (In Windows, this is the Evil Arrow). If you use this symbol, you will MOVE the selection to a new location. This is very rarely a good idea or something you intend. | ![evil hand](images/xl-refresher-evilhand.png) |
 
@@ -54,21 +51,13 @@ if (knitr::is_html_output()) knitr::include_graphics("images/xl-refresher-select
 ![](images/xl-refresher-columnselect.png)
 :::
 
-*To select a column or row* : Hover the BFWPS over the letter at the top of the column. For a row, hover it over the row number in the margin
+*To select a column or row* : Hover the cursor over the letter at the top of the column. For a row, hover it over the row number in the margin
 
 ::: {.mt-4 style="clear:both"}
 ### Reading the screen
 :::
 
 The areas of the spreadsheet have different visual clues, and learning to read them will make your life much easier.
-
-This image shows some key areas on the screen when you're just viewing the sheet:
-
-![ready](images/xl-refresher-screen1.png){width="100%"}
-
-This is how it changes when you're editing
-
-![editing](images/xl-refresher-screen2.png){width="100%"}
 
 ### Entering data
 
@@ -82,9 +71,9 @@ If you're having trouble getting to a menu item or seeing the result of your wor
 
 As your spreadsheet grows vertically with more rows, you'll want to be able to see the top all the time. When it grows horizontally with more columns, you'll probably want to see columns in the left, such as names. This is called "Freezing Panes" -- you freeze part of the page so it stays in place when you move around.
 
-Select the corner that you want frozen. For example, if you want the first three columns frozen (A:C) and the first row frozen (1), then select the cell in D2. This is the first cell that will move, and everything to the left of it and above it will stay on the screen.
+In Google Sheets, this is done via the View -> Freeze menu:
 
-![freeze panes](images/xl-refresher-freezepanes.png){width="100%"}
+![freeze panes](images/sheets-refresher-freezepanes.png){width="100%"}
 
 ### Formatting tricks
 
@@ -121,27 +110,3 @@ A *unit of analysis* refers to the items that are listed in the rows of your dat
 #### Row numbers
 
 The data was probably given to you in some sort of natural sort order. Different computer systems sort differently -- some are case-sensitive, others are not. It may depend on when and where the data as created! The order of the data may even depend on a column you don't have. If you don't do something now, you'll never be able to get back to the original order, which could have meaning for both the agency and for fact-checking.
-
-## Video walkthrough
-
-These first steps, along with adding an ID row, are shown [here](https://www.youtube.com/embed/iGCpfop0zvs?rel=0). You can [follow along with the same dataset](https://cronkitedata.s3.us-west-1.amazonaws.com/xlfiles/phoenix_salaries.xlsx).
-
-## Keyboard shortcuts
-
-For Mac users, it's much easier to use Excel if you override the action of function keys while you're in the program. In your Mac's System Preferences, choose Keyboard, and select the box that says, "Use F1, F2, etc. as standard function keys." (NOTE: If you have a MacBook Pro with a touch bar (circa 2017-2020 or so), this option may not be there. Instead, go into the Shortcuts section of the keyboard options and turn off all of the options for Mission Control. Those are the ones that interfere with Excel.)
-
-![options](images/xl-refresher-options.png){width="60%" height="60%"}
-
-Once you've done that, these keyboard shortcuts will work:
-
-| To do this                                                            | Windows or IMac | Macbook            |
-|-----------------------------------------|----------------|----------------|
-| Edit a cell                                                           | F2              | Ctl-U or F2        |
-| Toggle between absolute and relative references                       | F4              | Ctl-T or F4        |
-| Insert cut cells                                                      | Ctl+            | Ctl+               |
-| Delete a cell                                                         | Ctl-            | Ctl-               |
-| Select the top left of a spreadsheet                                  | Ctl-Home        | Ctl-Fn-Left arrow  |
-| Move to the bottom right of a spreadsheet                             | Ctl-End         | Ctl-Fn-Right arrow |
-| Select a region (a contiguous rectangle of cells that are filled out) | Ctl -\*         | Ctl-Shift_spacebar |
-
-You should practice getting around a spreadsheet efficiently, since scrolling with the mouse while selecting is a lesson in frustration.

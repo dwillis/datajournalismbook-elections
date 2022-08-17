@@ -47,7 +47,7 @@ Originally the reporters had written it even more simply, but editors found the 
 
 ## Put math in its place
 
-For journalists, numbers -- or facts -- make up the third leg of a stool supported by human stories or anecdotes , and insightful comment from experts. They serve us in three ways:
+For journalists, numbers -- or facts -- make up the third leg of a stool supported by human stories or anecdotes, and insightful comment from experts. They serve us in three ways:
 
 -   ***As summaries***. Almost by definition, a number counts something, averages something, or otherwise summarizes something. Sometimes, it does a good job, as in the average height of Americans. Sometimes it does a terrible job, as in the average income of Americans. Try to find summaries that accurately characterize the real world.
 
@@ -66,7 +66,7 @@ Once you find the humanity in your numbers, by cutting them down to size and rel
 
 ### Reading and viewing {.unnumbered}
 
--   "[Avoiding Numeric Novcain: Writing Well with Numbers](https://www.poynter.org/news/avoiding-numeric-novocain-writing-well-numbers)," by Chip Scanlan, Poynter.com
+-   "[Avoiding Numeric Novocain: Writing Well with Numbers](https://www.poynter.org/news/avoiding-numeric-novocain-writing-well-numbers)," by Chip Scanlan, Poynter.com
 
 -   T. Christian Miller's "[Writing the data-driven story](https://cronkitedata.s3.amazonaws.com/docs/data-writing-tmiller.pdf)"
 
@@ -78,6 +78,4 @@ Once you find the humanity in your numbers, by cutting them down to size and rel
 ```
 ## Exercises
 
--   Imagine that someone gave you \$1 million and you could spend it on anything you want. Write down a list of things that would add up to about that amount. That should be easy. Now, imagine someone gave you \$1 billion and you could spend it on whatever you want, but anything left over after a year had to be returned. How would you spend it? (You can give away money, but it can't be more than 50% of a charity's annual revenues. So you can't give 10 \$100 million gifts!) See how far you get trying to spend it. A few homes, a few yachts, student loan repayments for all of your friends? You've hardly gotten started.
-
--   Imagine it is Jan. 1, 2022 and you are tasked with writing the annual weather story, summarizing the high and low points of the previous year. Using [this daily summary](https://cronkitedata.s3.amazonaws.com/xlfiles/phoenix_temperatures.xlsx) of temperatures, rain and wind for Phoenix, try to find three interesting facts for your story. If you want to [download your own data from NOAA](https://www.ncdc.noaa.gov/cdo-web/datasets), choose "Local Climatalogical Data," and keep only the rows that refer to "SOD," or "Summary of Day".
+- Imagine that someone gave you \$1 million and you could spend it on anything you want. Write down a list of things that would add up to about that amount. That should be easy. Now, imagine someone gave you \$1 billion and you could spend it on whatever you want, but anything left over after a year had to be returned. How would you spend it? (You can give away money, but it can't be more than 50% of a charity's annual revenues. So you can't give 10 \$100 million gifts!) See how far you get trying to spend it. A few homes, a few yachts, student loan repayments for all of your friends? You've hardly gotten started.
