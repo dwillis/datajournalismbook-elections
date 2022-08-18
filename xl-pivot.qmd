@@ -1,14 +1,12 @@
 # Grouping with pivot tables {#xl-pivot}
 
-To get totals for out of state contributions to Maryland's 2022 gubernatorial primary candidates, Stephen Neukam downloaded data from the State Board of Elections for candidates including Wes Moore and other candidates.
+To get totals for out of state contributions to Maryland's 2022 gubernatorial primary candidates, Stephen Neukam downloaded data from the State Board of Elections for Wes Moore and other candidates. Make a copy of [this Google Sheet](https://docs.google.com/spreadsheets/d/1MRpGN-9mJGKZIvKbiCVayKWUNVi75eYxTCcpQapTVjs/edit?usp=sharing) so we can work with that data.
 
-In the wake of a police shooting in 2016, reporter Mitch Smith obtained a [list of traffic stops](https://cronkitedata.s3.amazonaws.com/xlfiles/saintanthony_police.xlsx) from the St. Anthony Police Department in Minnesota. He was writing a story on Philandro Castile's death and was running out of time. He wanted to answer a simple question: Were minority motorists more likely to be stopped in St. Anthony than whites?
+[Neukam's story](https://cnsmaryland.org/2022/03/03/millions-in-out-of-state-donations-help-fuel-high-profile-maryland-democratic-governor-candidates/) is about out-of-state contributions:
 
-Rob Gebeloff made a quick pivot table to answer the question. That night, [Smith wrote](https://www.nytimes.com/2016/07/13/us/philando-castile-minnesota-police-shooting.html):
-
-> In each of the three small suburbs patrolled by the St. Anthony police, less than 10 percent of the population is black. But data released by the city on Tuesday showed that a far higher percentage of the people ticketed or arrested by St. Anthony officers were African-American.
+> Moore, a U.S. Army veteran and bestselling author, built a campaign war chest that included over $2.3 million in out-of-state contributions. Tom Perez, a former leader of the Democratic National Committee, raised nearly $1.7 million in donations from outside Maryland.
 >
-> Last year, around 19 percent of those cited by St. Anthony police were black, as were roughly 41 percent of people arrested by the department, a review of the city's data showed. Those percentages do not include the large number of defendants whose race was unknown.
+> John B. King, former secretary of Education under President Barack Obama, raised $2.2 million in campaign funding last year. Only 11%, just under $240,000, came from Maryland donors. King raised over $534,000 in New York alone.
 
 Summarizing a list of items in a spreadsheet is done using pivot tables. In other languages, it's considered "aggregating" or "grouping and summarizing". Think of pivot tables and grouping as answering the questions, "How many?" and "How much?". They are particularly powerful when your question also has the words "the most" or the "the least" or "of each". Some examples:
 
@@ -16,7 +14,7 @@ Summarizing a list of items in a spreadsheet is done using pivot tables. In othe
 -   What *month* had *the least* total rainfall?
 -   *How much* did *each candidate* raise last quarter?
 -   In playing cards, *how many* of *each suit* do I have in my hand?
--   On average, are *Cronkite students* *taller or shorter* than in other schools?
+-   On average, are *Merrill students* *taller or shorter* than in other schools?
 
 ### Confusing grouping with sorting or arranging {.unnumbered}
 
@@ -36,61 +34,38 @@ In practice, you'll go back and forth between summary and detail. They're both i
 
 ## Tutorial
 
-::: {.alert .alert-info .opacity-2}
-This continues with the Washington Post's police shooting database, but I updated it to include the descriptions of ethnicities.
-
-[Download the new version](https://cronkitedata.s3.amazonaws.com/xlfiles/wapo-shootings-pivot.xlsx)
-:::
-
-### TL;DR {.unnumbered}
-
-Here's a video with the same material:
-
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/P_udA-XFpGY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-
-</iframe>
-
 ### Setting up the pivot table {.unnumbered}
 
-Start with your cursor somewhere in your data , and choose *Insert*, then *Pivot table*
+Start with your cursor somewhere in your data , and choose *Insert*, then *Pivot table*. Then hit the *Create* button.
 
-![insert menu](images/xl-pivot-insert.png)
+![insert menu](images/sheets-pivot-insert.png)
 
 If all goes well, it will look like your data disappeared. It didn't -- you're just on a new page. Here's what it looks like:
 
-![pivot menu](images/xl-pivot-pivotscreen.png){width="100%"}
+![pivot menu](images/sheets-pivot-pivotscreen.png){width="100%"}
 
 ### Counting , or "how many"? {.unnumbered}
 
-The section on the right gives you an outline of what to do. The section on the left will get filled in as you make your pivot table. If you want to see the number of fatalities by ethnicity, drag that column into the "Rows" area, then drag something that's always filled out into the Values area (`state` is a safe one in this data).
+The section on the right gives you an outline of what to do. The section on the left will get filled in as you make your pivot table. If you want to see the number of contributions by state, drag the state column into the "Rows" area, then drag something that's always filled out into the Values area (`candidate` is a safe one in this data).
 
-![](images/xl-pivot-success.png){width="100%"}
-
-### Percents of total {.unnumbered}
-
-It's hard to compare raw numbers unless they're really small. Instead, we'd like to know what *percent* of fatalities by ethnicity. Right-click on any number in the pivot table, and choose "Show data as..." , then choose "Percent of Column total".
-
-![](images/xl-pivot-percentcolumn.png){width="100%"}
-
-To remove it, right-click on it and choose "Remove"Count of state2"".
-
+![](images/sheets-pivot-success.png){width="100%"}
 ### More variables {.unnumbered}
 
-Suppose you'd like to see the number of fatalities by year, with the years across the top and the `ethnicity` down the sides. Drag the `year` variable into the column area . Sorting can get hinky on pivot tables, but in this case it will work to put the largest number on top. This won't work with percentages -- it still sorts by the underlying number.
+Suppose you'd like to see the number of contributions by candidate, with the candidates across the top and the `state` down the sides. Drag the `candidate` variable into the column area . Sorting can get hinky on pivot tables, but in this case it will work to put the largest number on top. This won't work with percentages -- it still sorts by the underlying number.
 
-![](images/xl-pivot-twovariables.png){width="100%"}
+![](images/sheets-pivot-twovariables.png){width="100%"}
 
 ### Even more variables {.unnumbered}
 
-Say you wanted to see each city's total shootings by year. Which one had the most last year, and which one had the most overall?
+Say you wanted to see each candidate's total number of contributions by month and state.
 
-This is actually really hard in a pivot table, because there are cities with the same names in different states. It means you'd need to have a pivot table with TWO columns down the side, and one across the top. Here's my attempt at getting there:
+This isn't always easy to organize. It means you'd need to have a pivot table with TWO columns down the side, and one across the top. Here's my attempt at getting there:
 
-![badsort](images/xl-pivot-badsort.png){width="100%"}
+![badsort](images/sheets-pivot-badsort.png){width="100%"}
 
-This is after some fiddling with the formats, and I still can't sort properly -- the city "Phoenix", including those in Maryland and Arizona, had the second-highest number of shootings. We can't sort by the combination of city and state.
+This is after some fiddling with the formats, and I still can't sort properly. We can't sort by the combination of month and state.
 
-Your choices in Excel are limited: Copy and paste the values of the pivot table into a new sheet and sort there, or create a new variable by concatenating the name of the city and state into one column.
+Your choices here are limited: Copy and paste the values of the pivot table into a new sheet and sort there, or create a new variable by concatenating the name of the month and state into one column.
 
 ## FAQ
 
@@ -100,15 +75,11 @@ If you select something outside of that pivot table on the left, the menu on the
 
 ### I have too many columns {.unnumbered}
 
-If you want two sets of statistics -- say, number of fatalities and percent of fatalities -- across the top, it can get very wide and confusing very quickly. One alternative is to change it into more of a vertical rectangle by dragging the "Values" element from the columns to the rows on the right. (This only shows up when you have two calculations being made.)
-
-### I want to sort by percents, not numbers {.unnumbered}
-
-You can't.
+If you want two sets of statistics -- say, number of contributions and percent of contributions -- across the top, it can get very wide and confusing very quickly. One alternative is to change it into more of a vertical rectangle by dragging the "Values" element from the columns to the rows on the right. (This only shows up when you have two calculations being made.)
 
 ### Things aren't adding up {.unnumbered}
 
-You have to be super careful about which column you use to Count things -- it has to always be filled out (there can't be any blanks). Go through the filters and find one that doesnt have (Blanks) at the bottom to be sure.
+You have to be super careful about which column you use to Count things -- it has to always be filled out (there can't be any blanks). Go through the filters and find one that doesn't have (Blanks) at the bottom to be sure.
 
 ### Its a crazy number! {.unnumbered}
 

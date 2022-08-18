@@ -1,16 +1,16 @@
-# Formulas in Excel {#xl-formulas}
+# Formulas in Google Sheets {#xl-formulas}
 
-The quick review of math in Excel uses the City of Phoenix's budgeted spending for the 2018 fiscal year, compared with previous years.
+The quick review of math in Google Sheets uses the City of Phoenix's budgeted spending for the 2018 fiscal year, compared with previous years.
 
 ::: {.alert .alert-info .opacity-2}
-Download the [data file](https://cronkitedata.s3.amazonaws.com/xlfiles/phx_budget_summary.xlsx) to follow along
+Make a copy of the [data file](https://docs.google.com/spreadsheets/d/1NGFHiJzvSsdB2wT7AehdSCjGrrwrOS1_rLk5FEaz7a8/edit?usp=sharing) to follow along
 :::
 
-You should get into the habit of creating unique identifiers, checking your corners and looking for documentation before you ever start working with a spreadsheet. These habits were covered in [Replication and the data diary](start-data-diary.html) and on [an Excel refresher](xl-refresher.html) .
+You should get into the habit of creating unique identifiers, checking your corners and looking for documentation before you ever start working with a spreadsheet. These habits were covered in [Data journalism in the age of replication](replication.html) and on [a Google Sheets refresher](xl-refresher.html).
 
 ## Formulas in spreadsheets
 
-Whether you use Excel or Google sheets, remember that every formula begins with the equals sign **(=)**. Rather than the values you want to work with in the formula, you'll use *references* to other cells in the sheet.
+Whether you use Google sheets or Excel, remember that every formula begins with the equals sign **(=)**. Rather than the values you want to work with in the formula, you'll use *references* to other cells in the sheet.
 
 The easiest formulas are simple arithmetic: adding, subtracting, multiplying and dividing two or more cells. You'll just use simple operators to do this:
 
@@ -156,7 +156,7 @@ Doing simple calclutions like this on data that is provided to you by the govern
 
 ## FAQs
 
-#### Excel won't let me copy my formula {.unnumbered}
+#### Sheets won't let me copy my formula {.unnumbered}
 
 Make sure your formula is locked in by either hitting "Enter" or "Escape". This is a common problem if you're in the habit of double-clicking instead of selecting a cell. There are a lot things you can't do while Excel thinks you're still entering information.
 
@@ -167,7 +167,3 @@ It depends. Averages are easier to explain but can be misleading. Usually, if th
 #### My percents are small numbers with decimal points {.unnumbered}
 
 Use the format as a % button to move the decimal point over two places and insert the percentage symbol.
-
-#### Mac Users: There's some kind of weird image on top of my spreadsheet. Or some other very weird hiccup. {.unnumbered}
-
-I have no idea what this is, but it happens. Save your spreadsheet, close it and then re-open. It should go away.
