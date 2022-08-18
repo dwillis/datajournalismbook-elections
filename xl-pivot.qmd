@@ -1,6 +1,6 @@
 # Grouping with pivot tables {#xl-pivot}
 
-To get totals for out of state contributions to Maryland's 2022 gubernatorial primary candidates, Stephen Neukam 
+To get totals for out of state contributions to Maryland's 2022 gubernatorial primary candidates, Stephen Neukam downloaded data from the State Board of Elections for candidates including Wes Moore and other candidates.
 
 In the wake of a police shooting in 2016, reporter Mitch Smith obtained a [list of traffic stops](https://cronkitedata.s3.amazonaws.com/xlfiles/saintanthony_police.xlsx) from the St. Anthony Police Department in Minnesota. He was writing a story on Philandro Castile's death and was running out of time. He wanted to answer a simple question: Were minority motorists more likely to be stopped in St. Anthony than whites?
 
