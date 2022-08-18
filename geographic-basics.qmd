@@ -1,6 +1,6 @@
 # Geographic data basics
 
-Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like per capita rates, or looked at how data changes over time.
+Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like percentages, or looked at how data changes over time.
 
 Another way we can look at the data is geographically. Is there a spatial pattern to our data? Can we learn anything by using distance as a metric? What if we merge non-geographic data into geographic data?
 
