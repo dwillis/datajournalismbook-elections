@@ -24,23 +24,23 @@ library(tidyverse)
 
 ## Get Our PDF
 
-We'll be working with the [Maryland Statistical Handbook](https://planning.maryland.gov/MSDC/Documents/md-statistical-handbook.pdf) from the state Department of Planning. It's not tiny (44MB), and you'll want to download it to a place you'll remember (like your Downloads folder).
+We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_07.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository).
 
 ## Setup Tabula
 
-Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the Statistical Handbook file and click "open", and then click the "Import button" in Tabula. This will take a minute or two.
+Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the PDF file and click "open", and then click the "Import button" in Tabula. This will take a few seconds.
 
-Let's go to page 30 of the PDF, Table 2A, "International Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". This is _net migration_, meaning it shows the total number of people moving to Maryland and its regions/jurisdictions _minus_ the total number of people leaving the same, divided into 12-month periods from July to July. In Tabula, draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV (it should be called `tabula-md-statistical-handbook.csv` by default) to your Downloads folder.
+This PDF has multiple possible tables to extract. We're going to make three dataframes: new registrations by party, removals by party, and current registrations by county. You will need to draw boxes around and export three CSV files (you could probably do this with just two files, but three is easier) that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean. Let's export that CSV (each one should be called `tabula-2022-07.csv` by default) to your lab_06/data folder.
+
+From there, you will need to clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)).
 
 ## Cleaning up the data in R
-
-Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)):
 
 ```{r}
 international_migration <- read_csv('tabula-md-statistical-handbook.csv', skip=2, col_names=c("jurisdiction", "july_2011", "july_2012", "july_2013", "july_2014", "july_2015", "july_2016", "july_2017", "july_2018", "july_2019", "total"))
 ```
 
-Add a column for the type of migration ("international") and populate it:
+Add a column in each dataframe that will contain the month for the update and populate it:
 
 ```{r}
 international_migration <- international_migration %>% mutate(type='international')

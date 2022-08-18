@@ -34,29 +34,29 @@ library(tidyverse)
 
 ## Get Our PDF
 
-We'll be working with the [Maryland Statistical Handbook](https://planning.maryland.gov/MSDC/Documents/md-statistical-handbook.pdf) from the state Department of Planning. It's not tiny (44MB), and you'll want to download it to a place you'll remember (like your Downloads folder).
+We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_07.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository).
 
-**Task** Download the file from the above link and save it to your Downloads folder.
+**Task** Download the file from the above link and save it to your Downloads or labs folder.
 
 ## Setup Tabula
 
-**Task** Start Tabula and load the PDF, then extract a table
+**Task** Start Tabula and load the PDF, then extract your tables
 
-Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the Statistical Handbook file in your Downloads folder and click "open", and then click the "Import button" in Tabula. This will take a minute or two.
+Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the PDF file and click "open", and then click the "Import button" in Tabula. This will take a few seconds.
 
-Let's go to page 30 of the PDF, Table 2A, "International Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". This is _net migration_, meaning it shows the total number of people moving to Maryland and its regions/jurisdictions _minus_ the total number of people leaving the same, divided into 12-month periods from July to July. In Tabula, draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV (it should be called `tabula-md-statistical-handbook.csv` by default) to your lab_06/data folder.
+This PDF has multiple possible tables to extract. We're going to make three dataframes: new registrations by party, removals by party, and current registrations by county. You will need to draw boxes around and export three CSV files (you could probably do this with just two files, but three is easier) that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean. Let's export those CSVs (each one should be called `tabula-2022-07.csv` by default, so you will want to rename them to something better) to your lab_06/data folder.
 
 ## Cleaning up the data in R
 
-Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)):
+From there, you will need to clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)):
 
-**Task** Write code to read the CSV file into a dataframe called `international_migration`. As in the pre_lab, you may have to skip 1 or more rows and you may want to supply easier-to-use column names that use underscores and don't begin with numbers.
+**Task** Write code to read the CSV files into three dataframes called `party_registrations`, `party_removals` and `current_registrations`. You may have to skip 1 or more rows and you may want to supply easier-to-use column names that use underscores and don't begin with numbers. You also may need to ensure that columns containing numbers have a numeric datatype.
 
 ```{r}
 # Write the code to load the CSV file here
 ```
 
-Add a column that will contain the type of migration ("international") and populate it:
+Add a column that will contain the month for the update and populate it:
 
 **Task** Write the code to add a `migration_type` column to the data and give it the value of "international"
 
@@ -66,7 +66,8 @@ Add a column that will contain the type of migration ("international") and popul
 
 ## Answer questions
 
-**Q1** Which region AND county/city _below_ the state level accounted for the largest percentage of international migration for the entire time period? You'll need to add and populate a column representing the percent of total using `mutate`.
+**Q1** 
+You'll need to add and populate a column representing the percent of total using `mutate`.
 **A1** [write your answer here]
 
 ```{r}
