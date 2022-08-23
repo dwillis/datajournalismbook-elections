@@ -13,142 +13,71 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 
 ```
 
-And now let's load the dataframe of demographic information from the previous chapter, and filter for Baltimore city Census blocks.
+And now let's load a dataframe of Maryland county population information from the 2020 Census, but this time we'll add in county geographic data.
 
 ```{r}
-baltimore_city_blocks <- st_read("data/Adjusted2020.gdb") %>%
-  filter(County == "24510")
+maryland_counties <- read_csv("data/md_counties_2020.csv")
+maryland_county_shapes <- st_read("data/Maryland2020_County.json")
 
-baltimore_city_blocks
+maryland_counties_with_shapes <- maryland_counties %>% inner_join(maryland_county_shapes, by=c('GEOID'='GEOID20'))
+
 ```
-
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in hospital bed availability by county in Maryland. Our question: by examining the number of hospital beds per 100,000 people in each county, what regional geographic patterns can we identify?
-
-Each hospital exists inside of a county, so we're going to first calculate the total number of beds in each county. We do this by first converting the md_hospitals data to a standard dataframe (instead of a spatial dataframe) using as_tibble(), then grouping by county and totaling the number of beds. Finally, let's sort by total_beds to see which county has the most.
+And there's that join error again: we've got incompatible data types. We can quickly fix that:
 
 ```{r}
+maryland_counties <- read_csv("data/md_counties_2020.csv") %>% mutate(GEOID = as.character(GEOID))
+maryland_county_shapes <- st_read("data/Maryland2020_County.json")
 
-md_beds_by_county <- md_hospitals %>%
-  as_tibble() %>%
-  group_by(COUNTY) %>%
-  summarise(
-    total_beds = sum(BEDS)
-  ) %>%
-  arrange(desc(total_beds))
-
-md_beds_by_county
+maryland_counties_with_shapes <- maryland_counties %>% inner_join(maryland_county_shapes, by=c('GEOID'='GEOID20'))
 ```
-So, what do we see here? Baltimore City has the most, followed by Montgomery, Baltimore County and Prince George's.  All big counties.
+For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in registered voters and population by county and in Maryland. Our starting question: by examining the number of voters and the population in each county, what regional geographic patterns can we identify?
 
-Next, we'll go out and get population data for each county from tidycensus.  The variable for total population is B01001_001.  
+First we need to load voter registration data - since the population data is from 2020, we'll use the county totals as of the 2020 general election. And we'll make sure that the FIPS code that we need to join on is a character column:
 
 ```{r}
-
-md_county_population <- get_acs(geography = "county",
-              variables = c(population = "B01001_001"),
-              state = "MD")
-
-md_county_population
+maryland_voters_by_county <- read_csv("data/maryland_voters_2020g.csv") %>% mutate(FIPS=as.character(FIPS))
 ```
 
-Ultimately, we're going to join this county population table with our beds by county table, and then calculate a beds per 100,000 people statistic.  But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile.  Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
+Now let's combine our two dataframes:
 
 ```{r}
-
-md_county_population <- get_acs(geography = "county",
-              variables = c(population = "B01001_001"),
-              state = "MD",
-              geometry = TRUE)
-
-md_county_population
+maryland_voters_by_county_with_pop <- maryland_voters_by_county %>% inner_join(maryland_counties_with_shapes, by=c('FIPS'='GEOID'))
 ```
 
-We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
-
-The next step will be to join our population data to our hospital bed data on the county column.
-
-But there's a problem.  The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it.  The beds data just has the uppercase name of the county.  For example, the population data has "Anne Arundel County, Maryland" and the beds data has "ANNE ARUNDEL"
+Now we can do some calculations and visualize them on a map. Let's calculate the number of Unaffiliated (no party) voters per 10,000 people and take a look at just the numbers.
 
 ```{r}
+md_una_per_10k <- maryland_voters_by_county_with_pop %>%
+  mutate(una_per_10k = UNA/TOTAL_POP*10000) %>%
+  arrange(desc(una_per_10k)) %>% 
+  select(County, DEM, REP, OTH, UNA, TOTAL, una_per_10k, geometry)
 
-md_county_population
-
-md_beds_by_county
+md_una_per_10k
 ```
+Let's take a look at the result of this table. We might call this where the swing voters are, although political science tells us that most independents actually vote with a party most of the time. Frederick, Howard, Calvert, Anne Arundel and Carroll counties all have some competitive races at the local and state level, so that makes some sense. Montgomery, the state's largest jurisdiction, has more independents than Republicans.
 
-If they're going to join properly, we need to clean one of them up to make it match the other.  
-
-Let's clean the population table. We're going to rename the "NAME" column to "COUNTY", then convert it to uppercase while also removing ", Maryland" and "County". Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
-
-```{r}
-md_county_population <- md_county_population %>%
-  rename(COUNTY = NAME) %>%
-  mutate(COUNTY = toupper(str_remove_all(COUNTY,", Maryland|County"))) %>%
-  mutate(COUNTY = str_trim(COUNTY,side="both")) %>%
-  rename(population = estimate) %>%
-  select(COUNTY, population, geometry)
-
-md_county_population
-
-```
-
-Now we can join them.  
-
-```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county)
-
-md_beds_per_100k
-```
-
-We have two NAs after we join, for Queen Anne's County and Caroline County.  That's not an error.  There are no General Acute Care hospitals in those counties, according to our data (it's why our beds table has 22 rows, not 24). So let's convert those values to 0 using replace_na().
-
-```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
-  mutate(total_beds = replace_na(total_beds,0))
-
-md_beds_per_100k
-```
-
-Our final step before visualization, let's calculate the number of beds per 100,000 for each county and sort from highest to lowest to see waht trends we can identify just from the table.
-
-```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
-  mutate(total_beds = replace_na(total_beds,0)) %>%
-  mutate(beds_per_100k = total_beds/population*100000) %>%
-  arrange(desc(beds_per_100k))
-
-md_beds_per_100k
-```
-
-Let's take a look at the result of this table. Baltimore City is still up there at the top, even when measuring by beds per 100k.  But there are some surpising ones at the top, some of Maryland's smallest counties! Allegany, Talbot, Somerset may not have that many beds, but they also don't have a lot of people.  
-
-Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of beds per 100K on a color gradient.  
+Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 10K on a color gradient.  
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
+  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k)) +
+  theme_minimal()
+```
+So this error message is pretty sneaky, because it's saying that it can't find a geometry column. But we *have* a geometry column - it's called geometry! What's happening here is that ggplot expects certain details in order to be able to locate the column with geometry in it, and sometimes when we build a new dataframe through joins those details get dropped. Luckily, we can explicitly tell ggplot where to find it:
+
+```{r}
+ggplot() +
+  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k, geometry=geometry)) +
   theme_minimal()
 ```
 This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
+  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k, geometry=geometry)) +
   theme_minimal() +
   scale_fill_viridis_b(option="magma")
 ```
-The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between counties.
-
-So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
-```{r}
-ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
-  theme_minimal() +
-  scale_fill_viridis_b(option="magma",trans = "log")
-```
 Some interesting regional patterns finally emerge.  
 
-The Eastern Shore and Western Maryland have more beds per capita than Central Maryland (with the exception of Baltimore City). And Southern Maryland -- PG, Charles, Calvert and St. Mary's -- has by far the fewest beds per capita of any other region.
+The highest number of unaffiliated voters per capita are clustered close to DC and Baltimore, with the notable exception of Prince George's County. The further west you go, the lower number of unaffiliated voters per capita there are (and that's somewhat true for the Eastern Shore, too). You could swap out UNA for Republicans or Democrats, or look at this another way, but what you're trying to see here are potential patterns for further exploration.
