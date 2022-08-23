@@ -34,7 +34,7 @@ book:
     - visualizing-for-reporting.qmd
     - visualizing-for-publication.qmd
     - geographic-basics.qmd
-    - geographic-analysis.qmd
+    - geographicanalysis.qmd
     - textanalysis.qmd
     - basicstats.qmd
     - writingwithdata.qmd
