@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.646">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Journalism with R and the Tidyverse - 14&nbsp; Aggregates</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./mutating.html" rel="next">
+<link href="./replication.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Journalism with R and the Tidyverse</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#libraries" id="toc-libraries" class="nav-link active" data-scroll-target="#libraries"> <span class="header-section-number">14.1</span> Libraries</a></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data"> <span class="header-section-number">14.2</span> Importing data</a></li>
+  <li><a href="#group-by-and-count" id="toc-group-by-and-count" class="nav-link" data-scroll-target="#group-by-and-count"> <span class="header-section-number">14.3</span> Group by and count</a></li>
+  <li><a href="#other-summarization-methods-summing-mean-median-min-and-max" id="toc-other-summarization-methods-summing-mean-median-min-and-max" class="nav-link" data-scroll-target="#other-summarization-methods-summing-mean-median-min-and-max"> <span class="header-section-number">14.4</span> Other summarization methods: summing, mean, median, min and max</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="libraries" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="libraries"><span class="header-section-number">14.1</span> Libraries</h2>
+<p>R is a statistical programming language that is purpose built for data analysis.</p>
+<p>Base R does a lot, but there are a mountain of external libraries that do things to make R better/easier/more fully featured. We already installed the tidyverse – or you should have if you followed the instructions for the last assignment – which isn’t exactly a library, but a collection of libraries. Together, they make up the Tidyverse. Individually, they are extraordinarily useful for what they do. We can load them all at once using the tidyverse name, or we can load them individually. Let’s start with individually.</p>
+<p>The two libraries we are going to need for this assignment are <code>readr</code> and <code>dplyr</code>. The library <code>readr</code> reads different types of data in. For this assignment, we’re going to read in csv data or Comma Separated Values data. That’s data that has a comma between each column of data.</p>
+<p>Then we’re going to use <code>dplyr</code> to analyze it.</p>
+<p>To use a library, you need to import it. Good practice – one I’m going to insist on – is that you put all your library steps at the top of your notebooks.</p>
+<p>That code looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To load them both, you need to do this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+</div>
+<p>But, because those two libraries – and several others that we’re going to use over the course of this class – are so commonly used, there’s a shortcut to loading all of the libraries we’ll need:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.7     ✔ stringr 1.4.0
+✔ tidyr   1.2.0     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+</div>
+<p>You can keep doing that for as many libraries as you need.</p>
+</section>
+<section id="importing-data" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">14.2</span> Importing data</h2>
+<p>The first thing we need to do is get some data to work with. We do that by reading it in. In our case, we’re going to read a datatable from an “rds” file, which is a format for storing data with R. Later in the course, we’ll more frequently work with a format called a CSV. A CSV is a stripped down version of a spreadsheet you might open in a program like Excel, in which each column is separated by a comma. RDS files are less common when getting data from other people. But reading in CSVs is less foolproof than reading in rds files, so for now we’ll work with rds.</p>
+<p>The rds file we’re going to read in contains individual campaign contributions from Maryland donors via WinRed, an online fundraising platform used by conservatives. We’ll be working with a slice of the data from earlier this year.</p>
+<p>So step 1 is to import the data. The code to import the data looks like this:</p>
+<p><code>maryland_winred_contributions &lt;- read_rds("maryland_winred.rds")</code></p>
+<p>Let’s unpack that.</p>
+<p>The first part – <strong>maryland_winred_contributions</strong> – is the name of a variable.</p>
+<p>A <strong>variable</strong> is just a name that we’ll use to refer to some more complex thing. In this case, the more complex thing is the data we’re importing into R that will be stored as a <strong>dataframe</strong>, which is one way R stores data.</p>
+<p>We can call this variable whatever we want. The variable name doesn’t matter, technically. We could use any word. You could use your first name, if you like. Generally, though, we want to give variables names that are descriptive of the thing they refer to. Which is why we’re calling this one <strong>maryland_winred_contributions</strong>. Variable names, by convention are one word all lower case (or two or more words connected by an underscore). You can end a variable with a number, but you can’t start one with a number.</p>
+<p>The <code>&lt;-</code> bit, you’ll recall from the basics, is the <strong>variable assignment operator</strong>. It’s how we know we’re assigning something to a word. Think of the arrow as saying “Take everything on the right of this arrow and stuff it into the thing on the left.” So we’re creating an empty vessel called <strong>maryland_winred_contributions</strong> and stuffing all this data into it.</p>
+<p><strong>read_rds()</strong> is a function, one that only works when we’ve loaded the tidyverse. A <strong>function</strong> is a little bit of computer code that takes in information and follows a series of pre-determined steps and spits it back out. A recipe to make pizza is a kind of function. We might call it <strong>make_pizza()</strong>.</p>
+<p>The function does one thing. It takes a preset collection of ingredients – flour, water, oil, cheese, tomato, salt – and passes them through each step outlined in a recipe, in order. Things like: mix flour and water and oil, knead, let it sit, roll it out, put tomato sauce and cheese on it, bake it in an oven, then take it out.</p>
+<p>The output of our <strong>make pizza()</strong> function is a finished pie.</p>
+<p>We’ll make use of a lot of pre-written functions from the tidyverse and other packages, and even write some of our own. Back to this line of code:</p>
+<p><code>maryland_winred_contributions &lt;- read_rds("maryland_winred.rds")</code></p>
+<p>Inside of the <strong>read_rds()</strong> function, we’ve put the name of the file we want to load. Things we put inside of function, to customize what the function does, are called <strong>arguments</strong>.</p>
+<p>The easiest thing to do, if you are confused about how to find your data, is to put your data in the same folder as as your notebook (you’ll have to save that notebook first). If you do that, then you just need to put the name of the file in there (maryland_winred.rds). If you put your data in a folder called “data” that sits next to your data notebook, your function would instead look like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/maryland_winred.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+
+</div>
+<p>In this data set, each row represents an individual contribution to a federal political committee, typically a candidate’s campaign account.</p>
+<p>After loading the data, it’s a good idea to get a sense of its shape. What does it look like? There are several ways we can examine it.</p>
+<p>By looking in the R Studio environment window, we can see the number of rows (called “obs.”, which is short for observations), and the number of columns(called variables). We can double click on the dataframe name in the environment window, and explore it like a spreadsheet.</p>
+<p>There are several useful functions for getting a sense of the dataset right in our markdown document.</p>
+<p>If we run <code>glimpse(maryland_winred_contributions)</code>, it will give us a list of the columns, the data type for each column and and the first few values for each column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 54,247
+Columns: 24
+$ linenumber       &lt;chr&gt; "SA11AI", "SA11AI", "SA11AI", "SA11AI", "SA11AI", "SA…
+$ fec_committee_id &lt;chr&gt; "C00694323", "C00694323", "C00694323", "C00694323", "…
+$ tran_id          &lt;chr&gt; "A9EF36684A71C4FF097A", "A64BB5021801F42B386B", "A583…
+$ flag_orgind      &lt;chr&gt; "IND", "IND", "IND", "IND", "IND", "IND", "IND", "IND…
+$ org_name         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ last_name        &lt;chr&gt; "Hansher", "Leishman", "Bode", "Gallagher", "Bode", "…
+$ first_name       &lt;chr&gt; "Beth", "Alexander", "John", "Daniel", "Denise", "Joe…
+$ middle_name      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ prefix           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ suffix           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ address_one      &lt;chr&gt; "7205 Arrowood Rd", "1021 Gadsden Ave", "29389 Catalp…
+$ address_two      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ city             &lt;chr&gt; "Bethesda", "Silver Spring", "Easton", "Towson", "Eas…
+$ state            &lt;chr&gt; "MD", "MD", "MD", "MD", "MD", "MD", "MD", "MD", "MD",…
+$ zip              &lt;dbl&gt; 20817, 20905, 21601, 21204, 21601, 20815, 21502, 2081…
+$ prigen           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ date             &lt;date&gt; 2022-06-01, 2022-05-25, 2022-06-16, 2022-04-05, 2022…
+$ amount           &lt;dbl&gt; 5800.00, 5800.00, 5800.00, 5800.00, 5800.00, 5800.00,…
+$ aggregate_amount &lt;dbl&gt; 5800.00, 22300.00, 11600.00, 17900.00, 17650.00, 1450…
+$ employer         &lt;chr&gt; "INFORMATION REQUESTED", "RIVER", "CORN REFINERS ASSO…
+$ occupation       &lt;chr&gt; "HOMEMAKER", "CEO", "ASSOCIATION EXECUTIVE", "CLO", "…
+$ memo_code        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ memo_text        &lt;chr&gt; "Earmarked for BLAKE MASTERS FOR SENATE (C00784165)",…
+$ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022,…</code></pre>
+</div>
+</div>
+<p>If we type <code>head(maryland_winred_contributions)</code>, it will print out the columns and the first six rows of data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 24
+  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
+  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt;     
+1 SA11AI     C00694323        A9EF366… IND         NA       Hansher   Beth      
+2 SA11AI     C00694323        A64BB50… IND         NA       Leishman  Alexander 
+3 SA11AI     C00694323        A5835B6… IND         NA       Bode      John      
+4 SA11AI     C00694323        AE3AF0E… IND         NA       Gallagher Daniel    
+5 SA11AI     C00694323        AC55692… IND         NA       Bode      Denise    
+6 SA11AI     C00694323        A2B1EB0… IND         NA       Kaplan    Joel      
+# … with 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;,
+#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
+#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
+#   cycle &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>We can also click on the data name in the R Studio environment window to explore it interactively.</p>
+</section>
+<section id="group-by-and-count" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="group-by-and-count"><span class="header-section-number">14.3</span> Group by and count</h2>
+<p>So what if we wanted to know how many contributions went to each recipient?</p>
+<p>To do that by hand, we’d have to take each of the 54,247 individual rows (or observations or records) and sort them into a pile. We’d put them in groups – one for each recipient – and then count them.</p>
+<p><code>dplyr</code> has a group by function in it that does just this. A massive amount of data analysis involves grouping like things together and then doing simple things like counting them, or averaging them together. So it’s a good place to start.</p>
+<p>So to do this, we’ll take our dataset and we’ll introduce a new operator: <code>%&gt;%</code>. The best way to read that operator, in my opinion, is to interpret that as “and then do this.”</p>
+<p>We’re going to establish a pattern that will come up again and again throughout this book: <code>data %&gt;% function</code>. In English: take your data set and then do this specific action to it.</p>
+<p>The first step of every analysis starts with the data being used. Then we apply functions to the data.</p>
+<p>In our case, the pattern that you’ll use many, many times is: <code>data %&gt;% group_by(COLUMN NAME) %&gt;% summarize(VARIABLE NAME = AGGREGATE FUNCTION(COLUMN NAME))</code></p>
+<p>In our dataset, the column with recipient information is called “memo_text”</p>
+<p>Here’s the code to count the number of contributions to each recipient:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 519 × 2
+   memo_text                                           count_contribs
+   &lt;chr&gt;                                                        &lt;int&gt;
+ 1 Earmarked for ABRAHAM LINCOLN PAC (C00631051)                    3
+ 2 Earmarked for ADRIAN SMITH FOR CONGRESS (C00412890)              2
+ 3 Earmarked for AL FOR MONTANA (C00783381)                         1
+ 4 Earmarked for ALAMO PAC (C00387464)                              1
+ 5 Earmarked for ALAN SIMS FOR CONGRESS (C00784975)                 2
+ 6 Earmarked for ALASKANS FOR DAN SULLIVAN (C00570994)              5
+ 7 Earmarked for ALASKANS FOR NICK BEGICH (C00792341)               1
+ 8 Earmarked for ALEK FOR OREGON (C00715854)                      121
+ 9 Earmarked for ALEX FOR CONGRESS (C00771279)                      3
+10 Earmarked for ALLCORN FOR COLORADO (C00798983)                   2
+# … with 509 more rows</code></pre>
+</div>
+</div>
+<p>So let’s walk through that.</p>
+<p>We start with our dataset – <code>maryland_winred_contributions</code> – and then we tell it to group the data by a given field in the data. In this case, we wanted to group together all the recipients, signified by the field name <code>memo_text</code>, which you could get from using the glimpse() function. After we group the data, we need to count them up.</p>
+<p>In dplyr, we use the <code>summarize()</code> function, <a href="http://dplyr.tidyverse.org/reference/summarise.html">which can do alot more than just count things</a>.</p>
+<p>Inside the parentheses in summarize, we set up the summaries we want. In this case, we just want a count of the number of loans for each county grouping. The line of code <code>count_contribs = n(),</code> says create a new field, called <code>count_contribs</code> and set it equal to <code>n()</code>. <code>n()</code> is a function that counts the number of rows or records in each group. Why the letter n? The letter n is a common symbol used to denote a count of something. The number of things (or rows or observations or records) in a dataset? Statisticians call it n.&nbsp;There are n number of contributions in this dataset.</p>
+<p>When we run that, we get a list of recipients with a count next to them. But it’s not in any order.</p>
+<p>So we’ll add another “and then do this” symbol – %&gt;% – and use a new function called <code>arrange()</code>. Arrange does what you think it does – it arranges data in order. By default, it’s in ascending order – smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 519 × 2
+   memo_text                                                      count_contribs
+   &lt;chr&gt;                                                                   &lt;int&gt;
+ 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C0077…           7809
+ 2 Earmarked for NRSC (C00027466)                                           6497
+ 3 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00003418)                  4268
+ 4 Earmarked for NRCC (C00075820)                                           3945
+ 5 Earmarked for TEAM SCALISE (C00750521)                                   2477
+ 6 Earmarked for KEVIN MCCARTHY FOR CONGRESS (C00420935)                    1461
+ 7 Earmarked for MARCO RUBIO FOR SENATE (C00620518)                         1326
+ 8 Earmarked for RON JOHNSON FOR SENATE, INC. (C00482984)                    974
+ 9 Earmarked for JOHN KENNEDY FOR US (C00608398)                             955
+10 Earmarked for TIM SCOTT FOR SENATE (C00540302)                            915
+# … with 509 more rows</code></pre>
+</div>
+</div>
+<p>The Save America Joint Fundraising Committee has 7,809 contributions, more than any other recipient.</p>
+<p>We can, if we want, group by more than one thing.</p>
+<p>The WinRed data contains a column detailing the date of the contribution: “date”.</p>
+<p>We can group by “memo_text” and “date” to see how many contributions occurred on every date to every recipient. We’ll sort by recipient and then date</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text, date) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(memo_text, date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'memo_text'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9,194 × 3
+# Groups:   memo_text [519]
+   memo_text                                           date       count_contribs
+   &lt;chr&gt;                                               &lt;date&gt;              &lt;int&gt;
+ 1 Earmarked for ABRAHAM LINCOLN PAC (C00631051)       2022-06-27              1
+ 2 Earmarked for ABRAHAM LINCOLN PAC (C00631051)       2022-06-28              1
+ 3 Earmarked for ABRAHAM LINCOLN PAC (C00631051)       2022-06-30              1
+ 4 Earmarked for ADRIAN SMITH FOR CONGRESS (C00412890) 2022-04-01              1
+ 5 Earmarked for ADRIAN SMITH FOR CONGRESS (C00412890) 2022-06-27              1
+ 6 Earmarked for AL FOR MONTANA (C00783381)            2022-06-04              1
+ 7 Earmarked for ALAMO PAC (C00387464)                 2022-05-16              1
+ 8 Earmarked for ALAN SIMS FOR CONGRESS (C00784975)    2022-04-23              1
+ 9 Earmarked for ALAN SIMS FOR CONGRESS (C00784975)    2022-05-23              1
+10 Earmarked for ALASKANS FOR DAN SULLIVAN (C00570994) 2022-04-22              1
+# … with 9,184 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="other-summarization-methods-summing-mean-median-min-and-max" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="other-summarization-methods-summing-mean-median-min-and-max"><span class="header-section-number">14.4</span> Other summarization methods: summing, mean, median, min and max</h2>
+<p>In the last example, we grouped like records together and counted them, but there’s so much more we can to summarize each group.</p>
+<p>Let’s say we wanted to know the total dollar amount of contributions to each recipient? For that, we could use the <code>sum()</code> function to add up all of the loan values in the column “amount”. We put the column we want to total – “amount” – inside the sum() function <code>sum(amount)</code>. Note that we can simply add a new summarize function here, keeping our count_contribs field in our output table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 519 × 3
+   memo_text                                         count_contribs total_amount
+   &lt;chr&gt;                                                      &lt;int&gt;        &lt;dbl&gt;
+ 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COM…           7809      220155.
+ 2 Earmarked for NRSC (C00027466)                              6497      149673.
+ 3 Earmarked for NRCC (C00075820)                              3945      118658.
+ 4 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00…           4268      111955.
+ 5 Earmarked for NICOLEE AMBROSE FOR CONGRESS (C008…            150       67980.
+ 6 Earmarked for TEAM SCALISE (C00750521)                      2477       51709.
+ 7 Earmarked for PARROTT FOR CONGRESS (C00691931)               346       45243.
+ 8 Earmarked for MARCO RUBIO FOR SENATE (C00620518)            1326       43279.
+ 9 Earmarked for KEVIN MCCARTHY FOR CONGRESS (C0042…           1461       29612.
+10 Earmarked for RON JOHNSON FOR SENATE, INC. (C004…            974       29611.
+# … with 509 more rows</code></pre>
+</div>
+</div>
+<p>We can also calculate the average amount for each recipient – the mean – and the amount that sits at the midpoint of our data – the median.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 519 × 5
+   memo_text               count_contribs total_amount mean_amount median_amount
+   &lt;chr&gt;                            &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
+ 1 Earmarked for SAVE AME…           7809      220155.        28.2          20  
+ 2 Earmarked for NRSC (C0…           6497      149673.        23.0          12.5
+ 3 Earmarked for REPUBLIC…           4268      111955.        26.2          18  
+ 4 Earmarked for NRCC (C0…           3945      118658.        30.1          25  
+ 5 Earmarked for TEAM SCA…           2477       51709.        20.9          10  
+ 6 Earmarked for KEVIN MC…           1461       29612.        20.3          10  
+ 7 Earmarked for MARCO RU…           1326       43279.        32.6          20.2
+ 8 Earmarked for RON JOHN…            974       29611.        30.4          25  
+ 9 Earmarked for JOHN KEN…            955       26433.        27.7          15  
+10 Earmarked for TIM SCOT…            915       29095.        31.8          10  
+# … with 509 more rows</code></pre>
+</div>
+</div>
+<p>We see something interesting here. The mean contribution amount is higher than the median amount in most cases, but the difference isn’t huge. In some cases the mean gets skewed by larger amounts. Examining both the median – which is less sensitive to extreme values – and the mean – which is more sensitive to extreme values – gives you a clearer picture of the composition of the data.</p>
+<p>What about the highest and lowest amounts for each recipient? For that, we can use the <code>min()</code> and <code>max()</code> functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_amount =</span> <span class="fu">min</span>(amount),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_amount =</span> <span class="fu">max</span>(amount)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(max_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 519 × 7
+   memo_text    count_contribs total_amount mean_amount median_amount min_amount
+   &lt;chr&gt;                 &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Earmarked f…              5        7304       1461.            500       1   
+ 2 Earmarked f…             30       10442.       348.             25       1   
+ 3 Earmarked f…             24        6780        282.             25      10   
+ 4 Earmarked f…            358       17711.        49.5            10       0.5 
+ 5 Earmarked f…             75       14833.       198.              5       0.2 
+ 6 Earmarked f…              1        5800       5800            5800    5800   
+ 7 Earmarked f…             54        7900        146.             25       5   
+ 8 Earmarked f…              1        5800       5800            5800    5800   
+ 9 Earmarked f…            334       26920.        80.6            25       0.77
+10 Earmarked f…              3        6800       2267.            500     500   
+# … with 509 more rows, and 1 more variable: max_amount &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>From this, we can see that some committees focus on small-dollar donors while others ask for (and get) larger amounts. This pattern isn’t random: campaigns make choices about how they will raise money.</p>
+<p>It would be interesting to see what the largest donation was. To do that, we could simply take our original data set and sort it from highest to lowest on the amount.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 54,247 × 24
+   linenumber fec_committee_id tran_id flag_orgind org_name last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        A9EF36… IND         NA       Hansher   Beth      
+ 2 SA11AI     C00694323        A64BB5… IND         NA       Leishman  Alexander 
+ 3 SA11AI     C00694323        A5835B… IND         NA       Bode      John      
+ 4 SA11AI     C00694323        AE3AF0… IND         NA       Gallagher Daniel    
+ 5 SA11AI     C00694323        AC5569… IND         NA       Bode      Denise    
+ 6 SA11AI     C00694323        A2B1EB… IND         NA       Kaplan    Joel      
+ 7 SA11AI     C00694323        A2D9CC… IND         NA       Freas     Dustin    
+ 8 SA11AI     C00694323        A8F4D9… IND         NA       Monahan   Tom       
+ 9 SA11AI     C00694323        A3E262… IND         NA       powers    rick      
+10 SA11AI     C00694323        AD5034… IND         NA       JonesLan… Brien     
+# … with 54,237 more rows, and 17 more variables: middle_name &lt;lgl&gt;,
+#   prefix &lt;lgl&gt;, suffix &lt;lgl&gt;, address_one &lt;chr&gt;, address_two &lt;chr&gt;,
+#   city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;,
+#   amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;,
+#   memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Lots of $5,800 contributions, which probably seems like a weirdly specific number. And it is! That’s the maximum contribution an individual can give for both a primary and a general election.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./replication.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./mutating.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

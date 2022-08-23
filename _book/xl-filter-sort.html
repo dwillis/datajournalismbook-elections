@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-0.9.646">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 4&nbsp; Sorting and filtering to find stories</title>
+<title>Data Journalism with R and the Tidyverse - 6&nbsp; Sorting and filtering to find stories</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,6 +25,7 @@ ul.task-list{list-style: none;}
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./xl-formulas.html" rel="next">
 <link href="./xl-refresher.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -34,7 +35,7 @@ ul.task-list{list-style: none;}
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -64,7 +65,7 @@ ul.task-list{list-style: none;}
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -94,17 +95,152 @@ ul.task-list{list-style: none;}
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
   </div>
 </li>
     </ul>
@@ -116,21 +252,15 @@ ul.task-list{list-style: none;}
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#a-sorting-miracle" id="toc-a-sorting-miracle" class="nav-link active" data-scroll-target="#a-sorting-miracle"> <span class="header-section-number">4.1</span> A sorting miracle</a></li>
-  <li><a href="#sorting-and-filtering-as-a-reporting-tool" id="toc-sorting-and-filtering-as-a-reporting-tool" class="nav-link" data-scroll-target="#sorting-and-filtering-as-a-reporting-tool"> <span class="header-section-number">4.2</span> Sorting and filtering as a reporting tool</a></li>
-  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data"> <span class="header-section-number">4.3</span> Example data</a></li>
-  <li><a href="#working-with-excel-tables" id="toc-working-with-excel-tables" class="nav-link" data-scroll-target="#working-with-excel-tables"> <span class="header-section-number">4.4</span> Working with Excel “tables”</a>
+  <li><a href="#a-sorting-miracle" id="toc-a-sorting-miracle" class="nav-link active" data-scroll-target="#a-sorting-miracle"> <span class="header-section-number">6.1</span> A sorting miracle</a></li>
+  <li><a href="#sorting-and-filtering-as-a-reporting-tool" id="toc-sorting-and-filtering-as-a-reporting-tool" class="nav-link" data-scroll-target="#sorting-and-filtering-as-a-reporting-tool"> <span class="header-section-number">6.2</span> Sorting and filtering as a reporting tool</a></li>
+  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data"> <span class="header-section-number">6.3</span> Example data</a></li>
+  <li><a href="#understanding-data-types" id="toc-understanding-data-types" class="nav-link" data-scroll-target="#understanding-data-types"> <span class="header-section-number">6.4</span> Understanding data types</a>
   <ul class="collapse">
-  <li><a href="#sorting-rows" id="toc-sorting-rows" class="nav-link" data-scroll-target="#sorting-rows"> <span class="header-section-number">4.4.1</span> Sorting rows</a></li>
-  <li><a href="#filtering" id="toc-filtering" class="nav-link" data-scroll-target="#filtering"> <span class="header-section-number">4.4.2</span> Filtering</a></li>
-  </ul></li>
-  <li><a href="#video-of-sorting-and-filtering-with-salaries" id="toc-video-of-sorting-and-filtering-with-salaries" class="nav-link" data-scroll-target="#video-of-sorting-and-filtering-with-salaries"> <span class="header-section-number">4.5</span> Video of sorting and filtering with salaries</a></li>
-  <li><a href="#faq" id="toc-faq" class="nav-link" data-scroll-target="#faq"> <span class="header-section-number">4.6</span> FAQ</a>
-  <ul class="collapse">
-  <li><a href="#how-do-i-turn-off-all-of-my-sort-and-filters" id="toc-how-do-i-turn-off-all-of-my-sort-and-filters" class="nav-link" data-scroll-target="#how-do-i-turn-off-all-of-my-sort-and-filters">How do I turn off all of my sort and filters</a></li>
+  <li><a href="#sorting-rows" id="toc-sorting-rows" class="nav-link" data-scroll-target="#sorting-rows"> <span class="header-section-number">6.4.1</span> Sorting rows</a></li>
+  <li><a href="#filtering" id="toc-filtering" class="nav-link" data-scroll-target="#filtering"> <span class="header-section-number">6.4.2</span> Filtering</a></li>
+  <li><a href="#how-do-i-turn-off-all-of-my-filters" id="toc-how-do-i-turn-off-all-of-my-filters" class="nav-link" data-scroll-target="#how-do-i-turn-off-all-of-my-filters">How do I turn off all of my filters</a></li>
   <li><a href="#where-is-the-button-to-filter-columns" id="toc-where-is-the-button-to-filter-columns" class="nav-link" data-scroll-target="#where-is-the-button-to-filter-columns">Where is the button to filter <em>columns</em>?</a></li>
-  <li><a href="#im-getting-weird-questions-and-alerts-about-sorting" id="toc-im-getting-weird-questions-and-alerts-about-sorting" class="nav-link" data-scroll-target="#im-getting-weird-questions-and-alerts-about-sorting">I’m getting weird questions and alerts about sorting</a></li>
-  <li><a href="#i-want-to-get-rid-of-my-data-table" id="toc-i-want-to-get-rid-of-my-data-table" class="nav-link" data-scroll-target="#i-want-to-get-rid-of-my-data-table">I want to get rid of my data table</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -140,7 +270,7 @@ ul.task-list{list-style: none;}
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></h1>
 </div>
 
 
@@ -154,25 +284,15 @@ ul.task-list{list-style: none;}
 
 </header>
 
-<section id="a-sorting-miracle" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="a-sorting-miracle"><span class="header-section-number">4.1</span> A sorting miracle</h2>
-<p>After <a href="https://en.wikipedia.org/wiki/Shooting_of_Michael_Brown">police in Ferguson, Mo., killed Michael Brown in 2014</a>, advocates and journalists began examining the racial and ethnic gaps between police departments and the communities they served.</p>
-<p>The New York Times found a 7-year-old survey conducted by the Justice Department that allowed it to <a href="https://www.nytimes.com/interactive/2014/09/03/us/the-race-gap-in-americas-police-departments.html">compare the data for major cities in a standalone graphic</a> that it published later that year.</p>
-<p>When newer data reflecting departments’ makeup in 2012 was released a year later, Matt Apuzzo and Sarah Cohen hoped it would show some differences. It didn’t. So we were left trying to find news in the data that was clearly of public interest.</p>
-<p>After matching up the demographics of police departments with their cities, I started sorting, filtering and Googling. Could there be news in the outliers on the list? Which departments most closely represented their communities? Which ones had unusually large gaps?</p>
-<div class="figure float-right col-md-6 ml-3">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/xl-filter-sort-riley.png" class="figure-img img-fluid"></p>
-<p></p><figcaption class="figure-caption">Chief William T. Riley III. Credit: Laura McDermott for The New York Times</figcaption><p></p>
-</figure>
-</div>
-</div>
-<p>I quickly stumbled on telling anecdote to frame the story: Inkster, Mich. had one of the least representative departments in the country, and had recently hired a new police chief to help mend the department’s fraught relationship with its largely African-American community. Where had he come from? Selma, Ala., one of the most representative police departments in the nation. Interviews with the chief, William T. Riley III, suggested one reason for some cities’ disparities: there was no state or federal money to pay for training new police officers.</p>
-<p>The story, “<a href="https://www.nytimes.com/2015/11/08/us/politics/police-chiefs-looking-to-diversify-forces-face-structural-hurdles.html?unlocked_article_code=AAAAAAAAAAAAAAAACEIPuonUktbcrohlSVUbCybIRp8_qRmHmfnE2_skgXv_JyXQQjZDwuoORoyH_ETMY6Ume9x20zWFScVaMbE-AfJ11ORSJAljQgKl54CYgokOPzgvoIb2Xn4s05bARvY47TruJCGfGdtI-Yee7ViAISTiRrqMkjB6dlMyv8ZiJ137i3wM2qjERbNq3tUt2eMqD816WWxRNymOv_HoDhl_a86ULU2JsnlAUO5aXD7Zn9-Y-uhAJF0UUQSaOSs5tWUs69pcOMcUP7L_KHMieMn8g7YRAw94PdvjRs1xF8WPyeIc4fOaogeMycG22_w1CKxf2brHuW-7P10kI6iEmzxp800cWiwLurLqbSiQJw&amp;smid=url-share">Police Chiefs, Looking to Diversity Forces, Face Structural Hurdles</a>” helped explain the persistent gap between the makeup of police in some areas and the communities they served.</p>
+<section id="a-sorting-miracle" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="a-sorting-miracle"><span class="header-section-number">6.1</span> A sorting miracle</h2>
+<p>When Stephen Neukam - who was sitting in this class a year ago - wanted to find out who was funding candidates for Maryland’s open governor’s seat this year, he downloaded data from the State Board of Elections that listed contributions to the wide array of hopefuls seeking to replace Larry Hogan in Annapolis.</p>
+<p>He wasn’t sure at first what he was looking for, so he started the way that many reporters do with data: by sorting and filtering. Were there outliers in the list of contributions, and which candidates were getting their money from unusual (non-Maryland) sources?</p>
+<p>Neukam quickly found his story: in the race to be governor, Maryland candidates, and in particular Wes Moore, a first-time Democratic candidate, were raising millions of dollars from out of state donors.</p>
+<p>The story, “<a href="https://cnsmaryland.org/2022/03/03/millions-in-out-of-state-donations-help-fuel-high-profile-maryland-democratic-governor-candidates/">Millions in out-of-state donations help fuel high-profile Maryland Democratic governor candidates</a>” helped explain where candidates were going to fund one of the most contested primaries in recent history (Moore ended up winning).</p>
 </section>
-<section id="sorting-and-filtering-as-a-reporting-tool" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="sorting-and-filtering-as-a-reporting-tool"><span class="header-section-number">4.2</span> Sorting and filtering as a reporting tool</h2>
+<section id="sorting-and-filtering-as-a-reporting-tool" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sorting-and-filtering-as-a-reporting-tool"><span class="header-section-number">6.2</span> Sorting and filtering as a reporting tool</h2>
 <p>Sorting and filtering can:</p>
 <ul>
 <li>Narrow your focus to specific items that you want to examine in your story.</li>
@@ -180,138 +300,87 @@ ul.task-list{list-style: none;}
 <li>Let you answer quick “how many?” questions, with a count of the rows that match your criteria. (In the next lesson, you’ll see that pivot tables, or group-by queries, are much more powerful for this in most cases.)</li>
 </ul>
 </section>
-<section id="example-data" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="example-data"><span class="header-section-number">4.3</span> Example data</h2>
-<p>::: {.alert .alert-info } - <a href="https://cronkitedata.s3.amazonaws.com/xlfiles/wapo-shootings-filter.xlsx">Data from the Washington Post</a> for use in this tutorial - <a href="https://github.com/washingtonpost/data-police-shootings#about-the-data">Documentation from the Post’s github site</a> :::</p>
-<pre><code>                                            The data for this and several other chapters is the Washington Post's public data collection of police shootings in the U.S. It includes the nation's best guess about each fatal police shooting since 2015. There are a couple of caveats: 
-                                            
-                                            - It excludes deadly police interactions other than shooting a firarem at the suspect. Any strangulation, car crashes, Tasers without guns or other methods  are excluded. 
-                                          
-                                          - It is based primarily on news reports and the results public records requests so it often contains the story as told by police. We know that many of those reports are sugar-coated at best, and lies at worst. 
-                                          
-                                          - The Post says this is a list of fatal shootings, but doesn't say what happens if more than one person is killed. The [2019 shooting of D'Angelo Brown &amp; Megan Rivera in West Memphis](https://www.wbtv.com/2019/03/15/dash-cam-footage-aided-investigation-into-deadly-police-shooting-no-charges-officers/)  is shown as two rows^[Finding these is something that's pretty hard in a spreadsheet but will be really easy in R.] in the data  even though it was one event. So each row  might  be considered a shooting "victim",  a "suspect" or a shooting "fatality" rather than a "shooting". </code></pre>
-<p>The original data download link is <a href="https://github.com/washingtonpost/data-police-shootings/releases/download/v0.1/fatal-police-shootings-data.csv" class="uri">https://github.com/washingtonpost/data-police-shootings/releases/download/v0.1/fatal-police-shootings-data.csv</a>. The screenshots in this tutorial may not match exactly to what you get on their data – It had included incomplete 2021 data, and I added a column for the year.</p>
-<p>It’s a good example set for us because it’s been used as the basis of many stories, it has at least one of each <em>data type</em> that we plan to deal with in Excel, and it is <a href="https://github.com/washingtonpost/data-police-shootings#about-the-data">well documented on the Post’s github site</a>.</p>
-<pre><code>                                                                                                                                                                                                                   ## Understanding data types
-                                                                                                                                                                                                                   
-                                                                                                                                                                                                                   When you open the spreadsheet, the first thing to notice  is its [*granularity*](start-data-def.html). Unlike Census or budget spreadsheets, this is a list capturing specific characteristics of each fatality Each column has the same *type* of data from top to bottom. Those types are: 
-                                                                                                                                                                                                                     
-                                                                                                                                                                                                                     - **Text**. Text or "character" columns can come in long or short form. When they are standardized (the values can contain only one of a small list of values), they're called "categorical". If they're more free-form, they're might be called "free text". The computer doesn't know the difference, but you should. The Post data has examples of both. In spreadsheets, text is left-justified (they move toward the left of the cell and will line up vertically at the beginning)
-                                                                                                                                                                                                                   
-                                                                                                                                                                                                                   - **Numbers**. These are pure numbers with no commas, dollar signs or other embellishments. In Excel, as we'll see in the computing section, these can be formatted to *look* like numbers we care about , but underneath they're just numbers. Adding up a column of numbers that has a word in it or has missing values will just be ignored in Excel. It will trip up most other languages.  These are right-justified, so the last digit is always lined up vertically. 
-                                                                                                                                                                                                                   
-                                                                                                                                                                                                                   - **Logical**: This is a subset of text. It can take one of only two values -- yes or no, true or false. There is no "maybe". 
-                                                                                                                                                                                                                   
-                                                                                                                                                                                                                   - **Date and times**: These are actual dates on the calendar, which have magical properties. Underneath, they are a number. In Excel, that number is the number of days since Jan. 1, 1900.^[Each language deals with dates and times  a little differently. We'll see how R does it later on. But just know that dates can be tricky because of these differences and [time is even more tricky](https://infiniteundo.com/post/25326999628/falsehoods-programmers-believe-about-time) ] They can also have time attached to them, which in Excel is a fraction of a day. What this means is that the number 44,536.5  is really Dec. 6, 2021 at noon. In Excel, you use a format to tell the spreadsheet how you want to see the date or time, just the way you look at dollar values with commas and symbols. (If you get a spreadsheet with a lot of dates of 1/1/1900, it means there is a 0 in that column, which is sometimes a fill-in for "I don't know.")</code></pre>
+<section id="example-data" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="example-data"><span class="header-section-number">6.3</span> Example data</h2>
+<p>::: {.alert .alert-info } - <a href="https://github.com/stephenneukam/CNS_Annapolis/tree/main/Campaign_finance">Data from the State Board of Elections</a> for use in this tutorial - <a href="https://campaignfinance.maryland.gov/Public/ViewReceiptsMain">Documentation from the SBOE’s site</a> :::</p>
+<ul>
+<li><p>The data for this is from the Maryland State Board of Elections’s Campaign Finance Database. There are a couple of caveats:</p></li>
+<li><p>It includes money raised as of Jan.&nbsp;12, 2022, which covers all of 2021.</p></li>
+<li><p>These are self-reported by campaigns, and subject to amendment in case of errors or omissions.</p></li>
+</ul>
+<p>The original data download link for Wes Moore’s contributions is <a href="https://github.com/stephenneukam/CNS_Annapolis/raw/main/Campaign_finance/Moore_ContributionsList.csv" class="uri">https://github.com/stephenneukam/CNS_Annapolis/raw/main/Campaign_finance/Moore_ContributionsList.csv</a>. Download it to your computer and then, in a browser, type sheet.new to create a new Google Sheet. From there, use File -&gt; Import and choose “Upload” and select the file on your computer. Click the “Import Data” button when it appears. Then give your sheet a name, like “Wes Moore Contributions”.</p>
+<p>It’s a good example set for us because it’s been used as the basis of Neukam’s story and it has at least one of each <em>data type</em> that we plan to deal with in Google Sheets or Excel. And, critically, the first row contains headers, not data. Always have headers, even if you have to add them.</p>
+</section>
+<section id="understanding-data-types" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="understanding-data-types"><span class="header-section-number">6.4</span> Understanding data types</h2>
+<p>When you open the spreadsheet, the first thing to notice is its <a href="start-data-def.html"><em>granularity</em></a>. Unlike Census or budget spreadsheets, this is a list capturing specific characteristics of each contribution. Each column has the same <em>type</em> of data from top to bottom. Those types are:</p>
+<ul>
+<li><p><strong>Text</strong>. Text or “character” columns can come in long or short form. When they are standardized (the values can contain only one of a small list of values), they’re called “categorical”. If they’re more free-form, they’re might be called “free text”. The computer doesn’t know the difference, but you should. The Post data has examples of both. In spreadsheets, text is left-justified (they move toward the left of the cell and will line up vertically at the beginning)</p></li>
+<li><p><strong>Numbers</strong>. These are pure numbers with no commas, dollar signs or other embellishments. In Google Sheets these can be formatted to <em>look</em> like numbers in different ways, but underneath they’re just numbers. Adding up a column of numbers that has a word in it or has missing values will just be ignored. It will trip up most other languages. These are right-justified, so the last digit is always lined up vertically.</p></li>
+<li><p><strong>Logical</strong>: This is a subset of text. It can take one of only two values – yes or no, true or false. There is no “maybe”.</p></li>
+<li><p><strong>Date and times</strong>: These are actual dates on the calendar, which have magical properties. Underneath, they are a number. In Google Sheets and Excel, that number is the number of days since Jan.&nbsp;1, 1900.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> They can also have time attached to them, which is a fraction of a day. What this means is that the number 44,536.5 is really Dec.&nbsp;6, 2021 at noon. In Sheets, you use a format to tell the spreadsheet how you want to see the date or time, just the way you look at dollar values with commas and symbols. (If you get a spreadsheet with a lot of dates of 1/1/1900, it means there is a 0 in that column, which is sometimes a fill-in for “I don’t know.”)</p></li>
+</ul>
 <p>Here’s a picture of a date that is shown in a variety of formats.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl-filter-sort-dates.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption class="figure-caption">date formats</figcaption><p></p>
+<p></p><figcaption aria-hidden="true" class="figure-caption">date formats</figcaption><p></p>
 </figure>
 </div>
 <p>All of these are the same, underlying value – the number at the left. Notice that all of these are right-justified.</p>
 <p>This means that when you see “Friday, December 10”, the computer sees 44540.87431. When you put the dates in order, they won’t be alphabetized with all of the Fridays shown together. Instead, they’ll be arranged by the actual date and time.</p>
-<p>It also means that you can compute 911 response times even when it crosses midnight, or or compute the someone’s age today given a date of birth. Keeping actual calendar dates in your data will give it much more power than just having the words. (Excel uses the 1st of the month as a stand-in for an actual date when all you know is the month and year.)</p>
-</section>
-<section id="working-with-excel-tables" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="working-with-excel-tables"><span class="header-section-number">4.4</span> Working with Excel “tables”</h2>
-<p>Excel lets you put any type of data anywhere on your spreadsheet. To bring a little order to the chaos, it allows you to turn your data into a “table”, which is set up for sorting and filtering. It enforces some data types on you, and deals with missing information more smoothly. It is designed for tabular data without empty rows or columns, and where there is nothing else on the sheet.</p>
-<p>Put your cursor somewhere in the table, then use the “Format as table” button on the home screen. Check to make sure the “My table has headers” is checked.</p>
-<p><img src="images/xl-filter-sort-table.gif" class="img-fluid"></p>
-<section id="sorting-rows" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="sorting-rows"><span class="header-section-number">4.4.1</span> Sorting rows</h3>
+<p>It also means that you can compute 911 response times even when it crosses midnight, or or compute the someone’s age today given a date of birth. Keeping actual calendar dates in your data will give it much more power than just having the words. (Sheets and Excel use the 1st of the month as a stand-in for an actual date when all you know is the month and year.)</p>
+<section id="sorting-rows" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="sorting-rows"><span class="header-section-number">6.4.1</span> Sorting rows</h3>
 <p>Sorting means rearranging the rows of a data table into a different order. Some reporters take a conceptual shortcut and call this “sorting columns”. That thinking will only get you into trouble – it lets you forget that you want to keep the rows in tact while changing the order in which you see them. In fact, in other languages it’s called “order by” or “arrange” by one or more columns – a much clearer way to think of it.</p>
-<p>In Excel, look for the sort options under the Data tab at the top of your screen. In this case, sorting from oldest to newest gives you a list of the fatalities in chronological order, including the time of day.</p>
-<p>To sort your data, put your cursor in one of the cells within your data area, and choose Data…Sort. Please don’t use the A-&gt;Z or Z-&gt;A buttons!</p>
-<p><img src="images/xl-filter-sort-sortbox.png" class="img-fluid" style="width:100.0%"></p>
+<p>To sort in Google Sheets, first highlight the entire sheet by clicking on the button above the first row and to the left of the first column. So, between the 1 and the A. Then, look for the sort options under the Data drop-down menu at the top of your screen, and choose “Sort Range” and then “Advanced range sorting options”. Trust me, this is how you want to do it. Check the box that says “Data has header row” and Sort by Contribution Date. In this case, sorting from A to Z gives you a list of the contributions in chronological order.</p>
+<p><img src="images/sheets-filter-sort-sortbox.png" class="img-fluid" style="width:80.0%"></p>
 <section id="adding-fields-to-the-sort" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="adding-fields-to-the-sort">Adding fields to the sort</h4>
-<p>Adding more columns to the sort box tells Excel what to do when the first one is the same or tied. For example, sorting first by state then by date gives you a list that shows all of the events by state in sequence:</p>
-<p><img src="images/xl-filter-sort-state.png" class="img-fluid" style="width:100.0%"></p>
+<p>Adding more columns to the sort box tells Sheets what to do when the first one is the same or tied. For example, sorting first by date then by amount gives you a list that shows all of the contributions by date in sequence:</p>
+<p><img src="images/sheets-filter-sort-date.png" class="img-fluid" style="width:50.0%"></p>
 </section>
 </section>
-<section id="filtering" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="filtering"><span class="header-section-number">4.4.2</span> Filtering</h3>
+<section id="filtering" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="filtering"><span class="header-section-number">6.4.2</span> Filtering</h3>
 <p>Filtering means picking out only some of the rows you want to see based on a criteria you select in a column. Think of it as casting a fishing net – the more filters you add, the fewer fish will be caught.</p>
-<p>When you created the table, it also created little drop-down arrows on the top row. If you can’t see them, use CTL-HOME or CTL-UP on the first column to get yourself back to the top. Each filter you select adds more conditions, narrowing your net.</p>
-<p>To find fatalities that involved a firearm with a Taser, use the drop-down menu under <code>manner_of_death</code> select it. (This is an example of naming a column in an unexpected way. Usually, a “manner” of death relates to the circumstances such as accident, suicide or homicide. It’s why you can’t count on understanding the column names without a crib sheet from the data’s maker, called a data dictionary or record layout. The Post’s crib sheet is excellent!)</p>
-<p>When you do this, notice that the bottom left briefly shows you the number of rows that matched your filter, and the line numbers turn blue. Any rows that don’t match your filter hidden.</p>
-<p><img src="images/xl-filter-sort-onefilter.gif" class="img-fluid"></p>
+<p>To turn on filters in Google Sheets, go to Data -&gt; Create a filter. It will add small down arrows to each column in the first row, another reason why headers are crucial. You can filter by multiple columns, and each filter you select adds more conditions, narrowing your net.</p>
+<p>To find contributions of $5,000, use the drop-down menu under <code>Contribution Amount</code> to select it and hit “OK”.</p>
+<p>When you do this, notice that the drop-down arrow has turned into a solid green funnel and that any rows that don’t match your filter are hidden.</p>
+<p><img src="images/sheets-filter-sort-onefilter.png" class="img-fluid"></p>
 <div class="alert alert-warning">
 <p>This method works for small-ish and simple-ish columns. If your column has more than 10,000 different entries, such as names or addresses, only the first 10,000 will be considered. We only caught these for stories when someone did a fact-check using a different method of filtering. If your column has a lot of distinct entries, use option that says “Choose One”, and then use the “Contains” option. Better yet, don’t use filtering for counting things at all.</p>
 </div>
-<p>Add more filters to narrow down your list of cases even more. For example, the New York Times ran a series of stories in 2021 about unarmed people shot by police. One story was about those who were fleeing by car. Here’s one way to get a preliminary list of those cases:</p>
-<ol type="1">
-<li>Remove any filter you already have on.</li>
-<li>Turn on the filters again if you turned them off.</li>
-<li>Choose “unarmed” under <code>armed</code> and “car” under <code>flee</code>.</li>
-</ol>
-<p>(Of course, the Times didn’t stop there in trying to find more cases and teasing out more of them from this and other data. But this is a start. )</p>
-<p><img src="images/xl-filter-sort-unarmed-fleeing.gif" class="img-fluid"></p>
+<p>Add more filters to narrow down your list of cases even more. For example, if you wanted to see $5,000 contributions from individuals, you would choose “Individual” under Contributor Type:</p>
+<p><img src="images/sheets-filter-sort-twofilters.png" class="img-fluid"></p>
 <section id="different-kinds-of-filters" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="different-kinds-of-filters">Different kinds of filters</h4>
-<p>There are several options under the filter box, depending on what data <em>type</em> in in the column. In numeric columns, you can get top and bottom lists. Dates will automatically collapse into years, then months, then days to let you choose more efficiently.</p>
-<p><img src="images/xl-filter-sort-filter-options.png" class="img-fluid" style="width:100.0%"></p>
+<p>There are several options under the filter drop-down menu under “Filter by condition”, and you also can type values into a search box to try and filter that way (the latter option is best for text columns). There also is a “Filter by color” option. My opinion: don’t do this.</p>
+<p><img src="images/sheets-filter-sort-filter-options.png" class="img-fluid" style="width:30.0%"> ## FAQ</p>
 </section>
 </section>
-</section>
-<section id="video-of-sorting-and-filtering-with-salaries" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="video-of-sorting-and-filtering-with-salaries"><span class="header-section-number">4.5</span> Video of sorting and filtering with salaries</h2>
-<p>This video goes through many of the details of sorting and filtering. <a href="https://cronkitedata.s3.us-west-1.amazonaws.com/xlfiles/phoenix_salaries.xlsx">Follow along using this spreadsheet of Phoenix city salaries</a>. It’s from a different year, but the idea is just the same.</p>
-<p>Note that in this case, the original order of the dataset was alphabetical, except lower-case names came at the very end. It would be very hard to get back to this order in a spreadsheet if you didn’t have that leftmost column of numbers that indicated the original order.</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/QByd8L7owsQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" style="margin: 2em;">
-</iframe>
-</section>
-<section id="faq" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="faq"><span class="header-section-number">4.6</span> FAQ</h2>
-<section id="how-do-i-turn-off-all-of-my-sort-and-filters" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="how-do-i-turn-off-all-of-my-sort-and-filters">How do I turn off all of my sort and filters</h3>
-<p>In the data tab, chose “Clear” (the funnel with the red “X”) to remove all of the filters and sorts on your table.</p>
+<section id="how-do-i-turn-off-all-of-my-filters" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="how-do-i-turn-off-all-of-my-filters">How do I turn off all of my filters</h3>
+<p>In the data tab, chose “Remove filter” to remove all of the filters.</p>
 </section>
 <section id="where-is-the-button-to-filter-columns" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="where-is-the-button-to-filter-columns">Where is the button to filter <em>columns</em>?</h3>
-<p>Sometimes you don’t want to see all of your columns – there are too many and they’re getting confusing. There is no column filter in Excel. (You’ll see how to filter, or “Select”, columns from a dataset in standard programming languages later.)</p>
+<p>Sometimes you don’t want to see all of your columns – there are too many and they’re getting confusing. There is no column filter in Sheets or Excel (You’ll see how to filter, or “Select”, columns from a dataset in R later.)</p>
 <p>Instead, you can hide the columns you don’t want to see. When columns and rows are hidden, they generally won’t copy to a new sheet.</p>
-</section>
-<section id="im-getting-weird-questions-and-alerts-about-sorting" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="im-getting-weird-questions-and-alerts-about-sorting">I’m getting weird questions and alerts about sorting</h3>
-<p><em>Slow down and read the alert</em>. There are two common types of alerts in sorting, since it has the potential to wreck your spreadsheet.</p>
-<p>The first comes if you selected an entire column, and then just hit the button that says “A-Z” with the arrow. Excel won’t let you do that if it’s formatted as a table, but it will if it’s just a normal spreadsheet. This alert asks you if you REALLY want to sort only the column you’ve selected, separating its meaning from the rest of the rows. The answer is NO. Always. Expand the selection as Excel wants you do to by default.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/xl-filter-sort-faq1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">filter date</figcaption><p></p>
-</figure>
-</div>
-<p>The other comes when you have numbers that are treated as text. This is a tricky question, and a properly tidied spreadsheet should avoid it most of the time. If you have the same type of data in each column, the answer to this question shouldn’t matter. If not, neither one will give you what you want.</p>
-</section>
-<section id="i-want-to-get-rid-of-my-data-table" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="i-want-to-get-rid-of-my-data-table">I want to get rid of my data table</h3>
-<p>You can revert to the a plain old spreadsheet by selecting any cell within your table, then looking for the “Table” tab at the top of your screen. Choose the option that says “Convert to Range”.</p>
 
 
 </section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>Each language deals with dates and times a little differently. We’ll see how R does it later on. But just know that dates can be tricky because of these differences and <a href="https://infiniteundo.com/post/25326999628/falsehoods-programmers-believe-about-time">time is even more tricky</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
-  }
-  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -392,10 +461,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./xl-refresher.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./xl-formulas.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

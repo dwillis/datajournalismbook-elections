@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.646">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Journalism with R and the Tidyverse - 13&nbsp; Data journalism in the age of replication</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./aggregates.html" rel="next">
+<link href="./r-basics.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Journalism with R and the Tidyverse</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./replication.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-stylebook" id="toc-the-stylebook" class="nav-link active" data-scroll-target="#the-stylebook"> <span class="header-section-number">13.1</span> The stylebook</a></li>
+  <li><a href="#replication" id="toc-replication" class="nav-link" data-scroll-target="#replication"> <span class="header-section-number">13.2</span> Replication</a></li>
+  <li><a href="#goodbye-excel" id="toc-goodbye-excel" class="nav-link" data-scroll-target="#goodbye-excel"> <span class="header-section-number">13.3</span> Goodbye Excel?</a></li>
+  <li><a href="#receptivity-is-high" id="toc-receptivity-is-high" class="nav-link" data-scroll-target="#receptivity-is-high"> <span class="header-section-number">13.4</span> “Receptivity … is high”</a></li>
+  <li><a href="#replication-in-notebooks" id="toc-replication-in-notebooks" class="nav-link" data-scroll-target="#replication-in-notebooks"> <span class="header-section-number">13.5</span> Replication in notebooks</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>A single word in a single job ad for <a href="https://www.buzzfeednews.com/">Buzzfeed News</a> posted in 2017 offered an indication of a profound shift in how data journalism is both practiced and taught.</p>
+<p>“We’re looking for someone with a passion for news and a commitment to using data to find amazing, important stories — both quick hits and deeper analyses that drive conversations,” the posting seeking a data journalist says. It goes on to list five things BuzzFeed is looking for: Excellent collaborator, clear writer, deep statistical understanding, knowledge of obtaining and restructuring data.</p>
+<p>And then there’s this:</p>
+<p><strong>“You should have a strong command of at least one toolset that (a) allows for filtering, joining, pivoting, and aggregating tabular data, and (b) enables reproducible workflows.”</strong></p>
+<p>The word you’re seeing more and more of? Reproducible. And it started in earnest in 2017 when data journalism crossed a major threshold in American journalism: It got it’s own section in the <a href="https://www.apstylebook.com/">Associated Press Stylebook</a>.</p>
+<p>“Data journalism has become a staple of reporting across beats and platforms,” the Data Journalism section of the Stylebook opens. “The ability to analyze quantitative information and present conclusions in an engaging and accurate way is no longer the domain of specialists alone.”</p>
+<p>The AP’s Data Journalism section discusses how to request data and in what format, guidelines for scraping data from websites with automation, the ethics of using leaked or hacked data and other topics long part of data journalism conference talks.</p>
+<p>But the third page of the section contains perhaps the most profound commandment: <strong>“As a general rule, all assertions in a story based on data analysis should be reproducible. The methodology description in the story or accompanying materials should provide a road map to replicate the analysis.”</strong></p>
+<p>Reproducible research – replication – is a cornerstone of scientific inquiry. Researchers across a range of academic disciplines use methods to find new knowledge and publish it in peer reviewed journals. And, when it works, other researchers take that knowledge and try it with their own samples in their own locations. Replication studies exist to take something from an “interesting finding” to a “theory” and beyond.</p>
+<p>It doesn’t always work.</p>
+<p>Replication studies aren’t funded at nearly the level as new research. And, to the alarm of many, scores of studies can’t be replicated by others. Researchers across disciplines are finding that when their original studies are replicated, flaws are found, or the effects found aren’t as strong as the original. Because of this, academics across a number of disciplines have written about a replication crisis in their respective fields, particularly psychology, social science and medical research.</p>
+<p>In Chapter 1 of the <a href="https://www.amazon.com/New-Precision-Journalism-Midland-Book/dp/0253206642">New Precision Journalism</a>, Phil Meyer wrote that “we journalists would be wrong less often if we adapted to our own use some of the research tools of the social scientists.”</p>
+<p>Meyer would go on to write about how computers pouring over datasets too large to crunch by hand had changed social science from a discipline with “a few data and a lot of interpretation” into a much more meaningful and powerful area of study. If journalists could become comfortable with data and some basic statistics, they too could harness this power.</p>
+<p>“It used to be said that journalism is history in a hurry,” Meyer wrote. “The argument of this book is that to cope with the acceleration of social change in today’s world, journalism must become social science in a hurry.”</p>
+<p>He wrote that in 1971. It might as well have been yesterday.</p>
+<p>Journalism doesn’t have a history of replication, but the concerns about credibility are substantially greater. Trust in media is at an all time low and shows no signs of improving. While the politics of the day have quite a bit to do with this mistrust of media, being more transparent about what journalists do can’t hurt.</p>
+<p>The AP’s commandment that “Thou must replicate your findings” could, if taken seriously by the news business, have substantial impacts on how data journalism gets done in newsrooms and how data journalism gets taught, both at professional conferences and universities.</p>
+<p>How? Two ways.</p>
+<ul>
+<li>The predominant way that data journalism gets done in a newsroom is through simple tools like Microsoft Excel or Google Sheets. Those simple tools, on their own, lack significant logging functions that automatically keep track of steps a data journalist took to reach a given conclusion. That means journalists using those tools have to maintain separate, detailed logs of what they did so any analysis can be replicated.</li>
+<li>The predominant way that data journalism gets taught – both in professional settings and at most universities – doesn’t deal with replication at all. The tools and the training stress “getting things done” – an entirely logical focus for a deadline driven business. The choices of tools – like spreadsheet programs – are made to get from data to story as quick as possible, without frightening away math and tech phobic students.</li>
+</ul>
+<p>If the AP’s replication rules are to be followed, journalism needs to become much more serious about the tools and techniques used to do data journalism. The days of “point and click” tools to do “quick and dirty” analysis that get published are dying. The days of formal methods using documented steps are here.</p>
+<section id="the-stylebook" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="the-stylebook"><span class="header-section-number">13.1</span> The stylebook</h2>
+<p>Troy Thibodeaux, the editor of the AP’s data journalism team, said the stylebook entry started when the data team found themselves answering the same questions over and over. With a grant from the Knight Foundation, the team began to document their own standards and turn that into a stylebook section.</p>
+<p>From the beginning, they had a fairly clear idea of what they wanted to do – think through a project and ask what the frequently asked questions are that came up. It was not going to be a soup-to-nuts guide to how to do a data project.</p>
+<p>When the section came out, eyebrows went up on the replication parts, surprising Thibodeaux.</p>
+<p>“From our perspective, this is a core value for us,” he said. “Just for our own benefit, we need to be able to have someone give us a second set of eyes. We benefit from that every day. We catch things for each other.”</p>
+<p>Thibodeaux said the AP data team has two audiences when it comes to replication – they have the readers of the work, and members of the collective who may want to do their own work with the data.</p>
+<p>“This is something that’s essential to the way we work,” he said. “And it’s important in terms of transparency and credibility going forward. We thought it would be kind of unexceptionable.”</p>
+</section>
+<section id="replication" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="replication"><span class="header-section-number">13.2</span> Replication</h2>
+<p>Meyer, now 86, said he’s delighted to see replication up for discussion now, but warned that we shouldn’t take it too far.</p>
+<p>“Making the analysis replicable was something I worried about from the very beginning,” he wrote in an email. So much so that in 1967, after publishing stories from his landmark survey after the Detroit riots, he shipped the data and backup materials about it to a social science data repository at the University of North Carolina.</p>
+<p>And, in doing so, he opened the door to others replicating his results. One scholar attempted to find fault with Meyer’s analysis by slicing the data ever thinner until the differences weren’t significant – gaming the analysis to criticize the stories.</p>
+<p>Meyer believes replication is vitally important, but doesn’t believe it should take on the trappings of science replication, where newsrooms take their own samples or re-survey a community. That would be prohibitively expensive.</p>
+<p>But journalists should be sharing their data and analysis steps. And it doesn’t need to be complicated, he said.</p>
+<p>“Replication is a theoretical standard, not a requirement that every investigator duplicate his or her own work for every project,” he said. “Giving enough information in the report to enable another investigator to follow in your footsteps is enough. Just telling enough to make replication possible will build confidence.”</p>
+<p>But as simple as that sounds, it’s not so simple. Ask social scientists.</p>
+<p>Andrew Gelman, a professor of statistics and political science and director of the Applied Statistics Center at Columbia University, wrote in the journal CHANCE that difficulties with replication in empirical research are pervasive.</p>
+<p>“When an outsider requests data from a published paper, the authors will typically not post or send their data files and code, but instead will point to their sources, so replicators have to figure out exactly what to do from there,” Gelman wrote. “End-to-end replicability is not the norm, even among scholars who actively advocate for the principles of open science.”</p>
+<p>So goes science, so goes journalism.</p>
+<p>Until a recent set of exceptions, journalists rarely shared data. The “nerd box” – a sidebar story that explains how a news organization did what they did – is a term that first appeared on NICAR-L, a email listserv of data journalists, in the 1990s.</p>
+<p>It was a form born in print.</p>
+<p>As newsrooms adapted to the internet, some news organizations began linking to their data sources if they were online. Often, the data used in stories were obtained through records requests. Sometimes, reporters created the data themselves.</p>
+<p>Journalism, more explicitly than science, is a competitive business. There have been arguments that nerd boxes and downloadable links give too much away to competitors.</p>
+<p>Enter the AP Stylebook.</p>
+<p>The AP Stylebook argues explicitly for both internal and external replication. Externally, they argue that the <strong>“methodology description in the story or accompanying materials should provide a road map to replicate the analysis”</strong>, meaning someone else could do the replication post publication.</p>
+<p>Internally, the AP Stylebook says: <strong>“If at all possible, an editor or another reporter should attempt to reproduce the results of the analysis and confirm all findings before publication.”</strong></p>
+<p>There are two problems here.</p>
+<p>First is that journalism, unlike science, has no history of replication. There is no “scientific method” for stories. There is no standard “research methods” class taught at every journalism school, at least not where it comes to writing stories. And, beyond that, journalism school isn’t a requirement to get into the news business. In other words, journalism lacks the standards other disciplines have.</p>
+<p>The second problem is, in many ways, worse: Except for the largest newsrooms, most news organizations lack editors who could replicate the analysis. Many don’t have a second person who would know what to do.</p>
+<p>Not having a second set of eyes in a newsroom is a problem, Thibodeaux acknowledges. Having a data journalism team “is an incredible luxury” at the AP, he said, and their rule is nothing goes on the wire without a second set of eyes.</p>
+<p>Thibodeaux, for his part, wants to see fewer “lone nerds in the corner” – it’s too much pressure. That person gets too much credibility from people who don’t understand what they do, and they get too much blame when a mistake is made.</p>
+<p>So what would replication look like in a newsroom? What does this mean for how newsrooms do data journalism on deadline?</p>
+</section>
+<section id="goodbye-excel" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="goodbye-excel"><span class="header-section-number">13.3</span> Goodbye Excel?</h2>
+<p>For decades, Excel has been the gateway drug for data journalists, the Swiss Army knife of data tools, the “One Tool You Can’t Live Without.” Investigative Reporters and Editors, an organization that trains investigative journalists, have built large amounts of their curricula around Excel. Of the journalism schools that teach data journalism, most of them begin and end with spreadsheets.</p>
+<p>The Stylebook says at a minimum, today’s data journalists should keep a log that details:</p>
+<ul>
+<li>The source of the data, making sure to work on a copy of the data and not the original file.</li>
+<li>Data dictionaries or any other supporting documentation of the data.</li>
+<li><strong>“Description of all steps required to transform the data and perform the analysis.”</strong></li>
+</ul>
+<p>The trouble with Excel (or Google Sheets) is, unless you are keeping meticulous notes on what steps you are taking, there’s no way to keep track. Many data journalists will copy and paste the values of a formula over the formula itself to prevent Excel from fouling up cell references when moving data around – a practical step that also cuts off another path to being able to replicate the results.</p>
+<p>An increasing number of data journalists are switching to tools like analysis notebooks, which use languages like Python and R, to document their work. The notebooks, generally speaking, allow a data journalist to mix code and explanation in the same document.</p>
+<p>Combined with online sharing tools like GitHub, analysis notebooks seem to solve the problem of replication. But the number using them is small compared to those using spreadsheets. Recent examples of news organizations using analysis notebooks include the <a href="https://github.com/datadesk">Los Angeles Times</a>, the <a href="https://github.com/TheUpshot">New York Times</a>, <a href="https://github.com/fivethirtyeight/data">FiveThirtyEight</a>, and <a href="https://github.com/BuzzFeedNews">Buzzfeed</a>.</p>
+<p>Peter Aldous, a data journalist at Buzzfeed recently published a story about how the online news site used machine learning to <a href="https://www.buzzfeednews.com/article/peteraldhous/us-marshals-spy-plane-over-mexico#.qqYnVj0B">find airplanes being used to spy on people in American cities</a>. Published with the story is the <a href="https://github.com/BuzzFeedNews/2017-08-spy-plane-finder">code Aldous used to build his case</a>.</p>
+<p>“I think of it this way: As a journalist, I don’t like to simply trust what people tell me. Sometimes sources lie. Sometimes they’re just mistaken. So I like to verify what I’m told,” he wrote in an email. “By the same token, why should someone reading one of my articles believe my conclusions, if I don’t provide the evidence that explains how I reached them?”</p>
+<p>The methodology document, associated code and source data took Aldous a few hours to create. The story, from the initial data work through the reporting required to make sense of it all, took a year. Aldous said there wasn’t a discussion about if the methodology would be published because it was assumed – “it’s written into our DNA at BuzzFeed News.”</p>
+<p>“My background is in science journalism, and before that (way back in the 1980s) in science,” Aldous said. “In science, there’s been a shift from descriptive methods sections to publishing data and analysis code for reproducible research. And I think we’re seeing a similar shift in data journalism. Simply saying what you’ve done is not as powerful as providing the means for others to repeat and build on your work.”</p>
+<p>Thibodeaux said that what Buzzfeed and others do with analysis notebooks and code repositories that include their data is “lovely.”</p>
+<p>“That to me is the shining city on the hill,” Thibodeaux said. “We’re not going to get there, and I don’t think we have to for every story and every use case, and I don’t think it’s necessarily practical for every person working with data to get to that point.”</p>
+<p>There’s a wide spectrum of approaches that still gets journalists to the essence of what the stylebook is trying to do, Thibodeaux said. There are many tools, many strategies, and the AP isn’t going to advocate for any single one of them, he said. They’re just arguing for transparency and replicability, even if that means doing more work.</p>
+<p>“There’s a certain burden that comes with transparency,” he said. “And I think we have to accept that burden.”</p>
+<p>The question, Thibodeaux said, is what is sufficient? What’s enough transparency? What does someone need for replicability?</p>
+<p>“Maybe we do have to set a higher standard – the more critical the analysis is to the story, and the more complex that analysis is, that’s going to push the bar on what is a sufficient methodology statement,” he said. “And it could end up being a whole code repo in order to just say, this isn’t black magic, here’s how we got it if you’re so interested.”</p>
+</section>
+<section id="receptivity-is-high" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="receptivity-is-high"><span class="header-section-number">13.4</span> “Receptivity … is high”</h2>
+<p>Though written almost half a century ago, Meyer foresaw how data journalism was going to arrive in the newsroom.</p>
+<p>“For the new methods to gain currency in journalism, two things must happen,” he wrote. “Editors must feel the need strongly enough to develop the in-house capacity for systematic research … The second need, of course, is for the editors to be able to find the talent to fill this need.”</p>
+<p>Meyer optimistically wrote that journalism schools were prepared to provide that talent – they were not then, and only small handful are now – but students were unlikely to be drawn to these new skills if they didn’t see a chance to use those skills in their careers.</p>
+<p>It’s taken 45 years, but we are now at this point.</p>
+<p>“The potential for receptivity, especially among the younger generation of newspaper managers, is high,” Meyer wrote.</p>
+</section>
+<section id="replication-in-notebooks" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="replication-in-notebooks"><span class="header-section-number">13.5</span> Replication in notebooks</h2>
+<p>For our purposes in this book, replication requires two things from you, the student: What and why. What is this piece of code doing, and why are you doing that here and now? What lead you to this place? That you can copy and paste code from this book or the internet is not impressive. What is necessary for learning is that you know what a piece of code is doing a thing and why you want to do that thing here.</p>
+<p>How will we replicate? We’ll make use of special text files – R Markdown, also known as R Notebooks – that combine contextual text; the code we use to load, clean, analyze and visualize data; and the output of that code that allowed us to draw certain conclusions to use in stories.</p>
+<p>In an R Notebook, there are two blocks: A block that uses markdown, which has no special notation, and a code block. The code blocks can run mulitple languages inside R Studio. There’s R, of course, but we could also run Python, a general purpose scripting language; and SQL, or Structured Query Language, the language of databases.</p>
+<p>For the rest of the class, we’re going to be working in notebooks.</p>
+<p>In notebooks, you will both run your code and explain each step, much as I am doing here in this online book. This entire book was produced with R markdown files.</p>
+<p>To start a notebook in R Studio, you click on the green plus in the top left corner and go down to R Notebook.</p>
+<p><img src="images/verybasics2.png" class="img-fluid"></p>
+<p>In our first lab, we’ll go through the process of editing a markdown notebook.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./r-basics.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./aggregates.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.646">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Journalism with R and the Tidyverse - 20&nbsp; Data Cleaning Part III: Open Refine</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./pdfs.html" rel="next">
+<link href="./data-cleaning-part-ii.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Journalism with R and the Tidyverse</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#refinr-open-refine-in-r" id="toc-refinr-open-refine-in-r" class="nav-link active" data-scroll-target="#refinr-open-refine-in-r"> <span class="header-section-number">20.1</span> Refinr, Open Refine in R</a></li>
+  <li><a href="#manually-cleaning-data-with-open-refine" id="toc-manually-cleaning-data-with-open-refine" class="nav-link" data-scroll-target="#manually-cleaning-data-with-open-refine"> <span class="header-section-number">20.2</span> Manually cleaning data with Open Refine</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>Gather ’round kids and let me tell you a tale about one of your authors. In college, this author (Matt Waite) got involved in a project where he mapped crime in Lincoln, Nebraska, looking specifically in the neighborhoods surrounding campus. This was in the mid 1990s. Computers were under powered. Tools were pretty primitive. I was given a database of nearly 50,000 calls for service.</p>
+<p>And then I learned that addresses were not stored in a standard way. However the officer wrote it down, that’s how it was recorded.</p>
+<p>What did that mean?</p>
+<p>It meant the Lincoln Police Department came up with dozens of ways to say a single place. And since the mapping software needed the addressed to be in a specific form, I had to fix them. For example, I will go to my grave knowing that Lincoln High School’s street address is 2229 J Street. Police officers wrote down LHS, L.H.S., Lincoln HS, Lincoln H.S., LHS (J Street), 2229 J, 2229 J ST, St., Street and on and on and on. That one was relatively easy. The local convenience store chain, with 8 locations around the city, was harder. I had to use the patrol district to locate them.</p>
+<p>It took me four months to clean up more than 30,000 unique addresses and map them.</p>
+<p>I tell you this because if I had Open Refine, it would have taken me a week, not four months.</p>
+<p>Every time I talk about Open Refine, I remember this, and I get mad.</p>
+<p>Fortunately (unfortunately?) several columns in the PPP loan data we’re working with are flawed in exactly the same way. There are dozens of variations on just “Baltimore”.</p>
+<p>We’re going to explore two ways into Open Refine: Through R, and through Open Refine itself.</p>
+<section id="refinr-open-refine-in-r" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="refinr-open-refine-in-r"><span class="header-section-number">20.1</span> Refinr, Open Refine in R</h2>
+<p>What is Open Refine?</p>
+<p>Open Refine is a software program that has tools – algorithms – that find small differences in text and helps you fix them quickly. How Open Refine finds those small differences is through something called clustering. The algorithms behind clustering are not exclusive to Open Refine, so they can be used elsewhere.</p>
+<p>Enter <code>refinr</code>, a package that contains the same clustering algorithms as Open Refine but all within R. Go ahead and install it if you haven’t already by opening the console and running <code>install.packages("refinr")</code>. Then we can load libraries as we do.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.7     ✔ dplyr   1.0.9
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(refinr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+<p>Let’s load some campaign expenditure data focused on food-related expenses in Washington, D.C. Essentially, where campaigns spend their money on D.C. restaurants.</p>
+<p>Now let’s try and group and count the number of expenditures by recipient. To make it a bit more manageable, let’s use another string function from <code>stringr</code> and filter for recipients that start with the uppercase “W” or lowercase “w” using the function <code>str_detect()</code> with a regular expression.</p>
+<p>The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the “^” symbol means “starts with”) a lowercase “w” OR (the vertical “|”, called a pipe, means OR) an uppercase “W”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_name, <span class="st">'^w|^W'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50 × 2
+   recipient_name      count
+   &lt;chr&gt;               &lt;int&gt;
+ 1 W HOTELS                3
+ 2 W. MILLAR &amp; CO          1
+ 3 W. MILLAR &amp; CO.         5
+ 4 WA METRO                1
+ 5 WAGSHAL'S DELI          1
+ 6 WALMART SUPERCENTER    13
+ 7 WALTER'S SPORTS BAR     1
+ 8 WALTERS                 1
+ 9 WALTERS SPORT           1
+10 WALTERS SPORTS          1
+# … with 40 more rows</code></pre>
+</div>
+</div>
+<p>There are several problems in this data that will prevent proper grouping and summarizing. We’ve learned several functions to do this manually.</p>
+<p>By using the Open Refine package for R, <code>refinr</code>, our hope is that it can identify and standardize the data with a little more ease.</p>
+<p>The first merging technique that’s part of the <code>refinr</code> package we’ll try is the <code>key_collision_merge</code>.</p>
+<p>The key collision merge function takes each string and extracts the key parts of it. It then puts every key in a bin based on the keys matching.</p>
+<p>One rule you should follow when using this is: <strong>do not overwrite your original fields</strong>. Always work on a copy. If you overwrite your original field, how will you know if it did the right thing? How can you compare it to your original data? To follow this, I’m going to mutate a new field called clean_city and put the results of key collision merge there.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">key_collision_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,108 × 50
+   recipient_name        recipient_clean committee_id committee_name report_year
+   &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;
+ 1 ST. REGIS HOTEL       ST. REGIS HOTEL C00658385    MARK GREEN FO…        2021
+ 2 HARKER, GRAY          HARKER, GRAY    C00536540    JOBS, FREEDOM…        2021
+ 3 REPUBLICAN NATIONAL … REPUBLICAN NAT… C00055582    NY REPUBLICAN…        2021
+ 4 JOE'S SEAFOOD PRIME … JOE'S SEAFOOD,… C00551853    OORAH! POLITI…        2021
+ 5 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00391029    JIM COSTA FOR…        2021
+ 6 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00454694    MARCIA FUDGE …        2021
+ 7 CAFE MILANO           CAFE MILANO     C00391029    JIM COSTA FOR…        2021
+ 8 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+ 9 CAPITOL HILL CLUB     CAPITOL HILL C… C00725465    CLIFF BENTZ F…        2021
+10 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+# … with 13,098 more rows, and 45 more variables: report_type &lt;chr&gt;,
+#   image_number &lt;dbl&gt;, line_number &lt;chr&gt;, transaction_id &lt;chr&gt;,
+#   file_number &lt;dbl&gt;, entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
+#   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
+#   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
+#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
+#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<p>To examine changes <code>refinr</code> made, let’s examine the changes it made to cities that start with the letter “W”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'recipient_name'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 52 × 3
+# Groups:   recipient_name [52]
+   recipient_name      recipient_clean     count
+   &lt;chr&gt;               &lt;chr&gt;               &lt;int&gt;
+ 1 W HOTELS            W HOTELS                3
+ 2 W. MILLAR &amp; CO      W. MILLAR &amp; CO.         1
+ 3 W. MILLAR &amp; CO.     W. MILLAR &amp; CO.         5
+ 4 WA METRO            WA METRO                1
+ 5 WAGSHAL'S DELI      WAGSHAL'S DELI          1
+ 6 WALMART SUPERCENTER WALMART SUPERCENTER    13
+ 7 WALTERS             WALTERS                 1
+ 8 WALTERS SPORT       WALTERS SPORT           1
+ 9 WALTERS SPORTS      WALTERS SPORTS          1
+10 WALTER'S SPORTS BAR WALTERS SPORTS BAR      1
+# … with 42 more rows</code></pre>
+</div>
+</div>
+<p>You can see several changes on the second page of results, including that refinr made “PIZZA, WE THE” into “WE THE PIZZA” which is pretty smart. Other potential changes, grouping together “WASHINGTON NATIONALS” and “WASHINGTON NATIONALS BASEBALL CLUB”, didn’t happen. Key collision will do well with different cases, but all of our records are upper case.</p>
+<p>There’s another merging algorithim that’s part of refinr that works a bit differently, called <code>n_gram_merge()</code>. Let’s try applying that one.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">n_gram_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,108 × 50
+   recipient_name        recipient_clean committee_id committee_name report_year
+   &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;
+ 1 ST. REGIS HOTEL       ST. REGIS HOTEL C00658385    MARK GREEN FO…        2021
+ 2 HARKER, GRAY          HARKER, GRAY    C00536540    JOBS, FREEDOM…        2021
+ 3 REPUBLICAN NATIONAL … REPUBLICAN NAT… C00055582    NY REPUBLICAN…        2021
+ 4 JOE'S SEAFOOD PRIME … JOE'S SEAFOOD,… C00551853    OORAH! POLITI…        2021
+ 5 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00391029    JIM COSTA FOR…        2021
+ 6 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00454694    MARCIA FUDGE …        2021
+ 7 CAFE MILANO           CAFE MILANO     C00391029    JIM COSTA FOR…        2021
+ 8 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+ 9 CAPITOL HILL CLUB     CAPITOL HILL C… C00725465    CLIFF BENTZ F…        2021
+10 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+# … with 13,098 more rows, and 45 more variables: report_type &lt;chr&gt;,
+#   image_number &lt;dbl&gt;, line_number &lt;chr&gt;, transaction_id &lt;chr&gt;,
+#   file_number &lt;dbl&gt;, entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
+#   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
+#   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
+#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
+#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<p>To examine changes <code>refinr</code> made with this algorithm, let’s again look at cities that start with the letter “A”. Examining Aberdeen and Annapolis, we see there wasn’t a substantial change from the previous method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'recipient_name'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 51 × 3
+# Groups:   recipient_name [51]
+   recipient_name      recipient_clean     count
+   &lt;chr&gt;               &lt;chr&gt;               &lt;int&gt;
+ 1 W HOTELS            W HOTELS                3
+ 2 W. MILLAR &amp; CO      W. MILLAR &amp; CO.         1
+ 3 W. MILLAR &amp; CO.     W. MILLAR &amp; CO.         5
+ 4 WA METRO            WA METRO                1
+ 5 WAGSHAL'S DELI      WAGSHAL'S DELI          1
+ 6 WALMART SUPERCENTER WALMART SUPERCENTER    13
+ 7 WALTERS             WALTERS                 1
+ 8 WALTERS SPORT       WALTERS SPORT           1
+ 9 WALTERS SPORTS      WALTERS SPORT           1
+10 WALTER'S SPORTS BAR WALTERS SPORTS BAR      1
+# … with 41 more rows</code></pre>
+</div>
+</div>
+<p>This method also made some good changes, but not in every case. No single method will be perfect and often a combination is necessary.</p>
+<p>That’s how you use the Open Refine r package, refinr.</p>
+<p>Now let’s upload the data to the interactive version of OpenRefine, which really shines at this task.</p>
+</section>
+<section id="manually-cleaning-data-with-open-refine" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="manually-cleaning-data-with-open-refine"><span class="header-section-number">20.2</span> Manually cleaning data with Open Refine</h2>
+<p>Open Refine is free software. <a href="https://openrefine.org/">You should download and install it</a>; the most recent version is 3.6.0. Refinr is great for quick things on smaller datasets that you can check to make sure it’s not up to any mischief.</p>
+<p>For bigger datasets, Open Refine is the way to go. And it has a lot more tools than refinr does (by design).</p>
+<p>After you install it, run it. (If you are on a Mac it might tell you that it can’t run the program. Go to System Preferences -&gt; Security &amp; Privacy -&gt; General and click “Open Anyway”.) Open Refine works in the browser, and the app spins up a small web server visible only on your computer to interact with it. A browser will pop up automatically.</p>
+<p>You first have to import your data into a project. Click the choose files button and upload a csv of the DC food-related expenditures.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open1.png" class="img-fluid" width="1276"></p>
+</div>
+</div>
+<p>After your data is loaded into the app, you’ll get a screen to look over what the data looks like. On the top right corner, you’ll see a button to create the project. Click that.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open2.png" class="img-fluid" width="1785"></p>
+</div>
+</div>
+<p>Open Refine has many, many tools. We’re going to use one piece of it, as a tool for data cleaning. To learn how to use it, we’re going to clean the “recipient_name” field.</p>
+<p>First, let’s make a copy of the original recipient_name column so that we can preserve the original data while cleaning the new one.</p>
+<p>Click the dropdown arrow next to the recipient_name column, choose “edit column” &gt; “Add column based on this column”:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open2a.png" class="img-fluid" width="1029"></p>
+</div>
+</div>
+<p>On the window that pops up, type “recipient_name_orig” in the “new column name” field. Then hit the OK button.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open2b.png" class="img-fluid" width="713"></p>
+</div>
+</div>
+<p>Now, let’s get to work cleaning the recipient_name column.</p>
+<p>Next to the recipient_name field name, click the down arrow, then facet, then text facet.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open3.png" class="img-fluid" width="426"></p>
+</div>
+</div>
+<p>After that, a new box will appear on the left. It tells us how many unique recipient_names there are: 1,655. And, there’s a button on the right of the box that says Cluster.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open4.png" class="img-fluid" width="290"></p>
+</div>
+</div>
+<p>Click the cluster button. A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open5.png" class="img-fluid" width="999"></p>
+</div>
+</div>
+<p>The default “method” used is a clustering algorithim called “key collision”, using the fingerprint function. This is the same method we used with the refinr package above.</p>
+<p>At the top, you’ll see which method was used, and how many clusters that algorithm identified. There are several different methods, each of which work slightly differently and produce different results.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open6.png" class="img-fluid" width="999"></p>
+</div>
+</div>
+<p>Then, below that, you can see what those clusters are. Right away, we can see how useful this program is. It identified 99 rows that have some variation on “Hawk N Dove” in the recipient_name field. It proposed changing them all to “HAWK N DOVE”.</p>
+<p>Using human judgement, you can say if you agree with the cluster. If you do, click the “merge” checkbox. When it merges, the new result will be what it says in New Cell Value. Most often, that’s the row with the most common result. You also can manually edit the “New Cell Value” if you want it to be something else:</p>
+<p>Now begins the fun part: You have to look at all 88 clusters found and decide if they are indeed valid. The key collision method is very good, and very conservative. You’ll find that most of them are usually valid.</p>
+<p>Be careful! If you merge two things that aren’t supposed to be together, it will change your data in a way that could lead to inaccurate results.</p>
+<p>When you’re done, click Merge Selected and Re-Cluster.</p>
+<p>If any new clusters come up, evaluate them. Repeat until either no clusters come up or the clusters that do come up are ones you reject.</p>
+<p>Now. Try a new method, maybe the “nearest neighbor levenshtein” method. Notice that it finds even more clusters - 167 - using a slightly different approach.</p>
+<p>Rinse and repeat.</p>
+<p>You’ll keep doing this, and if the dataset is reasonably clean, you’ll find the end.</p>
+<p>When you’re finished cleaning, click “Merge Selected &amp; Close”.</p>
+<p>Then, export the data as a csv so you can load it back into R.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="images/open7.png" class="img-fluid" width="1425"></p>
+</div>
+</div>
+<p>A question for all data analysts – if the dataset is bad enough, can it ever be cleaned?</p>
+<p>There’s no good answer. You have to find it yourself.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./data-cleaning-part-ii.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./pdfs.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
