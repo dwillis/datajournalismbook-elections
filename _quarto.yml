@@ -24,8 +24,8 @@ book:
     - mutating.qmd
     - workingwithdates.qmd
     - filters.qmd
-    - datacleaning-part-i.qmd
-    - datacleaning-part-ii.qmd
+    - data-cleaning-part-i.qmd
+    - data-cleaning-part-ii.qmd
     - open-refine.qmd
     - pdfs.qmd
     - merging.qmd
