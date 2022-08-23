@@ -16,13 +16,15 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 And now let's load a dataframe of Maryland county population information from the 2020 Census, but this time we'll add in county geographic data.
 
 ```{r}
+#| error: true
+
 maryland_counties <- read_csv("data/md_counties_2020.csv")
 maryland_county_shapes <- st_read("data/Maryland2020_County.json")
 
 maryland_counties_with_shapes <- maryland_counties %>% inner_join(maryland_county_shapes, by=c('GEOID'='GEOID20'))
 
 ```
-And there's that join error again: we've got incompatible data types. We can quickly fix that:
+And there's that join error: we've got incompatible data types. We can quickly fix that:
 
 ```{r}
 maryland_counties <- read_csv("data/md_counties_2020.csv") %>% mutate(GEOID = as.character(GEOID))
@@ -59,6 +61,8 @@ Let's take a look at the result of this table. We might call this where the swin
 Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 10K on a color gradient.  
 
 ```{r}
+#| error: true
+
 ggplot() +
   geom_sf(data=md_una_per_10k, aes(fill=una_per_10k)) +
   theme_minimal()
