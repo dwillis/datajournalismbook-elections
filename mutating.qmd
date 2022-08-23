@@ -64,7 +64,7 @@ Mutate is also useful for standardizing data - for example, making different spe
 
 Let's load some campaign contribution data - in this case Maryland donors to Republican committees via WinRed's online platform earlier this year - and take a look at the `city` column in our data.
 
-```{r eval=FALSE}
+```{r}
 maryland_cities <- read_csv("data/winred_md_cities.csv")
 ```
 
