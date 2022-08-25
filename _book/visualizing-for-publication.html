@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -347,19 +347,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>First, let’s get some data and work with it. Let’s use the county-level results from the 2022 Republican Governor primary in Maryland that we scraped with rvest. Let’s look at it.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/md_primary_2022_gov_rep.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/md_primary_2022_gov_rep.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 24 Columns: 5
 ── Column specification ────────────────────────────────────────────────────────
@@ -372,7 +362,7 @@ dbl (4): cox, ficker, schulz, werner
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(md_gop_gov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(md_gop_gov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   jurisdiction       cox ficker schulz werner
@@ -387,13 +377,13 @@ dbl (4): cox, ficker, schulz, werner
 </div>
 <p>Let’s make this data a bit more useful by calculating percentages for each candidate, using the total of all votes in each county in the gubernatorial primary. Then we can calculate the difference in percentages between Dan Cox, the nominee, and Kelly Schulz, who came in second. Finally we can write that CSV file out using <code>write_csv</code>, because that’s what we’ll need for Datawrapper:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> md_gop_gov <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> cox <span class="sc">+</span> ficker <span class="sc">+</span> schulz <span class="sc">+</span> werner) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_cox =</span> cox<span class="sc">/</span>total, <span class="at">pct_ficker =</span> ficker<span class="sc">/</span>total, <span class="at">pct_schulz =</span> schulz<span class="sc">/</span>total, <span class="at">pct_werner =</span> werner<span class="sc">/</span>total) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cox_schulz_diff =</span> (pct_cox <span class="sc">-</span> pct_schulz)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(jurisdiction, cox_schulz_diff)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(md_gop_gov, <span class="st">"~/Downloads/md_gop_gov.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> md_gop_gov <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> cox <span class="sc">+</span> ficker <span class="sc">+</span> schulz <span class="sc">+</span> werner) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_cox =</span> cox<span class="sc">/</span>total, <span class="at">pct_ficker =</span> ficker<span class="sc">/</span>total, <span class="at">pct_schulz =</span> schulz<span class="sc">/</span>total, <span class="at">pct_werner =</span> werner<span class="sc">/</span>total) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cox_schulz_diff =</span> (pct_cox <span class="sc">-</span> pct_schulz)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(jurisdiction, cox_schulz_diff)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(md_gop_gov, <span class="st">"~/Downloads/md_gop_gov.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="datawrapper" class="level2" data-number="26.1">
 <h2 data-number="26.1" class="anchored" data-anchor-id="datawrapper"><span class="header-section-number">26.1</span> Datawrapper</h2>
@@ -402,46 +392,46 @@ dbl (4): cox, ficker, schulz, werner
 <p>Once logged in, you’ll click on New Chart.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/ppp_datawrapper1.png" class="img-fluid" width="677"></p>
+<p><img src="images/ppp_datawrapper1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The first thing we’ll do is upload our CSV that we created before. Click on XLS/CSV and upload the file.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper2.png" class="img-fluid" width="1013"></p>
+<p><img src="images/datawrapper2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it’s blue, it’s a number. If it’s green, it’s a date. If it’s black, it’s text. Red means there’s a problem. This data is very clean, so it imports cleanly. Click on the “Proceed” button.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper3.png" class="img-fluid" width="680"></p>
+<p><img src="images/datawrapper3.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now we make a chart. Bar chart comes up by default, which is good, because with a single percentage difference, that’s what we have.</p>
 <p>Click on Refine. The first option we want to change is the Number Format, because we have percentages to display and we want to make it as easy as possible for readers to understand what we’re displaying. Datawrapper has a list of popular formats and an excellent reference for its <a href="https://academy.datawrapper.de/article/207-custom-number-formats-that-you-can-display-in-datawrapper">custom formats</a> that you can consult. Let’s choose <code>0.0%</code>, which adds a percentage sign and abbreviates larger amounts:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper4.png" class="img-fluid" width="360"></p>
+<p><img src="images/datawrapper4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now we need to annotate our charts. Every chart needs a title, a source line and a credit line. Most need chatter (called description here). Click on the “Annotate” tab to get started.</p>
 <p>Really think about the title and description: the title is like a headline and the description is provides some additional context. Another way to think about it: the title is the most important lesson from the graphic, and the description could be the next most important lesson or could provide more context to the title.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper5.png" class="img-fluid" width="616"></p>
+<p><img src="images/datawrapper5.png" class="img-fluid"></p>
 </div>
 </div>
 <p>To publish, we click the “Publish &amp; Embed” tab. Some publication systems allow for the embedding of HTML into a post or a story. Some don’t. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there’s always a way to export your chart as a PNG file, which you can upload like any photo.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper6.png" class="img-fluid" width="640"></p>
+<p><img src="images/datawrapper6.png" class="img-fluid"></p>
 </div>
 </div>
 <section id="making-a-map" class="level3" data-number="26.1.1">
 <h3 data-number="26.1.1" class="anchored" data-anchor-id="making-a-map"><span class="header-section-number">26.1.1</span> Making a Map</h3>
 <p>Let’s create a choropleth map - one that shows the data we displayed above in geographic terms. Let’s take the <code>md_gop_gov.csv</code> data we just finished with and start there. We will need to add some information to it to make it possible to display on a map, so we’ll need to read it back in.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/md_gop_gov.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/md_gop_gov.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 24 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
@@ -455,8 +445,8 @@ dbl (1): cox_schulz_diff
 </div>
 <p>In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a <a href="https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html">FIPS Code</a>. You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our md_gop_gov dataframe doesn’t have a FIPS code for each county, but this is a solved problem thanks to the Tigris library. Let’s install it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages('tigris',repos = "http://cran.us.r-project.org")</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages('tigris',repos = "http://cran.us.r-project.org")</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>To enable caching of data, set `options(tigris_use_cache = TRUE)`
 in your R script or .Rprofile.</code></pre>
@@ -464,12 +454,12 @@ in your R script or .Rprofile.</code></pre>
 </div>
 <p>Once we’ve done that, we have access to a dataframe containing all fips codes. Let’s isolate the Maryland codes:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>all_fips <span class="ot">&lt;-</span> fips_codes <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> all_fips <span class="sc">%&gt;%</span> <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">'MD'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>all_fips <span class="ot">&lt;-</span> fips_codes <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> all_fips <span class="sc">%&gt;%</span> <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">'MD'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Looks good, but there are two issues: Datawrapper expects a 5-digit FIPS code (the state code plus the county code, so “24001” for Allegany County) and the county names don’t match the <code>jurisdiction</code> in the primary data. Let’s fix the first issue - adding a full FIPS code based on its components using the function <code>str_c</code>, which concatenates multiple strings:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> md_fips <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">fips_code =</span> <span class="fu">str_c</span>(state_code, county_code))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> md_fips <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">fips_code =</span> <span class="fu">str_c</span>(state_code, county_code))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we’ll deal with the county names in <code>md_counties</code>. They are all caps and contain no punctuation, we could:</p>
 <ol type="1">
@@ -479,32 +469,32 @@ in your R script or .Rprofile.</code></pre>
 <p>Let’s do the latter. We’ll use mutate to remove ” COUNTY”, replace the quotemarks with nothing, change counties so they match the primary data and fix both Baltimore city and Baltimore County:</p>
 <p>Change the county names in <code>md_fips</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> md_fips <span class="sc">%&gt;%</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(county, <span class="st">' County'</span>, <span class="st">''</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(match_county, <span class="st">"St. Mary"</span>, <span class="st">"Saint Mary"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(match_county, <span class="st">"Baltimore city"</span>, <span class="st">"Baltimore City"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">if_else</span>(match_county <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="st">"Baltimore County"</span>, match_county))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>md_fips <span class="ot">&lt;-</span> md_fips <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(county, <span class="st">' County'</span>, <span class="st">''</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(match_county, <span class="st">"St. Mary"</span>, <span class="st">"Saint Mary"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">str_replace</span>(match_county, <span class="st">"Baltimore city"</span>, <span class="st">"Baltimore City"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">match_county =</span> <span class="fu">if_else</span>(match_county <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="st">"Baltimore County"</span>, match_county))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we’ll join <code>md_gop_gov</code> and <code>md_fips</code> together using our new <code>match_county</code> column:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov_with_fips <span class="ot">&lt;-</span> md_gop_gov <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(md_fips, <span class="at">by=</span><span class="fu">c</span>(<span class="st">'jurisdiction'</span><span class="ot">=</span><span class="st">'match_county'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>md_gop_gov_with_fips <span class="ot">&lt;-</span> md_gop_gov <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(md_fips, <span class="at">by=</span><span class="fu">c</span>(<span class="st">'jurisdiction'</span><span class="ot">=</span><span class="st">'match_county'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we’ll write <code>md_gop_gov_with_fips</code> to a CSV in the data folder using write_csv:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(md_gop_gov_with_fips, <span class="st">"data/md_gop_gov_with_fips.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(md_gop_gov_with_fips, <span class="st">"data/md_gop_gov_with_fips.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Go back to Datawrapper and click on “New Map”. Click on “Choropleth map” and then choose “USA &gt;&gt; Counties (2022)” for the map base and click the Proceed button.</p>
 <p>Now we can upload the <code>md_gop_gov_with_fips.csv</code> file we just saved using the Upload File button. It should look like the following image:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper7.png" class="img-fluid" width="1351"></p>
+<p><img src="images/datawrapper7.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We’ll need to make sure that Datawrapper understands what the data is and where the FIPS code is. Click on the “Match” tab and make sure that yours looks like the image below:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper8.png" class="img-fluid" width="539"></p>
+<p><img src="images/datawrapper8.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Click the “Proceed” button (you should have to click it twice, since the first time it will tell you that there’s no data for 3,197 counties - the rest of the U.S.). That will take you to the Visualize tab.</p>
@@ -524,6 +514,21 @@ in your R script or .Rprofile.</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

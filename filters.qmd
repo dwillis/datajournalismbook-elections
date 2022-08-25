@@ -9,6 +9,7 @@ More often than not, we have more data than we want. Sometimes we need to be rid
 Now we'll import a dataset of county-level election results from Maryland's 2018 primary that is in the data folder in this chapter's pre-lab directory. It has results from all across the state, so one place to begin is by looking at individual jurisdictions - Maryland has 23 counties and one independent city, Baltimore. Let's start by loading tidyverse and reading in the Maryland data:
 
 ```{r}
+#| output: false
 library(tidyverse)
 ```
 

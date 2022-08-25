@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -344,20 +344,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>So first we’ll import the tidyverse so we can read in our data and begin to work with it.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
 </div>
 <p>Now we’ll import a dataset of county-level election results from Maryland’s 2018 primary that is in the data folder in this chapter’s pre-lab directory. We’ll use this to explore ways to create new information from existing data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2018.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2018.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 1778 Columns: 15
 ── Column specification ────────────────────────────────────────────────────────
@@ -374,98 +364,102 @@ dttm (1): end_date
 <p>First, let’s add a column called <code>percent_election_day</code> for the percentage of votes that were cast on election day for each candidate result in a county. The code to calculate a percentage is pretty simple. Remember, with <code>summarize</code>, we used <code>n()</code> to count things. With <code>mutate</code>, we use very similar syntax to calculate a new value – a new column of data – using other values in our dataset.</p>
 <p>If we look at what we got when we imported the data, you’ll see there’s <code>election_day</code> as the numerator, and we’ll use <code>votes</code> as the denominator. We can simply things by only selecting a few columns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> election_day<span class="sc">/</span>votes</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> election_day<span class="sc">/</span>votes</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,778 × 8
-   office                district name_raw party jurisdiction election_day votes
-   &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;
- 1 Governor / Lt. Gover… &lt;NA&gt;     Rushern… DEM   Allegany              324   413
- 2 Governor / Lt. Gover… &lt;NA&gt;     Ralph J… DEM   Allegany              106   122
- 3 Governor / Lt. Gover… &lt;NA&gt;     Ben Jea… DEM   Allegany              979  1170
- 4 Governor / Lt. Gover… &lt;NA&gt;     James H… DEM   Allegany               99   106
- 5 Governor / Lt. Gover… &lt;NA&gt;     Valerie… DEM   Allegany              118   159
- 6 Governor / Lt. Gover… &lt;NA&gt;     Rich Ma… DEM   Allegany              133   169
- 7 Governor / Lt. Gover… &lt;NA&gt;     Alec Ro… DEM   Allegany              175   218
- 8 Governor / Lt. Gover… &lt;NA&gt;     Jim Shea DEM   Allegany              239   284
- 9 Governor / Lt. Gover… &lt;NA&gt;     Krish O… DEM   Allegany              364   462
-10 Comptroller           &lt;NA&gt;     Peter F… DEM   Allegany             2518  3077
-# … with 1,768 more rows, and 1 more variable: percent_election_day &lt;dbl&gt;</code></pre>
+   office                  district name_raw party juris…¹ elect…² votes perce…³
+   &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Governor / Lt. Governor &lt;NA&gt;     Rushern… DEM   Allega…     324   413   0.785
+ 2 Governor / Lt. Governor &lt;NA&gt;     Ralph J… DEM   Allega…     106   122   0.869
+ 3 Governor / Lt. Governor &lt;NA&gt;     Ben Jea… DEM   Allega…     979  1170   0.837
+ 4 Governor / Lt. Governor &lt;NA&gt;     James H… DEM   Allega…      99   106   0.934
+ 5 Governor / Lt. Governor &lt;NA&gt;     Valerie… DEM   Allega…     118   159   0.742
+ 6 Governor / Lt. Governor &lt;NA&gt;     Rich Ma… DEM   Allega…     133   169   0.787
+ 7 Governor / Lt. Governor &lt;NA&gt;     Alec Ro… DEM   Allega…     175   218   0.803
+ 8 Governor / Lt. Governor &lt;NA&gt;     Jim Shea DEM   Allega…     239   284   0.842
+ 9 Governor / Lt. Governor &lt;NA&gt;     Krish O… DEM   Allega…     364   462   0.788
+10 Comptroller             &lt;NA&gt;     Peter F… DEM   Allega…    2518  3077   0.818
+# … with 1,768 more rows, and abbreviated variable names ¹​jurisdiction,
+#   ²​election_day, ³​percent_election_day</code></pre>
 </div>
 </div>
 <p>Now we’ve got our <code>percent_election_day</code> column. But what do you see right away? Do those numbers look like we expect them to? No.&nbsp;They’re a decimal expressed as a percentage. So let’s fix that by multiplying by 100.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,778 × 8
-   office                district name_raw party jurisdiction election_day votes
-   &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;
- 1 Governor / Lt. Gover… &lt;NA&gt;     Rushern… DEM   Allegany              324   413
- 2 Governor / Lt. Gover… &lt;NA&gt;     Ralph J… DEM   Allegany              106   122
- 3 Governor / Lt. Gover… &lt;NA&gt;     Ben Jea… DEM   Allegany              979  1170
- 4 Governor / Lt. Gover… &lt;NA&gt;     James H… DEM   Allegany               99   106
- 5 Governor / Lt. Gover… &lt;NA&gt;     Valerie… DEM   Allegany              118   159
- 6 Governor / Lt. Gover… &lt;NA&gt;     Rich Ma… DEM   Allegany              133   169
- 7 Governor / Lt. Gover… &lt;NA&gt;     Alec Ro… DEM   Allegany              175   218
- 8 Governor / Lt. Gover… &lt;NA&gt;     Jim Shea DEM   Allegany              239   284
- 9 Governor / Lt. Gover… &lt;NA&gt;     Krish O… DEM   Allegany              364   462
-10 Comptroller           &lt;NA&gt;     Peter F… DEM   Allegany             2518  3077
-# … with 1,768 more rows, and 1 more variable: percent_election_day &lt;dbl&gt;</code></pre>
+   office                  district name_raw party juris…¹ elect…² votes perce…³
+   &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Governor / Lt. Governor &lt;NA&gt;     Rushern… DEM   Allega…     324   413    78.5
+ 2 Governor / Lt. Governor &lt;NA&gt;     Ralph J… DEM   Allega…     106   122    86.9
+ 3 Governor / Lt. Governor &lt;NA&gt;     Ben Jea… DEM   Allega…     979  1170    83.7
+ 4 Governor / Lt. Governor &lt;NA&gt;     James H… DEM   Allega…      99   106    93.4
+ 5 Governor / Lt. Governor &lt;NA&gt;     Valerie… DEM   Allega…     118   159    74.2
+ 6 Governor / Lt. Governor &lt;NA&gt;     Rich Ma… DEM   Allega…     133   169    78.7
+ 7 Governor / Lt. Governor &lt;NA&gt;     Alec Ro… DEM   Allega…     175   218    80.3
+ 8 Governor / Lt. Governor &lt;NA&gt;     Jim Shea DEM   Allega…     239   284    84.2
+ 9 Governor / Lt. Governor &lt;NA&gt;     Krish O… DEM   Allega…     364   462    78.8
+10 Comptroller             &lt;NA&gt;     Peter F… DEM   Allega…    2518  3077    81.8
+# … with 1,768 more rows, and abbreviated variable names ¹​jurisdiction,
+#   ²​election_day, ³​percent_election_day</code></pre>
 </div>
 </div>
 <p>Now, does this ordering do anything for us? No.&nbsp;Let’s fix that with arrange.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(percent_election_day))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(percent_election_day))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,778 × 8
-   office                district name_raw party jurisdiction election_day votes
-   &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;
- 1 U.S. Senator          &lt;NA&gt;     Erik Je… DEM   Garrett                 8     8
- 2 U.S. Senator          &lt;NA&gt;     Albert … REP   Allegany               69    71
- 3 House of Delegates    01A      James M… REP   Allegany              140   148
- 4 Governor / Lt. Gover… &lt;NA&gt;     James H… DEM   Allegany               99   106
- 5 House of Delegates    38C      Jim Sha… REP   Wicomico               23    25
- 6 House of Delegates    01A      Wendell… REP   Allegany              947  1031
- 7 U.S. Senator          &lt;NA&gt;     Richard… DEM   Garrett                11    12
- 8 U.S. Senator          &lt;NA&gt;     Christi… REP   Allegany              863   948
- 9 U.S. Senator          &lt;NA&gt;     Marcia … DEM   Allegany              113   125
-10 Representative in Co… 06       Christo… DEM   Allegany               37    41
-# … with 1,768 more rows, and 1 more variable: percent_election_day &lt;dbl&gt;</code></pre>
+   office                    distr…¹ name_…² party juris…³ elect…⁴ votes perce…⁵
+   &lt;chr&gt;                     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 U.S. Senator              &lt;NA&gt;    Erik J… DEM   Garrett       8     8   100  
+ 2 U.S. Senator              &lt;NA&gt;    Albert… REP   Allega…      69    71    97.2
+ 3 House of Delegates        01A     James … REP   Allega…     140   148    94.6
+ 4 Governor / Lt. Governor   &lt;NA&gt;    James … DEM   Allega…      99   106    93.4
+ 5 House of Delegates        38C     Jim Sh… REP   Wicomi…      23    25    92  
+ 6 House of Delegates        01A     Wendel… REP   Allega…     947  1031    91.9
+ 7 U.S. Senator              &lt;NA&gt;    Richar… DEM   Garrett      11    12    91.7
+ 8 U.S. Senator              &lt;NA&gt;    Christ… REP   Allega…     863   948    91.0
+ 9 U.S. Senator              &lt;NA&gt;    Marcia… DEM   Allega…     113   125    90.4
+10 Representative in Congre… 06      Christ… DEM   Allega…      37    41    90.2
+# … with 1,768 more rows, and abbreviated variable names ¹​district, ²​name_raw,
+#   ³​jurisdiction, ⁴​election_day, ⁵​percent_election_day</code></pre>
 </div>
 </div>
 <p>So now we have results ordered by <code>percent_election_day</code> with the highest percentage first. To see the lowest percentage first, we can reverse that <code>arrange</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(percent_election_day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(percent_election_day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,778 × 8
-   office                district name_raw party jurisdiction election_day votes
-   &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;
- 1 Governor / Lt. Gover… &lt;NA&gt;     Valerie… DEM   Talbot                 38    89
- 2 Governor / Lt. Gover… &lt;NA&gt;     Rich Ma… DEM   Talbot                 84   192
- 3 Governor / Lt. Gover… &lt;NA&gt;     Rich Ma… DEM   Kent                   40    85
- 4 Governor / Lt. Gover… &lt;NA&gt;     Rich Ma… DEM   Garrett                32    67
- 5 Governor / Lt. Gover… &lt;NA&gt;     Jim Shea DEM   Talbot                168   345
- 6 U.S. Senator          &lt;NA&gt;     Blaine … REP   Talbot                 41    84
- 7 House of Delegates    43       Urcille… DEM   Baltimore C…          550  1122
- 8 Governor / Lt. Gover… &lt;NA&gt;     Rushern… DEM   Talbot                286   577
- 9 House of Delegates    21       Mary A.… DEM   Anne Arundel          407   816
-10 Representative in Co… 06       Christo… DEM   Garrett                 3     6
-# … with 1,768 more rows, and 1 more variable: percent_election_day &lt;dbl&gt;</code></pre>
+   office                    distr…¹ name_…² party juris…³ elect…⁴ votes perce…⁵
+   &lt;chr&gt;                     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Governor / Lt. Governor   &lt;NA&gt;    Valeri… DEM   Talbot       38    89    42.7
+ 2 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Talbot       84   192    43.8
+ 3 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Kent         40    85    47.1
+ 4 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Garrett      32    67    47.8
+ 5 Governor / Lt. Governor   &lt;NA&gt;    Jim Sh… DEM   Talbot      168   345    48.7
+ 6 U.S. Senator              &lt;NA&gt;    Blaine… REP   Talbot       41    84    48.8
+ 7 House of Delegates        43      Urcill… DEM   Baltim…     550  1122    49.0
+ 8 Governor / Lt. Governor   &lt;NA&gt;    Rusher… DEM   Talbot      286   577    49.6
+ 9 House of Delegates        21      Mary A… DEM   Anne A…     407   816    49.9
+10 Representative in Congre… 06      Christ… DEM   Garrett       3     6    50  
+# … with 1,768 more rows, and abbreviated variable names ¹​district, ²​name_raw,
+#   ³​jurisdiction, ⁴​election_day, ⁵​percent_election_day</code></pre>
 </div>
 </div>
 <p>Only a handful of candidates got less than 50 percent of their total votes in a county on election day. What a difference a pandemic makes.</p>
@@ -474,7 +468,7 @@ dttm (1): end_date
 <p>Mutate is also useful for standardizing data - for example, making different spellings of, say, cities into a single one.</p>
 <p>Let’s load some campaign contribution data - in this case Maryland donors to Republican committees via WinRed’s online platform earlier this year - and take a look at the <code>city</code> column in our data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>maryland_cities <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_cities.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>maryland_cities <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_cities.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 408 Columns: 3
 ── Column specification ────────────────────────────────────────────────────────
@@ -489,10 +483,10 @@ dbl (2): count, sum
 <p>You’ll notice that there’s a mix of styles: “Baltimore” and “BALTIMORE” for example. R will think those are two different cities, and that will mean that any aggregates we create based on city won’t be accurate.</p>
 <p>So how can we fix that? Mutate - it’s not just for math! And a function called <code>str_to_upper</code> that will convert a character column into all uppercase. Now we can say exactly how many donations came from Baltimore (I mean, of course, BALTIMORE).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>standardized_maryland_cities <span class="ot">&lt;-</span> maryland_cities <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_city =</span> <span class="fu">str_to_upper</span>(city)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>standardized_maryland_cities <span class="ot">&lt;-</span> maryland_cities <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_city =</span> <span class="fu">str_to_upper</span>(city)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.</p>
 </section>
@@ -507,7 +501,7 @@ dbl (2): count, sum
 </ol>
 <p>Mutate can make that happen by creating a new column and putting in a category value <em>based on the amount</em> of each record. First, let’s load the individual contributions:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>maryland_winred <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_q2_2022.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_winred <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_q2_2022.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 54247 Columns: 24
 ── Column specification ────────────────────────────────────────────────────────
@@ -520,42 +514,43 @@ date  (1): date
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 24
-  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
-  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt;     
-1 SA11AI     C00694323        A9EF366… IND         NA       Hansher   Beth      
-2 SA11AI     C00694323        A64BB50… IND         NA       Leishman  Alexander 
-3 SA11AI     C00694323        A5835B6… IND         NA       Bode      John      
-4 SA11AI     C00694323        AE3AF0E… IND         NA       Gallagher Daniel    
-5 SA11AI     C00694323        AC55692… IND         NA       Bode      Denise    
-6 SA11AI     C00694323        A2B1EB0… IND         NA       Kaplan    Joel      
-# … with 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
-#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;,
-#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
-#   cycle &lt;dbl&gt;</code></pre>
+  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
+  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
+1 SA11AI   C00694… A9EF36… IND     NA      Hansher Beth    NA      NA     NA    
+2 SA11AI   C00694… A64BB5… IND     NA      Leishm… Alexan… NA      NA     NA    
+3 SA11AI   C00694… A5835B… IND     NA      Bode    John    NA      NA     NA    
+4 SA11AI   C00694… AE3AF0… IND     NA      Gallag… Daniel  NA      NA     NA    
+5 SA11AI   C00694… AC5569… IND     NA      Bode    Denise  NA      NA     NA    
+6 SA11AI   C00694… A2B1EB… IND     NA      Kaplan  Joel    NA      NA     NA    
+# … with 14 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
+#   state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
+#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
+#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and abbreviated variable names ¹​linenumber,
+#   ²​fec_committee_id, ³​flag_orgind, ⁴​org_name, ⁵​last_name, ⁶​first_name,
+#   ⁷​middle_name</code></pre>
 </div>
 </div>
 <p>Now that we’ve gotten a look, we can use <code>case_when</code> to give our new category column a value using some standard numeric logic:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amount_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="st">"Less than $100"</span>,</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">100</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">500</span> <span class="sc">~</span> <span class="st">"Between $100 and $500"</span>,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">500</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"Between $501 and $2900"</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"More than $2,900"</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amount_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="st">"Less than $100"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">100</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">500</span> <span class="sc">~</span> <span class="st">"Between $100 and $500"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">500</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"Between $501 and $2900"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"More than $2,900"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can then use our new <code>amount_category</code> column in group_by statements to make summarizing easier:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(amount_category) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_amount =</span> <span class="fu">sum</span>(amount)) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(amount_category) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_amount =</span> <span class="fu">sum</span>(amount)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
   amount_category        total_amount
@@ -575,6 +570,21 @@ date  (1): date
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

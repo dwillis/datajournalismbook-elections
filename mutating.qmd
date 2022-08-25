@@ -7,6 +7,7 @@ To do that in R, we can use `dplyr` and `mutate` to calculate new metrics in a n
 So first we'll import the tidyverse so we can read in our data and begin to work with it.
 
 ```{r}
+#| output: false
 library(tidyverse)
 ```
 
@@ -22,7 +23,7 @@ If we look at what we got when we imported the data, you'll see there's `electio
 
 ```{r}
 primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
   mutate(
   percent_election_day = election_day/votes
 )
@@ -31,7 +32,7 @@ Now we've got our `percent_election_day` column. But what do you see right away?
 
 ```{r}
 primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
   mutate(
   percent_election_day = (election_day/votes)*100
 )
@@ -40,7 +41,7 @@ Now, does this ordering do anything for us? No. Let's fix that with arrange.
 
 ```{r}
 primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
   mutate(
   percent_election_day = (election_day/votes)*100
 )  %>% arrange(desc(percent_election_day))
@@ -50,7 +51,7 @@ So now we have results ordered by `percent_election_day` with the highest percen
 
 ```{r}
 primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>% 
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
   mutate(
   percent_election_day = (election_day/votes)*100
 )  %>% arrange(percent_election_day)
@@ -115,9 +116,9 @@ maryland_winred_categories <- maryland_winred %>%
 We can then use our new `amount_category` column in group_by statements to make summarizing easier:
 
 ```{r}
-maryland_winred_categories %>% 
-  group_by(amount_category) %>% 
-  summarize(total_amount = sum(amount)) %>% 
+maryland_winred_categories %>%
+  group_by(amount_category) %>%
+  summarize(total_amount = sum(amount)) %>%
   arrange(desc(total_amount))
 ```
 

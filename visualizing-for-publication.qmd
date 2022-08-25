@@ -9,6 +9,7 @@ The tool we're going to use is called [Datawrapper](https://www.datawrapper.de/)
 First, let's get some data and work with it. Let's use the county-level results from the 2022 Republican Governor primary in Maryland that we scraped with rvest. Let's look at it.
 
 ```{r}
+#| output: false
 library(tidyverse)
 ```
 
@@ -23,10 +24,10 @@ head(md_gop_gov)
 Let's make this data a bit more useful by calculating percentages for each candidate, using the total of all votes in each county in the gubernatorial primary. Then we can calculate the difference in percentages between Dan Cox, the nominee, and Kelly Schulz, who came in second. Finally we can write that CSV file out using `write_csv`, because that's what we'll need for Datawrapper:
 
 ```{r}
-md_gop_gov <- md_gop_gov %>% 
-  mutate(total = cox + ficker + schulz + werner) %>% 
-  mutate(pct_cox = cox/total, pct_ficker = ficker/total, pct_schulz = schulz/total, pct_werner = werner/total) %>% 
-  mutate(cox_schulz_diff = (pct_cox - pct_schulz)*100) %>% 
+md_gop_gov <- md_gop_gov %>%
+  mutate(total = cox + ficker + schulz + werner) %>%
+  mutate(pct_cox = cox/total, pct_ficker = ficker/total, pct_schulz = schulz/total, pct_werner = werner/total) %>%
+  mutate(cox_schulz_diff = (pct_cox - pct_schulz)*100) %>%
   select(jurisdiction, cox_schulz_diff)
 
 write_csv(md_gop_gov, "~/Downloads/md_gop_gov.csv")
@@ -114,10 +115,10 @@ Let's do the latter. We'll use mutate to remove " COUNTY", replace the quotemark
 Change the county names in `md_fips`
 
 ```{r}
-md_fips <- md_fips %>% 
+md_fips <- md_fips %>%
    mutate(match_county = str_replace(county, ' County', '')) %>%
-   mutate(match_county = str_replace(match_county, "St. Mary", "Saint Mary")) %>% 
-   mutate(match_county = str_replace(match_county, "Baltimore city", "Baltimore City")) %>% 
+   mutate(match_county = str_replace(match_county, "St. Mary", "Saint Mary")) %>%
+   mutate(match_county = str_replace(match_county, "Baltimore city", "Baltimore City")) %>%
    mutate(match_county = if_else(match_county == "Baltimore", "Baltimore County", match_county))
 
 ```

@@ -2,7 +2,7 @@
 
 Often, as data journalists, we're looking at data across time or at data stored in multiple tables. And to do that, we need to often need to merge that data together.
 
-Depending on what we have, we may just need to stack data on top of each other to make new data. If we have 2019 data and 2018 data and we want that to be one file, we stack them. If we have a dataset of cows in counties and a dataset of populations in county, we're going to join those two together on the county -- the common element.  
+Depending on what we have, we may just need to stack data on top of each other to make new data. If we have 2019 data and 2018 data and we want that to be one file, we stack them. If we have a dataset of cows in counties and a dataset of populations in county, we're going to join those two together on the county -- the common element.
 
 Let's explore.
 
@@ -13,6 +13,7 @@ Let's say that we have Maryland county voter registration data from three differ
 Let's do what we need to import them properly. I've merged it all into one step for each of the three datasets.
 
 ```{r}
+#| output: false
 library(tidyverse)
 ```
 
@@ -94,8 +95,8 @@ We can get this by using mutate and arrange:
 
 ```{r}
 maryland_population_with_voters_and_demographics %>%
-  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>% 
-  arrange(desc(pct_black_18_plus)) %>% 
+  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>%
+  arrange(desc(pct_black_18_plus)) %>%
   select(COUNTY, pct_black_18_plus, pct_dems)
 ```
 
@@ -105,8 +106,8 @@ Let's change that to look at Asian population:
 
 ```{r}
 maryland_population_with_voters_and_demographics %>%
-  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>% 
-  arrange(desc(pct_asian_18_plus)) %>% 
+  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/Total)*100) %>%
+  arrange(desc(pct_asian_18_plus)) %>%
   select(COUNTY, pct_asian_18_plus, pct_dems)
 ```
 

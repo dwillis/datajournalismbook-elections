@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -374,15 +374,6 @@ Attaching package: 'dplyr'</code></pre>
 <p>But, because those two libraries – and several others that we’re going to use over the course of this class – are so commonly used, there’s a shortcut to loading all of the libraries we’ll need:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ stringr 1.4.0
-✔ tidyr   1.2.0     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
 </div>
 <p>You can keep doing that for as many libraries as you need.</p>
 </section>
@@ -405,10 +396,7 @@ Attaching package: 'dplyr'</code></pre>
 <p>Inside of the <strong>read_rds()</strong> function, we’ve put the name of the file we want to load. Things we put inside of function, to customize what the function does, are called <strong>arguments</strong>.</p>
 <p>The easiest thing to do, if you are confused about how to find your data, is to put your data in the same folder as as your notebook (you’ll have to save that notebook first). If you do that, then you just need to put the name of the file in there (maryland_winred.rds). If you put your data in a folder called “data” that sits next to your data notebook, your function would instead look like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/maryland_winred.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/maryland_winred.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In this data set, each row represents an individual contribution to a federal political committee, typically a candidate’s campaign account.</p>
 <p>After loading the data, it’s a good idea to get a sense of its shape. What does it look like? There are several ways we can examine it.</p>
@@ -416,7 +404,7 @@ Attaching package: 'dplyr'</code></pre>
 <p>There are several useful functions for getting a sense of the dataset right in our markdown document.</p>
 <p>If we run <code>glimpse(maryland_winred_contributions)</code>, it will give us a list of the columns, the data type for each column and and the first few values for each column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 54,247
 Columns: 24
@@ -448,22 +436,23 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 </div>
 <p>If we type <code>head(maryland_winred_contributions)</code>, it will print out the columns and the first six rows of data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 24
-  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
-  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt;     
-1 SA11AI     C00694323        A9EF366… IND         NA       Hansher   Beth      
-2 SA11AI     C00694323        A64BB50… IND         NA       Leishman  Alexander 
-3 SA11AI     C00694323        A5835B6… IND         NA       Bode      John      
-4 SA11AI     C00694323        AE3AF0E… IND         NA       Gallagher Daniel    
-5 SA11AI     C00694323        AC55692… IND         NA       Bode      Denise    
-6 SA11AI     C00694323        A2B1EB0… IND         NA       Kaplan    Joel      
-# … with 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
-#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;,
-#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
-#   cycle &lt;dbl&gt;</code></pre>
+  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
+  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
+1 SA11AI   C00694… A9EF36… IND     NA      Hansher Beth    NA      NA     NA    
+2 SA11AI   C00694… A64BB5… IND     NA      Leishm… Alexan… NA      NA     NA    
+3 SA11AI   C00694… A5835B… IND     NA      Bode    John    NA      NA     NA    
+4 SA11AI   C00694… AE3AF0… IND     NA      Gallag… Daniel  NA      NA     NA    
+5 SA11AI   C00694… AC5569… IND     NA      Bode    Denise  NA      NA     NA    
+6 SA11AI   C00694… A2B1EB… IND     NA      Kaplan  Joel    NA      NA     NA    
+# … with 14 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
+#   state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
+#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
+#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and abbreviated variable names ¹​linenumber,
+#   ²​fec_committee_id, ³​flag_orgind, ⁴​org_name, ⁵​last_name, ⁶​first_name,
+#   ⁷​middle_name</code></pre>
 </div>
 </div>
 <p>We can also click on the data name in the R Studio environment window to explore it interactively.</p>
@@ -480,11 +469,11 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <p>In our dataset, the column with recipient information is called “memo_text”</p>
 <p>Here’s the code to count the number of contributions to each recipient:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 519 × 2
    memo_text                                           count_contribs
@@ -509,17 +498,17 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <p>When we run that, we get a list of recipients with a count next to them. But it’s not in any order.</p>
 <p>So we’ll add another “and then do this” symbol – %&gt;% – and use a new function called <code>arrange()</code>. Arrange does what you think it does – it arranges data in order. By default, it’s in ascending order – smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 519 × 2
-   memo_text                                                      count_contribs
+   memo_text                                                          count_co…¹
    &lt;chr&gt;                                                                   &lt;int&gt;
- 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C0077…           7809
+ 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C00770941)       7809
  2 Earmarked for NRSC (C00027466)                                           6497
  3 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00003418)                  4268
  4 Earmarked for NRCC (C00075820)                                           3945
@@ -529,7 +518,7 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
  8 Earmarked for RON JOHNSON FOR SENATE, INC. (C00482984)                    974
  9 Earmarked for JOHN KENNEDY FOR US (C00608398)                             955
 10 Earmarked for TIM SCOTT FOR SENATE (C00540302)                            915
-# … with 509 more rows</code></pre>
+# … with 509 more rows, and abbreviated variable name ¹​count_contribs</code></pre>
 </div>
 </div>
 <p>The Save America Joint Fundraising Committee has 7,809 contributions, more than any other recipient.</p>
@@ -537,12 +526,12 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <p>The WinRed data contains a column detailing the date of the contribution: “date”.</p>
 <p>We can group by “memo_text” and “date” to see how many contributions occurred on every date to every recipient. We’ll sort by recipient and then date</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text, date) <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(memo_text, date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text, date) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(memo_text, date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'memo_text'. You can override using the
 `.groups` argument.</code></pre>
@@ -571,113 +560,117 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <p>In the last example, we grouped like records together and counted them, but there’s so much more we can to summarize each group.</p>
 <p>Let’s say we wanted to know the total dollar amount of contributions to each recipient? For that, we could use the <code>sum()</code> function to add up all of the loan values in the column “amount”. We put the column we want to total – “amount” – inside the sum() function <code>sum(amount)</code>. Note that we can simply add a new summarize function here, keeping our count_contribs field in our output table.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 519 × 3
-   memo_text                                         count_contribs total_amount
-   &lt;chr&gt;                                                      &lt;int&gt;        &lt;dbl&gt;
- 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COM…           7809      220155.
- 2 Earmarked for NRSC (C00027466)                              6497      149673.
- 3 Earmarked for NRCC (C00075820)                              3945      118658.
- 4 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00…           4268      111955.
- 5 Earmarked for NICOLEE AMBROSE FOR CONGRESS (C008…            150       67980.
- 6 Earmarked for TEAM SCALISE (C00750521)                      2477       51709.
- 7 Earmarked for PARROTT FOR CONGRESS (C00691931)               346       45243.
- 8 Earmarked for MARCO RUBIO FOR SENATE (C00620518)            1326       43279.
- 9 Earmarked for KEVIN MCCARTHY FOR CONGRESS (C0042…           1461       29612.
-10 Earmarked for RON JOHNSON FOR SENATE, INC. (C004…            974       29611.
-# … with 509 more rows</code></pre>
+   memo_text                                                     count…¹ total…²
+   &lt;chr&gt;                                                           &lt;int&gt;   &lt;dbl&gt;
+ 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C007…    7809 220155.
+ 2 Earmarked for NRSC (C00027466)                                   6497 149673.
+ 3 Earmarked for NRCC (C00075820)                                   3945 118658.
+ 4 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00003418)          4268 111955.
+ 5 Earmarked for NICOLEE AMBROSE FOR CONGRESS (C00812891)            150  67980.
+ 6 Earmarked for TEAM SCALISE (C00750521)                           2477  51709.
+ 7 Earmarked for PARROTT FOR CONGRESS (C00691931)                    346  45243.
+ 8 Earmarked for MARCO RUBIO FOR SENATE (C00620518)                 1326  43279.
+ 9 Earmarked for KEVIN MCCARTHY FOR CONGRESS (C00420935)            1461  29612.
+10 Earmarked for RON JOHNSON FOR SENATE, INC. (C00482984)            974  29611.
+# … with 509 more rows, and abbreviated variable names ¹​count_contribs,
+#   ²​total_amount</code></pre>
 </div>
 </div>
 <p>We can also calculate the average amount for each recipient – the mean – and the amount that sits at the midpoint of our data – the median.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 519 × 5
-   memo_text               count_contribs total_amount mean_amount median_amount
-   &lt;chr&gt;                            &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
- 1 Earmarked for SAVE AME…           7809      220155.        28.2          20  
- 2 Earmarked for NRSC (C0…           6497      149673.        23.0          12.5
- 3 Earmarked for REPUBLIC…           4268      111955.        26.2          18  
- 4 Earmarked for NRCC (C0…           3945      118658.        30.1          25  
- 5 Earmarked for TEAM SCA…           2477       51709.        20.9          10  
- 6 Earmarked for KEVIN MC…           1461       29612.        20.3          10  
- 7 Earmarked for MARCO RU…           1326       43279.        32.6          20.2
- 8 Earmarked for RON JOHN…            974       29611.        30.4          25  
- 9 Earmarked for JOHN KEN…            955       26433.        27.7          15  
-10 Earmarked for TIM SCOT…            915       29095.        31.8          10  
-# … with 509 more rows</code></pre>
+   memo_text                                     count…¹ total…² mean_…³ media…⁴
+   &lt;chr&gt;                                           &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Earmarked for SAVE AMERICA JOINT FUNDRAISING…    7809 220155.    28.2    20  
+ 2 Earmarked for NRSC (C00027466)                   6497 149673.    23.0    12.5
+ 3 Earmarked for REPUBLICAN NATIONAL COMMITTEE …    4268 111955.    26.2    18  
+ 4 Earmarked for NRCC (C00075820)                   3945 118658.    30.1    25  
+ 5 Earmarked for TEAM SCALISE (C00750521)           2477  51709.    20.9    10  
+ 6 Earmarked for KEVIN MCCARTHY FOR CONGRESS (C…    1461  29612.    20.3    10  
+ 7 Earmarked for MARCO RUBIO FOR SENATE (C00620…    1326  43279.    32.6    20.2
+ 8 Earmarked for RON JOHNSON FOR SENATE, INC. (…     974  29611.    30.4    25  
+ 9 Earmarked for JOHN KENNEDY FOR US (C00608398)     955  26433.    27.7    15  
+10 Earmarked for TIM SCOTT FOR SENATE (C0054030…     915  29095.    31.8    10  
+# … with 509 more rows, and abbreviated variable names ¹​count_contribs,
+#   ²​total_amount, ³​mean_amount, ⁴​median_amount</code></pre>
 </div>
 </div>
 <p>We see something interesting here. The mean contribution amount is higher than the median amount in most cases, but the difference isn’t huge. In some cases the mean gets skewed by larger amounts. Examining both the median – which is less sensitive to extreme values – and the mean – which is more sensitive to extreme values – gives you a clearer picture of the composition of the data.</p>
 <p>What about the highest and lowest amounts for each recipient? For that, we can use the <code>min()</code> and <code>max()</code> functions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount),</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_amount =</span> <span class="fu">min</span>(amount),</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_amount =</span> <span class="fu">max</span>(amount)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(max_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(memo_text) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count_contribs =</span> <span class="fu">n</span>(),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_amount =</span> <span class="fu">sum</span>(amount),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_amount =</span> <span class="fu">mean</span>(amount),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_amount =</span> <span class="fu">median</span>(amount),</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_amount =</span> <span class="fu">min</span>(amount),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_amount =</span> <span class="fu">max</span>(amount)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(max_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 519 × 7
-   memo_text    count_contribs total_amount mean_amount median_amount min_amount
-   &lt;chr&gt;                 &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
- 1 Earmarked f…              5        7304       1461.            500       1   
- 2 Earmarked f…             30       10442.       348.             25       1   
- 3 Earmarked f…             24        6780        282.             25      10   
- 4 Earmarked f…            358       17711.        49.5            10       0.5 
- 5 Earmarked f…             75       14833.       198.              5       0.2 
- 6 Earmarked f…              1        5800       5800            5800    5800   
- 7 Earmarked f…             54        7900        146.             25       5   
- 8 Earmarked f…              1        5800       5800            5800    5800   
- 9 Earmarked f…            334       26920.        80.6            25       0.77
-10 Earmarked f…              3        6800       2267.            500     500   
-# … with 509 more rows, and 1 more variable: max_amount &lt;dbl&gt;</code></pre>
+   memo_text                     count…¹ total…² mean_…³ media…⁴ min_a…⁵ max_a…⁶
+   &lt;chr&gt;                           &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Earmarked for ALASKANS FOR D…       5   7304   1461.      500    1       5800
+ 2 Earmarked for AMAL FOR CONGR…      30  10442.   348.       25    1       5800
+ 3 Earmarked for BLAKE MASTERS …      24   6780    282.       25   10       5800
+ 4 Earmarked for FRIENDS OF MIK…     358  17711.    49.5      10    0.5     5800
+ 5 Earmarked for FRIENDS OF TOD…      75  14833.   198.        5    0.2     5800
+ 6 Earmarked for GALLUCH FOR CO…       1   5800   5800      5800 5800       5800
+ 7 Earmarked for KELLY FOR ALAS…      54   7900    146.       25    5       5800
+ 8 Earmarked for LAWLER FOR CON…       1   5800   5800      5800 5800       5800
+ 9 Earmarked for LAXALT FOR SEN…     334  26920.    80.6      25    0.77    5800
+10 Earmarked for MCHENRY FOR CO…       3   6800   2267.      500  500       5800
+# … with 509 more rows, and abbreviated variable names ¹​count_contribs,
+#   ²​total_amount, ³​mean_amount, ⁴​median_amount, ⁵​min_amount, ⁶​max_amount</code></pre>
 </div>
 </div>
 <p>From this, we can see that some committees focus on small-dollar donors while others ask for (and get) larger amounts. This pattern isn’t random: campaigns make choices about how they will raise money.</p>
 <p>It would be interesting to see what the largest donation was. To do that, we could simply take our original data set and sort it from highest to lowest on the amount.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 54,247 × 24
-   linenumber fec_committee_id tran_id flag_orgind org_name last_name first_name
-   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt;     
- 1 SA11AI     C00694323        A9EF36… IND         NA       Hansher   Beth      
- 2 SA11AI     C00694323        A64BB5… IND         NA       Leishman  Alexander 
- 3 SA11AI     C00694323        A5835B… IND         NA       Bode      John      
- 4 SA11AI     C00694323        AE3AF0… IND         NA       Gallagher Daniel    
- 5 SA11AI     C00694323        AC5569… IND         NA       Bode      Denise    
- 6 SA11AI     C00694323        A2B1EB… IND         NA       Kaplan    Joel      
- 7 SA11AI     C00694323        A2D9CC… IND         NA       Freas     Dustin    
- 8 SA11AI     C00694323        A8F4D9… IND         NA       Monahan   Tom       
- 9 SA11AI     C00694323        A3E262… IND         NA       powers    rick      
-10 SA11AI     C00694323        AD5034… IND         NA       JonesLan… Brien     
-# … with 54,237 more rows, and 17 more variables: middle_name &lt;lgl&gt;,
-#   prefix &lt;lgl&gt;, suffix &lt;lgl&gt;, address_one &lt;chr&gt;, address_two &lt;chr&gt;,
-#   city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;,
-#   amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;,
-#   memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
+   linen…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
+   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
+ 1 SA11AI  C00694… A9EF36… IND     NA      Hansher Beth    NA      NA     NA    
+ 2 SA11AI  C00694… A64BB5… IND     NA      Leishm… Alexan… NA      NA     NA    
+ 3 SA11AI  C00694… A5835B… IND     NA      Bode    John    NA      NA     NA    
+ 4 SA11AI  C00694… AE3AF0… IND     NA      Gallag… Daniel  NA      NA     NA    
+ 5 SA11AI  C00694… AC5569… IND     NA      Bode    Denise  NA      NA     NA    
+ 6 SA11AI  C00694… A2B1EB… IND     NA      Kaplan  Joel    NA      NA     NA    
+ 7 SA11AI  C00694… A2D9CC… IND     NA      Freas   Dustin  NA      NA     NA    
+ 8 SA11AI  C00694… A8F4D9… IND     NA      Monahan Tom     NA      NA     NA    
+ 9 SA11AI  C00694… A3E262… IND     NA      powers  rick    NA      NA     NA    
+10 SA11AI  C00694… AD5034… IND     NA      JonesL… Brien   NA      NA     NA    
+# … with 54,237 more rows, 14 more variables: address_one &lt;chr&gt;,
+#   address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
+#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
+#   ⁴​org_name, ⁵​last_name, ⁶​first_name, ⁷​middle_name</code></pre>
 </div>
 </div>
 <p>Lots of $5,800 contributions, which probably seems like a weirdly specific number. And it is! That’s the maximum contribution an individual can give for both a primary and a general election.</p>
@@ -688,6 +681,21 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

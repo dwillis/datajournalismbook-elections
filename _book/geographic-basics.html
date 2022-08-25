@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -351,47 +351,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/geolayers.jpg" class="img-fluid" width="512"></p>
+<p><img src="images/geolayers.jpg" class="img-fluid"></p>
 </div>
 </div>
 <section id="importing-and-viewing-data" class="level2" data-number="27.1">
 <h2 data-number="27.1" class="anchored" data-anchor-id="importing-and-viewing-data"><span class="header-section-number">27.1</span> Importing and viewing data</h2>
 <p>Let’s start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Linking to GEOS 3.10.2, GDAL 3.4.2, PROJ 8.2.1; sf_use_s2() is TRUE</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'janitor'
-
-The following objects are masked from 'package:stats':
-
-    chisq.test, fisher.test</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>First: an aside on geographic data. There are many formats for geographic data, but data type you’ll see the most is called the shapefile. It comes from a company named ESRI, which created the most widely-used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.</p>
 <p>So more often than not, you’ll be dealing with a shapefile. But a shapefile isn’t just a single file – it’s a collection of files that combined make up all the data that allow you to use it. There’s a .shp file – that’s the main file that pulls it all together – but it’s important to note if your shapefiles has a .prj file, which indicates that the projection is specified. There’s also a newer format from ESRI called a geodatabase (.gdb) that contains all of the elements that shapefiles do. We can use the <code>sf</code> library to read either format.</p>
 <p>The data we’re going to be working with is a file from the Maryland Citizens Redistricting Commission showing data about political districts in the state and their demographic characteristics.</p>
 <p>Similar to <code>readr</code>, the <code>sf</code> library has functions to read geographic data. In this case, we’re going to use <code>st_read</code> to read in our hospitals data. And then glimpse it to look at the columns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Adjusted2020.gdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Adjusted2020.gdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Census_Blocks' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
   using driver `OpenFileGDB'
 Simple feature collection with 83827 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -399,7 +378,7 @@ Dimension:     XY
 Bounding box:  xmin: -79.48765 ymin: 37.88661 xmax: -74.98628 ymax: 39.72304
 Geodetic CRS:  NAD83</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(blocks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(blocks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 83,827
 Columns: 27
@@ -436,10 +415,10 @@ $ Shape               &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-75.42637 3..., 
 <p>You can see the <a href="https://redistricting.maryland.gov/Documents/Data/DataDictionary.pdf">full description of the data</a>.</p>
 <p>Let’s look at just Baltimore City census blocks. Good news – <code>sf</code> plays very nicely with the tidyverse, so we can filter data the way we are accustomed. The County column represents what is called a FIPS code, which is a unique code for a geographic unit like state or county. All Maryland FIPS codes begin with “24”, which is the code for the state as a whole.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks <span class="ot">&lt;-</span> blocks <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(County <span class="sc">==</span> <span class="st">"24510"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks <span class="ot">&lt;-</span> blocks <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(County <span class="sc">==</span> <span class="st">"24510"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 10025 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -517,8 +496,8 @@ First 10 features:
 </div>
 <p>We have 10,025 blocks, according to this data. Now we can try to get a sense of the population in them. In how many blocks does the number of Hispanic population 18 and over exceed both non-Hispanic white 18 and over population and non-Hispanic Black 18 and over population?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Wht <span class="sc">&amp;</span> Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Blk) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>baltimore_city_blocks <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Wht <span class="sc">&amp;</span> Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Blk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 386 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -596,14 +575,14 @@ First 10 features:
 </div>
 <p>So there are 386 Census blocks with adult Hispanic population greater than either white or Black adult population. Where are they? We can simply plot them on a longitude-latitude grid using ggplot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>baltimore_hispanic_blocks <span class="ot">&lt;-</span> baltimore_city_blocks <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Wht <span class="sc">&amp;</span> Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Blk) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>baltimore_hispanic_blocks <span class="ot">&lt;-</span> baltimore_city_blocks <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Wht <span class="sc">&amp;</span> Adj_H18__Pop <span class="sc">&gt;</span> Adj_NH18__Blk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>baltimore_hispanic_blocks <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>baltimore_hispanic_blocks <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="geographic-basics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -615,7 +594,7 @@ First 10 features:
 <p>In the console, install tigris with the install packages function</p>
 <p>Then load it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>To enable caching of data, set `options(tigris_use_cache = TRUE)`
 in your R script or .Rprofile.</code></pre>
@@ -623,7 +602,7 @@ in your R script or .Rprofile.</code></pre>
 </div>
 <p>Now, let’s use the counties() function from tigris to pull down a shapefile of all U.S. counties.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>counties <span class="ot">&lt;-</span> <span class="fu">counties</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>counties <span class="ot">&lt;-</span> <span class="fu">counties</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Retrieving data for the year 2020</code></pre>
 </div>
@@ -644,10 +623,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |==                                                                    |   4%
   |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
   |====                                                                  |   5%
   |                                                                            
   |====                                                                  |   6%
@@ -657,10 +632,6 @@ in your R script or .Rprofile.</code></pre>
   |=====                                                                 |   8%
   |                                                                            
   |======                                                                |   8%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
   |                                                                            
   |=======                                                               |  10%
   |                                                                            
@@ -678,8 +649,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |==========                                                            |  14%
   |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
   |===========                                                           |  15%
   |                                                                            
   |===========                                                           |  16%
@@ -689,6 +658,10 @@ in your R script or .Rprofile.</code></pre>
   |============                                                          |  18%
   |                                                                            
   |=============                                                         |  18%
+  |                                                                            
+  |=============                                                         |  19%
+  |                                                                            
+  |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
@@ -702,11 +675,7 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |================                                                      |  23%
   |                                                                            
-  |================                                                      |  24%
-  |                                                                            
   |=================                                                     |  24%
-  |                                                                            
-  |=================                                                     |  25%
   |                                                                            
   |==================                                                    |  25%
   |                                                                            
@@ -718,10 +687,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |====================                                                  |  28%
   |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
   |=====================                                                 |  30%
   |                                                                            
   |=====================                                                 |  31%
@@ -730,13 +695,15 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |======================                                                |  32%
   |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
   |=======================                                               |  33%
   |                                                                            
-  |=======================                                               |  34%
+  |========================                                              |  35%
+  |                                                                            
+  |=========================                                             |  35%
   |                                                                            
   |=========================                                             |  36%
+  |                                                                            
+  |==========================                                            |  36%
   |                                                                            
   |==========================                                            |  37%
   |                                                                            
@@ -746,25 +713,17 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |===========================                                           |  39%
   |                                                                            
-  |============================                                          |  39%
-  |                                                                            
   |============================                                          |  40%
   |                                                                            
   |============================                                          |  41%
   |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
   |==============================                                        |  42%
   |                                                                            
-  |==============================                                        |  43%
+  |===============================                                       |  44%
   |                                                                            
   |===============================                                       |  45%
   |                                                                            
   |================================                                      |  45%
-  |                                                                            
-  |================================                                      |  46%
   |                                                                            
   |=================================                                     |  47%
   |                                                                            
@@ -773,8 +732,6 @@ in your R script or .Rprofile.</code></pre>
   |==================================                                    |  48%
   |                                                                            
   |==================================                                    |  49%
-  |                                                                            
-  |===================================                                   |  49%
   |                                                                            
   |===================================                                   |  50%
   |                                                                            
@@ -788,35 +745,23 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=====================================                                 |  53%
   |                                                                            
-  |======================================                                |  54%
+  |=====================================                                 |  54%
   |                                                                            
-  |======================================                                |  55%
+  |======================================                                |  54%
   |                                                                            
   |=======================================                               |  55%
   |                                                                            
-  |=======================================                               |  56%
-  |                                                                            
-  |========================================                              |  56%
-  |                                                                            
   |========================================                              |  57%
-  |                                                                            
-  |========================================                              |  58%
   |                                                                            
   |=========================================                             |  58%
   |                                                                            
   |=========================================                             |  59%
   |                                                                            
-  |==========================================                            |  59%
-  |                                                                            
   |==========================================                            |  60%
-  |                                                                            
-  |==========================================                            |  61%
   |                                                                            
   |===========================================                           |  61%
   |                                                                            
   |===========================================                           |  62%
-  |                                                                            
-  |============================================                          |  62%
   |                                                                            
   |============================================                          |  63%
   |                                                                            
@@ -824,21 +769,21 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=============================================                         |  64%
   |                                                                            
-  |=============================================                         |  65%
-  |                                                                            
   |==============================================                        |  65%
   |                                                                            
   |==============================================                        |  66%
   |                                                                            
-  |===============================================                       |  67%
+  |===============================================                       |  66%
   |                                                                            
-  |===============================================                       |  68%
+  |===============================================                       |  67%
   |                                                                            
   |================================================                      |  68%
   |                                                                            
   |================================================                      |  69%
   |                                                                            
   |=================================================                     |  70%
+  |                                                                            
+  |=================================================                     |  71%
   |                                                                            
   |==================================================                    |  71%
   |                                                                            
@@ -848,15 +793,15 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |===================================================                   |  73%
   |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
+  |===================================================                   |  74%
   |                                                                            
   |=====================================================                 |  75%
   |                                                                            
   |=====================================================                 |  76%
   |                                                                            
-  |=======================================================               |  78%
+  |======================================================                |  76%
+  |                                                                            
+  |======================================================                |  77%
   |                                                                            
   |=======================================================               |  79%
   |                                                                            
@@ -874,8 +819,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |===========================================================           |  84%
   |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
   |============================================================          |  85%
   |                                                                            
   |============================================================          |  86%
@@ -884,13 +827,9 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=============================================================         |  87%
   |                                                                            
-  |==============================================================        |  88%
+  |=============================================================         |  88%
   |                                                                            
   |==============================================================        |  89%
-  |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
-  |===============================================================       |  90%
   |                                                                            
   |===============================================================       |  91%
   |                                                                            
@@ -898,17 +837,11 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |================================================================      |  92%
   |                                                                            
+  |=================================================================     |  92%
+  |                                                                            
   |=================================================================     |  93%
   |                                                                            
-  |==================================================================    |  94%
-  |                                                                            
-  |==================================================================    |  95%
-  |                                                                            
   |===================================================================   |  95%
-  |                                                                            
-  |===================================================================   |  96%
-  |                                                                            
-  |====================================================================  |  96%
   |                                                                            
   |====================================================================  |  97%
   |                                                                            
@@ -916,11 +849,11 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |===================================================================== |  98%
   |                                                                            
-  |===================================================================== |  99%
+  |======================================================================|  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(counties)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(counties)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 3,234
 Columns: 18
@@ -947,32 +880,32 @@ $ geometry &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-97.01952 4..., MULTIPOLYGO
 <p>This looks pretty similar to our Census blocks shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column.</p>
 <p>This county shapefile has all 3233 U.S. counties. We only want the Maryland counties, so we’re going to filter the data to only keep Maryland counties. There is no STATE column, but there is a STATEFP column, with each number representing a state. Maryland’s FP number is 24.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>md_counties <span class="ot">&lt;-</span> counties <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STATEFP <span class="sc">==</span> <span class="st">"24"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>md_counties <span class="ot">&lt;-</span> counties <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STATEFP <span class="sc">==</span> <span class="st">"24"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To see what this looks like, let’s plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>md_counties <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>md_counties <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="geographic-basics_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Hey, look, it’s Maryland! Of course, we just need Baltimore City, so let’s get that:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>baltimore_city <span class="ot">&lt;-</span> md_counties <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COUNTYFP <span class="sc">==</span> <span class="st">"510"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>baltimore_city <span class="ot">&lt;-</span> md_counties <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COUNTYFP <span class="sc">==</span> <span class="st">"510"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>With this map, we can layer our Census block data.</p>
 <p>Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.</p>
 <p>We’re also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe. We have two to plot now, so it’s easier this way.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city) <span class="sc">+</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks) <span class="sc">+</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="geographic-basics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -980,10 +913,10 @@ $ geometry &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-97.01952 4..., MULTIPOLYGO
 <p>What can we tell from this?</p>
 <p>Well, Census blocks where adult Hispanic population outnumbers both white and Black adult population are clustered in the city’s eastern and southwestern areas. There are fewer such blocks in the northern parts of the city. We’re also missing the water - the harbor, rivers and streams. But we can add those, too! The city offers various GIS data, including the <a href="https://data.baltimorecity.gov/datasets/water/explore?location=89.796632%2C-66.364958%2C0.00">locations of waterways</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>water <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Water.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>water <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Water.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Water' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Water.shp' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Water.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 468 features and 5 fields
 Geometry type: POLYGON
@@ -994,11 +927,11 @@ Projected CRS: NAD83 / Maryland (ftUS)</code></pre>
 </div>
 <p>Now let’s add that to our previous map. The order here matters - we want the outline of the city first, followed by water and then the Hispanic population blocks:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>water) <span class="sc">+</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks) <span class="sc">+</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city) <span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>water) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks) <span class="sc">+</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="geographic-basics_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1006,12 +939,12 @@ Projected CRS: NAD83 / Maryland (ftUS)</code></pre>
 <p>Better, but this is a pretty blunt visualization. Not all Census blocks are equally sized. Some have more people than the others, for example. It’s hard to differentiate that here.</p>
 <p>We can get a sense of where the largest Hispanic populations are, by changing the color of the shapes according to the number of people. We do this by setting the aesthetic – or aes – to use the Adj_H18__POP column inside of the geom_sf function. To make the differences easier to see, we’re going to change the fill of the city white, too, and use a special color palette, viridis magma. We’re also going to make the shapes slightly bigger.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city, <span class="at">fill=</span><span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>water) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks, <span class="fu">aes</span>(<span class="at">color=</span>Adj_H18__Pop), <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>) <span class="sc">+</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_city, <span class="at">fill=</span><span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>water) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>baltimore_hispanic_blocks, <span class="fu">aes</span>(<span class="at">color=</span>Adj_H18__Pop), <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>) <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="geographic-basics_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1024,6 +957,21 @@ Projected CRS: NAD83 / Maryland (ftUS)</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

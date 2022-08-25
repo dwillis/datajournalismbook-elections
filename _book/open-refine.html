@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -354,39 +354,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Open Refine is a software program that has tools – algorithms – that find small differences in text and helps you fix them quickly. How Open Refine finds those small differences is through something called clustering. The algorithms behind clustering are not exclusive to Open Refine, so they can be used elsewhere.</p>
 <p>Enter <code>refinr</code>, a package that contains the same clustering algorithms as Open Refine but all within R. Go ahead and install it if you haven’t already by opening the console and running <code>install.packages("refinr")</code>. Then we can load libraries as we do.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(refinr)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'janitor'
-
-The following objects are masked from 'package:stats':
-
-    chisq.test, fisher.test</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(refinr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s load some campaign expenditure data focused on food-related expenses in Washington, D.C. Essentially, where campaigns spend their money on D.C. restaurants.</p>
 <p>Now let’s try and group and count the number of expenditures by recipient. To make it a bit more manageable, let’s use another string function from <code>stringr</code> and filter for recipients that start with the uppercase “W” or lowercase “w” using the function <code>str_detect()</code> with a regular expression.</p>
 <p>The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the “^” symbol means “starts with”) a lowercase “w” OR (the vertical “|”, called a pipe, means OR) an uppercase “W”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dc_food <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name) <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_name, <span class="st">'^w|^W'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_name, <span class="st">'^w|^W'</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50 × 2
    recipient_name      count
@@ -410,43 +392,43 @@ The following objects are masked from 'package:stats':
 <p>The key collision merge function takes each string and extracts the key parts of it. It then puts every key in a bin based on the keys matching.</p>
 <p>One rule you should follow when using this is: <strong>do not overwrite your original fields</strong>. Always work on a copy. If you overwrite your original field, how will you know if it did the right thing? How can you compare it to your original data? To follow this, I’m going to mutate a new field called clean_city and put the results of key collision merge there.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">key_collision_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">key_collision_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13,108 × 50
-   recipient_name        recipient_clean committee_id committee_name report_year
-   &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;
- 1 ST. REGIS HOTEL       ST. REGIS HOTEL C00658385    MARK GREEN FO…        2021
- 2 HARKER, GRAY          HARKER, GRAY    C00536540    JOBS, FREEDOM…        2021
- 3 REPUBLICAN NATIONAL … REPUBLICAN NAT… C00055582    NY REPUBLICAN…        2021
- 4 JOE'S SEAFOOD PRIME … JOE'S SEAFOOD,… C00551853    OORAH! POLITI…        2021
- 5 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00391029    JIM COSTA FOR…        2021
- 6 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00454694    MARCIA FUDGE …        2021
- 7 CAFE MILANO           CAFE MILANO     C00391029    JIM COSTA FOR…        2021
- 8 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
- 9 CAPITOL HILL CLUB     CAPITOL HILL C… C00725465    CLIFF BENTZ F…        2021
-10 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
-# … with 13,098 more rows, and 45 more variables: report_type &lt;chr&gt;,
-#   image_number &lt;dbl&gt;, line_number &lt;chr&gt;, transaction_id &lt;chr&gt;,
-#   file_number &lt;dbl&gt;, entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
+   recipient_n…¹ recip…² commi…³ commi…⁴ repor…⁵ repor…⁶ image…⁷ line_…⁸ trans…⁹
+   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
+ 1 ST. REGIS HO… ST. RE… C00658… MARK G…    2021 YE      2.02e17 17      SB17.I…
+ 2 HARKER, GRAY  HARKER… C00536… JOBS, …    2021 YE      2.02e17 21B     SB21B.…
+ 3 REPUBLICAN N… REPUBL… C00055… NY REP…    2021 M2      2.02e17 21B     B35A42…
+ 4 JOE'S SEAFOO… JOE'S … C00551… OORAH!…    2021 M4      2.02e17 21B     SB21B.…
+ 5 NATIONAL DEM… NATION… C00391… JIM CO…    2021 Q1      2.02e17 17      BA7DD5…
+ 6 NATIONAL DEM… NATION… C00454… MARCIA…    2021 Q1      2.02e17 17      SB17.2…
+ 7 CAFE MILANO   CAFE M… C00391… JIM CO…    2021 Q1      2.02e17 17      B68639…
+ 8 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      BA078C…
+ 9 CAPITOL HILL… CAPITO… C00725… CLIFF …    2021 Q1      2.02e17 17      17883  
+10 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      B51CE8…
+# … with 13,098 more rows, 41 more variables: file_number &lt;dbl&gt;,
+#   entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
 #   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
 #   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
 #   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
-#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;, …</code></pre>
+#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;,
+#   memo_code &lt;chr&gt;, memo_code_full &lt;lgl&gt;, disbursement_date &lt;chr&gt;, …</code></pre>
 </div>
 </div>
 <p>To examine changes <code>refinr</code> made, let’s examine the changes it made to cities that start with the letter “W”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'recipient_name'. You can override using
 the `.groups` argument.</code></pre>
@@ -472,43 +454,43 @@ the `.groups` argument.</code></pre>
 <p>You can see several changes on the second page of results, including that refinr made “PIZZA, WE THE” into “WE THE PIZZA” which is pretty smart. Other potential changes, grouping together “WASHINGTON NATIONALS” and “WASHINGTON NATIONALS BASEBALL CLUB”, didn’t happen. Key collision will do well with different cases, but all of our records are upper case.</p>
 <p>There’s another merging algorithim that’s part of refinr that works a bit differently, called <code>n_gram_merge()</code>. Let’s try applying that one.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">n_gram_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="ot">&lt;-</span> dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient_clean=</span><span class="fu">n_gram_merge</span>(recipient_name)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(recipient_name, recipient_clean, <span class="fu">everything</span>())</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13,108 × 50
-   recipient_name        recipient_clean committee_id committee_name report_year
-   &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;
- 1 ST. REGIS HOTEL       ST. REGIS HOTEL C00658385    MARK GREEN FO…        2021
- 2 HARKER, GRAY          HARKER, GRAY    C00536540    JOBS, FREEDOM…        2021
- 3 REPUBLICAN NATIONAL … REPUBLICAN NAT… C00055582    NY REPUBLICAN…        2021
- 4 JOE'S SEAFOOD PRIME … JOE'S SEAFOOD,… C00551853    OORAH! POLITI…        2021
- 5 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00391029    JIM COSTA FOR…        2021
- 6 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00454694    MARCIA FUDGE …        2021
- 7 CAFE MILANO           CAFE MILANO     C00391029    JIM COSTA FOR…        2021
- 8 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
- 9 CAPITOL HILL CLUB     CAPITOL HILL C… C00725465    CLIFF BENTZ F…        2021
-10 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
-# … with 13,098 more rows, and 45 more variables: report_type &lt;chr&gt;,
-#   image_number &lt;dbl&gt;, line_number &lt;chr&gt;, transaction_id &lt;chr&gt;,
-#   file_number &lt;dbl&gt;, entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
+   recipient_n…¹ recip…² commi…³ commi…⁴ repor…⁵ repor…⁶ image…⁷ line_…⁸ trans…⁹
+   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
+ 1 ST. REGIS HO… ST. RE… C00658… MARK G…    2021 YE      2.02e17 17      SB17.I…
+ 2 HARKER, GRAY  HARKER… C00536… JOBS, …    2021 YE      2.02e17 21B     SB21B.…
+ 3 REPUBLICAN N… REPUBL… C00055… NY REP…    2021 M2      2.02e17 21B     B35A42…
+ 4 JOE'S SEAFOO… JOE'S … C00551… OORAH!…    2021 M4      2.02e17 21B     SB21B.…
+ 5 NATIONAL DEM… NATION… C00391… JIM CO…    2021 Q1      2.02e17 17      BA7DD5…
+ 6 NATIONAL DEM… NATION… C00454… MARCIA…    2021 Q1      2.02e17 17      SB17.2…
+ 7 CAFE MILANO   CAFE M… C00391… JIM CO…    2021 Q1      2.02e17 17      B68639…
+ 8 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      BA078C…
+ 9 CAPITOL HILL… CAPITO… C00725… CLIFF …    2021 Q1      2.02e17 17      17883  
+10 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      B51CE8…
+# … with 13,098 more rows, 41 more variables: file_number &lt;dbl&gt;,
+#   entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
 #   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
 #   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
 #   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
-#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;, …</code></pre>
+#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;,
+#   memo_code &lt;chr&gt;, memo_code_full &lt;lgl&gt;, disbursement_date &lt;chr&gt;, …</code></pre>
 </div>
 </div>
 <p>To examine changes <code>refinr</code> made with this algorithm, let’s again look at cities that start with the letter “A”. Examining Aberdeen and Annapolis, we see there wasn’t a substantial change from the previous method.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(recipient_name, recipient_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count=</span><span class="fu">n</span>()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(recipient_clean, <span class="st">"^w|^W"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(recipient_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'recipient_name'. You can override using
 the `.groups` argument.</code></pre>
@@ -543,13 +525,13 @@ the `.groups` argument.</code></pre>
 <p>You first have to import your data into a project. Click the choose files button and upload a csv of the DC food-related expenditures.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open1.png" class="img-fluid" width="1276"></p>
+<p><img src="images/open1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>After your data is loaded into the app, you’ll get a screen to look over what the data looks like. On the top right corner, you’ll see a button to create the project. Click that.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2.png" class="img-fluid" width="1785"></p>
+<p><img src="images/open2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Open Refine has many, many tools. We’re going to use one piece of it, as a tool for data cleaning. To learn how to use it, we’re going to clean the “recipient_name” field.</p>
@@ -557,39 +539,39 @@ the `.groups` argument.</code></pre>
 <p>Click the dropdown arrow next to the recipient_name column, choose “edit column” &gt; “Add column based on this column”:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2a.png" class="img-fluid" width="1029"></p>
+<p><img src="images/open2a.png" class="img-fluid"></p>
 </div>
 </div>
 <p>On the window that pops up, type “recipient_name_orig” in the “new column name” field. Then hit the OK button.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2b.png" class="img-fluid" width="713"></p>
+<p><img src="images/open2b.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now, let’s get to work cleaning the recipient_name column.</p>
 <p>Next to the recipient_name field name, click the down arrow, then facet, then text facet.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open3.png" class="img-fluid" width="426"></p>
+<p><img src="images/open3.png" class="img-fluid"></p>
 </div>
 </div>
 <p>After that, a new box will appear on the left. It tells us how many unique recipient_names there are: 1,655. And, there’s a button on the right of the box that says Cluster.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open4.png" class="img-fluid" width="290"></p>
+<p><img src="images/open4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Click the cluster button. A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open5.png" class="img-fluid" width="999"></p>
+<p><img src="images/open5.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The default “method” used is a clustering algorithim called “key collision”, using the fingerprint function. This is the same method we used with the refinr package above.</p>
 <p>At the top, you’ll see which method was used, and how many clusters that algorithm identified. There are several different methods, each of which work slightly differently and produce different results.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open6.png" class="img-fluid" width="999"></p>
+<p><img src="images/open6.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Then, below that, you can see what those clusters are. Right away, we can see how useful this program is. It identified 99 rows that have some variation on “Hawk N Dove” in the recipient_name field. It proposed changing them all to “HAWK N DOVE”.</p>
@@ -605,7 +587,7 @@ the `.groups` argument.</code></pre>
 <p>Then, export the data as a csv so you can load it back into R.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open7.png" class="img-fluid" width="1425"></p>
+<p><img src="images/open7.png" class="img-fluid"></p>
 </div>
 </div>
 <p>A question for all data analysts – if the dataset is bad enough, can it ever be cleaned?</p>
@@ -617,6 +599,21 @@ the `.groups` argument.</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

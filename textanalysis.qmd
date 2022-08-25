@@ -9,6 +9,7 @@ Turning unstructured text into data to analyze is a whole course in and of itsel
 To do this, we'll need a new library -- [tidytext](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html), which you can guess by the name plays very nicely with the tidyverse. So install it with `install.packages("tidytext")` and we'll get rolling.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(tidytext)
 library(janitor)
@@ -69,7 +70,6 @@ unique_words %>%
 
 Well, that's a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like "a" and "the" are known as "stop words". In most cases you'll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them:
 
-
 ```{r}
 data("stop_words")
 ```
@@ -88,7 +88,6 @@ unique_words %>%
 ```
 
 Those seem like more relevant unique words. Now, here's where we can start to do more interesting and meaningful analysis. Let's create two dataframes of unique words based on time: one for all of 2020 and the other for all of 2021:
-
 
 ```{r}
 unique_words_2020 <- covid_tweets %>%
@@ -130,14 +129,13 @@ The code to make ngrams is similar to what we did above, but involves some more 
 
 So this block is is going to do the following:
 
-1. Use the covid_tweets data we created above, and filter for pre-2021 tweets.
-2. Unnest the tokens again, but instead we're going to create a field called bigram, break apart summary, but we're going to specify the tokens in this case are ngrams of 2.
-3. We're going to make things easier to read and split bigrams into word1 and word2.
-4. We're going to filter out stopwords again, but this time we're going to do it in both word1 and word2 using a slightly different filtering method.
-5. Because of some weirdness in calculating the percentage, we're going to put bigram back together again, now that the stop words are gone.
-6. We'll then group by, count and create a percent just like we did above.
-7. We'll then use top_n to give us the top 10 bigrams.
-
+1.  Use the covid_tweets data we created above, and filter for pre-2021 tweets.
+2.  Unnest the tokens again, but instead we're going to create a field called bigram, break apart summary, but we're going to specify the tokens in this case are ngrams of 2.
+3.  We're going to make things easier to read and split bigrams into word1 and word2.
+4.  We're going to filter out stopwords again, but this time we're going to do it in both word1 and word2 using a slightly different filtering method.
+5.  Because of some weirdness in calculating the percentage, we're going to put bigram back together again, now that the stop words are gone.
+6.  We'll then group by, count and create a percent just like we did above.
+7.  We'll then use top_n to give us the top 10 bigrams.
 
 ```{r}
 covid_tweets %>%

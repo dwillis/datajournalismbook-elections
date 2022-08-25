@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -348,19 +348,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Let’s do what we need to import them properly. I’ve merged it all into one step for each of the three datasets.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>county_voters_2016 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2016.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>county_voters_2016 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2016.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 25 Columns: 9
 ── Column specification ────────────────────────────────────────────────────────
@@ -373,7 +363,7 @@ dbl (8): YEAR, DEM, REP, LIB, GRN, UNA, OTH, Total
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>county_voters_2018 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2018.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>county_voters_2018 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2018.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 25 Columns: 9
 ── Column specification ────────────────────────────────────────────────────────
@@ -386,7 +376,7 @@ dbl (8): YEAR, DEM, REP, LIB, GRN, UNA, OTH, Total
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>county_voters_2020 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2020.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>county_voters_2020 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/county_voters_2020.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 25 Columns: 9
 ── Column specification ────────────────────────────────────────────────────────
@@ -401,7 +391,7 @@ dbl (8): YEAR, DEM, REP, GRN, LIB, OTH, UNA, Total
 <p>All three of these datasets have the same number of columns, all with the same names, so if we want to merge them together to compare them over time, we need to stack them together. The verb here, in R, is <code>bind_rows</code>. You tell the function what you want to combine and it does it, assuming that you’ve got column names in common containing identically formatted data.</p>
 <p>Since we have three dataframes, we’re going to need to pass them as a list, meaning they’ll be enclosed inside the <code>list</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>county_voters_combined <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">list</span>(county_voters_2016, county_voters_2018, county_voters_2020))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>county_voters_combined <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">list</span>(county_voters_2016, county_voters_2018, county_voters_2020))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And boom, like that, we have 75 rows of data together instead of three dataframes. There are plenty of uses for <code>bind_rows</code>: any regularly updated data that comes in the same format like crime reports or award recipients or player game statistics. Or election results.</p>
 </section>
@@ -410,7 +400,7 @@ dbl (8): YEAR, DEM, REP, GRN, LIB, OTH, UNA, Total
 <p>More complicated is when you have two separate tables that are connected by a common element or elements. But there’s a verb for that, too: <code>join</code>.</p>
 <p>Let’s start by reading in some Maryland 2020 county population data:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_population_2020.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_population_2020.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 24 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
@@ -427,14 +417,14 @@ dbl (1): POP2020
 <p>In the best-case scenario, the two tables we want to join share a common column. In this case, both of our tables have a column called <code>county</code> that has the same characteristics: values in both look identical, including how they distinguish Baltimore City from Baltimore County. This is important, because joins work on <em>exact matches</em>.</p>
 <p>We can do this join multiple ways and get a similar result. We can put the population file on the left and the registration data on the right and use a left join to get them all together. And we use <code>by=</code> to join by the correct column. I’m going to count the rows at the end. The reason I’m doing this is important: <strong>Rule 1 in joining data is having an idea of what you are expecting to get</strong>. So with a left join with population on the left, I have 24 rows, so I expect to get 24 rows when I’m done.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020, <span class="at">by=</span><span class="st">"COUNTY"</span>) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020, <span class="at">by=</span><span class="st">"COUNTY"</span>) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 24</code></pre>
 </div>
 </div>
 <p>Remove the nrow and run it again for yourself. By default, <code>dplyr</code> will do a “natural” join, where it’ll match all the matching columns in both tables. So if we take out the by, it’ll use all the common columns between the tables. That may not be right in every instance but let’s try it. If it works, we should get 24 rows.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining, by = "COUNTY"</code></pre>
 </div>
@@ -458,7 +448,7 @@ dbl (1): POP2020
 <p>Since we only have one column in common between the two tables, the join only used that column. And we got the same answer. If we had more columns in common, you could see in your results columns with .X after them - that’s a sign of duplicative columns between two tables, and you may decide you don’t need both moving forward.</p>
 <p>Let’s save our joined data to a new dataframe, but this time let’s remove the select function so we don’t limit the columns to just three.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters <span class="ot">&lt;-</span> maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters <span class="ot">&lt;-</span> maryland_population <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(county_voters_2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining, by = "COUNTY"</code></pre>
 </div>
@@ -466,7 +456,7 @@ dbl (1): POP2020
 <p>Now, with our joined data, we can answer questions in a more useful way. But joins can do even more than just bring data together; they can include additional data to enable you to ask more sophisticated questions. Right now we have registered voters and total population. But we can do more.</p>
 <p>Let’s try adding more Maryland demographic data to the mix. Using a file describing the 18-and-over population (from which eligible voters come) from <a href="https://planning.maryland.gov/MSDC/Pages/census/Census2020/pL_2020redistricting.aspx">the state’s data catalog</a>, we can read it into R:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maryland_demographics <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_demographics.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>maryland_demographics <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_demographics.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 24 Columns: 11
 ── Column specification ────────────────────────────────────────────────────────
@@ -480,15 +470,15 @@ dbl (10): GEOCODE, pop_18_over, pop_one_race, pop_white, pop_black, pop_nati...
 </div>
 <p>Again, we can use a <code>left_join</code> to make our demographic data available. This time we’ll need to specify the two fields to join because they do not have identical names. We’ll use <code>COUNTY</code> from our population data and <code>NAME</code> from the demographic data, and the order matters - the first column is from the dataframe you name <em>first</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="ot">&lt;-</span> maryland_population_with_voters <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(maryland_demographics, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"COUNTY"</span><span class="ot">=</span><span class="st">"NAME"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="ot">&lt;-</span> maryland_population_with_voters <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(maryland_demographics, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"COUNTY"</span><span class="ot">=</span><span class="st">"NAME"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we’ve got population data and demographic data by county. That means we can draw from both datasets in asking our questions. For example, we could see the counties with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county.</p>
 <p>We can get this by using mutate and arrange:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_black_18_plus =</span> (pop_black<span class="sc">/</span>pop_18_over)<span class="sc">*</span><span class="dv">100</span>, <span class="at">pct_dems =</span> (DEM<span class="sc">/</span>Total)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pct_black_18_plus)) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COUNTY, pct_black_18_plus, pct_dems)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_black_18_plus =</span> (pop_black<span class="sc">/</span>pop_18_over)<span class="sc">*</span><span class="dv">100</span>, <span class="at">pct_dems =</span> (DEM<span class="sc">/</span>Total)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pct_black_18_plus)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COUNTY, pct_black_18_plus, pct_dems)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 3
    COUNTY           pct_black_18_plus pct_dems
@@ -509,10 +499,10 @@ dbl (10): GEOCODE, pop_18_over, pop_one_race, pop_white, pop_black, pop_nati...
 <p>If you know Maryland political demographics, this result isn’t too surprising, but Somerset County - the state’s 2nd smallest in terms of population - stands out for its Black population, which is a greater percentage than Baltimore County and Montgomery County.</p>
 <p>Let’s change that to look at Asian population:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_asian_18_plus =</span> (pop_asian<span class="sc">/</span>pop_18_over)<span class="sc">*</span><span class="dv">100</span>, <span class="at">pct_dems =</span> (DEM<span class="sc">/</span>Total)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pct_asian_18_plus)) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COUNTY, pct_asian_18_plus, pct_dems)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>maryland_population_with_voters_and_demographics <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_asian_18_plus =</span> (pop_asian<span class="sc">/</span>pop_18_over)<span class="sc">*</span><span class="dv">100</span>, <span class="at">pct_dems =</span> (DEM<span class="sc">/</span>Total)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pct_asian_18_plus)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(COUNTY, pct_asian_18_plus, pct_dems)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 3
    COUNTY           pct_asian_18_plus pct_dems
@@ -533,7 +523,7 @@ dbl (10): GEOCODE, pop_18_over, pop_one_race, pop_white, pop_black, pop_nati...
 <p>Here, Howard and Montgomery County stand out in terms of the percentage of Asian population 18 and over. The jurisdictions with the highest percentage of Democrats - Prince George’s and Baltimore City - have small Asian populations.</p>
 <p>Sometimes joins look like they should work but don’t. Often this is due to the two columns you’re joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let’s walk through an example of that using some demographic data by zip code.</dbl></chr></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>maryland_zcta <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_zcta.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>maryland_zcta <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_zcta.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 468 Columns: 40
 ── Column specification ────────────────────────────────────────────────────────
@@ -544,7 +534,7 @@ dbl (35): OBJECTID_1, ZCTA5CE10, FIRST_STAT, FIRST_GEOI, ZCTA5N, STATE, AREA...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(maryland_zcta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(maryland_zcta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 468
 Columns: 40
@@ -592,7 +582,7 @@ $ REPORT_9_P &lt;chr&gt; "http://mdpgis.mdp.state.md.us/census2010/PDF/00_SF1_9P
 </div>
 <p>You can see that ZCTA5N, the column representing the Zip Code Tabulation Area, is a numeric column. But should it be? Do we ever want to know the average zip code in Maryland? Zip codes and ZCTAs look like numbers but really are character columns. Let’s change that so that we can be sure to join them correctly with other data where the zip codes are not numbers. We’ll use <code>mutate</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>maryland_zcta <span class="ot">&lt;-</span> maryland_zcta <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(ZCTA5N, as.character))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>maryland_zcta <span class="ot">&lt;-</span> maryland_zcta <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(ZCTA5N, as.character))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>What’s happening here is that we’re telling R to take all of the values in the ZCTA5N column and make them “as.character”. If we wanted to change a column to numeric, we’d do “as.numeric”. When you join two dataframes, the join columns <em>must</em> be the same datatype.</p>
 <p>Joining datasets allows you to expand the range and sophistication of questions you’re able to ask. It is one of the most powerful tools in a journalist’s toolkit.</p>
@@ -603,6 +593,21 @@ $ REPORT_9_P &lt;chr&gt; "http://mdpgis.mdp.state.md.us/census2010/PDF/00_SF1_9P
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

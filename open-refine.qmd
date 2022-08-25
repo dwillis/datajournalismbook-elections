@@ -14,7 +14,7 @@ I tell you this because if I had Open Refine, it would have taken me a week, not
 
 Every time I talk about Open Refine, I remember this, and I get mad.
 
-Fortunately (unfortunately?) several columns in the PPP loan data we're working with are flawed in exactly the same way. There are dozens of variations on just "Baltimore".    
+Fortunately (unfortunately?) several columns in the PPP loan data we're working with are flawed in exactly the same way. There are dozens of variations on just "Baltimore".
 
 We're going to explore two ways into Open Refine: Through R, and through Open Refine itself.
 
@@ -27,6 +27,7 @@ Open Refine is a software program that has tools -- algorithms -- that find smal
 Enter `refinr`, a package that contains the same clustering algorithms as Open Refine but all within R. Go ahead and install it if you haven't already by opening the console and running `install.packages("refinr")`. Then we can load libraries as we do.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(refinr)
 library(janitor)
@@ -40,9 +41,9 @@ dc_food <- read_csv("data/dc_food.csv")
 
 ```
 
-Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "W" or lowercase "w" using the function `str_detect()` with a regular expression.  
+Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "W" or lowercase "w" using the function `str_detect()` with a regular expression.
 
-The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W".  
+The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W".
 
 ```{r}
 dc_food %>%
@@ -50,7 +51,7 @@ dc_food %>%
   summarise(
     count=n()
   ) %>%
-  filter(str_detect(recipient_name, '^w|^W')) %>% 
+  filter(str_detect(recipient_name, '^w|^W')) %>%
   arrange(recipient_name)
 ```
 
@@ -108,7 +109,7 @@ cleaned_dc_food %>%
 ```
 This method also made some good changes, but not in every case. No single method will be perfect and often a combination is necessary.
 
-That's how you use the Open Refine r package, refinr.  
+That's how you use the Open Refine r package, refinr.
 
 Now let's upload the data to the interactive version of OpenRefine, which really shines at this task.
 
@@ -132,7 +133,7 @@ After your data is loaded into the app, you'll get a screen to look over what th
 knitr::include_graphics(rep("images/open2.png"))
 ```
 
-Open Refine has many, many tools.  We're going to use one piece of it, as a tool for data cleaning. To learn how to use it, we're going to clean the "recipient_name" field.  
+Open Refine has many, many tools.  We're going to use one piece of it, as a tool for data cleaning. To learn how to use it, we're going to clean the "recipient_name" field.
 
 First, let's make a copy of the original recipient_name column so that we can preserve the original data while cleaning the new one.
 
@@ -147,7 +148,7 @@ On the window that pops up, type "recipient_name_orig" in the "new column name" 
 knitr::include_graphics(rep("images/open2b.png"))
 ```
 
-Now, let's get to work cleaning the recipient_name column.  
+Now, let's get to work cleaning the recipient_name column.
 
 Next to the recipient_name field name, click the down arrow, then facet, then text facet.
 
@@ -161,7 +162,7 @@ After that, a new box will appear on the left. It tells us how many unique recip
 knitr::include_graphics(rep("images/open4.png"))
 ```
 
-Click the cluster button.  A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.  
+Click the cluster button.  A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/open5.png"))

@@ -5,6 +5,7 @@ In the previous chapter, we looked at the demographics of Census blocks in Balti
 First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(sf)
 library(janitor)
@@ -51,14 +52,14 @@ Now we can do some calculations and visualize them on a map. Let's calculate the
 ```{r}
 md_una_per_10k <- maryland_voters_by_county_with_pop %>%
   mutate(una_per_10k = UNA/TOTAL_POP*10000) %>%
-  arrange(desc(una_per_10k)) %>% 
+  arrange(desc(una_per_10k)) %>%
   select(County, DEM, REP, OTH, UNA, TOTAL, una_per_10k, geometry)
 
 md_una_per_10k
 ```
 Let's take a look at the result of this table. We might call this where the swing voters are, although political science tells us that most independents actually vote with a party most of the time. Frederick, Howard, Calvert, Anne Arundel and Carroll counties all have some competitive races at the local and state level, so that makes some sense. Montgomery, the state's largest jurisdiction, has more independents than Republicans.
 
-Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 10K on a color gradient.  
+Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 10K on a color gradient.
 
 ```{r}
 #| error: true
@@ -82,6 +83,6 @@ ggplot() +
   theme_minimal() +
   scale_fill_viridis_b(option="magma")
 ```
-Some interesting regional patterns finally emerge.  
+Some interesting regional patterns finally emerge.
 
 The highest number of unaffiliated voters per capita are clustered close to DC and Baltimore, with the notable exception of Prince George's County. The further west you go, the lower number of unaffiliated voters per capita there are (and that's somewhat true for the Eastern Shore, too). You could swap out UNA for Republicans or Democrats, or look at this another way, but what you're trying to see here are potential patterns for further exploration.

@@ -14,6 +14,7 @@ We're going to do this two ways. First I'm going to show you how to use base R t
 First, we'll import `tidyverse` like we always do and our newly-installed lubridate.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(lubridate)
 ```

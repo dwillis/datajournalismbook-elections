@@ -9,6 +9,7 @@ There is a version of Tabula that will run inside of R -- a library called Tabul
 Unfortunately, harvesting tables from PDFs with Tabula is an exercise in getting your hopes up, only to have them dashed. We'll start with an example. First, let's load the tidyverse and janitor.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(janitor)
 ```

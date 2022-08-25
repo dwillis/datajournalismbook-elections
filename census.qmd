@@ -11,6 +11,7 @@ We're going to use a library called `tidycensus` which makes calls to the Census
 First we need to install `tidycensus` using the console: `install.packages("tidycensus", dependencies = TRUE)`. You also should install the `sf` and `rgdal` packages.
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(tidycensus)
 ```

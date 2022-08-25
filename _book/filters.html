@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -344,19 +344,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Now we’ll import a dataset of county-level election results from Maryland’s 2018 primary that is in the data folder in this chapter’s pre-lab directory. It has results from all across the state, so one place to begin is by looking at individual jurisdictions - Maryland has 23 counties and one independent city, Baltimore. Let’s start by loading tidyverse and reading in the Maryland data:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-✔ tibble  3.1.7     ✔ dplyr   1.0.9
-✔ tidyr   1.2.0     ✔ stringr 1.4.0
-✔ readr   2.1.2     ✔ forcats 0.5.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()</code></pre>
-</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2018.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2018.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 1778 Columns: 15
 ── Column specification ────────────────────────────────────────────────────────
@@ -373,31 +363,32 @@ dttm (1): end_date
 <p>The data we want to filter on is in <code>jurisdiction</code>. So we’re going to use filter and something called a comparison operator. We need to filter all records equal to “Prince George’s”. The comparison operators in R, like most programming languages, are == for equal to, != for not equal to, &gt; for greater than, &gt;= for greater than or equal to and so on.</p>
 <p><strong>Be careful: <code>=</code> is not <code>==</code> and <code>=</code> is not “equal to”. <code>=</code> is an assignment operator in most languages – how things get named.</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 15
-  end_date            election_type result_type special office district name_raw
-  &lt;dttm&gt;              &lt;chr&gt;         &lt;chr&gt;       &lt;lgl&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
-1 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     Rushern…
-2 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     Ralph J…
-3 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     Ben Jea…
-4 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     James H…
-5 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     Valerie…
-6 2018-06-26 00:00:00 primary       certified   FALSE   Gover… &lt;NA&gt;     Rich Ma…
-# … with 8 more variables: party &lt;chr&gt;, jurisdiction &lt;chr&gt;, votes &lt;dbl&gt;,
-#   year &lt;dbl&gt;, election_day &lt;dbl&gt;, absentee &lt;dbl&gt;, provisional &lt;dbl&gt;,
-#   second_absentee &lt;dbl&gt;</code></pre>
+  end_date            election_type resul…¹ special office distr…² name_…³ party
+  &lt;dttm&gt;              &lt;chr&gt;         &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;
+1 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    Rusher… DEM  
+2 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    Ralph … DEM  
+3 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    Ben Je… DEM  
+4 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    James … DEM  
+5 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    Valeri… DEM  
+6 2018-06-26 00:00:00 primary       certif… FALSE   Gover… &lt;NA&gt;    Rich M… DEM  
+# … with 7 more variables: jurisdiction &lt;chr&gt;, votes &lt;dbl&gt;, year &lt;dbl&gt;,
+#   election_day &lt;dbl&gt;, absentee &lt;dbl&gt;, provisional &lt;dbl&gt;,
+#   second_absentee &lt;dbl&gt;, and abbreviated variable names ¹​result_type,
+#   ²​district, ³​name_raw</code></pre>
 </div>
 </div>
 <p>And just like that, we have just Prince George’s results, which we can verify looking at the head, the first six rows.</p>
 <p>We also have more data than we might want. For example, we may only want to work with the office, district, candidate name, party and votes.</p>
 <p>To simplify our dataset, we can use select.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>selected_prince_georges <span class="ot">&lt;-</span> prince_georges <span class="sc">%&gt;%</span> <span class="fu">select</span>(office, district, name_raw, party, votes)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(selected_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>selected_prince_georges <span class="ot">&lt;-</span> prince_georges <span class="sc">%&gt;%</span> <span class="fu">select</span>(office, district, name_raw, party, votes)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(selected_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   office                  district name_raw              party votes
@@ -415,9 +406,9 @@ dttm (1): end_date
 <h2 data-number="17.1" class="anchored" data-anchor-id="combining-filters"><span class="header-section-number">17.1</span> Combining filters</h2>
 <p>So let’s say we wanted to see all the candidates for governor and the number of votes each received in Prince George’s County. We can do this a number of ways. The first is we can chain together a whole lot of filters.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>prince_georges_governor <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(prince_georges_governor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>prince_georges_governor <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(prince_georges_governor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
@@ -426,18 +417,18 @@ dttm (1): end_date
 <p>The difference? With AND, all three things must be true to be included. With OR, any of those three things can be true and it will be included. A Prince George’s corporation will get included because it applied for more than $150k. One of the conditions is true.</p>
 <p>Here’s the difference.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>and_prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span> <span class="sc">&amp;</span> office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(and_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>and_prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span> <span class="sc">&amp;</span> office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(and_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
 </div>
 <p>So AND gives us the same answer we got before. What does OR give us?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>or_prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span> <span class="sc">|</span> office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(or_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>or_prince_georges <span class="ot">&lt;-</span> primary_18 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(jurisdiction <span class="sc">==</span> <span class="st">"Prince George's"</span> <span class="sc">|</span> office <span class="sc">==</span> <span class="st">"Governor / Lt. Governor"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(or_prince_georges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 355</code></pre>
 </div>
@@ -451,6 +442,21 @@ dttm (1): end_date
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
