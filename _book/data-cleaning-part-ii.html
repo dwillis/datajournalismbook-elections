@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-0.9.646">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 19&nbsp; Data Cleaning Part II: Janitor</title>
+<title>Data Journalism with R and the Tidyverse - 20&nbsp; Data Cleaning Part II: Janitor</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -128,7 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -168,142 +168,147 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
   </div>
 </li>
     </ul>
@@ -315,10 +320,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#cleaning-headers" id="toc-cleaning-headers" class="nav-link active" data-scroll-target="#cleaning-headers"> <span class="header-section-number">19.1</span> Cleaning headers</a></li>
-  <li><a href="#changing-data-types" id="toc-changing-data-types" class="nav-link" data-scroll-target="#changing-data-types"> <span class="header-section-number">19.2</span> Changing data types</a></li>
-  <li><a href="#duplicates" id="toc-duplicates" class="nav-link" data-scroll-target="#duplicates"> <span class="header-section-number">19.3</span> Duplicates</a></li>
-  <li><a href="#cleaning-strings" id="toc-cleaning-strings" class="nav-link" data-scroll-target="#cleaning-strings"> <span class="header-section-number">19.4</span> Cleaning strings</a></li>
+  <li><a href="#cleaning-headers" id="toc-cleaning-headers" class="nav-link active" data-scroll-target="#cleaning-headers"> <span class="header-section-number">20.1</span> Cleaning headers</a></li>
+  <li><a href="#changing-data-types" id="toc-changing-data-types" class="nav-link" data-scroll-target="#changing-data-types"> <span class="header-section-number">20.2</span> Changing data types</a></li>
+  <li><a href="#duplicates" id="toc-duplicates" class="nav-link" data-scroll-target="#duplicates"> <span class="header-section-number">20.3</span> Duplicates</a></li>
+  <li><a href="#cleaning-strings" id="toc-cleaning-strings" class="nav-link" data-scroll-target="#cleaning-strings"> <span class="header-section-number">20.4</span> Cleaning strings</a></li>
   </ul>
 </nav>
     </div>
@@ -327,7 +332,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></h1>
 </div>
 
 
@@ -421,8 +426,8 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <li>The street address field is inconsistent. It has multiple variations of Merry Knoll Lane.</li>
 </ul>
 <p>Let’s get cleaning. Our goal will be to build up one block of code that does all the necessary cleaning in order to answer this question: what is the total amount of contributions from Conowingo, MD in ZIP code 21918?</p>
-<section id="cleaning-headers" class="level2" data-number="19.1">
-<h2 data-number="19.1" class="anchored" data-anchor-id="cleaning-headers"><span class="header-section-number">19.1</span> Cleaning headers</h2>
+<section id="cleaning-headers" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="cleaning-headers"><span class="header-section-number">20.1</span> Cleaning headers</h2>
 <p>One of the first places we can start with cleaning data is cleaning the column names (or headers).</p>
 <p>Every system has their own way of recording headers, and every developer has their own thoughts of what a good idea is within it. R is most happy when headers are lower case, without special characters.</p>
 <p>If column headers start with a number, or have a space in between two words, you have to set them off with backticks when using them in a function. Generally speaking, we want one word (or words separated by an underscore), all lowercase, that don’t start with numbers.</p>
@@ -495,8 +500,8 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 </div>
 </div>
 </section>
-<section id="changing-data-types" class="level2" data-number="19.2">
-<h2 data-number="19.2" class="anchored" data-anchor-id="changing-data-types"><span class="header-section-number">19.2</span> Changing data types</h2>
+<section id="changing-data-types" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="changing-data-types"><span class="header-section-number">20.2</span> Changing data types</h2>
 <p>Right now, the amount column is stored as a character. Do you see the little <code>&lt;chr&gt;</code> under the amount column in the table above? If we wanted to do math to it, we’d get an error, like so.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaning function</span></span>
@@ -566,8 +571,8 @@ Caused by error in `sum()`:
 </div>
 </div>
 </section>
-<section id="duplicates" class="level2" data-number="19.3">
-<h2 data-number="19.3" class="anchored" data-anchor-id="duplicates"><span class="header-section-number">19.3</span> Duplicates</h2>
+<section id="duplicates" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="duplicates"><span class="header-section-number">20.3</span> Duplicates</h2>
 <p>One of the most difficult problems to fix in data is duplicate records in the data. They can creep in with bad joins, bad data entry practices, mistakes – all kinds of reasons. A duplicated record isn’t always there because of an error, but you need to know if it’s there before making that determination.</p>
 <p>So the question is, do we have any records repeated?</p>
 <p>Here we’ll use a function called <code>get_dupes</code> from the janitor library to check for fully repeated records in our cleaned data set.</p>
@@ -629,8 +634,8 @@ Caused by error in `sum()`:
 </div>
 </div>
 </section>
-<section id="cleaning-strings" class="level2" data-number="19.4">
-<h2 data-number="19.4" class="anchored" data-anchor-id="cleaning-strings"><span class="header-section-number">19.4</span> Cleaning strings</h2>
+<section id="cleaning-strings" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="cleaning-strings"><span class="header-section-number">20.4</span> Cleaning strings</h2>
 <p>The rest of the problems with this data set all have to do with inconsistent format of values in a few of the columns. To fix these problems, we’re going to make use of mutate() and a new function, <code>case_when()</code> in concert with “string functions” – special functions that allow us to clean up columns stored as character strings. The tidyverse package <code>stringr</code> has lots of useful string functions, more than we’ll learn in this chapter.</p>
 <p>Let’s start by cleaning up the zip field. Remember, three of rows had a five-digit ZIP code, while two had a nine-digit ZIP code, separated by a hyphen.</p>
 <p>We’re going to write code that tells R to keep the first five digits on the left, and get rid of anything after that by using <code>mutate()</code> in concert with <code>str_sub()</code>, from the <code>stringr</code> package.</p>
@@ -850,21 +855,6 @@ Caused by error in `sum()`:
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
-  }
-  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -945,12 +935,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./data-cleaning-part-i.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./open-refine.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

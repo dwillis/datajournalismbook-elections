@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-0.9.646">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 27&nbsp; Geographic data basics</title>
+<title>Data Journalism with R and the Tidyverse - 28&nbsp; Geographic data basics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -128,7 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -168,142 +168,147 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
   </div>
 </li>
     </ul>
@@ -315,7 +320,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#importing-and-viewing-data" id="toc-importing-and-viewing-data" class="nav-link active" data-scroll-target="#importing-and-viewing-data"> <span class="header-section-number">27.1</span> Importing and viewing data</a></li>
+  <li><a href="#importing-and-viewing-data" id="toc-importing-and-viewing-data" class="nav-link active" data-scroll-target="#importing-and-viewing-data"> <span class="header-section-number">28.1</span> Importing and viewing data</a></li>
   </ul>
 </nav>
     </div>
@@ -324,7 +329,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Geographic data basics</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></h1>
 </div>
 
 
@@ -351,11 +356,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/geolayers.jpg" class="img-fluid"></p>
+<p><img src="images/geolayers.jpg" class="img-fluid" width="512"></p>
 </div>
 </div>
-<section id="importing-and-viewing-data" class="level2" data-number="27.1">
-<h2 data-number="27.1" class="anchored" data-anchor-id="importing-and-viewing-data"><span class="header-section-number">27.1</span> Importing and viewing data</h2>
+<section id="importing-and-viewing-data" class="level2" data-number="28.1">
+<h2 data-number="28.1" class="anchored" data-anchor-id="importing-and-viewing-data"><span class="header-section-number">28.1</span> Importing and viewing data</h2>
 <p>Let’s start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -370,7 +375,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Adjusted2020.gdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Census_Blocks' from data source 
-  `/Users/derekwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
+  `/Users/dpwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
   using driver `OpenFileGDB'
 Simple feature collection with 83827 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -611,8 +616,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |                                                                      |   0%
   |                                                                            
-  |                                                                      |   1%
-  |                                                                            
   |=                                                                     |   1%
   |                                                                            
   |=                                                                     |   2%
@@ -623,6 +626,10 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |==                                                                    |   4%
   |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
   |====                                                                  |   5%
   |                                                                            
   |====                                                                  |   6%
@@ -632,6 +639,10 @@ in your R script or .Rprofile.</code></pre>
   |=====                                                                 |   8%
   |                                                                            
   |======                                                                |   8%
+  |                                                                            
+  |======                                                                |   9%
+  |                                                                            
+  |=======                                                               |   9%
   |                                                                            
   |=======                                                               |  10%
   |                                                                            
@@ -645,23 +656,11 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=========                                                             |  13%
   |                                                                            
-  |=========                                                             |  14%
-  |                                                                            
   |==========                                                            |  14%
-  |                                                                            
-  |===========                                                           |  15%
   |                                                                            
   |===========                                                           |  16%
   |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |============                                                          |  18%
-  |                                                                            
   |=============                                                         |  18%
-  |                                                                            
-  |=============                                                         |  19%
-  |                                                                            
-  |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
@@ -675,17 +674,27 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |================                                                      |  23%
   |                                                                            
+  |================                                                      |  24%
+  |                                                                            
   |=================                                                     |  24%
+  |                                                                            
+  |=================                                                     |  25%
   |                                                                            
   |==================                                                    |  25%
   |                                                                            
   |==================                                                    |  26%
+  |                                                                            
+  |===================                                                   |  26%
   |                                                                            
   |===================                                                   |  27%
   |                                                                            
   |===================                                                   |  28%
   |                                                                            
   |====================                                                  |  28%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=====================                                                 |  29%
   |                                                                            
   |=====================                                                 |  30%
   |                                                                            
@@ -695,15 +704,19 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |======================                                                |  32%
   |                                                                            
+  |=======================                                               |  32%
+  |                                                                            
   |=======================                                               |  33%
+  |                                                                            
+  |=======================                                               |  34%
+  |                                                                            
+  |========================                                              |  34%
   |                                                                            
   |========================                                              |  35%
   |                                                                            
   |=========================                                             |  35%
   |                                                                            
   |=========================                                             |  36%
-  |                                                                            
-  |==========================                                            |  36%
   |                                                                            
   |==========================                                            |  37%
   |                                                                            
@@ -717,13 +730,23 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |============================                                          |  41%
   |                                                                            
+  |=============================                                         |  41%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
   |==============================                                        |  42%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |==============================                                        |  44%
   |                                                                            
   |===============================                                       |  44%
   |                                                                            
-  |===============================                                       |  45%
-  |                                                                            
   |================================                                      |  45%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |=================================                                     |  46%
   |                                                                            
   |=================================                                     |  47%
   |                                                                            
@@ -733,6 +756,8 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |==================================                                    |  49%
   |                                                                            
+  |===================================                                   |  49%
+  |                                                                            
   |===================================                                   |  50%
   |                                                                            
   |===================================                                   |  51%
@@ -741,49 +766,57 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |====================================                                  |  52%
   |                                                                            
-  |=====================================                                 |  52%
-  |                                                                            
   |=====================================                                 |  53%
   |                                                                            
   |=====================================                                 |  54%
   |                                                                            
   |======================================                                |  54%
   |                                                                            
+  |======================================                                |  55%
+  |                                                                            
   |=======================================                               |  55%
   |                                                                            
+  |=======================================                               |  56%
+  |                                                                            
+  |========================================                              |  56%
+  |                                                                            
   |========================================                              |  57%
+  |                                                                            
+  |========================================                              |  58%
   |                                                                            
   |=========================================                             |  58%
   |                                                                            
   |=========================================                             |  59%
   |                                                                            
-  |==========================================                            |  60%
+  |==========================================                            |  61%
   |                                                                            
   |===========================================                           |  61%
   |                                                                            
   |===========================================                           |  62%
   |                                                                            
+  |============================================                          |  62%
+  |                                                                            
   |============================================                          |  63%
   |                                                                            
-  |============================================                          |  64%
-  |                                                                            
   |=============================================                         |  64%
+  |                                                                            
+  |=============================================                         |  65%
   |                                                                            
   |==============================================                        |  65%
   |                                                                            
   |==============================================                        |  66%
   |                                                                            
-  |===============================================                       |  66%
-  |                                                                            
   |===============================================                       |  67%
+  |                                                                            
+  |===============================================                       |  68%
   |                                                                            
   |================================================                      |  68%
   |                                                                            
   |================================================                      |  69%
   |                                                                            
-  |=================================================                     |  70%
+  |=================================================                     |  69%
   |                                                                            
-  |=================================================                     |  71%
+  |=================================================                     |  70%
   |                                                                            
   |==================================================                    |  71%
   |                                                                            
@@ -795,13 +828,19 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |===================================================                   |  74%
   |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |====================================================                  |  75%
+  |                                                                            
   |=====================================================                 |  75%
   |                                                                            
   |=====================================================                 |  76%
   |                                                                            
-  |======================================================                |  76%
-  |                                                                            
   |======================================================                |  77%
+  |                                                                            
+  |======================================================                |  78%
+  |                                                                            
+  |=======================================================               |  78%
   |                                                                            
   |=======================================================               |  79%
   |                                                                            
@@ -815,9 +854,15 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=========================================================             |  82%
   |                                                                            
+  |==========================================================            |  82%
+  |                                                                            
   |==========================================================            |  83%
   |                                                                            
+  |==========================================================            |  84%
+  |                                                                            
   |===========================================================           |  84%
+  |                                                                            
+  |===========================================================           |  85%
   |                                                                            
   |============================================================          |  85%
   |                                                                            
@@ -829,7 +874,13 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=============================================================         |  88%
   |                                                                            
+  |==============================================================        |  88%
+  |                                                                            
   |==============================================================        |  89%
+  |                                                                            
+  |===============================================================       |  89%
+  |                                                                            
+  |===============================================================       |  90%
   |                                                                            
   |===============================================================       |  91%
   |                                                                            
@@ -841,13 +892,23 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=================================================================     |  93%
   |                                                                            
+  |==================================================================    |  94%
+  |                                                                            
+  |==================================================================    |  95%
+  |                                                                            
   |===================================================================   |  95%
+  |                                                                            
+  |===================================================================   |  96%
+  |                                                                            
+  |====================================================================  |  96%
   |                                                                            
   |====================================================================  |  97%
   |                                                                            
   |====================================================================  |  98%
   |                                                                            
   |===================================================================== |  98%
+  |                                                                            
+  |===================================================================== |  99%
   |                                                                            
   |======================================================================|  99%
   |                                                                            
@@ -916,7 +977,7 @@ $ geometry &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-97.01952 4..., MULTIPOLYGO
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>water <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Water.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Water' from data source 
-  `/Users/derekwillis/code/datajournalismbook-elections/data/Water.shp' 
+  `/Users/dpwillis/code/datajournalismbook-elections/data/Water.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 468 features and 5 fields
 Geometry type: POLYGON
@@ -957,21 +1018,6 @@ Projected CRS: NAD83 / Maryland (ftUS)</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
-  }
-  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1052,12 +1098,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./visualizing-for-publication.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./geographicanalysis.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
