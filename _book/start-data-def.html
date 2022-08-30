@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.646">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Journalism with R and the Tidyverse - 4&nbsp; Defining “Data”</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./xl-intro.html" rel="next">
+<link href="./start-math.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Journalism with R and the Tidyverse</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-birth-of-a-dataset" id="toc-the-birth-of-a-dataset" class="nav-link active" data-scroll-target="#the-birth-of-a-dataset"> <span class="header-section-number">4.1</span> The birth of a dataset</a>
+  <ul class="collapse">
+  <li><a href="#trace-data-and-administrative-records" id="toc-trace-data-and-administrative-records" class="nav-link" data-scroll-target="#trace-data-and-administrative-records">Trace data and administrative records</a></li>
+  <li><a href="#data-collected-and-curated-for-analysis" id="toc-data-collected-and-curated-for-analysis" class="nav-link" data-scroll-target="#data-collected-and-curated-for-analysis">Data collected and curated for analysis</a></li>
+  </ul></li>
+  <li><a href="#granular-and-aggregated-data" id="toc-granular-and-aggregated-data" class="nav-link" data-scroll-target="#granular-and-aggregated-data"> <span class="header-section-number">4.2</span> Granular and aggregated data</a></li>
+  <li><a href="#nouns" id="toc-nouns" class="nav-link" data-scroll-target="#nouns"> <span class="header-section-number">4.3</span> Nouns</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"> <span class="header-section-number">4.4</span> Further reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"> <span class="header-section-number">4.5</span> Exercises</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="start-data-def" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<blockquote class="blockquote">
+<p>data /ˈdeɪ.tə/ :</p>
+<p>information in an electronic form that can be stored and used by a computer, or information, especially facts or numbers, collected to be examined and &gt;considered and used to help decision-making</p>
+<p>– Cambridge Dictionary – sort of <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</blockquote>
+<section id="the-birth-of-a-dataset" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="the-birth-of-a-dataset"><span class="header-section-number">4.1</span> The birth of a dataset</h2>
+<p>Most journalism uses data collected for one purpose for something entirely different. Understanding its original uses – what matters to the people who collected it, and what doesn’t – will profoundly affect its accuracy or usefulness.</p>
+<section id="trace-data-and-administrative-records" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="trace-data-and-administrative-records">Trace data and administrative records</h3>
+<p>In “<a href="https://www.amazon.com/Art-Access-Strategies-Acquiring-Records/dp/1604265507">The Art of Access</a>”, David Cullier and Charles N. Davis describe a process of tracking down the life and times of a dataset. Their purpose is to make sure they know how to request it from a government agency. The same idea applies to using data that we acquire elsewhere.</p>
+<p>Understanding how and why data exists is crucial to understanding what you, as a reporter, might do with it.</p>
+<p>Anything you can systematically search or analyze could be considered one piece of of data. As reporters, we usually deal with data that was created in the process of doing something else – conducting an inspection, delivering a tweet, or scoring a musical. In the sciences, this flotsam and jetsom that is left behind is called “digital trace data” if it was born digitally.</p>
+<p>In journalism and in the social sciences, many of our data sources were born during some government process – a safety inspection, a traffic ticket, or the filing of a death certificate. These administrative records form the basis of much investigative reporting and they are often the subject of public records and FOIA requests. They were born as part of the government doing its job, without any thought given to how it might be used in another way. In the sciences, those are often called “administrative records”.</p>
+<p>This trace data might be considered the first part of the definition above – information that can be stored and used.</p>
+<p>Here’s how Chris Bail from Duke University <a href="https://www.youtube.com/embed/uuSWQN7uYhk">describes it</a>.</p>
+</section>
+<section id="data-collected-and-curated-for-analysis" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="data-collected-and-curated-for-analysis">Data collected and curated for analysis</h3>
+<p>Another kind of data is that which is compiled or collected specifically for the purpose of studying something. It might collected in the form of a survey or a poll, or it might be a system of sampling to measure pollution or weather. But it’s there because the information has intrinsic value AS information.</p>
+<p>The video suggests a hard line between trace data and custom data. In practice, it’s not that clear. Many newsrooms may curate data published in other sources or in administrative records, such as the Washington Post’s police shooting dataset. In other cases, the agencies we are covering get already-compiled data from state and local governments.</p>
+<p>This type of data might be considered the second type in the definition – tabular information that is used for decision-making.</p>
+</section>
+</section>
+<section id="granular-and-aggregated-data" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="granular-and-aggregated-data"><span class="header-section-number">4.2</span> Granular and aggregated data</h2>
+<p>One of the hardest concepts for a lot of new data journalists is the idea of <em>granularity</em> of your data source. There are a lot of ways to think about this: individual items in a list vs.&nbsp;figures in a table; original records vs.&nbsp;compilations; granular data vs.&nbsp;statistics.</p>
+<p>Generally, an investigative reporter is interested in getting data that is as close as possible to the most granular information that exists, at least on computer files. Here’s an example, which might give you a little intuition about why it’s so important to think this way:</p>
+<p>When someone dies in the US, a standard death certificate is filled out by a series of officials - the attending physician, the institution where they died and even the funeral direcor.</p>
+<p><a href="https://www.cdc.gov/nchs/data/dvs/death11-03final-acc.pdf">Click on this link</a> to see a blank version of the standard US death certificate form – notice the detail and the detailed instructions on how it is supposed to be filled out. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>A good reporter could imagine many stories coming out of these little boxes. Limiting yourself to just to COVID-19-related stories: You could profile the local doctor who signed the most COVID-19-related death certificates in their city, or examine the number of deaths that had COVID as a contributing, but not underlying or immediate, cause of death. You could compare smoking rates in the city with the number of decedents whose tobacco use likely contributed to their death. Maybe you’d want to know how long patients suffered with the disease before they died. And you could map the deaths to find the block in your town most devastated by the virus.</p>
+<p>Early in the pandemic, Coulter Jones and Jon Kamp examined the records from one of the few states that makes them public, and concluded that “<a href="https://www.wsj.com/articles/coronavirus-deaths-were-likely-missed-in-michigan-death-certificates-suggest-11590073280%5D%20%5E%5BWall%20Street%20Journal,%20May%2021,%202020">Coronavirus Deaths were Likely Missed in Michigan, Death Certificates Suggest</a>”</p>
+<p>But you probably can’t do that. The reason is that, in most states, death certificates are not public records and are treated as secrets. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. Instead, state and local governments provide limited statistics related to the deaths, usually by county, with no detail. That’s the difference between granular data and aggregate data. Here are some of the typical (not universal) characteristics of each:</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Granular</th>
+<th>Aggregate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intended for some purpose other than your work</td>
+<td>Intended to be presented as is to the public</td>
+</tr>
+<tr class="even">
+<td>Many rows (records), few columns (variables)</td>
+<td>Many columns (variables), few rows (records)</td>
+</tr>
+<tr class="odd">
+<td>Requires a good understanding of the source</td>
+<td>Explanatory notes usually come with the data</td>
+</tr>
+<tr class="even">
+<td>Easy to cross-reference and compile</td>
+<td>Often impossible to repurpose</td>
+</tr>
+<tr class="odd">
+<td>Has few numeric columns</td>
+<td>May be almost entirely numerical</td>
+</tr>
+<tr class="even">
+<td>Is intended for use in a database</td>
+<td>Is intended for use in a spreadsheet</td>
+</tr>
+</tbody>
+</table>
+<p>We often have to consider the trade-offs. Granular data with the detail we need - especially when it involves personally identifiable information like names and addresses - can take months or years of negotiation over public records requests, even when the law allows it. It’s often much easier to convince an agency to provide summarized or incomplete data. Don’t balk at using it if it works for you. But understand that in the vast majority of cases, it’s been summarized in a way that’s lost information that could be important to your story.</p>
+</section>
+<section id="nouns" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="nouns"><span class="header-section-number">4.3</span> Nouns</h2>
+<p>That brings us to one of the most important things you must find out about any data you begin to analyze: What “noun” does each row in a tabular dataset represent? In statistics, they might be called <em>observations</em> or <em>cases</em>. In data science, they’re usually called <em>records</em>. Either way, every row must represent the same thing – a person, a place, a year, a water sample or a school. And you can’t really do anything with it until you figure out what that is.</p>
+<p>In 2015, Sarah Cohen did a story at The New York Times called <a href="https://www.nytimes.com/2014/04/07/us/more-deportations-follow-minor-crimes-data-shows.html">“More Deportation Follow Minor Crimes, Records Show”</a>. The government had claimed it was only removing hardened criminals from the country, but our analysis of the data suggested that many of them were for minor infractions.</p>
+<p>In writing the piece, they had to work around a problem in our data: the agency refused to provide them anything that would help us distinguish individuals from one another. All the reporters knew was that each row represented one deportation – not one person! Without a column, or <em>field</em> or a <em>variable</em> or an <em>attribute</em> for an individual – say, name and date of birth, or some scrambled version of an their DHS number – they had no way to even estimate how often people were deported multiple times. If you read the story, you’ll see the very careful wording, except when they had reported out and spoken to people on the ground.</p>
+</section>
+<section id="further-reading" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">4.4</span> Further reading</h2>
+<ul>
+<li><p><a href="https://datajournalism.com/read/handbook/one/understanding-data/basic-steps-in-working-with-data">“Basic steps in working with data”</a>, the Data Journalism Handbook, Steve Doig, ASU Professor. He describes in this piece the problem of not knowing exactly how the data was compiled.</p></li>
+<li><p>“<a href="https://www.nytimes.com/2020/07/08/podcasts/the-daily/coronavirus-data-united-states.html">Counting the Infected</a>” , Rob Gebellof on The Daily, July 8, 2020.</p></li>
+<li><p>“<a href="https://eagereyes.org/basics/spreadsheet-thinking-vs-database-thinking">Spreadsheet thinking vs.&nbsp;Database thinking</a>”, by Robert Kosara, gets at the idea that looking at individual items is often a “database”, and statistical compilations are often “spreadsheets”.</p></li>
+<li><p>“<a href="https://vita.had.co.nz/papers/tidy-data.pdf">Tidy Data</a>”, in the Journal of Statistical Software (linked here in a pre-print) by Hadley Wickham , is the quintessential article on describing what we think of as “clean” data. For our purposes, much of what he describes as “tidy” comes when we have individual, granular records – not statistical compilations. It’s an academic article, but it has the underlying concepts that we’ll be working with all year.</p></li>
+</ul>
+</section>
+<section id="exercises" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">4.5</span> Exercises</h2>
+<ul>
+<li>The next time you get a government statistical report, scour all of the footnotes to find some explanation of where the data came from. You’ll be surprised how often they are compilations of administrative records - the government version of trace data.</li>
+</ul>
+
+
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>I flipped the order of these two definitions!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>You should do this whenever you get a dataset created from administrative records. That is, track down its origin and examine the pieces you were given and the pieces that were left out; look at what is written in free-form vs what is presented as a check box. You may need a copy of the template that an agency uses to collect the information, but many governments make these available on their websites or are willing to provide them without a fuss.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>See “<a href="https://www.researchgate.net/publication/348322257_Secrecy_in_Death_Records_A_Call_to_Action">Secrecy in Death Records: A call to action</a>”, by Megain Craig and Madeleine Davison, Journal of Civic Information, December 2020<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./start-math.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./xl-intro.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

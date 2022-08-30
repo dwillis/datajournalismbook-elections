@@ -10,6 +10,7 @@ book:
     - index.qmd
     - start-story.qmd
     - start-math.qmd
+    - start-data-def.qmd
     - xl-intro.qmd
     - xl-refresher.qmd
     - xl-filter-sort.qmd
