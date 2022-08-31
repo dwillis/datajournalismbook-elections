@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -397,39 +397,39 @@ dbl (4): cox, ficker, schulz, werner
 <p>Once logged in, you’ll click on New Chart.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/ppp_datawrapper1.png" class="img-fluid" width="677"></p>
+<p><img src="images/ppp_datawrapper1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The first thing we’ll do is upload our CSV that we created before. Click on XLS/CSV and upload the file.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper2.png" class="img-fluid" width="1013"></p>
+<p><img src="images/datawrapper2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it’s blue, it’s a number. If it’s green, it’s a date. If it’s black, it’s text. Red means there’s a problem. This data is very clean, so it imports cleanly. Click on the “Proceed” button.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper3.png" class="img-fluid" width="680"></p>
+<p><img src="images/datawrapper3.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now we make a chart. Bar chart comes up by default, which is good, because with a single percentage difference, that’s what we have.</p>
 <p>Click on Refine. The first option we want to change is the Number Format, because we have percentages to display and we want to make it as easy as possible for readers to understand what we’re displaying. Datawrapper has a list of popular formats and an excellent reference for its <a href="https://academy.datawrapper.de/article/207-custom-number-formats-that-you-can-display-in-datawrapper">custom formats</a> that you can consult. Let’s choose <code>0.0%</code>, which adds a percentage sign and abbreviates larger amounts:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper4.png" class="img-fluid" width="360"></p>
+<p><img src="images/datawrapper4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now we need to annotate our charts. Every chart needs a title, a source line and a credit line. Most need chatter (called description here). Click on the “Annotate” tab to get started.</p>
 <p>Really think about the title and description: the title is like a headline and the description is provides some additional context. Another way to think about it: the title is the most important lesson from the graphic, and the description could be the next most important lesson or could provide more context to the title.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper5.png" class="img-fluid" width="616"></p>
+<p><img src="images/datawrapper5.png" class="img-fluid"></p>
 </div>
 </div>
 <p>To publish, we click the “Publish &amp; Embed” tab. Some publication systems allow for the embedding of HTML into a post or a story. Some don’t. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there’s always a way to export your chart as a PNG file, which you can upload like any photo.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper6.png" class="img-fluid" width="640"></p>
+<p><img src="images/datawrapper6.png" class="img-fluid"></p>
 </div>
 </div>
 <section id="making-a-map" class="level3" data-number="27.1.1">
@@ -493,13 +493,13 @@ in your R script or .Rprofile.</code></pre>
 <p>Now we can upload the <code>md_gop_gov_with_fips.csv</code> file we just saved using the Upload File button. It should look like the following image:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper7.png" class="img-fluid" width="1351"></p>
+<p><img src="images/datawrapper7.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We’ll need to make sure that Datawrapper understands what the data is and where the FIPS code is. Click on the “Match” tab and make sure that yours looks like the image below:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/datawrapper8.png" class="img-fluid" width="539"></p>
+<p><img src="images/datawrapper8.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Click the “Proceed” button (you should have to click it twice, since the first time it will tell you that there’s no data for 3,197 counties - the rest of the U.S.). That will take you to the Visualize tab.</p>
@@ -519,6 +519,21 @@ in your R script or .Rprofile.</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

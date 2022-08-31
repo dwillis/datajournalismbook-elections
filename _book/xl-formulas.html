@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -35,7 +35,7 @@ ul.task-list{list-style: none;}
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -334,7 +334,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_00.png" class="img-fluid figure-img"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">formula</figcaption><p></p>
+<p></p><figcaption class="figure-caption">formula</figcaption><p></p>
 </figure>
 </div>
 <p>The other kind of formula is a <em>function</em>. A function is a command that has a name, and requires <em>arguments</em> – usually the cell addresses or the range of addresses that it will act on. Every programming language has functions built in and many have extensions, or packages or libraries, that add even more as users find things they want to do more efficiently. You begin using a function the same way you begin a formula – with an = sign. Here are three common functions that create summary statistics for the numbers contained in a <em>range</em> of addresses. A range is a set of cells defined by its corner cell address: the top left through the bottom right.</p>
@@ -370,7 +370,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_00A.png" class="img-fluid figure-img"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">formula</figcaption><p></p>
+<p></p><figcaption class="figure-caption">formula</figcaption><p></p>
 </figure>
 </div>
 </section>
@@ -412,7 +412,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_04.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">“% change”</figcaption><p></p>
+<p></p><figcaption class="figure-caption">“% change”</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -432,7 +432,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_05.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">Wrong way</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Wrong way</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -442,7 +442,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_06.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">E2/E$10</figcaption><p></p>
+<p></p><figcaption class="figure-caption">E2/E$10</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -466,7 +466,7 @@ ul.task-list{list-style: none;}
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/xl_mathreview_07.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">final worksheet</figcaption><p></p>
+<p></p><figcaption class="figure-caption">final worksheet</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -493,6 +493,21 @@ ul.task-list{list-style: none;}
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

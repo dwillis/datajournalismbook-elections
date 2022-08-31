@@ -198,7 +198,7 @@ Willis and Sean Mussenden}
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, boxrule=0pt, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable, sharp corners, enhanced]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced, frame hidden, sharp corners, interior hidden, breakable]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -6138,13 +6138,13 @@ pop up automatically.
 You first have to import your data into a project. Click the choose
 files button and upload a csv of the DC food-related expenditures.
 
-\includegraphics[width=8.51in,height=\textheight]{./images/open1.png}
+\includegraphics{./images/open1.png}
 
 After your data is loaded into the app, you'll get a screen to look over
 what the data looks like. On the top right corner, you'll see a button
 to create the project. Click that.
 
-\includegraphics[width=11.9in,height=\textheight]{./images/open2.png}
+\includegraphics{./images/open2.png}
 
 Open Refine has many, many tools. We're going to use one piece of it, as
 a tool for data cleaning. To learn how to use it, we're going to clean
@@ -6156,30 +6156,30 @@ we can preserve the original data while cleaning the new one.
 Click the dropdown arrow next to the recipient\_name column, choose
 ``edit column'' \textgreater{} ``Add column based on this column'':
 
-\includegraphics[width=6.86in,height=\textheight]{./images/open2a.png}
+\includegraphics{./images/open2a.png}
 
 On the window that pops up, type ``recipient\_name\_orig'' in the ``new
 column name'' field. Then hit the OK button.
 
-\includegraphics[width=4.75in,height=\textheight]{./images/open2b.png}
+\includegraphics{./images/open2b.png}
 
 Now, let's get to work cleaning the recipient\_name column.
 
 Next to the recipient\_name field name, click the down arrow, then
 facet, then text facet.
 
-\includegraphics[width=2.84in,height=\textheight]{./images/open3.png}
+\includegraphics{./images/open3.png}
 
 After that, a new box will appear on the left. It tells us how many
 unique recipient\_names there are: 1,655. And, there's a button on the
 right of the box that says Cluster.
 
-\includegraphics[width=1.93in,height=\textheight]{./images/open4.png}
+\includegraphics{./images/open4.png}
 
 Click the cluster button. A new window will pop up, a tool to help us
 identify things that need to be cleaned, and quickly clean them.
 
-\includegraphics[width=6.66in,height=\textheight]{./images/open5.png}
+\includegraphics{./images/open5.png}
 
 The default ``method'' used is a clustering algorithim called ``key
 collision'', using the fingerprint function. This is the same method we
@@ -6189,7 +6189,7 @@ At the top, you'll see which method was used, and how many clusters that
 algorithm identified. There are several different methods, each of which
 work slightly differently and produce different results.
 
-\includegraphics[width=6.66in,height=\textheight]{./images/open6.png}
+\includegraphics{./images/open6.png}
 
 Then, below that, you can see what those clusters are. Right away, we
 can see how useful this program is. It identified 99 rows that have some
@@ -6227,7 +6227,7 @@ When you're finished cleaning, click ``Merge Selected \& Close''.
 
 Then, export the data as a csv so you can load it back into R.
 
-\includegraphics[width=9.5in,height=\textheight]{./images/open7.png}
+\includegraphics{./images/open7.png}
 
 A question for all data analysts -- if the dataset is bad enough, can it
 ever be cleaned?
@@ -6288,12 +6288,12 @@ somewhere, and then click import. After it imports, click autodetect
 tables. You'll see red boxes appear around what Tabula believes are the
 tables. You'll see it does a pretty good job at this.
 
-\includegraphics[width=3.93in,height=\textheight]{./images/md_voters.png}
+\includegraphics{./images/md_voters.png}
 
 Now you can hit the green ``Preview \& Export Extracted Data'' button on
 the top right. You should see something very like this:
 
-\includegraphics[width=7.83in,height=\textheight]{./images/md_voters2.png}
+\includegraphics{./images/md_voters2.png}
 
 You can now export that extracted table to a CSV file using the
 ``Export'' button. And then we can read it into R:
@@ -6347,7 +6347,7 @@ Here's a slightly more involved PDF. Here's a
 \href{https://raw.githubusercontent.com/openelections/openelections-sources-pa/master/2020/general/Fayette\%20PA\%202020\%20General\%20Summary.pdf}{PDF
 of 2020 general election results from Fayette County, Pa.}.
 
-\includegraphics[width=3.27in,height=\textheight]{./images/fayette_1.png}
+\includegraphics{./images/fayette_1.png}
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in
 a place where you'll remember it (like a Downloads folder).
@@ -6355,7 +6355,7 @@ a place where you'll remember it (like a Downloads folder).
 Now let's repeat the steps we did to import the PDF into Tabula and
 autodetect the tables. It should look like this:
 
-\includegraphics[width=2.33in,height=\textheight]{./images/fayette_2.png}
+\includegraphics{./images/fayette_2.png}
 
 This is pretty good, but we don't want the ``Times Cast'' boxes at the
 top of each contest, because they have a slightly different layout. Go
@@ -6366,7 +6366,7 @@ Now you can hit the green ``Preview \& Export Extracted Data'' button on
 the top right. Using the ``Lattice'' method, you should see something
 very like this:
 
-\includegraphics[width=5.54in,height=\textheight]{./images/fayette_3.png}
+\includegraphics{./images/fayette_3.png}
 
 You can now export that extracted table to a CSV file using the
 ``Export'' button. And then we can read it into R and clean up the
@@ -7084,7 +7084,7 @@ Let's suppose we can't find a table like that for download, but we do
 see a version on the SBOE website at this URL:
 \url{https://elections.maryland.gov/elections/2022/primary_results/gen_detail_results_2022_1_1_Republican.html}.
 
-\includegraphics[width=3.33in,height=\textheight]{./images/rvest1.png}
+\includegraphics{./images/rvest1.png}
 
 We could get this table into R with the following manual steps:
 highlighting the text, copying it into Excel, saving it as a csv, and
@@ -7142,7 +7142,7 @@ view-source:https://elections.maryland.gov/elections/2022/primary\_results/gen\_
 
 Here's a picture of what some of the source code looks like.
 
-\includegraphics[width=7.22in,height=\textheight]{./images/rvest2.png}
+\includegraphics{./images/rvest2.png}
 
 We'll use those HTML tags -- things like
 \texttt{\textless{}table\textgreater{}} and
@@ -7187,7 +7187,7 @@ is the \texttt{\textless{}head\textgreater{}} and
 most web pages. We're going to pull information out of the
 \texttt{\textless{}body\textgreater{}} tag in a bit.
 
-\includegraphics[width=3.25in,height=\textheight]{./images/rvest3.png}
+\includegraphics{./images/rvest3.png}
 
 Now, our task is to just pull out the section of the html that contains
 the information we need.
@@ -7204,7 +7204,7 @@ will pop up a window called the ``element inspector'' that shows us
 where different elements on the page are located, what html tags created
 those elements, and other info.
 
-\includegraphics[width=3.27in,height=\textheight]{./images/rvest4.png}
+\includegraphics{./images/rvest4.png}
 
 The entire table that we want of results is actually contained inside an
 html \texttt{\textless{}table\textgreater{}}. It has a
@@ -8349,12 +8349,12 @@ up for an account. It's free.
 
 Once logged in, you'll click on New Chart.
 
-\includegraphics[width=4.51in,height=\textheight]{./images/ppp_datawrapper1.png}
+\includegraphics{./images/ppp_datawrapper1.png}
 
 The first thing we'll do is upload our CSV that we created before. Click
 on XLS/CSV and upload the file.
 
-\includegraphics[width=6.75in,height=\textheight]{./images/datawrapper2.png}
+\includegraphics{./images/datawrapper2.png}
 
 Next up is to check and see what Datawrappper did with our data when we
 uploaded it. As you can see from the text on the left, if it's blue,
@@ -8362,7 +8362,7 @@ it's a number. If it's green, it's a date. If it's black, it's text. Red
 means there's a problem. This data is very clean, so it imports cleanly.
 Click on the ``Proceed'' button.
 
-\includegraphics[width=4.53in,height=\textheight]{./images/datawrapper3.png}
+\includegraphics{./images/datawrapper3.png}
 
 Now we make a chart. Bar chart comes up by default, which is good,
 because with a single percentage difference, that's what we have.
@@ -8376,7 +8376,7 @@ its
 formats} that you can consult. Let's choose \texttt{0.0\%}, which adds a
 percentage sign and abbreviates larger amounts:
 
-\includegraphics[width=2.4in,height=\textheight]{./images/datawrapper4.png}
+\includegraphics{./images/datawrapper4.png}
 
 Now we need to annotate our charts. Every chart needs a title, a source
 line and a credit line. Most need chatter (called description here).
@@ -8388,7 +8388,7 @@ Another way to think about it: the title is the most important lesson
 from the graphic, and the description could be the next most important
 lesson or could provide more context to the title.
 
-\includegraphics[width=4.1in,height=\textheight]{./images/datawrapper5.png}
+\includegraphics{./images/datawrapper5.png}
 
 To publish, we click the ``Publish \& Embed'' tab. Some publication
 systems allow for the embedding of HTML into a post or a story. Some
@@ -8397,7 +8397,7 @@ publication system on the planet, though, can publish an image. So
 there's always a way to export your chart as a PNG file, which you can
 upload like any photo.
 
-\includegraphics[width=4.26in,height=\textheight]{./images/datawrapper6.png}
+\includegraphics{./images/datawrapper6.png}
 
 \hypertarget{making-a-map}{%
 \subsection{Making a Map}\label{making-a-map}}
@@ -8526,13 +8526,13 @@ Now we can upload the \texttt{md\_gop\_gov\_with\_fips.csv} file we just
 saved using the Upload File button. It should look like the following
 image:
 
-\includegraphics[width=9.01in,height=\textheight]{./images/datawrapper7.png}
+\includegraphics{./images/datawrapper7.png}
 
 We'll need to make sure that Datawrapper understands what the data is
 and where the FIPS code is. Click on the ``Match'' tab and make sure
 that yours looks like the image below:
 
-\includegraphics[width=3.59in,height=\textheight]{./images/datawrapper8.png}
+\includegraphics{./images/datawrapper8.png}
 
 Click the ``Proceed'' button (you should have to click it twice, since
 the first time it will tell you that there's no data for 3,197 counties
@@ -8614,7 +8614,7 @@ head first:
   boundaries on layer Y. And it's the plane that holds them together.
 \end{enumerate}
 
-\includegraphics[width=3.41in,height=\textheight]{./images/geolayers.jpg}
+\includegraphics{./images/geolayers.jpg}
 
 \hypertarget{importing-and-viewing-data}{%
 \section{Importing and viewing data}\label{importing-and-viewing-data}}
@@ -8662,7 +8662,7 @@ read in our hospitals data. And then glimpse it to look at the columns.
 
 \begin{verbatim}
 Reading layer `Census_Blocks' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
   using driver `OpenFileGDB'
 Simple feature collection with 83827 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -8985,299 +8985,115 @@ Retrieving data for the year 2020
   |                                                                            
   |=                                                                     |   2%
   |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
   |==                                                                    |   3%
+  |                                                                            
+  |==                                                                    |   4%
   |                                                                            
   |===                                                                   |   4%
   |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
   |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
   |                                                                            
   |======                                                                |   8%
   |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
   |=======                                                               |  10%
-  |                                                                            
-  |=======                                                               |  11%
-  |                                                                            
-  |========                                                              |  11%
   |                                                                            
   |========                                                              |  12%
   |                                                                            
   |=========                                                             |  12%
   |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |=========                                                             |  14%
-  |                                                                            
   |==========                                                            |  14%
-  |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
-  |===========                                                           |  15%
   |                                                                            
   |===========                                                           |  16%
   |                                                                            
-  |============                                                          |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
   |============                                                          |  18%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |=============                                                         |  19%
-  |                                                                            
-  |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
-  |==============                                                        |  21%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
   |===============                                                       |  22%
   |                                                                            
-  |================                                                      |  22%
+  |================                                                      |  23%
   |                                                                            
   |=================                                                     |  24%
   |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
   |==================                                                    |  26%
-  |                                                                            
-  |===================                                                   |  27%
   |                                                                            
   |===================                                                   |  28%
   |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
   |=====================                                                 |  30%
-  |                                                                            
-  |=====================                                                 |  31%
-  |                                                                            
-  |======================                                                |  31%
   |                                                                            
   |======================                                                |  32%
   |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
   |=======================                                               |  33%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |========================                                              |  35%
   |                                                                            
   |=========================                                             |  35%
   |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==========================                                            |  36%
-  |                                                                            
   |==========================                                            |  37%
-  |                                                                            
-  |==========================                                            |  38%
   |                                                                            
   |===========================                                           |  38%
   |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
   |============================                                          |  40%
-  |                                                                            
-  |============================                                          |  41%
-  |                                                                            
-  |=============================                                         |  41%
   |                                                                            
   |=============================                                         |  42%
   |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
   |===============================                                       |  44%
   |                                                                            
-  |===============================                                       |  45%
-  |                                                                            
-  |================================                                      |  45%
-  |                                                                            
-  |=================================                                     |  47%
+  |================================                                      |  46%
   |                                                                            
   |=================================                                     |  48%
   |                                                                            
-  |==================================                                    |  48%
+  |===================================                                   |  50%
   |                                                                            
-  |==================================                                    |  49%
-  |                                                                            
-  |====================================                                  |  51%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |=====================================                                 |  54%
+  |====================================                                  |  52%
   |                                                                            
   |======================================                                |  54%
   |                                                                            
-  |======================================                                |  55%
-  |                                                                            
-  |=======================================                               |  55%
-  |                                                                            
   |=======================================                               |  56%
-  |                                                                            
-  |========================================                              |  56%
-  |                                                                            
-  |========================================                              |  57%
   |                                                                            
   |========================================                              |  58%
   |                                                                            
-  |=========================================                             |  58%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |==========================================                            |  59%
-  |                                                                            
   |==========================================                            |  60%
-  |                                                                            
-  |==========================================                            |  61%
-  |                                                                            
-  |===========================================                           |  61%
-  |                                                                            
-  |===========================================                           |  62%
   |                                                                            
   |============================================                          |  62%
   |                                                                            
-  |============================================                          |  63%
-  |                                                                            
   |=============================================                         |  64%
-  |                                                                            
-  |=============================================                         |  65%
-  |                                                                            
-  |==============================================                        |  65%
   |                                                                            
   |==============================================                        |  66%
   |                                                                            
-  |===============================================                       |  66%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |===============================================                       |  68%
-  |                                                                            
   |================================================                      |  68%
   |                                                                            
-  |================================================                      |  69%
-  |                                                                            
   |=================================================                     |  70%
-  |                                                                            
-  |=================================================                     |  71%
-  |                                                                            
-  |==================================================                    |  71%
-  |                                                                            
-  |==================================================                    |  72%
   |                                                                            
   |===================================================                   |  72%
   |                                                                            
   |===================================================                   |  73%
   |                                                                            
-  |===================================================                   |  74%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
   |=====================================================                 |  75%
-  |                                                                            
-  |=====================================================                 |  76%
-  |                                                                            
-  |======================================================                |  76%
   |                                                                            
   |======================================================                |  77%
   |                                                                            
   |======================================================                |  78%
   |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |========================================================              |  79%
-  |                                                                            
   |========================================================              |  80%
-  |                                                                            
-  |========================================================              |  81%
-  |                                                                            
-  |=========================================================             |  81%
   |                                                                            
   |=========================================================             |  82%
   |                                                                            
-  |==========================================================            |  82%
-  |                                                                            
-  |==========================================================            |  83%
-  |                                                                            
-  |==========================================================            |  84%
-  |                                                                            
   |===========================================================           |  84%
-  |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
-  |============================================================          |  85%
   |                                                                            
   |============================================================          |  86%
   |                                                                            
-  |=============================================================         |  86%
-  |                                                                            
   |=============================================================         |  87%
-  |                                                                            
-  |=============================================================         |  88%
-  |                                                                            
-  |==============================================================        |  88%
   |                                                                            
   |==============================================================        |  89%
   |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
   |===============================================================       |  90%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |================================================================      |  91%
-  |                                                                            
-  |================================================================      |  92%
   |                                                                            
   |=================================================================     |  92%
   |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |=================================================================     |  94%
-  |                                                                            
   |==================================================================    |  94%
-  |                                                                            
-  |==================================================================    |  95%
-  |                                                                            
-  |===================================================================   |  95%
   |                                                                            
   |===================================================================   |  96%
   |                                                                            
-  |====================================================================  |  96%
-  |                                                                            
-  |====================================================================  |  97%
-  |                                                                            
   |====================================================================  |  98%
-  |                                                                            
-  |===================================================================== |  98%
-  |                                                                            
-  |===================================================================== |  99%
   |                                                                            
   |======================================================================|  99%
   |                                                                            
@@ -9406,7 +9222,7 @@ of waterways}.
 
 \begin{verbatim}
 Reading layer `Water' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Water.shp' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Water.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 468 features and 5 fields
 Geometry type: POLYGON
@@ -9524,7 +9340,7 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 
 \begin{verbatim}
 Reading layer `Maryland2020_County' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
   using driver `ESRIJSON'
 Simple feature collection with 24 features and 18 fields
 Geometry type: POLYGON
@@ -9574,7 +9390,7 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 
 \begin{verbatim}
 Reading layer `Maryland2020_County' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
   using driver `ESRIJSON'
 Simple feature collection with 24 features and 18 fields
 Geometry type: POLYGON

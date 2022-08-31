@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -356,7 +356,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/geolayers.jpg" class="img-fluid" width="512"></p>
+<p><img src="images/geolayers.jpg" class="img-fluid"></p>
 </div>
 </div>
 <section id="importing-and-viewing-data" class="level2" data-number="28.1">
@@ -375,7 +375,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Adjusted2020.gdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Census_Blocks' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Adjusted2020.gdb' 
   using driver `OpenFileGDB'
 Simple feature collection with 83827 features and 26 fields
 Geometry type: MULTIPOLYGON
@@ -616,6 +616,8 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |                                                                      |   0%
   |                                                                            
+  |                                                                      |   1%
+  |                                                                            
   |=                                                                     |   1%
   |                                                                            
   |=                                                                     |   2%
@@ -624,8 +626,6 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |==                                                                    |   3%
   |                                                                            
-  |==                                                                    |   4%
-  |                                                                            
   |===                                                                   |   4%
   |                                                                            
   |===                                                                   |   5%
@@ -633,6 +633,8 @@ in your R script or .Rprofile.</code></pre>
   |====                                                                  |   5%
   |                                                                            
   |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   6%
   |                                                                            
   |=====                                                                 |   7%
   |                                                                            
@@ -656,11 +658,27 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=========                                                             |  13%
   |                                                                            
+  |=========                                                             |  14%
+  |                                                                            
   |==========                                                            |  14%
+  |                                                                            
+  |==========                                                            |  15%
+  |                                                                            
+  |===========                                                           |  15%
   |                                                                            
   |===========                                                           |  16%
   |                                                                            
+  |============                                                          |  16%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |============                                                          |  18%
+  |                                                                            
   |=============                                                         |  18%
+  |                                                                            
+  |=============                                                         |  19%
+  |                                                                            
+  |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
@@ -718,6 +736,8 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=========================                                             |  36%
   |                                                                            
+  |==========================                                            |  36%
+  |                                                                            
   |==========================                                            |  37%
   |                                                                            
   |==========================                                            |  38%
@@ -725,6 +745,8 @@ in your R script or .Rprofile.</code></pre>
   |===========================                                           |  38%
   |                                                                            
   |===========================                                           |  39%
+  |                                                                            
+  |============================                                          |  39%
   |                                                                            
   |============================                                          |  40%
   |                                                                            
@@ -741,6 +763,8 @@ in your R script or .Rprofile.</code></pre>
   |==============================                                        |  44%
   |                                                                            
   |===============================                                       |  44%
+  |                                                                            
+  |===============================                                       |  45%
   |                                                                            
   |================================                                      |  45%
   |                                                                            
@@ -766,6 +790,8 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |====================================                                  |  52%
   |                                                                            
+  |=====================================                                 |  52%
+  |                                                                            
   |=====================================                                 |  53%
   |                                                                            
   |=====================================                                 |  54%
@@ -788,6 +814,10 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=========================================                             |  59%
   |                                                                            
+  |==========================================                            |  59%
+  |                                                                            
+  |==========================================                            |  60%
+  |                                                                            
   |==========================================                            |  61%
   |                                                                            
   |===========================================                           |  61%
@@ -797,6 +827,8 @@ in your R script or .Rprofile.</code></pre>
   |============================================                          |  62%
   |                                                                            
   |============================================                          |  63%
+  |                                                                            
+  |============================================                          |  64%
   |                                                                            
   |=============================================                         |  64%
   |                                                                            
@@ -818,6 +850,8 @@ in your R script or .Rprofile.</code></pre>
   |                                                                            
   |=================================================                     |  70%
   |                                                                            
+  |=================================================                     |  71%
+  |                                                                            
   |==================================================                    |  71%
   |                                                                            
   |==================================================                    |  72%
@@ -835,6 +869,8 @@ in your R script or .Rprofile.</code></pre>
   |=====================================================                 |  75%
   |                                                                            
   |=====================================================                 |  76%
+  |                                                                            
+  |======================================================                |  76%
   |                                                                            
   |======================================================                |  77%
   |                                                                            
@@ -891,6 +927,8 @@ in your R script or .Rprofile.</code></pre>
   |=================================================================     |  92%
   |                                                                            
   |=================================================================     |  93%
+  |                                                                            
+  |=================================================================     |  94%
   |                                                                            
   |==================================================================    |  94%
   |                                                                            
@@ -977,7 +1015,7 @@ $ geometry &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-97.01952 4..., MULTIPOLYGO
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>water <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Water.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Water' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Water.shp' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Water.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 468 features and 5 fields
 Geometry type: POLYGON
@@ -1018,6 +1056,21 @@ Projected CRS: NAD83 / Maryland (ftUS)</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

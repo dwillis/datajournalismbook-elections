@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -356,7 +356,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Let’s suppose we can’t find a table like that for download, but we do see a version on the SBOE website at this URL: <a href="https://elections.maryland.gov/elections/2022/primary_results/gen_detail_results_2022_1_1_Republican.html">https://elections.maryland.gov/elections/2022/primary_results/gen_detail_results_2022_1_1_Republican.html</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/rvest1.png" class="img-fluid" width="500"></p>
+<p><img src="images/rvest1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We could get this table into R with the following manual steps: highlighting the text, copying it into Excel, saving it as a csv, and reading it into R. Or, we could write a few lines of webscraping code to have R do that for us!</p>
@@ -378,7 +378,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Here’s a picture of what some of the source code looks like.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/rvest2.png" class="img-fluid" width="1083"></p>
+<p><img src="images/rvest2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We’ll use those HTML tags – things like <code>&lt;table&gt;</code> and <code>&lt;tr&gt;</code> – to grab the info we need.</p>
@@ -403,7 +403,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>If we click on the name “results” in our environment window, we can see that it’s pulled in the html and shown us the general page structure. Nested within the <code>&lt;html&gt;</code> tag is the <code>&lt;head&gt;</code> and <code>&lt;body&gt;</code>, the two fundamental sections of most web pages. We’re going to pull information out of the <code>&lt;body&gt;</code> tag in a bit.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/rvest3.png" class="img-fluid" width="488"></p>
+<p><img src="images/rvest3.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now, our task is to just pull out the section of the html that contains the information we need.</p>
@@ -411,7 +411,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>On the page, find the data we want to grab – “Table 2. NAICS Sectors” - and right click on the word “Sector” in the column header of the table. That will bring up a dropdown menu. Select “Inspect”, which will pop up a window called the “element inspector” that shows us where different elements on the page are located, what html tags created those elements, and other info.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/rvest4.png" class="img-fluid" width="490"></p>
+<p><img src="images/rvest4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The entire table that we want of results is actually contained inside an html <code>&lt;table&gt;</code>. It has a <code>&lt;tbody&gt;</code> that contains one row <code>&lt;tr&gt;</code> per county.</p>
@@ -531,6 +531,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

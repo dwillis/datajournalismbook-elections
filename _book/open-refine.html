@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -530,13 +530,13 @@ the `.groups` argument.</code></pre>
 <p>You first have to import your data into a project. Click the choose files button and upload a csv of the DC food-related expenditures.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open1.png" class="img-fluid" width="1276"></p>
+<p><img src="images/open1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>After your data is loaded into the app, you’ll get a screen to look over what the data looks like. On the top right corner, you’ll see a button to create the project. Click that.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2.png" class="img-fluid" width="1785"></p>
+<p><img src="images/open2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Open Refine has many, many tools. We’re going to use one piece of it, as a tool for data cleaning. To learn how to use it, we’re going to clean the “recipient_name” field.</p>
@@ -544,39 +544,39 @@ the `.groups` argument.</code></pre>
 <p>Click the dropdown arrow next to the recipient_name column, choose “edit column” &gt; “Add column based on this column”:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2a.png" class="img-fluid" width="1029"></p>
+<p><img src="images/open2a.png" class="img-fluid"></p>
 </div>
 </div>
 <p>On the window that pops up, type “recipient_name_orig” in the “new column name” field. Then hit the OK button.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open2b.png" class="img-fluid" width="713"></p>
+<p><img src="images/open2b.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now, let’s get to work cleaning the recipient_name column.</p>
 <p>Next to the recipient_name field name, click the down arrow, then facet, then text facet.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open3.png" class="img-fluid" width="426"></p>
+<p><img src="images/open3.png" class="img-fluid"></p>
 </div>
 </div>
 <p>After that, a new box will appear on the left. It tells us how many unique recipient_names there are: 1,655. And, there’s a button on the right of the box that says Cluster.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open4.png" class="img-fluid" width="290"></p>
+<p><img src="images/open4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Click the cluster button. A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open5.png" class="img-fluid" width="999"></p>
+<p><img src="images/open5.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The default “method” used is a clustering algorithim called “key collision”, using the fingerprint function. This is the same method we used with the refinr package above.</p>
 <p>At the top, you’ll see which method was used, and how many clusters that algorithm identified. There are several different methods, each of which work slightly differently and produce different results.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open6.png" class="img-fluid" width="999"></p>
+<p><img src="images/open6.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Then, below that, you can see what those clusters are. Right away, we can see how useful this program is. It identified 99 rows that have some variation on “Hawk N Dove” in the recipient_name field. It proposed changing them all to “HAWK N DOVE”.</p>
@@ -592,7 +592,7 @@ the `.groups` argument.</code></pre>
 <p>Then, export the data as a csv so you can load it back into R.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/open7.png" class="img-fluid" width="1425"></p>
+<p><img src="images/open7.png" class="img-fluid"></p>
 </div>
 </div>
 <p>A question for all data analysts – if the dataset is bad enough, can it ever be cleaned?</p>
@@ -604,6 +604,21 @@ the `.groups` argument.</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

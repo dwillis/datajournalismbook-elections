@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.646">
+<meta name="generator" content="quarto-1.0.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -362,7 +362,7 @@ dbl (31): GEOID, LOGRECNO, TOTAL_POP, POP_ONE_RACE, POP_WHITE, POP_BLACK, PO...
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>maryland_county_shapes <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Maryland2020_County.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Maryland2020_County' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
   using driver `ESRIJSON'
 Simple feature collection with 24 features and 18 fields
 Geometry type: POLYGON
@@ -394,7 +394,7 @@ dbl (31): GEOID, LOGRECNO, TOTAL_POP, POP_ONE_RACE, POP_WHITE, POP_BLACK, PO...
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>maryland_county_shapes <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Maryland2020_County.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `Maryland2020_County' from data source 
-  `/Users/dpwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
+  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
   using driver `ESRIJSON'
 Simple feature collection with 24 features and 18 fields
 Geometry type: POLYGON
@@ -486,6 +486,21 @@ dbl (10): FIPS, DEM, REP, BAR, GRN, LIB, WCP, OTH, UNA, TOTAL
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
