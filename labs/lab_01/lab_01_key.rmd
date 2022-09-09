@@ -99,15 +99,13 @@ wv_winred_contribs %>%
 **Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set.  You do not need to write any code for this question, so no codeblock is provided.  
 **A6** Save America JFC is the main fundraising organization for former President Donald Trump. It splits money between his PAC, Save America, and other organizations. Trump won 68% of the vote in West Virginia in 2020.
 
-
-
 **Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city):
-* count of loans
-* total amount of all loans
-* the average loan amount
-* the median loan amount
-* the smallest loan amount
-* the largest loan amount
+* count of contributions
+* total amount of all contributions
+* the average contribution amount
+* the median contribution amount
+* the smallest contribution amount
+* the largest contribution amount
 
 Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
 
