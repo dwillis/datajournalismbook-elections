@@ -46,7 +46,7 @@ wv_winred_contribs <- read_rds("lab_01.rds")
 
 **Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
 **Q1** How many rows and columns does this dataframe have?
-**A1** 13,817 rows and 24 columns
+**A1** 13,382 rows and 24 columns
 
 ```{r}
 
@@ -57,7 +57,7 @@ glimpse(wv_winred_contribs)
 ## Answer questions
 
 **Q2** Which West Virginia city provided the largest number of contributions? How many?
-**A2** Martinsburg, with 786.
+**A2** Martinsburg, with 781.
 
 ```{r}
 wv_winred_contribs %>%
