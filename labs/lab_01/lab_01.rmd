@@ -77,12 +77,12 @@ glimpse(wv_winred_contribs)
 **A6** 
 
 **Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city):
-* count of loans
-* total amount of all loans
-* the average loan amount
-* the median loan amount
-* the smallest loan amount
-* the largest loan amount
+* count of contributions
+* total amount of all contributions
+* the average contribution amount
+* the median contribution amount
+* the smallest contribution amount
+* the largest contribution amount
 
 Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
 
