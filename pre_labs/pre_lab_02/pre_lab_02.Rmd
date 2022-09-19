@@ -269,6 +269,7 @@ So there's 355 rows that are EITHER in Prince George's OR are governor results. 
 A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes.
 
 ## Dates
+
 The key to working with dates is that R needs to know that the column containing the date has a datatype of date (or datetime for timestamps). Regular R will guess, and the tidyverse will make a better guess.
 
 Let's start with a dataset of campaign expenses from Maryland political committees:
