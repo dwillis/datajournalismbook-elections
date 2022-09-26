@@ -57,7 +57,7 @@ texas_precinct_20 <- read_csv("data/tx_precinct_2020.csv", guess_max=476915)
 ```
 
 ### Task 5: Examine the data with glimpse
-**Task** Run the following codeblock to glimpse the data.  What data type is the "amount" field?  What data type is the "name" field? What data type is the id column? Answer below.
+**Task** Run the following codeblock to glimpse the data. What data type is the "district" field?  What data type is the "precinct" field? What data type is the "mail" column? Answer below.
 **Answer**
 ```{r}
 glimpse(texas_precinct_20)
