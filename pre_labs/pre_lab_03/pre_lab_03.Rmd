@@ -103,9 +103,10 @@ texas_precinct_20 %>%
   arrange(desc(count))
 ```
 
-### Task 8: Install lubridate
+### Task 8: Install lubridate (if you haven't already)
 **Task** Run the following codeblock to install the lubridate package.
 ```{r}
+# skip this if you already have it installed.
 install.packages('lubridate')
 ```
 
@@ -213,7 +214,7 @@ cleaned_conowingo
 ```
 
 ### Task 8: Try summarizing the amount column
-**Task** Run the following codeblock to attempt to add up the amount of all loans. What does the error say when you run this code? What do you think it means? Answer below.
+**Task** Run the following codeblock to attempt to add up the amount of all contributions. What does the error say when you run this code? What do you think the error means? Answer below.
 **Answer**
 
 ```{r}
@@ -243,7 +244,7 @@ cleaned_conowingo
 
 ```
 ### Task 10: Try again to summarize the amount column
-**Task** Run the following codeblock to add up the amount of all loans in this data.  What is the total? Answer below.
+**Task** Run the following codeblock to add up the amount of all contributions in this data.  What is the total? Answer below.
 **Answer**
 ```{r}
 # cleaning function
@@ -257,7 +258,7 @@ total_conowingo
 ```
 
 ### Task 11: Check for duplicate rows
-**Task** Run the following codeblock to check for duplicate rows using get_dupes().  How many are there? What is the business name? Answer below.
+**Task** Run the following codeblock to check for duplicate rows using get_dupes().  How many are there? What is the donor name? Answer below.
 **Answer**
 
 ```{r}
@@ -284,7 +285,7 @@ cleaned_conowingo
 ```
 
 ### Task 13: Clean up ZIP code
-**Task** Run the following codeblock to use str_sub() to convert the ZIP codes that have nine digits to five digits, standardizing the field. Add a description of what this code does to your reference notebook.
+**Task** Run the following codeblock to use str_sub() to convert the ZIP codes that have nine digits to five digits, standardizing the field. Look at the difference in the result - what changed?
 **Answer**
 
 ```{r}
@@ -346,7 +347,7 @@ cleaned_conowingo
 ```
 
 ### Task 16: Clean up city field more with case_when()
-**Task** Run the following codeblock to use case_when() to fix misspellings of Conowingo in the "city" field using both the exact match method and the str_detect() method. How many mispellings of Arnold remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
+**Task** Run the following codeblock to use case_when() to fix misspellings of Conowingo in the "city" field using both the exact match method and the str_detect() method. How many mispellings of Conowingo remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
 **Answer**
 ```{r}
 # cleaning function
