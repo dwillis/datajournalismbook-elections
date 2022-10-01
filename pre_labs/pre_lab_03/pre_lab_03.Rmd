@@ -304,7 +304,7 @@ cleaned_conowingo
 ```
 
 ### Task 14: Clean up city field
-**Task** Run the following codeblock to use str_tot_title() to standarize capitalization in the "city" field. How many mispellings of Arnold remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
+**Task** Run the following codeblock to use str_tot_title() to standarize capitalization in the "city" field. How many mispellings of Conowingo remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
 
 ```{r}
 # cleaning function
