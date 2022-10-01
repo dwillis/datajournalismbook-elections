@@ -14,84 +14,53 @@ knitr::opts_chunk$set(echo = TRUE)
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
-# install.packages('tidyverse')
 library(tidyverse)
+library(janitor)
 ```
 
 ## Getting Started
 
-Let's keep working with Maryland contribution data. In this exercise we're going to explore the relationship between campaign contribution and what researchers call "economic connectedness" - basically the degree to which people have cross-class friendships - that is detailed in [this New York Times piece](https://www.nytimes.com/interactive/2022/08/01/upshot/rich-poor-friendships.html). You should read that before proceeding, and look at [Social Capital](https://www.socialcapital.org/), the site that explores the data. If you search Social Capital for a zip code (20742, for example), you'll see that it will say that 70.1 percent of low socioeconomic status individuals' friends are high income. The actual data you'll load will display this score as double the percentage that's displayed. Just keep that in mind.
+This week we'll be combining and joining data to make it more useful and to ask some questions about it. We'll use Maryland 2022 primary precinct election results to do this, and our main question will be this: Which precincts had the most votes cast at them statewide, counting both the Republican and Democratic primaries? To answer this question, we'll need to first combine the two parties' primary precinct results into a single dataframe and then join it to data that has more information about each voting location.
 
-Let's start by reading in our Maryland U.S. House contribution data, which is in the lab_04.rds file in your data folder.
-
-
-```{r}
-# read in the rds file
-```
-
-To answer the questions below, you'll need to make a dataframe with the number of contributions and total amount for every 5-digit zip code, and then calculate the average donation. Then you'll join that dataframe to data containing economic connectedness scores for every zip code in Maryland. There's a particular set of steps you'll need to perform to make this work properly.
-
-First, let's create the dataframe with totals by each 5-digit Maryland zip code. Hint: if your zip code column contains values longer than 5 digits, you can extract substrings of a specified length.
+First, load the two precinct results CSV files in the `data` folder, one each for the Democratic and Republican primaries, and then combine them into a single dataframe. You'll need to clean up the column names to make the data easier to work with - make sure you have loaded the library to do that.
 
 ```{r}
-
 ```
 
-Next, let's load the economic connectedness data, which is in the data folder as `maryland_ec_data.csv`:
+Next, let's read in the precinct voting location data and make sure you clean up the column names:
+
+```{r}
+```
+
+Then join the two on the unique combination of precinct and county:
 
 ```{r}
 
 ```
-
-Next join the two dataframes on your 5-digit zip code. If you encounter an error, check to see if it's like one contained in the pre_lab.
-
-```{r}
-
-```
-
 
 ## Answer questions
 
-Q1. Look at the joined dataframe - what do you notice about the rows, and what are your options for dealing with it? You don't have to have code here, but you can add it if it helps your answer.
+Q1. Look at the joined dataframe - are there any column names that are repeated, and what does that look like? What's the difference between the values in those repeated columns and what are your options for dealing with them? This question doesn't require code.
+
 A1. 
 
-Q2. Organize the dataframe so that you see the zip code with the greatest number of contributions first. What is that zip code and what is the economic connectedness value (`ec_zip`)? Where is the zip code located?
+Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column going forward. Then, separately write code to show each county and precinct and calculate the total votes in the Governor's race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the governor's race? 
+
 A2. 
 
 ```{r}
-
 ```
 
-Q3. A lower ec_zip score means less economic connectedness in that zip code. How many zip codes had more than 1 contribution and a ec_zip score of less than 1? What zip code had the lowest ec_zip score and where is that? How could you learn more about the contributions made from that zip code - you don't need to write code to answer this part, just write a sentence or two about what you would do.
+Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story? Finally, write code to calculate the average and median number of total votes across all precincts (to do this, you will need to use the `ungroup()` function _before_ you do the math). Take a look at the the Annotated Code of Maryland's election laws (https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf) - is there a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
+
 A3. 
 
 ```{r}
-
 ```
 
-Q4. Do Maryland zip codes with lower economic connectedness scores also have lower average contributions? Explain, in code and in text below, how you would answer that and what you can conclude? If you're not sure about the code, be sure to write out the process.
+Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the U.S. Senate primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me or Ramsay for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
 A4: 
 
 ```{r}
 
 ```
-
-Q5. The Social Capital data also includes a `volunteering_rate_zip` score, which is the percentage of Facebook users in that zip code who are members of a group predicted to be about volunteering or activism. How many Maryland zip codes have a volunteering rate of at least 0.10 (10%) and at least 5 contributions and what county has the most such zip codes? Which large population counties do not appear on this list?
-
-HINT: To get county names, you can use the `county` column in your dataframe to join it to `md_counties.csv` in your data folder after you read that file in. Look for the column in that CSV file that has identical values to the `county` column.
-
-A5. 
-
-```{r}
-
-```
-
-Q6. Using code, find a zip code in the data that has more than a single contribution but no `ec_zip` score. If you can't figure out the code to show that, tell me in your answer how you would do it in a more manual way. Find that zip code on the Social Capital site and tell me where it is and what the site says about the lack of an economic connectedness score. What kind of community is it demographically? You may use whatever research skills you have to answer this last part.
-A6. 
-
-
-```{r}
-
-```
-

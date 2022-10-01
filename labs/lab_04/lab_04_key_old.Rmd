@@ -1,0 +1,135 @@
+---
+title: "lab_04"
+author: "derek willis"
+date: "8/11/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
+library(tidyverse)
+```
+
+## Getting Started
+
+Let's keep working with Maryland contribution data. In this exercise we're going to explore the relationship between campaign contribution and what researchers call "economic connectedness" - basically the degree to which people have cross-class friendships - that is detailed in [this New York Times piece](https://www.nytimes.com/interactive/2022/08/01/upshot/rich-poor-friendships.html). You should read that before proceeding, and look at [Social Capital](https://www.socialcapital.org/), the site that explores the data. If you search Social Capital for a zip code (20742, for example), you'll see that it will say that 70.1 percent of low socioeconomic status individuals' friends are high income. The actual data you'll load will display this score as double the percentage that's displayed. Just keep that in mind.
+
+
+```{r}
+md_contribs <- read_rds('data/lab_04.rds')
+```
+
+To answer the questions below, you'll need to make a dataframe with the number of contributions and total amount for every 5-digit zip code, and then calculate the average donation. Then you'll join that dataframe to data containing economic connectedness scores for every zip code in Maryland. There's a particular set of steps you'll need to perform to make this work properly.
+
+First, let's create the dataframe with totals by each 5-digit Maryland zip code. Hint: if your zip code column contains values longer than 5 digits, you can extract substrings of a specified length.
+
+```{r}
+md_zip_totals <- md_contribs %>% 
+  mutate(zip5 = str_sub(contributor_zip, start = 1L, end = 5L)) %>% 
+  group_by(zip5) %>% 
+  summarize(total_contribs = n(), total_amount = sum(contribution_receipt_amount), avg = total_amount/total_contribs)
+```
+
+Next, let's load the economic connectedness data:
+
+```{r}
+md_ec <- read_csv('data/maryland_ec_data.csv')
+```
+
+Next join the two on your 5-digit zip code:
+
+```{r}
+# there's a problem - the `zip` column in md_ec is numeric, so we have to convert it to character before we join
+
+md_ec <- md_ec %>% mutate(across(zip, as.character))
+
+md_zip_totals_with_ec <- md_zip_totals %>% left_join(md_ec, by=c('zip5'='zip'))
+
+```
+
+
+## Answer questions
+
+Q1. Look at the joined dataframe - what do you notice about the rows, and what are your options for dealing with it?
+A1. There are zip codes from the contribution data that have no matching zip codes from the EC data, which means many of the columns from md_ec are NA. Reading more about the economic connectedness study, we can see in the NYT article the following note: "Prevalence of cross-class friendships, or economic connectedness, measures the average share of above-median-income individuals among the friends of below-median-income individuals, by ZIP code. Median household incomes are from the 2014-18 American Community Survey. Low-, medium- and high-income neighborhoods are defined as ZIP codes in the lowest, middle and highest quintiles of the income distribution. Chart includes ZIP code tabulation areas with median household incomes of less than $150,000 that contain at least 100 low-income and 100 high-income Facebook users who met the researchers’ sampling criteria." So it's possible (likely) that at least some of these zip codes with missing data did not have the minimum number of Facebook users to be included. We can either drop those rows before we continue our analysis or filter them during it.
+
+Q2. Organize the dataframe so that you see the zip code with the greatest number of contributions first. What is that zip code and what is the economic connectedness value (`ec_zip`)? Where is the zip code located?
+A2. 20815, with an ec_zip score of 1.43. That's Chevy Chase, Maryland, a wealthy area.
+
+```{r}
+md_zip_totals_with_ec %>% 
+  arrange(desc(total_contribs))
+```
+
+Q3. A lower ec_zip score means less economic connectedness in that zip code. How many zip codes had more than 1 contribution and a ec_zip score of less than 1? What zip code had the lowest ec_zip score and where is that? How could you learn more about the contributions made from that zip code - you don't need to write code to answer this part, just write a sentence or two about what you would do.
+A3. 20783 (Langley Park) had the lowest ec_zip score (0.57) of any zip code that had more than a single contribution. I could filter the original md_contribs dataset for that 5-digit zip code to see if this was the result of a small number of donors or if the money went to a range of candidates.
+
+```{r}
+md_zip_totals_with_ec %>% 
+  filter(ec_zip < 1.0, total_contribs > 1) %>% 
+  arrange(ec_zip)
+```
+
+Q4. Do Maryland zip codes with lower economic connectedness scores also have lower average contributions? Explain, in code and in text below, how you would answer that and what you can conclude? If you're not sure about the code, be sure to write out the process.
+A4: One way to do this is to calculate an average of the average contributions for zip codes. Looking at the Social Capital site, an economic connectedness percentage of 43.8 or 43.9 represents the 50th percentile. Doubling that would yield a median ec_zip score of 0.877, so I'll use that as a cutoff. Doing so yields average of averages of $237 and $227, respectively, meaning that the average is slightly _higher_ in zip codes with lower economic connectedness. That seems a little weird, so maybe it's the number of donations that's throwing it off? I added a filter to discard any zip codes with a single contribution - that brought the lower EC zips' average down to $200 and left the higher ones at $226. That makes more sense to me.
+
+```{r}
+
+md_zip_totals_with_ec %>% 
+  filter(ec_zip < 0.878) %>% 
+  summarize(avg_of_avg = mean(avg))
+
+md_zip_totals_with_ec %>% 
+  filter(ec_zip >= 0.877) %>% 
+  summarize(avg_of_avg = mean(avg))
+
+md_zip_totals_with_ec %>% 
+  filter(total_contribs > 1) %>% 
+  filter(ec_zip < 0.878) %>% 
+  summarize(avg_of_avg = mean(avg))
+
+md_zip_totals_with_ec %>% 
+  filter(total_contribs > 1) %>% 
+  filter(ec_zip >= 0.877) %>% 
+  summarize(avg_of_avg = mean(avg))
+
+```
+
+Q5. The Social Capital data also includes a `volunteering_rate_zip` score, which is the percentage of Facebook users in that zip code who are members of a group predicted to be about volunteering or activism. How many Maryland zip codes have a volunteering rate of at least 0.10 (10%) and at least 5 contributions and what county has the most such zip codes? Which large population counties do not appear on this list?
+
+HINT: To get county names, you can use the `county` column in your dataframe to join it to `md_counties.csv` in your data folder after you read that file in. Look for the column in that CSV file that has identical values to the `county` column.
+
+A5. There are 39 such zip codes, and Howard County has the most with 8, followed by Washington County with 7. Neither Prince George's nor Montgomery counties appear on the list, which is interesting.
+
+```{r}
+md_counties <- read_csv("data/md_counties.csv")
+
+md_zip_totals_with_ec_and_counties <- md_zip_totals_with_ec %>% inner_join(md_counties, by=c('county'='fips_code'))
+
+md_zip_totals_with_ec_and_counties %>% 
+  filter(total_contribs >= 5, volunteering_rate_zip >= 0.10) %>% 
+  group_by(county_name) %>% 
+  summarize(count = n()) %>% 
+  arrange(desc(count))
+
+```
+
+Q6. Using code, find a zip code in the data that has more than a single contribution but no `ec_zip` score. If you can't figure out the code to show that, tell me in your answer how you would do it in a more manual way. Find that zip code on the Social Capital site and tell me where it is and what the site says about the lack of an economic connectedness score. What kind of community is it demographically? You may use whatever research skills you have to answer this last part.
+A6. I picked 21057, which is Glen Arm - it had 57 contributions at an average of $195 each. Social Capital says there is insufficient data to calculate an EC score. According to Census Reporter, the 21057 ZCTA is mostly white (88%), has a higher-than-average median income and fewer people below the poverty line than other areas of the state. https://censusreporter.org/profiles/86000US21057-21057/. 
+
+
+```{r}
+md_zip_totals_with_ec_and_counties %>% 
+  filter(total_contribs > 1, is.na(ec_zip)) %>% 
+  arrange(desc(total_contribs))
+```
+
