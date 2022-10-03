@@ -80,7 +80,7 @@ maryland_population %>% left_join(county_voters_2020, by="COUNTY")
 ```
 
 ### Task 7: Assign Joined Data to New Dataframe
-**Task** Create a new dataframe with PPP and NAICS data joined together. Add a description of what this code does to your reference notebook.
+**Task** Create a new dataframe with population and voter data joined together. Add a description of what this code does to your reference notebook.
 
 ```{r}
 maryland_population_with_voters <- maryland_population %>% left_join(county_voters_2020)
@@ -94,8 +94,7 @@ maryland_demographics <- read_csv('data/maryland_demographics.csv')
 ```
 
 ### Task 9: Join demographic data to combined voting/population data
-**Task** Join the ZCTA data to the our PPP & NAICS data. What's the error message you get? What do you think it means? Add a description of what this code does to your reference notebook.
-**Answer**
+**Task** Join the demographic data to the our combined voting/population data. To do this, we need to specify the join columns since the names aren't the same.
 
 ```{r}
 # join on zip - but there's a problem
