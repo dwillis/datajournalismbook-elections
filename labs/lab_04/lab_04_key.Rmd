@@ -43,7 +43,7 @@ Next join the two on the unique combination of precinct and county:
 ```{r}
 # there's a problem - the `election_district_precinct` column in all_primary_precinct_results is numeric, so we have to convert it to character before we join
 
-primary_precinct_results_with_voting_locations <- all_primary_precinct_results %>% left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="js_code"))
+primary_precinct_results_with_voting_locations <- all_primary_precinct_results %>% left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="county_code"))
 ```
 
 ```{r}
@@ -51,19 +51,29 @@ all_primary_precinct_results <- all_primary_precinct_results %>% mutate(election
 
 # now we can join on precinct and county
 
-primary_precinct_results_with_voting_locations <- all_primary_precinct_results %>% left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="js_code"))
+primary_precinct_results_with_voting_locations <- all_primary_precinct_results %>% left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="county_code"))
 ```
 
 
 ## Answer questions
 
-Q1. Look at the joined dataframe - are there any column names that are repeated, and what does that look like? What's the difference between the values in those repeated columns and what are your options for dealing with them? 
+Q1. Using the newly-created dataframe and isolating just the results for Wes Moore and Aruna Miller, write code that calculates how many voting locations each county has, showing the county with the most voting locations first. There's a catch: multiple precincts can share the same voting location, so you'll need to calculate the distinct number of locations (Google is your friend).
 
-A1. There are two `county_name` columns, one from each data frame used in the join, so if R doesn't use those columns in the join itself (and we didn't because the content doesn't exactly match) it will include both and add `.x` and `.y` to their names to distinguish them. We could rename either or both of them and we could rename one and drop the other using select(-column_name).
+Does the county with the most voting locations have the largest population in the state (ask yourself: where have you seen county population figures recently)?
 
-Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column going forward. Then, separately write code to show each county and precinct and calculate the total votes in the Governor's race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the governor's race? 
+A1. Prince George's County has 240 voting locations, but it's not the most populous county - that's Montgomery, which has 15 fewer voting locations. (Pre_lab_04 has county population data.)
 
-A2. Precinct 15005 in Prince George's County, which votes at Wise High School.
+```{r}
+primary_precinct_results_with_voting_locations %>% 
+  filter(candidate_name == 'Wes Moore and Aruna Miller') %>%
+  group_by(county_name) %>% 
+  summarise(voting_locations = n_distinct(location_name)) %>% 
+  arrange(desc(voting_locations))
+```
+
+Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column permanently. Next, separately write code to show each county and precinct and calculate the total votes in the Governor's race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the governor's race? 
+
+A2. Precinct 15005 in Prince George's County, which votes at Wise High School, had 2,396 votes in the governor's race.
 
 ```{r}
 primary_precinct_results_with_voting_locations <- primary_precinct_results_with_voting_locations %>% 
@@ -71,20 +81,24 @@ primary_precinct_results_with_voting_locations <- primary_precinct_results_with_
 
 primary_precinct_results_with_voting_locations %>% 
   filter(office_name == 'Governor / Lt. Governor') %>% 
-  group_by(county_name.x, election_district_precinct, location_name) %>% 
+  group_by(county_name, election_district_precinct, location_name) %>% 
   summarise(total_votes = sum(votes)) %>% 
   arrange(desc(total_votes))
 
 ```
 
-Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story? Finally, write code to calculate the average and median number of total votes across all precincts (to do this, you will need to use the `ungroup()` function _before_ you do the math). Take a look at the the Annotated Code of Maryland's election laws (https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf) - is there a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
+Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story?
+
+Finally, write code to calculate the average and median number of total votes across all precincts statewide (so you want to see just two numbers - the average and median). To do this, you will need to use the `ungroup()` function on your new dataframe _before_ you do the math - https://www.rdocumentation.org/packages/multiplyr/versions/0.1.1/topics/ungroup. There's no state column here, so you aren't grouping by anything, but can still use summarize to do the math.
+
+Take a look at the the Annotated Code of Maryland's election laws (https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf) - can you find a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
 
 A3. There are 12, and four of them are in Prince George's County. It would be useful to know how many registered voters are assigned to this precinct - if it's a sizeable amount (more than 25, say), that's probably worth looking into. The average number of votes across all precincts is 465, and the median is 418. Maryland has no limit on the number of voters assigned to a precinct (although many states do), so having 2,000+ voters at one location and 400 at another could mean that more voting machines and poll workers would be needed at the former location.
 
 ```{r}
 gov_precinct_totals <- primary_precinct_results_with_voting_locations %>% 
   filter(office_name == 'Governor / Lt. Governor') %>% 
-  group_by(county_name.x, election_district_precinct, location_name) %>% 
+  group_by(county_name, election_district_precinct, location_name) %>% 
   summarise(total_votes = sum(votes)) %>% 
   arrange(desc(total_votes))
 
@@ -95,7 +109,7 @@ gov_precinct_totals %>% ungroup() %>% summarise(average = mean(total_votes), med
 ```
 
 Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the U.S. Senate primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me or Ramsay for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
-A4: 
+A4: [backup questions:]
 
 ```{r}
 

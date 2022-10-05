@@ -11,18 +11,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load libraries and establish settings
 ```{r}
-# Turn off scientific notation
-options(scipen=999)
+# Load the libraries you will need to read in and clean up the data, knowing that you can go back and add a library and re-run this block after you get a look at the dataframes.
 
-library(tidyverse)
-library(janitor)
 ```
 
 ## Getting Started
 
 This week we'll be combining and joining data to make it more useful and to ask some questions about it. We'll use Maryland 2022 primary precinct election results to do this, and our main question will be this: Which precincts had the most votes cast at them statewide, counting both the Republican and Democratic primaries? To answer this question, we'll need to first combine the two parties' primary precinct results into a single dataframe and then join it to data that has more information about each voting location.
 
-First, load the two precinct results CSV files in the `data` folder, one each for the Democratic and Republican primaries, and then combine them into a single dataframe. You'll need to clean up the column names to make the data easier to work with - make sure you have loaded the library to do that.
+First, load the two precinct results CSV files in the `data` folder, one each for the Democratic and Republican primaries, and then combine them into a single dataframe using the method we used in the pre_lab. You'll need to clean up the column names to make the data easier to work with - make sure you have loaded the library to do that.
 
 ```{r}
 ```
@@ -32,7 +29,7 @@ Next, let's read in the precinct voting location data and make sure you clean up
 ```{r}
 ```
 
-Then join the two on the unique combination of precinct and county:
+These two dataframes have a pair of columns in common - not necessarily with the same column names. Join the two dataframes on that unique combination that describes a precinct and the jurisdiction that contains it:
 
 ```{r}
 
@@ -40,9 +37,15 @@ Then join the two on the unique combination of precinct and county:
 
 ## Answer questions
 
-Q1. Look at the joined dataframe - are there any column names that are repeated, and what does that look like? What's the difference between the values in those repeated columns and what are your options for dealing with them? This question doesn't require code.
+Q1. Using the newly-created dataframe and isolating just the results for Wes Moore and Aruna Miller, write code that calculates how many voting locations each county has, showing the county with the most voting locations first. There's a catch: multiple precincts can share the same voting location, so you'll need to calculate the distinct number of locations (Google is your friend).
+
+Does the county with the most voting locations have the largest population in the state (ask yourself: where have you seen county population figures recently)?
 
 A1. 
+
+```{r}
+```
+
 
 Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column going forward. Then, separately write code to show each county and precinct and calculate the total votes in the Governor's race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the governor's race? 
 
@@ -51,7 +54,11 @@ A2.
 ```{r}
 ```
 
-Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story? Finally, write code to calculate the average and median number of total votes across all precincts (to do this, you will need to use the `ungroup()` function _before_ you do the math). Take a look at the the Annotated Code of Maryland's election laws (https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf) - is there a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
+Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story?
+
+Finally, write code to calculate the average and median number of total votes across all precincts statewide (so you want to see just two numbers - the average and median). To do this, you will need to use the `ungroup()` function on your new dataframe _before_ you do the math - https://www.rdocumentation.org/packages/multiplyr/versions/0.1.1/topics/ungroup. There's no state column here, so you aren't grouping by anything, but can still use summarize to do the math.
+
+Take a look at the the Annotated Code of Maryland's election laws (https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf) - can you find a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
 
 A3. 
 
@@ -59,8 +66,7 @@ A3.
 ```
 
 Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the U.S. Senate primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me or Ramsay for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
-A4: 
+A4: Put your question here.
 
 ```{r}
-
 ```
