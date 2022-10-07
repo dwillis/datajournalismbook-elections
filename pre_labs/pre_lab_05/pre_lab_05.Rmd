@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_05.Rmd"
-author: "sean mussenden"
-date: "8/24/2021"
+author: "Derek Willis"
+date: "8/24/2022"
 output: html_document
 ---
 
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 2. Show students how to download and install Open Refine and confirm install before they leave class.
 
 
-## Chapter 11
+## Chapter 22
 
 ### Task 1: Install refinr package
 **Task** Run the following code in the gray-colored codeblock below to install refinr.
