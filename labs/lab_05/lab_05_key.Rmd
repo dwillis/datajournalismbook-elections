@@ -21,9 +21,9 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 
-You'll need to load two packages for this: the tidyverse and janitor.
+You'll need to load three packages for this: the tidyverse, lubridate and janitor.
 
-**Task** load these two packages.
+**Task** load these three packages.
 
 ```{r}
 # Turn off scientific notation
@@ -33,128 +33,40 @@ options(scipen=999)
 # install.packages('tidyverse')
 library(tidyverse)
 library(janitor)
+library(lubridate)
 
 ```
 
+For this lab, we want to investigate spending by Maryland state and local candidates during the current election. For example, we could ask how much money have candidates and committees spent on advertising on Facebook? Which vendors received the most money for media expenses? We have the data, but it's messy - names of payees are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
+
+The basic structure here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
+
 ## Load Data
 
-You'll need to load three data sets for this:
+You'll need to load one data set, a CSV file of Maryland campaign expenditures located in the data folder called "md_expenses.csv"
 
-* A slice of federal campaign contribution data from College Park (lab_05.rds).
-
-* A "lookup table" that allows you to translate NAICS (industry) numeric codes to industry titles (naics_codes.csv).
-* A table of West Virginia population by county (American Community Survey, 2019 5-year averages) (wv_population_county.csv).
-
-All three data sets are in the data folder.  Write code to load the three in the codeblock below.
-
-**Task** Create a codeblock below, then read the data sets in in and assign them to appropriate variable names. There's a fourth data set you'll use in this lab, too, of selected loans in ZIP Code 25401. But there's no need to load it now.
+**Task** Create a codeblock below, then read the data in and assign it to an appropriate variable name. You'll want to clean up the column names and make sure that any date columns are actually date datatypes.
 
 ```{r}
-# Load the College Park contributions data table
-college_park_contributions <- read_rds('data/lab_05.rds')
+# Load the Maryland expenditures data table
+md_expenses <- read_csv('data/md_expenses.csv') %>% clean_names()
 
-
+md_expenses <- md_expenses %>% mutate(expenditure_date = mdy(expenditure_date))
 ```
 
 ## Answer questions
 
-**Q1.**  In the data folder, there is a csv called zip_25401_loan_sample.csv.  It contains a sample of loans from West Virginia ZIP Code 25401.
+**Q1.** There's a category column in the data that has values for different kinds of spending. One of them is "Media". Write code to isolate Media expenses where the name of the payee is not NA. Then, using `write_csv`, make a CSV file in your data folder. Using OpenRefine, create a project using that CSV file, create a copy of the `payee_name` column called `payee_clean` and then standardize it, focusing on the payees that appear most often (the way we handled the top MD cities in lab_03).
 
-As we read earlier this semester, [multiple loan applications coming from multiple businesses at the same residential street address](https://www.nytimes.com/2021/08/17/business/ppp-fraud-covid.html) might point to fraud. Or it could alert us to companies that used [multiple corporate entities to get more money than envisioned](https://www.propublica.org/article/different-names-same-address-how-big-businesses-got-government-loans-meant-for-small-businesses) by the original law that authorized the program.   
+Then, when you are done standardizing `payee_clean`, export it as a new CSV file in your data folder and read it back into RStudio as a new dataframe.
 
-You are going to examine this data to see if we can find a lot of loans coming from the same address.  Here's the problem: the street address field is pretty messy.  The same address appears with minor variations --  "1003 Sushruta Dr" vs "1003 SUSHRUTA DR" -- that will prevent proper grouping.
-
-First, upload the data into Open Refine and standardize/clean the address field - make sure to make a copy of that column to work on and to try all of the options for clustering. If you've done it properly, you should have 65 discrete addresses.
-
-Then export the data from Open Refine, and move it to the proper folder.
-
-Next, load it in the codeblock below, assigning it to an appropriate variable name.
-
-Then answer these questions:
-* What is the street address in this data that has the most loans?
-* How many loans are there at that street address?
-* What are the names of the businesses at that address?
-
-**A1.**  126 E Burke St. in Martinsburg has 6, more than any other address in this sample. The businesses are DREW HOLDINGS LLC, BRIX27 LLC, ABRAHAM ASHTON, HUB CO-OP LLC (2X), RONIN PROPERTIES LLC.
+**A1.**  
 
 ```{r}
+media_expenses <- md_expenses %>% filter(expense_category == 'Media') %>% filter(!is.na(payee_name))
 
-#####
-## Step 0: Process to create this practice sample of loans from ZIP 25401 that will be uploaded to Open Refine
-## This section not necessary to complete problem.
-## Just there for instructor understanding of what's in the dataframe.
-## We're not using all records in 25401 because it would have taken too long to clean in Open Refine.
-#####
+write_csv(media_expenses, "data/media_expenses.csv")
 
-# Create a dataframe of loans in Berekely County and ZIP 25401. 413 records.
-berkeley_25401_ppp <- west_virginia_ppp %>%
-  filter(project_county_name == "BERKELEY") %>%
-  mutate(zip5=str_sub(zip,start=1L, end=5L)) %>%
-  filter(zip5=="25401") %>%
-  mutate(address_clean = str_to_title(address))
-
-# Identify addresses that (with some grouping problems) appear more than once. 66 distinct addresses.
-berkeley_25401_multiple <- berkeley_25401_ppp %>%
-  group_by(address_clean) %>%
-  count() %>%
-  arrange(desc(n)) %>%
-  filter(n>1) %>%
-  select(address_clean) %>%
-  distinct()
-
-# Filtering join to only keep select ZIPS identified in previous function. 142 records in this sample.
-berkeley_25401_ppp <- berkeley_25401_ppp %>%
-  inner_join(berkeley_25401_multiple) %>%
-  select(-address_clean)
-
-# Write sample out as csv
-write_csv(berkeley_25401_ppp,"data/zip_25401_loan_sample.csv")
-
-#####
-## Step 1: Upload to Open Refine, Clean, Export.
-## This is the first step students will do.  
-#####
-
-# Launch Open Refine
-# Choose file zip_25401_loan_sample.csv
-# Hit next to upload data
-# Click create project
-# Make copy of address column called address_clean.  Click dropdown arrow next to address_clean > edit column > add column based on this column. When window pops up, type address_clean in "New column name" field and click OK button.
-# Click dropdown arrow next to address_clean > Facet > Text facet
-# On left sidebar click "cluster"
-# Use various cleaning functions until city inconsistency grouping problems are resolved.
-# Should have 65 distinct addresses at end of cleaning.  
-# Click "export" > comma separated value >
-# Move to proper folder with the rest of your data in the GitHub repo.
-# Change the name to something like zip_25401_loan_sample_open_refine.csv
-
-#####
-## Step 2: Upload to Open Refine, Clean, Export.
-## This is the first step students will do.  
-#####
-
-## Read in data, fix most capitalization issues by applying str_to_title
-zip_25401_loan_sample_open_refine <- read_csv("data/zip_25401_loan_sample_open_refine.csv") %>%
-  mutate(address_clean = str_to_title(address_clean))
-
-#####
-## Step 3: Determine street address with most loans in this sample. 126 E Burke St. has 6.
-#####
-
-zip_25401_loan_sample_open_refine %>%
-  group_by(address_clean) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-#####
-## Step 4: Examine loans to 126 E Burke St
-## DREW HOLDINGS LLC, BRIX27 LLC, ABRAHAM ASHTON, HUB CO-OP LLC (2X), RONIN PROPERTIES LLC
-#####
-
-zip_25401_loan_sample_open_refine %>%
-  filter(address_clean == "126 E Burke St")
 
 
 ```
