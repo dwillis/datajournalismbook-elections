@@ -1,7 +1,7 @@
 ---
 title: "lab_05"
-author: "Sean Mussenden"
-date: "8/24/2021"
+author: "Derek Willis"
+date: "8/24/2022"
 output: html_document
 ---
 
@@ -39,7 +39,7 @@ library(lubridate)
 
 For this lab, we want to investigate spending by Maryland state and local candidates during the current election. For example, we could ask how much money have candidates and committees spent on advertising on Facebook? Which vendors received the most money for media expenses? We have the data, but it's messy - names of payees are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
 
-The basic structure here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
+The basic process here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
 
 ## Load Data
 
@@ -56,9 +56,11 @@ md_expenses <- md_expenses %>% mutate(expenditure_date = mdy(expenditure_date))
 
 ## Answer questions
 
-**Q1.** There's a category column in the data that has values for different kinds of spending. One of them is "Media". Write code to isolate Media expenses where the name of the payee is not NA. Then, using `write_csv`, make a CSV file in your data folder. Using OpenRefine, create a project using that CSV file, create a copy of the `payee_name` column called `payee_clean` and then standardize it, focusing on the payees that appear most often (the way we handled the top MD cities in lab_03).
+**Q1.** You've been assigned to write about Maryland political committees' use of Facebook advertising. There's a category column in the data that has values for different kinds of spending. One of them is "Media". Write code to isolate Media expenses where the name of the payee is not NA. Then, using `write_csv`, make a CSV file in your data folder. Using OpenRefine, create a project using that CSV file, create a copy of the `payee_name` column called `payee_clean` and then standardize it, focusing on the payees that appear most often. Pay particular attention to variations of Facebook, bearing in mind that it changed its name last year: https://about.fb.com/news/2021/10/facebook-company-is-now-meta/), but also clean up variations of the most common payees.
 
-Then, when you are done standardizing `payee_clean`, export it as a new CSV file in your data folder and read it back into RStudio as a new dataframe.
+Then, when you are done standardizing `payee_clean`, export it as a new CSV file to your data folder, *giving it a different name* and read it back into RStudio as a new dataframe.
+
+Then, using that `payee_clean` column, write code to find all of the spending where Facebook is the payee and calculate the total amount of spending for each committee and present the results showing the committee that spent the most first.
 
 **A1.**  
 
@@ -67,278 +69,49 @@ media_expenses <- md_expenses %>% filter(expense_category == 'Media') %>% filter
 
 write_csv(media_expenses, "data/media_expenses.csv")
 
+# Clean up work in OpenRefine
 
+# read the cleaned CSV 
+media_expenses_cleaned <- read_csv("data/media-expenses-cleaned.csv")
+
+# calculate top Facebook spenders
+media_expenses_cleaned %>% 
+  filter(payee_clean == 'Facebook') %>% 
+  group_by(committee_name) %>% 
+  summarise(total_amount = sum(amount)) %>% 
+  arrange(desc(total_amount))
 
 ```
-**Q2.** Do some web research on the businesses that answered question 1.  
+**Q2.** Let's do some research on the top committees from question 1. Look up the top 10 spenders: if they are candidate committees, what offices were they running for? If they were not candidates, what issues do they seem to care about? Write some sentences answering those questions, then go the Facebook ad library (https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&media_type=all) and look for ads from the top spender. What do you notice about those ads?
 
-Google the street address.  Google the business names and search for their corporate records on [Open Corporates](https://opencorporates.com/). Be sure to find the website of the name of the company that appears twice in the list of businesses and develop an understanding of what it does.
+**A2.** The top ten are mostly, but not entirely, candidates for governor in the 2022 primary election. Billy Boniface is a candidate for Harford County executive, and there are several PACs, including CASA in Action, which supports immigrant communities. The top spender is the campaign of Ashwani Jain, a Democratic gubernatorial candidate who lost in the primary. His Facebook ads were taken down by the platform because they did not comply with disclaimer rules (who paid for this ad).
 
-Based on your research, does it seem suspicious that this collection of businesses all got loans using the same address? Why or why not. Use specific facts identified in your research to support your position.
+**Q3.** Given the list of top spenders in A1 and the primary results for governor (https://elections.maryland.gov/elections/2022/primary_results/gen_results_2022_1.html), who is missing from that Q1 list? Did those campaigns run Facebook ads? Who are the biggest recipients of media expenses by the Democratic primary winner for governor (HINT: that person has two committees)?
 
-**A2.** It's hard to say for sure without much more reporting. There's some evidence for and against suspicion. Hub Co-Op is based at 126 E. Burke Street. It appears to be a co-working space, which leases office space at low-rates to very small companies, including startups. So it does seem normal that several otherwise unrelated businesses that share office space could have applied for loans.  However, a search of Open Corporates shows that most of these businesses do seem connected beyond just sharing office space. A person named Robert Johnson is a member or agent on every single company, and they seem to share the same attorney who helped register the companies, [Abraham Ashton](https://www.linkedin.com/in/abraham-ashton-0a660815), who is listed as the "organizer" for dozens of organizations. At any rate, it would be a mistake to publish these findings without doing a lot more reporting to understand the context.
-
-* [Drew Holdings](https://opencorporates.com/companies/us_wv/363638)
-* [BRIX27, LLC](https://opencorporates.com/companies/us_wv/370554)
-* [Hub Co-Op](https://opencorporates.com/companies/us_wv/338359)
-* [Ronin Properties LLC](https://opencorporates.com/companies/us_wv/362157)
-
-
-**Q3.** Start by using the West Virginia slice of the PPP loan data that you loaded at the start of the lab to create a subset of PPP loans in West Virginia's second largest county (which you can find in wv_population_county). And then use that table you created to answer the following questions:
-
-* Which city in that county had the highest number of loans?
-* In that city, which industry title had more loans than any other industry title?
-
-Requirement: you MUST export a dataframe of PPP loans from R Studio at some point in the process (not necessarily at the beginning!), load it into Open Refine, clean the city column, export it from Open Refine, and reimport into R Studio. To export data, you will use the write_csv() function.
-
-Guidance: there are a lot of steps you'll need to take to answer this question. You may or may not find it helpful to write out in English what you plan to do step-by-step before you start writing code.   
-
-**A3.** Martinsburg, the biggest city in Berekley County, West Virginia, had more loans than any other city in that county.  The "full-service restaurants" industry had more approved loans than any other industry, just ahead of real estate agents and child care providers.
-```{r}
-
-# Below are two approaches to answering this question here.  Approach A makes heavy use of the familiar filter() function. Approach B makes heavy use of a new-to-you type of join, inner_join(), to do a "filtering join".
-
-###############
-#### Approach A (Less Advanced): Relying on filter()
-###############
-
-#####
-### Step 1: Identify West Virginia's second largest county
-#####
-
-## Sort population table
-wv_population_county_sorted <- wv_population_county %>%
-  arrange(desc(population_2019))
-
-## Display it.  Berkeley County is #2 with 115K people.
-wv_population_county_sorted
-
-#####
-### Step 2: Create a table of Berkeley County loans
-#####
-
-berkeley_ppp <- west_virginia_ppp %>%
-  filter(project_county_name == "BERKELEY")
-
-#####
-### Step 3: Identify city in Berkeley County that got the most loans.
-#####
-
-## Group by city and county
-berkeley_top_city <- berkeley_ppp %>%
-  group_by(city) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-## Display to notice city field needs cleaning in order to group properly.
-berkeley_top_city
-
-#####
-### Step 4: Export data to Open Refine, clean city field and reimport to R Studio.
-#####
-
-## Export Berkeley loan data to Open Refine
-write_csv(berkeley_ppp,"data/berkeley_ppp.csv")
-
-## Open Refine Cleaning Steps
-# Launch Open Refine
-# Choose file berkeley_ppp.csv
-# Hit next to upload data
-# Click create project
-# Make copy of city column called city_clean.  Click dropdown arrow next to city > edit column > add column based on this column. When window pops up, type city_clean in "New column name" field and click OK button.
-# Click dropdown arrow next to city_clean > Facet > Text facet
-# On left sidebar click "cluster"
-# Use various cleaning functions until city inconsistency grouping problems are resolved.
-# Click "export" > comma separated value >
-# Move to proper folder with the rest of your data in the GitHub repo.
-# Change the name to something like berkeley_ppp_open_refine.csv
-
-## Reimport cleaned Open Refine data, do some further cleaning if desired to fix capitalization.
-
-berkeley_ppp <- read_csv("data/berkeley_ppp_open_refine.csv") %>%
-  mutate(city_clean = str_to_title(city_clean))
-
-#####
-### Step 5: Identify top city in Berkeley County.
-#####
-
-## Group by cleaned city column and count loans, sort descending
-berkeley_ppp_cities <- berkeley_ppp %>%
-  group_by(city_clean) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-## Display it. Martinsburg with 1166 approved loans.
-wv_population_county_sorted
-
-#####
-### Step 6: Create a Martinsburg only PPP loans table
-#####
-
-martinsburg_ppp <- berkeley_ppp %>%
-  filter(city_clean == "Martinsburg")
-
-#####
-### Step 7: Examine top industries in Martinsburg
-#####
-
-# Join to naics lookup table, group by industry title, count sort descending
-martinsburg_ppp_industries <- martinsburg_ppp %>%
-  left_join(naics_codes) %>%
-  group_by(title) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-# Display it.
-martinsburg_ppp_industries
-
-###############
-#### Approach B (More advanced): Relying on inner_join() to do "filtering joins"
-###############
-
-#####
-### Step 1: Identify West Virginia's second largest county
-#####
-
-## Sort population table, keep the second row using slice, keep only the county column, convert county to uppercase to match ppp data for join
-wv_second_county <- wv_population_county %>%
-  arrange(desc(population_2019)) %>%
-  slice(2) %>%
-  select(county) %>%
-  mutate(county = str_to_upper(county))
-
-## Display it.  Berkeley County is #2 with 115K people.
-wv_second_county
-
-#####
-### Step 2: Create a table of Berkeley County loans
-#####
-
-berkeley_ppp <- west_virginia_ppp %>%
-  inner_join(wv_second_county,by=c("project_county_name" = "county"))
-
-#####
-### Step 3: Identify city in Berkeley County that got the most loans.
-#####
-
-## Group by city and county
-berkeley_top_city <- berkeley_ppp %>%
-  group_by(city) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-## Display to notice city field needs cleaning in order to group properly.
-berkeley_top_city
-
-#####
-### Step 4: Export data to Open Refine, clean city field and reimport to R Studio.
-#####
-
-## Export Berkeley loan data to Open Refine
-write_csv(berkeley_ppp,"data/berkeley_ppp.csv")
-
-## Open Refine Cleaning Steps
-# Launch Open Refine
-# Choose file berkeley_ppp.csv
-# Hit next to upload data
-# Click create project
-# Make copy of city column called city_clean.  Click dropdown arrow next to city > edit column > add column based on this column. When window pops up, type city_clean in "New column name" field and click OK button.
-# Click dropdown arrow next to city_clean > Facet > Text facet
-# On left sidebar click "cluster"
-# Use various cleaning functions until city inconsistency grouping problems are resolved.
-# Click "export" > comma separated value >
-# Move to proper folder with the rest of your data in the GitHub repo.
-# Change the name to something like berkeley_ppp_open_refine.csv
-
-## Reimport cleaned Open Refine data, do some further cleaning if desired to fix capitalization.
-
-berkeley_ppp <- read_csv("data/berkeley_ppp_open_refine.csv") %>%
-  mutate(city_clean = str_to_title(city_clean))
-
-#####
-### Step 5: Identify top city in Berkeley County.
-#####
-
-## Group by cleaned city column and count loans, sort descending
-berkeley_top_city <- berkeley_ppp %>%
-  group_by(city_clean) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count)) %>%
-  slice(1) %>%
-  select(city_clean)
-
-## Display it. Martinsburg with 1166 approved loans.
-berkeley_top_city
-
-#####
-### Step 6: Create a Martinsburg only PPP loans table
-#####
-
-martinsburg_ppp <- berkeley_ppp %>%
-  inner_join(berkeley_top_city)
-
-#####
-### Step 7: Examine top industries in Martinsburg
-#####
-
-# Join to naics lookup table, group by industry title, count sort descending
-martinsburg_ppp_industries <- martinsburg_ppp %>%
-  left_join(naics_codes) %>%
-  group_by(title) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-
-# Display it.
-martinsburg_ppp_industries
-```
-
-**Q4.** What are your two best hypotheses, which you'd need to confirm with reporting and further analysis, that explain why that industry is at the top of the list?
-**A4.** Here are four ideas, though you may think of others.   
-
-* Full-service restaurants may just be more common than other types of businesses in Martinsburg. If businesses in all industries were equally likely to apply for a loan -- which may not be a safe assumption to make! -- then it would make sense that more restaurants equals more loans.
-* Restaurants may have been more likely than businesses in other industries to apply for multiple loans with different lenders, leading to multiple records in the PPP data. For example, SISSY'S FAMILY RESTAURANT LLC, MOTHER SHUCKERS CRAB SHACK, LAS TRANCAS OF MARTINSBURG INC. and several others have two loans of differing amounts on different dates at the same address. Is this true of other big industries?
-* Sit-down restaurants were particularly vulnerable during the pandemic, especially the early months, as public health measures in many states limited or prevent in-restaurant dining. The economic hit may have driven restaurant owners to seek help with more urgency than in other industries.
-* The position of restaurants at the top may just be an artifact of using fine-grained NAICS data.
-
-**Q5.** Start with a table of loans to all businesses in the city and industry that answered question 3. Answer the following questions:
-* What is the name of the business that got the highest approved loan amount?
-* How much was it for?
-* When was it approved?
-* How many jobs does the data say were retained?
-* Is there a difference between the business' name in the PPP data and the name its customers know it by? If so, what is that name?
-* How many locations does this business have?
-* Did one of its locations close during the pandemic, either before or after it got the loan?
-
-Hint: you will not find the answers to the last three questions in the data.  You could call them directly to get that information, but I don't want you to do that for this assignment.  Instead, do some web research. I would start by Googling the company name from the data and looking at the page that comes up for the business from at http://apps.sos.wv.gov/. I would use information I found on that page and use info about the company from Google, the [Wayback machine](https://archive.org/web/) (which lets you look at older versions of a company's website), Yelp, and Facebook.
-
-**A5.** "COTTLE CHRISTI L LLC" got the highest approved loan amount, $280,434. The loan was approved on Feb. 17, 2021, nearly a full year after the pandemic started.
-
-The data says it allowed the company to retain 94 jobs, more than any other full service restaurant in town.
-
-Based on web research, "COTTLE CHRISTI L LLC" appears to be the corporate holding company for a small chain of restaurants, according to its page on the [West Virginia Secretary of State Corporate Lookup] ](http://apps.sos.wv.gov/business/corporations/organization.aspx?org=338507).
-
-According to the corporate page, the business has several "DBA" or "Doing Business As" names, including several variations of Kitzie's (Kitzie's Cafe, Kitzie's Cafe II, Kitzie's of Inwood, Kitzie's of Spring Mills, Kitzie's Restaurant & Lounge) and Riverbend Bar & Grill. The "termination date" for one of the DBA names, "Kitzie's of Inwood" suggests it may have closed after the pandemic started, in May 2020.
-
-A Google search for A Google search for "kitzie's wv" gets us to the website for [Kitzie's Restaurant & Lounge](http://www.kitziesrestaurant.com/").  It shows two locations in Martinsburg ("Spring Mills" and "Martinsburg").  Using the "Wayback Machine" at Archive.org, we can see how the restaurant's website changed over time.  This is how it [looked in January 2019](https://web.archive.org/web/20190115061057/http://www.kitziesrestaurant.com/), showing a third location in Inwood, WV.  By [June 2019](https://web.archive.org/web/20190618194756/http://www.kitziesrestaurant.com/) though, the Inwood location no longer appeared. Yelp users also [reported the Inwood location appears to be closed](https://www.yelp.com/biz/kitzies-inwood-inwood), with the last review left in March 2019. We'd have to call to confirm, but it appears the location closed before the pandemic started.  
+**A3.** Both Wes Moore & Dan Cox's campaigns are missing from the list of top Facebook spenders. Moore definitely has run Facebook ads, but Cox appears not to have, which seems unusual. Moore's campaign (both primary and general committees) has paid more than $3.6 million to SKDK, a Democratic consulting firm that handles all kinds of campaign activities, including advertising. We don't see direct payments to Facebook because it's likely that SKDK is making those buys rather than the campaign itself.
 
 ```{r}
 
-martinsburg_ppp_restaurants <- martinsburg_ppp %>%
-  left_join(naics_codes) %>%
-  filter(str_detect(title,"Full-Service Restaurants")) %>%
-  arrange(desc(amount))
+media_expenses_cleaned %>% 
+  filter(committee_name == 'Moore  Wes For Maryland' | committee_name == 'Moore Miller For Maryland Slate') %>% 
+  group_by(payee_clean) %>% 
+  summarise(total_amount = sum(amount)) %>% 
+  arrange(desc(total_amount))
 
-martinsburg_ppp_restaurants
 ```
+
+**Q4.** The media expense data you cleaned also has a standardized purpose column. Write code to generate a list of the committees with the total amount of spending on online advertising. How does this list compare to the one from Q1 about top Facebook spenders? Of the top 5 committees who spent the most on Facebook ads from Q1, are there any that appear to have spent *all* of their online advertising dollars on Facebook?
+
+**A4.** This list has larger amounts for total online ad spending, and a different list of top committees, including the Republican Governors Association and DGA Action. Ashwani Jain, the top committee on the Facebook spending list, appears to have spent all of its online advertising dollars on Facebook.
+
+```{r}
+media_expenses_cleaned %>% 
+  filter(expense_purpose == 'Online Advertising') %>% 
+  group_by(committee_name) %>% 
+  summarise(total_amount = sum(amount)) %>% 
+  arrange(desc(total_amount))
+```
+
+**Q5** You've been asked to summarize your findings about spending on Facebook by Maryland political candidates. How much do we know and what don't we know? What's the best story idea you've found here?
+
+**A5** 

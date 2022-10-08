@@ -1,7 +1,7 @@
 ---
 title: "lab_05"
-author: "Sean Mussenden"
-date: "8/24/2021"
+author: "Derek Willis"
+date: "8/24/2022"
 output: html_document
 ---
 
@@ -21,9 +21,9 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 
-You'll need to load two packages for this: the tidyverse and janitor.
+You'll need to load three packages for this: the tidyverse, lubridate and janitor.
 
-**Task** load these two packages.
+**Task** load these three packages.
 
 ```{r}
 # Turn off scientific notation
@@ -31,84 +31,54 @@ options(scipen=999)
 
 ```
 
+For this lab, we want to investigate spending by Maryland state and local candidates during the current election. For example, we could ask how much money have candidates and committees spent on advertising on Facebook? Which vendors received the most money for media expenses? We have the data, but it's messy - names of payees are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
+
+The basic process here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
+
 ## Load Data
 
-You'll need to load three data sets for this:
+You'll need to load one data set, a CSV file of Maryland campaign expenditures located in the data folder called "md_expenses.csv"
 
-* The West Virginia slice of the PPP loan data (lab_05.rds).
-* A "lookup table" that allows you to translate NAICS (industry) numeric codes to industry titles (naics_codes.csv).
-* A table of West Virginia population by county (American Community Survey, 2019 5-year averages) (wv_population_county.csv).
+**Task** Create a codeblock below, then read the data in and assign it to an appropriate variable name. You'll want to clean up the column names and make sure that any date columns are actually date datatypes.
 
-All three data sets are in the data folder.  Write code to load the three in the codeblock below.
-
-**Task** Create a codeblock below this task, then read the data sets in in and assign them to appropriate variable names. There's a fourth data set you'll use in this lab, too, of selected loans in ZIP Code 25401. But there's no need to load it now.
+```{r}
+# Load the Maryland expenditures data table and make any fixes/changes you need to
+```
 
 ## Answer questions
 
-**Q1.** In the data folder, there is a csv called zip_25401_loan_sample.csv.  It contains a sample of loans from West Virginia ZIP Code 25401.
+**Q1.** You've been assigned to write about Maryland political committees' use of Facebook advertising. There's a category column in the data that has values for different kinds of spending. One of them is "Media". Write code to isolate Media expenses where the name of the payee is not NA. Then, using `write_csv`, make a CSV file in your data folder. 
 
-As we read earlier this semester, [multiple loan applications coming from multiple businesses at the same residential street address](https://www.nytimes.com/2021/08/17/business/ppp-fraud-covid.html) might point to fraud. Or it could alert us to companies that used [multiple corporate entities to get more money than envisioned](https://www.propublica.org/article/different-names-same-address-how-big-businesses-got-government-loans-meant-for-small-businesses) by the original law that authorized the program.   
+Using OpenRefine, create a project using that CSV file, create a copy of the `payee_name` column called `payee_clean` and then standardize it, focusing on the payees that appear most often. Pay particular attention to variations of Facebook, bearing in mind that it changed its name last year: https://about.fb.com/news/2021/10/facebook-company-is-now-meta/), but also clean up variations of the most common payees.
 
-You are going to examine this data to see if we can find a lot of loans coming from the same address.  Here's the problem: the street address field is pretty messy.  The same address appears with minor variations --  "1003 Sushruta Dr" vs "1003 SUSHRUTA DR" -- that will prevent proper grouping.
+Then, when you are done standardizing `payee_clean`, export it as a new CSV file to your data folder, *giving it a different name* and read it back into RStudio as a new dataframe.
 
-First, upload the data into Open Refine and standardize/clean the address field - make sure to make a copy of that column to work on and to try all of the options for clustering. If you've done it properly, you should have 65 discrete addresses.
+Then, using that `payee_clean` column, write code to find all of the spending where Facebook is the payee and calculate the total amount of spending for each committee and present the results showing the committee that spent the most first.
 
-Then export the data from Open Refine, and move it to the proper folder.
-
-Next, load it in the codeblock below, assigning it to an appropriate variable name.
-
-Then answer these questions:
-* What is the street address in this data that has the most loans?
-* How many loans are there at that street address?
-* What are the names of the businesses at that address?
-
-**A1.**
+**A1.**  
 
 ```{r}
-
 ```
 
-**Q2.** Do some web research on the businesses that answered question 1.  
 
-Google the street address.  Google the business names and search for their corporate records on [Open Corporates](https://opencorporates.com/). Be sure to find the website of the name of the company that appears twice in the list of businesses and develop an understanding of what it does.
+**Q2.** Let's do some research on the top committees from question 1. Look up the top 10 spenders: if they are candidate committees, what offices were they running for? If they were not candidates, what issues do they seem to care about? Write some sentences answering those questions, then go the Facebook ad library (https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&media_type=all) and look for ads from the top spender. What do you notice about those ads? There's no code required here.
 
-Based on your research, does it seem suspicious that this collection of businesses all got loans using the same address? Why or why not. Use specific facts identified in your research to support your position.
+**A2.** 
 
-**A2.**
+**Q3.** Given the list of top spenders in A1 and the primary results for governor (https://elections.maryland.gov/elections/2022/primary_results/gen_results_2022_1.html), who is missing from that Q1 list? Did those campaigns run Facebook ads? Who are the biggest recipients of media expenses by the Democratic primary winner for governor (HINT: that person has two committees you should account for)?
 
-**Q3.** Start by using the West Virginia slice of the PPP loan data that you loaded at the start of the lab to create a subset of PPP loans in West Virginia's second largest county (which you can find in wv_population_county). And then use that table you created to answer the following questions:
-
-* Which city in that county had the highest number of loans?
-* In that city, which industry title had more loans than any other industry title?
-
-Requirement: you MUST export a dataframe of PPP loans from R Studio at some point in the process (not necessarily at the beginning!), load it into Open Refine, clean the city column, export it from Open Refine, and reimport into R Studio. To export data from R Studio, you will use the write_csv() function, which works like this if we're using the wv_population_county dataframe:
+**A3.** 
 
 ```{r}
-# write_csv accepts 2 arguments: the dataframe and the path to the file you write out
-write_csv(wv_population_county, "data\wv_population_county.csv")
 ```
 
-Guidance: there are a lot of steps you'll need to take to answer this question. You may find it helpful to write out in English what you plan to do step-by-step before you start writing code.   
+**Q4.** The media expense data you cleaned also has a standardized purpose column. Write code to generate a list of the committees with the total amount of spending on online advertising. How does this list compare to the one from Q1 about top Facebook spenders? Of the top 5 committees who spent the most on Facebook ads from Q1, are there any that appear to have spent *all* of their online advertising dollars on Facebook?
 
-**A3.**
+**A4.** 
 
 ```{r}
-
 ```
 
-**Q4.** What are your two best hypotheses, which you'd need to confirm with reporting and further analysis, that explain why that industry is at the top of the list?
+**Q5** You've been asked to summarize your findings about spending on Facebook by Maryland political candidates. How much do we know and what don't we know? What's the best story idea you've found here?
 
-**A4.**
-
-**Q5.** Start with a dataframe of loans to all businesses in the city and industry that answered question 3. Answer the following questions:
-* What is the name of the business that got the highest approved loan amount?
-* How much was it for?
-* When was it approved?
-* How many jobs does the data say were retained?
-* Is there a difference between the business' name in the PPP data and the name its customers know it by? If so, what is that name?
-* How many locations does this business have?
-* Did one of its locations close during the pandemic, either before or after it got the loan?
-
-Hint: you will not find the answers to the last three questions in the data.  You could call them directly to get that information, but I don't want you to do that for this assignment.  Instead, do some web research. I would start by Googling the company name from the data and looking at the page that comes up for the business from at http://apps.sos.wv.gov/. I would use information I found on that page and use info about the company from Google, the [Wayback machine](https://archive.org/web/) (which lets you look at older versions of a company's website), Yelp, and Facebook.
-
-**A5.**
+**A5** 
