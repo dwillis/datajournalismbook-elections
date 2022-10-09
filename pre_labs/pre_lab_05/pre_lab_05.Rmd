@@ -65,7 +65,7 @@ dc_food %>%
 ```
 
 ### Task 5: Use refinr to clean the city_clean field.
-**Task** Run the following code to make a copy of the recipient_name field called recipient_clean, then use the `key_collision_merge` function from refinr to attempt to standarize similar values. Store it as a new object called cleaned_dc_food.  Click the black arrow on the table to examine the recipient_name and recipient_clean columns.  Looking at the results on the first page only (first 10 rows), name two changes the refinr package made, by comparing recipient_name to recipient_clean.
+**Task** Run the following code to make a copy of the recipient_name field called recipient_clean, then use the `key_collision_merge` function from refinr to attempt to standarize similar values. Store it as a new object called cleaned_dc_food.  Click the black arrow on the table to examine the recipient_name and recipient_clean columns.  Looking at the results on the first two pages only (first 20 rows), name two changes the refinr package made, by comparing recipient_name to recipient_clean.
 **Answer**
 
 ```{r}
@@ -78,7 +78,7 @@ cleaned_dc_food
 ```
 
 ### Task 6: Filter cleaned_dc_food to examine recipients that start with W
-**Task** Run the following code to group by recipient_clean and recipient_name, then filter for cities that start with W. Name three changes the refinr function made.  
+**Task** Run the following code to group by recipient_clean and recipient_name, then filter for cities that start with W. Name three changes the refinr function made in the first 20 results.
 **Answer**
 
 ```{r}
@@ -113,4 +113,4 @@ cleaned_dc_food %>%
 
 ```
 ### Task 8: Follow the directions in the textbook to use Open Refine
-**Task** Follow the directions in the textbook to upload dc_food.csv to Open Refine. Follow the instructions to clean as many recipients as the Open Refine clustering tool can identify.  In class, I will come around to look at the Open Refine project you created to do this.
+**Task** Follow the directions in the textbook to upload dc_food.csv to Open Refine (https://dwillis.github.io/data_journalism_book/open-refine.html#manually-cleaning-data-with-open-refine). Follow the instructions to clean as many recipients as the Open Refine clustering tool can identify. In class, I will come around to look at the Open Refine project you created to do this.
