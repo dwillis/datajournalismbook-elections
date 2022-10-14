@@ -85,11 +85,11 @@ The good news is that we have data we don't have to retype. The bad news is, it'
 ```{r}
 camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
 
-camden_2022 <- camden_2022 %>% 
-  rename(precinct = x1) %>% 
+camden_2022 <- camden_2022 %>%
+  rename(precinct = x1) %>%
   mutate(voters = as.numeric(voters),
          turnout = as.numeric(str_replace(turnout, '%',''))
-         ) %>% 
+         ) %>%
   mutate(precinct = case_when(
     precinct == 'SUNRISE BEACH 2 & 3 AND WILSON' ~ 'SUNRISE BEACH 2 & 3 AND WILSON BEND',
     TRUE ~ precinct

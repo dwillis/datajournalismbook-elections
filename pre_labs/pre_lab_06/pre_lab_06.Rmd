@@ -56,44 +56,87 @@ Boom - we're good to go.
 
 ## When it looks good, but needs a little fixing
 
-### Task 3: Parsing another PDF
-**Task** Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
+Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/camden.png"))
+knitr::include_graphics(rep("images/camden_1.png"))
 ```
+
+### Task 3: Get it into Tabula
+**Task** Save the PDF and import to Tabula
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).
 
-Now let's repeat the steps we did to import the PDF into Tabula and autodetect the tables. Page 4 should look like this:
+Now let's repeat the steps we did to import the PDF into Tabula and autodetect the tables. It should look like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/ppp_2.png"))
+knitr::include_graphics(rep("images/camden_2.png"))
 ```
 
-We just want the table on page 4, which shows 2021 loan activity by type of lender, so hit the "Clear All Selections" button to remove the red boxes. Now, in Tabula, let's draw a box around the table on page 4. Click and drag to draw the box.
+### Task 4: Draw a Box
+**Task** Using your cursor, draw a box across the first table so it looks like the image below.
 
-Now you can hit the green "Preview & Export Extracted Data" button on the top right. You should see something very like this:
+This is pretty good, but we want to capture the second line of the headers - `Voters`, `Cast` and `Turnout` - and for our purposes we only want the first page of the PDF for now. So hit "Clear All Selections" button at the top and let's draw a box around what we want. Using your cursor, click and drag a box across the first page so it looks like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/ppp_3.png"))
+knitr::include_graphics(rep("images/camden_3.png"))
 ```
 
-You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R:
+Now you can hit the green "Preview & Export Extracted Data" button on the top right. Using the "Stream" method, you should see something very like this:
 
-### Task 4: Loading data
-**Task** Run the following code to load the CSV file into R.
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/camden_4.png"))
+```
+
+You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names and some other things:
+
+### Task 5: Export the CSV file 
+**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data?
+**Answer** 
+
 
 ```{r}
-lender_types <- read_csv("tabula-PPP_Report_Public_210531-508.csv")
-View(lender_types)
+camden_2022 <- read_csv("tabula-camden_county_election_results.csv") %>% clean_names()
+
+camden_2022
 ```
 
-### Task 5: Cleaning up the data in R
-**Task** Run the following code to load and clean up the data
+## Cleaning up the data in R
+
+The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
+
+### Task 6: Cleaning up
+**Task** Clean up the columns, datatypes & precinct names by running the codeblock below. What problems remain?
+**Answer**
+
 
 ```{r}
-lender_types <- read_csv("tabula-PPP_Report_Public_210531-508.csv", skip=1, col_names=c("type", "count", "approved", "net_dollars"))
-lender_types <- lender_types %>% mutate(net_dollars=as.numeric(parse_number(net_dollars)))
-View(lender_types)
+camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
+
+camden_2022 <- camden_2022 %>%
+  rename(precinct = x1) %>%
+  mutate(voters = as.numeric(voters),
+         turnout = as.numeric(str_replace(turnout, '%',''))
+         ) %>%
+  mutate(precinct = case_when(
+    precinct == 'SUNRISE BEACH 2 & 3 AND WILSON' ~ 'SUNRISE BEACH 2 & 3 AND WILSON BEND',
+    TRUE ~ precinct
+  )
+)
+camden_2022
 ```
+
+Ok, now we have numbers. Next we'll get rid of the rows where `cast` is NA (why not `voters`?). To do that, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where cast is NOT NA").
+
+### Task 7: Get rid of rows we don't need
+**Task** Run the codeblock below. How many rows does the dataframe have now compared to Task 6?
+**Answer** 
+
+```{r}
+camden_2022 <- camden_2022 %>% filter(!is.na(cast))
+
+camden_2022
+```
+All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
+
+Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.
