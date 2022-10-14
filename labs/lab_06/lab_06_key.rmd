@@ -20,31 +20,62 @@ options(scipen=999)
 
 # Load the tidyverse.
 library(tidyverse)
+library(janitor)
 ```
 
 ## Get Our PDF
 
-We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_07.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository).
+We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_09.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository). The goal is to write a couple of paragraphs that summarize the changes in voter registration in Maryland during the month of September.
 
 ## Setup Tabula
 
 Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the PDF file and click "open", and then click the "Import button" in Tabula. This will take a few seconds.
 
-This PDF has multiple possible tables to extract. We're going to make three dataframes: new registrations by party, removals by party, and current registrations by county. You will need to draw boxes around and export three CSV files (you could probably do this with just two files, but three is easier) that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean. Let's export that CSV (each one should be called `tabula-2022-07.csv` by default) to your lab_06/data folder.
+This PDF has multiple possible tables to extract. We're going to make four dataframes: new registrations by party, removals by party, changes in registration and current registrations by county. You will need to draw boxes around four sections and export four CSV files that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean.
+
+Export each CSV (each one should be called `tabula-2022-09.csv` by default, so you should rename them for clarity) to your lab_06/data folder.
 
 From there, you will need to clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)).
 
-## Cleaning up the data in R
+## Load and clean up the data in R
+
+You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and should be meaningful names, not "x1" or something similar. For all four files you should add columns representing the month (9) and year (2022) and populate them. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R).
 
 ```{r}
-international_migration <- read_csv('tabula-md-statistical-handbook.csv', skip=2, col_names=c("jurisdiction", "july_2011", "july_2012", "july_2013", "july_2014", "july_2015", "july_2016", "july_2017", "july_2018", "july_2019", "total"))
-```
+# Party registrations
+new_registrations <- read_csv("data/party_registrations.csv") %>% clean_names()
 
-Add a column in each dataframe that will contain the month for the update and populate it:
+new_registrations <- new_registrations %>% 
+  rename(category = x1) %>% 
+  mutate(year = 2022, month = 9)
+```
 
 ```{r}
-international_migration <- international_migration %>% mutate(type='international')
+# Removals
+removals <- read_csv("data/removals.csv") %>% clean_names()
+
+removals <- removals %>% 
+  rename(category = x1) %>% 
+  mutate(year = 2022, month = 9)
 ```
+
+```{r}
+# Changes
+changes <- read_csv("data/changes.csv") %>% clean_names()
+
+changes <- changes %>% 
+  rename(county = x1) %>% 
+  mutate(year = 2022, month = 9)
+
+```
+
+```{r}
+# Current registrations
+
+
+```
+
+
 
 ## Answer questions
 
