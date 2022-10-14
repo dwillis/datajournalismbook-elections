@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-0.9.646">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,7 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -360,13 +360,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>When Tabula opens, you click browse to find the PDF on your computer somewhere, and then click import. After it imports, click autodetect tables. You’ll see red boxes appear around what Tabula believes are the tables. You’ll see it does a pretty good job at this.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/md_voters.png" class="img-fluid"></p>
+<p><img src="images/md_voters.png" class="img-fluid" width="283"></p>
 </div>
 </div>
 <p>Now you can hit the green “Preview &amp; Export Extracted Data” button on the top right. You should see something very like this:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/md_voters2.png" class="img-fluid"></p>
+<p><img src="images/md_voters2.png" class="img-fluid" width="810"></p>
 </div>
 </div>
 <p>You can now export that extracted table to a CSV file using the “Export” button. And then we can read it into R:</p>
@@ -403,187 +403,134 @@ chr (1): County
 </section>
 <section id="when-it-looks-good-but-needs-a-little-fixing" class="level2" data-number="22.2">
 <h2 data-number="22.2" class="anchored" data-anchor-id="when-it-looks-good-but-needs-a-little-fixing"><span class="header-section-number">22.2</span> When it looks good, but needs a little fixing</h2>
-<p>Here’s a slightly more involved PDF. Here’s a <a href="https://raw.githubusercontent.com/openelections/openelections-sources-pa/master/2020/general/Fayette%20PA%202020%20General%20Summary.pdf">PDF of 2020 general election results from Fayette County, Pa.</a>.</p>
+<p>Here’s a slightly more involved PDF, from our Missouri primary election collection efforts! It’s from <a href="https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing">Camden County</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/fayette_1.png" class="img-fluid"></p>
+<p><img src="images/camden_1.png" class="img-fluid" width="403"></p>
 </div>
 </div>
 <p>Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you’ll remember it (like a Downloads folder).</p>
 <p>Now let’s repeat the steps we did to import the PDF into Tabula and autodetect the tables. It should look like this:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/fayette_2.png" class="img-fluid"></p>
+<p><img src="images/camden_2.png" class="img-fluid" width="137"></p>
 </div>
 </div>
-<p>This is pretty good, but we don’t want the “Times Cast” boxes at the top of each contest, because they have a slightly different layout. Go through the pages (there are 9 of them) and click the “x” to the right of those to clear them.</p>
-<p>Now you can hit the green “Preview &amp; Export Extracted Data” button on the top right. Using the “Lattice” method, you should see something very like this:</p>
+<p>This is pretty good, but we want to capture the second line of the headers - <code>Voters</code>, <code>Cast</code> and <code>Turnout</code> - and for our purposes we only want the first page of the PDF for now. So hit “Clear All Selections” button at the top and let’s draw a box around what we want. Using your cursor, click and drag a box across the first page so it looks like this:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="images/fayette_3.png" class="img-fluid"></p>
+<p><img src="images/camden_3.png" class="img-fluid" width="146"></p>
 </div>
 </div>
-<p>You can now export that extracted table to a CSV file using the “Export” button. And then we can read it into R and clean up the column names:</p>
+<p>Now you can hit the green “Preview &amp; Export Extracted Data” button on the top right. Using the “Stream” method, you should see something very like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fayette_2020 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tabula-Fayette PA 2020 General Summary.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="images/camden_4.png" class="img-fluid" width="728"></p>
+</div>
+</div>
+<p>You can now export that extracted table to a CSV file using the “Export” button. And then we can read it into R and clean up the column names and some other things:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>camden_2022 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tabula-camden_county_election_results.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>New names:
-• `` -&gt; `...8`</code></pre>
+Rows: 23 Columns: 4
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(3): ...1, Voters, Turnout dbl (1): Cast
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: One or more parsing issues, see `problems()` for details</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 284 Columns: 8
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (7): Candidate, Party, Election Day, Absentee, Mail-In, Provisional, Total
-lgl (1): ...8
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fayette_2020</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>camden_2022</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 284 × 8
-   candidate                   party elect…¹ absen…² mail_in provi…³ total x8   
-   &lt;chr&gt;                       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;lgl&gt;
- 1 "Joseph R. Biden V.P. Kama… DEM   9,337   1,364   9,181   574     20,4… NA   
- 2 "Donald J. Trump V.P. Mich… REP   34,965  1,224   4,056   998     41,2… NA   
- 3 "Jo Jorgensen V.P Jeremy\r… LIB   328     34      94      12      468   NA   
- 4 "Write-in"                  &lt;NA&gt;  51      4       32      4       91    NA   
- 5  &lt;NA&gt;                       &lt;NA&gt;  Electi… Absent… Mail-In Provis… Total NA   
- 6 "Brian Carroll"             WRIT… 0       0       0       0       0     NA   
- 7 "Andrew Tang"               WRIT… 1       0       0       0       1     NA   
- 8 "Kayne West"                WRIT… 1       0       0       0       1     NA   
- 9 "Benjamin Sota"             WRIT… 1       0       0       0       1     NA   
-10 "Patrick Roy"               WRIT… 1       0       0       0       1     NA   
-# … with 274 more rows, and abbreviated variable names ¹​election_day,
-#   ²​absentee, ³​provisional</code></pre>
+<pre><code># A tibble: 23 × 4
+   x1                        voters  cast turnout
+   &lt;chr&gt;                     &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;  
+ 1 Jurisdiction Wide         &lt;NA&gt;      NA &lt;NA&gt;   
+ 2 BARNUMTON                 1065     360 33.80% 
+ 3 CAMDENTON 1               2618     775 29.60% 
+ 4 CAMDENTON 2               2530     711 28.10% 
+ 5 CAMDENTON 3 &amp; HA HA TONKA 2952     840 28.46% 
+ 6 CLIMAX SPRINGS            1144     354 30.94% 
+ 7 DECATURVILLE              1272     461 36.24% 
+ 8 FREEDOM                   594      224 37.71% 
+ 9 GREENVIEW                 1551     570 36.75% 
+10 HILLHOUSE                 503      167 33.20% 
+# … with 13 more rows</code></pre>
 </div>
 </div>
 </section>
 <section id="cleaning-up-the-data-in-r" class="level2" data-number="22.3">
 <h2 data-number="22.3" class="anchored" data-anchor-id="cleaning-up-the-data-in-r"><span class="header-section-number">22.3</span> Cleaning up the data in R</h2>
-<p>The good news is that we have data we don’t have to retype. The bad news is, it’s hardly in importable shape. We have a few things to fix. All the columns with the number of votes in them have commas, which causes R to think they are <chr> columns, not numbers. Let’s fix that by re-importing it and calling <code>mutate</code> so that those columns are numeric.</chr></p>
+<p>The good news is that we have data we don’t have to retype. The bad news is, it’s hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we’ve got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let’s start by re-importing it and calling <code>mutate</code> to fix the column &amp; datatype issues, plus that precinct name:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fayette_2020 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tabula-Fayette PA 2020 General Summary.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>camden_2022 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tabula-camden_county_election_results.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>New names:
-• `` -&gt; `...8`</code></pre>
+Rows: 23 Columns: 4
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(3): ...1, Voters, Turnout dbl (1): Cast
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>camden_2022 <span class="ot">&lt;-</span> camden_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">precinct =</span> x1) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">voters =</span> <span class="fu">as.numeric</span>(voters),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">turnout =</span> <span class="fu">as.numeric</span>(<span class="fu">str_replace</span>(turnout, <span class="st">'%'</span>,<span class="st">''</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>         ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">precinct =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    precinct <span class="sc">==</span> <span class="st">'SUNRISE BEACH 2 &amp; 3 AND WILSON'</span> <span class="sc">~</span> <span class="st">'SUNRISE BEACH 2 &amp; 3 AND WILSON BEND'</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> precinct</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: One or more parsing issues, see `problems()` for details</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 284 Columns: 8
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (7): Candidate, Party, Election Day, Absentee, Mail-In, Provisional, Total
-lgl (1): ...8
+<pre><code>Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
 
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+Warning in mask$eval_all_mutate(quo): NAs introduced by coercion</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fayette_2020 <span class="ot">&lt;-</span> fayette_2020 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">election_day=</span><span class="fu">as.numeric</span>(<span class="fu">parse_number</span>(election_day)), <span class="at">absentee=</span><span class="fu">as.numeric</span>(<span class="fu">parse_number</span>(absentee)), <span class="at">mail_in=</span><span class="fu">as.numeric</span>(<span class="fu">parse_number</span>(mail_in)), <span class="at">provisional=</span><span class="fu">as.numeric</span>(<span class="fu">parse_number</span>(provisional)),<span class="at">total=</span><span class="fu">as.numeric</span>(<span class="fu">parse_number</span>(total)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 20 parsing failures.
-row col expected       actual
-  5  -- a number Election Day
- 25  -- a number Election Day
- 73  -- a number Election Day
- 74  -- a number Election Day
- 80  -- a number Election Day
-... ... ........ ............
-See problems(...) for more details.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 20 parsing failures.
-row col expected   actual
-  5  -- a number Absentee
- 25  -- a number Absentee
- 73  -- a number Absentee
- 74  -- a number Absentee
- 80  -- a number Absentee
-... ... ........ ........
-See problems(...) for more details.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 20 parsing failures.
-row col expected  actual
-  5  -- a number Mail-In
- 25  -- a number Mail-In
- 73  -- a number Mail-In
- 74  -- a number Mail-In
- 80  -- a number Mail-In
-... ... ........ .......
-See problems(...) for more details.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 20 parsing failures.
-row col expected      actual
-  5  -- a number Provisional
- 25  -- a number Provisional
- 73  -- a number Provisional
- 74  -- a number Provisional
- 80  -- a number Provisional
-... ... ........ ...........
-See problems(...) for more details.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 20 parsing failures.
-row col expected actual
-  5  -- a number  Total
- 25  -- a number  Total
- 73  -- a number  Total
- 74  -- a number  Total
- 80  -- a number  Total
-... ... ........ ......
-See problems(...) for more details.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fayette_2020</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>camden_2022</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 284 × 8
-   candidate                   party elect…¹ absen…² mail_in provi…³ total x8   
-   &lt;chr&gt;                       &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;
- 1 "Joseph R. Biden V.P. Kama… DEM      9337    1364    9181     574 20456 NA   
- 2 "Donald J. Trump V.P. Mich… REP     34965    1224    4056     998 41243 NA   
- 3 "Jo Jorgensen V.P Jeremy\r… LIB       328      34      94      12   468 NA   
- 4 "Write-in"                  &lt;NA&gt;       51       4      32       4    91 NA   
- 5  &lt;NA&gt;                       &lt;NA&gt;       NA      NA      NA      NA    NA NA   
- 6 "Brian Carroll"             WRIT…       0       0       0       0     0 NA   
- 7 "Andrew Tang"               WRIT…       1       0       0       0     1 NA   
- 8 "Kayne West"                WRIT…       1       0       0       0     1 NA   
- 9 "Benjamin Sota"             WRIT…       1       0       0       0     1 NA   
-10 "Patrick Roy"               WRIT…       1       0       0       0     1 NA   
-# … with 274 more rows, and abbreviated variable names ¹​election_day,
-#   ²​absentee, ³​provisional</code></pre>
+<pre><code># A tibble: 23 × 4
+   precinct                  voters  cast turnout
+   &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Jurisdiction Wide             NA    NA    NA  
+ 2 BARNUMTON                   1065   360    33.8
+ 3 CAMDENTON 1                 2618   775    29.6
+ 4 CAMDENTON 2                 2530   711    28.1
+ 5 CAMDENTON 3 &amp; HA HA TONKA   2952   840    28.5
+ 6 CLIMAX SPRINGS              1144   354    30.9
+ 7 DECATURVILLE                1272   461    36.2
+ 8 FREEDOM                      594   224    37.7
+ 9 GREENVIEW                   1551   570    36.8
+10 HILLHOUSE                    503   167    33.2
+# … with 13 more rows</code></pre>
 </div>
 </div>
-<p>Ok, now we have numbers. Next we’ll get rid of the rows where <code>candidate</code> is NA or the value of <code>candidate</code> is literally “Candidate” and also drop the <code>x8</code> blank column. To do the former, we’ll use the inverse of the <code>is.na</code> function by placing an exclamation point before it (you can read that filter as “where candidate is NOT NA”) and do the same to exclude “Candidate” from the matching values. For the latter, we’ll use select and the minus sign to drop that column</p>
+<p>Ok, now we have numbers. Next we’ll get rid of the rows where <code>cast</code> is NA (why not <code>voters</code>?). To do that, we’ll use the inverse of the <code>is.na</code> function by placing an exclamation point before it (you can read that filter as “where cast is NOT NA”).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fayette_2020 <span class="ot">&lt;-</span> fayette_2020 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(candidate)) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(candidate <span class="sc">!=</span> <span class="st">"Candidate"</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>x8)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>fayette_2020</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>camden_2022 <span class="ot">&lt;-</span> camden_2022 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(cast))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>camden_2022</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 264 × 7
-   candidate                         party elect…¹ absen…² mail_in provi…³ total
-   &lt;chr&gt;                             &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
- 1 "Joseph R. Biden V.P. Kamala\rD.… DEM      9337    1364    9181     574 20456
- 2 "Donald J. Trump V.P. Michael\rR… REP     34965    1224    4056     998 41243
- 3 "Jo Jorgensen V.P Jeremy\rSpike … LIB       328      34      94      12   468
- 4 "Write-in"                        &lt;NA&gt;       51       4      32       4    91
- 5 "Brian Carroll"                   WRIT…       0       0       0       0     0
- 6 "Andrew Tang"                     WRIT…       1       0       0       0     1
- 7 "Kayne West"                      WRIT…       1       0       0       0     1
- 8 "Benjamin Sota"                   WRIT…       1       0       0       0     1
- 9 "Patrick Roy"                     WRIT…       1       0       0       0     1
-10 "R19 Boddie"                      WRIT…       0       0       0       0     0
-# … with 254 more rows, and abbreviated variable names ¹​election_day,
-#   ²​absentee, ³​provisional</code></pre>
+<pre><code># A tibble: 21 × 4
+   precinct                  voters  cast turnout
+   &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 BARNUMTON                   1065   360    33.8
+ 2 CAMDENTON 1                 2618   775    29.6
+ 3 CAMDENTON 2                 2530   711    28.1
+ 4 CAMDENTON 3 &amp; HA HA TONKA   2952   840    28.5
+ 5 CLIMAX SPRINGS              1144   354    30.9
+ 6 DECATURVILLE                1272   461    36.2
+ 7 FREEDOM                      594   224    37.7
+ 8 GREENVIEW                   1551   570    36.8
+ 9 HILLHOUSE                    503   167    33.2
+10 HORSESHOE BEND              4100  1230    30  
+# … with 11 more rows</code></pre>
 </div>
 </div>
-<p>This still isn’t perfect - we don’t have the offices these folks are running for - but all things considered, that was pretty easy. Many - most? - electronic PDFs aren’t so easy to parse. Sometimes you’ll need to open the exported CSV file and clean things up before importing into R. Other times you’ll be able to do that cleaning in R itself.</p>
+<p>All things considered, that was pretty easy. Many - most? - electronic PDFs aren’t so easy to parse. Sometimes you’ll need to open the exported CSV file and clean things up before importing into R. Other times you’ll be able to do that cleaning in R itself.</p>
 <p>Here’s the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don’t change all that much, you can save the code to process subsequent versions of PDFs.</p>
 
 
@@ -592,21 +539,6 @@ See problems(...) for more details.</code></pre>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
-  }
-  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
