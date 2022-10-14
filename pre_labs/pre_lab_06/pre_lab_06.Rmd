@@ -24,7 +24,7 @@ library(tidyverse)
 
 ## PDF Parsing with Tabula
 
-Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://elections.maryland.gov/press_room/2020_stats/Eligible%20Active%20Voters%20by%20County%20-%20PG20.pdf).
+Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://www.elections.maryland.gov/press_room/2022_stats/Eligible%20Active%20Voters%20by%20County%20-%20GP22.pdf).
 
 ### Task 1: Download and Install Tabula
 
@@ -42,13 +42,13 @@ ow you can hit the green "Preview & Export Extracted Data" button on the top rig
 knitr::include_graphics(rep("images/md_voters2.png"))
 ```
 
-You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R:
+You can now export that extracted table to a CSV file using the "Export" button. Put it in your pre_lab_06 folder. And then we can read it into R:
 
 ### Task 2: Load data
 **Task** Load the Maryland voters by county data by running the following codeblock.
 
 ```{r}
-voters_by_county <- read_csv("tabula-Eligible Active Voters by County - PG20.csv")
+voters_by_county <- read_csv("tabula-Eligible Active Voters by County - GP22.csv")
 View(voters_by_county)
 ```
 
@@ -57,10 +57,10 @@ Boom - we're good to go.
 ## When it looks good, but needs a little fixing
 
 ### Task 3: Parsing another PDF
-**Task** Here's a slightly more involved PDF. Check out the table on page 4 of [this SBA PDF](https://www.sba.gov/sites/default/files/2021-06/PPP_Report_Public_210531-508.pdf).
+**Task** Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/ppp_1.png"))
+knitr::include_graphics(rep("images/camden.png"))
 ```
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).

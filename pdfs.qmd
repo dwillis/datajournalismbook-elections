@@ -45,10 +45,10 @@ Boom - we're good to go.
 
 ## When it looks good, but needs a little fixing
 
-Here's a slightly more involved PDF. Here's a [PDF of 2020 general election results from Fayette County, Pa.](https://raw.githubusercontent.com/openelections/openelections-sources-pa/master/2020/general/Fayette%20PA%202020%20General%20Summary.pdf).
+Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/fayette_1.png"))
+knitr::include_graphics(rep("images/camden_1.png"))
 ```
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).
@@ -56,44 +56,55 @@ Looks like a spreadsheet, right? Save that PDF file to your computer in a place 
 Now let's repeat the steps we did to import the PDF into Tabula and autodetect the tables. It should look like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/fayette_2.png"))
+knitr::include_graphics(rep("images/camden_2.png"))
 ```
 
-This is pretty good, but we don't want the "Times Cast" boxes at the top of each contest, because they have a slightly different layout. Go through the pages (there are 9 of them) and click the "x" to the right of those to clear them.
-
-Now you can hit the green "Preview & Export Extracted Data" button on the top right. Using the "Lattice" method, you should see something very like this:
+This is pretty good, but we want to capture the second line of the headers - `Voters`, `Cast` and `Turnout` - and for our purposes we only want the first page of the PDF for now. So hit "Clear All Selections" button at the top and let's draw a box around what we want. Using your cursor, click and drag a box across the first page so it looks like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/fayette_3.png"))
+knitr::include_graphics(rep("images/camden_3.png"))
 ```
 
-You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names:
+Now you can hit the green "Preview & Export Extracted Data" button on the top right. Using the "Stream" method, you should see something very like this:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/camden_4.png"))
+```
+You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names and some other things:
 
 ```{r}
-fayette_2020 <- read_csv("data/tabula-Fayette PA 2020 General Summary.csv") %>% clean_names()
+camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
 
-fayette_2020
+camden_2022
 ```
 
 ## Cleaning up the data in R
 
-The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. All the columns with the number of votes in them have commas, which causes R to think they are <chr> columns, not numbers. Let's fix that by re-importing it and calling `mutate` so that those columns are numeric.
+The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
 
 ```{r}
-fayette_2020 <- read_csv("data/tabula-Fayette PA 2020 General Summary.csv") %>% clean_names()
+camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
 
-fayette_2020 <- fayette_2020 %>% mutate(election_day=as.numeric(parse_number(election_day)), absentee=as.numeric(parse_number(absentee)), mail_in=as.numeric(parse_number(mail_in)), provisional=as.numeric(parse_number(provisional)),total=as.numeric(parse_number(total)))
-
-fayette_2020
+camden_2022 <- camden_2022 %>% 
+  rename(precinct = x1) %>% 
+  mutate(voters = as.numeric(voters),
+         turnout = as.numeric(str_replace(turnout, '%',''))
+         ) %>% 
+  mutate(precinct = case_when(
+    precinct == 'SUNRISE BEACH 2 & 3 AND WILSON' ~ 'SUNRISE BEACH 2 & 3 AND WILSON BEND',
+    TRUE ~ precinct
+  )
+)
+camden_2022
 ```
 
-Ok, now we have numbers. Next we'll get rid of the rows where `candidate` is NA or the value of `candidate` is literally "Candidate" and also drop the `x8` blank column. To do the former, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where candidate is NOT NA") and do the same to exclude "Candidate" from the matching values. For the latter, we'll use select and the minus sign to drop that column
+Ok, now we have numbers. Next we'll get rid of the rows where `cast` is NA (why not `voters`?). To do that, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where cast is NOT NA").
 
 ```{r}
-fayette_2020 <- fayette_2020 %>% filter(!is.na(candidate)) %>% filter(candidate != "Candidate") %>% select(-x8)
+camden_2022 <- camden_2022 %>% filter(!is.na(cast))
 
-fayette_2020
+camden_2022
 ```
-This still isn't perfect - we don't have the offices these folks are running for - but all things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
+All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
 
 Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.
