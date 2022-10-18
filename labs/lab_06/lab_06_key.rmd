@@ -35,35 +35,35 @@ This PDF has multiple possible tables to extract. We're going to make four dataf
 
 Export each CSV (each one should be called `tabula-2022-09.csv` by default, so you should rename them for clarity) to your lab_06/data folder.
 
-From there, you will need to clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)).
+From there, you will need to read in and clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR to exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)).
 
 ## Load and clean up the data in R
 
-You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and should be meaningful names, not "x1" or something similar. For all four files you should add columns representing the month (9) and year (2022) and populate them. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R).
+You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and should have meaningful names, not "x1" or something similar. For all four files you should add columns representing the month (9) and year (2022) and populate them. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R), but you can use select() with or without the minus sign to include or exclude certain columns. 
 
 ```{r}
 # Party registrations
-new_registrations <- read_csv("data/party_registrations.csv") %>% clean_names()
+new_registrations_sep22 <- read_csv("data/party_registrations.csv") %>% clean_names()
 
-new_registrations <- new_registrations %>% 
+new_registrations_sep22 <- new_registrations_sep22 %>% 
   rename(category = x1) %>% 
   mutate(year = 2022, month = 9)
 ```
 
 ```{r}
 # Removals
-removals <- read_csv("data/removals.csv") %>% clean_names()
+removals_sep22 <- read_csv("data/removals.csv") %>% clean_names()
 
-removals <- removals %>% 
+removals_sep22 <- removals_sep22 %>% 
   rename(category = x1) %>% 
   mutate(year = 2022, month = 9)
 ```
 
 ```{r}
 # Changes
-changes <- read_csv("data/changes.csv") %>% clean_names()
+changes_sep22 <- read_csv("data/changes.csv") %>% clean_names()
 
-changes <- changes %>% 
+changes_sep22 <- changes_sep22 %>% 
   rename(county = x1) %>% 
   mutate(year = 2022, month = 9)
 
@@ -71,11 +71,15 @@ changes <- changes %>%
 
 ```{r}
 # Current registrations
+current_sep22 <- read_csv("data/current.csv") %>%
+  select(-c(2,3,4,5,6,7,8,9,10,11)) %>% 
+  clean_names()
 
-
+current_sep22 <- current_sep22 %>% 
+  rename(county = x1) %>% 
+  rename(dem = dem_12, rep = rep_13, grn = grn_14, lib = lib_15, wcp = wcp_16, unaf = unaf_17, oth = oth_18, total = total_19) %>%
+  mutate(year = 2022, month = 9)
 ```
-
-
 
 ## Answer questions
 
