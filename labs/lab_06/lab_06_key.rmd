@@ -150,11 +150,18 @@ current_compare %>%
 ```
 
 
-Q3.  
-A3. 
+Q3. Do the party percentages of new registrants (% Dem, % Rep, % Unaffiliated) from September 2022 and September 2020 match the overall percentage of partisan registration in the state at those times?
+
+In other words, did new registrants mirror the overall partisan composition of the electorate, or were they different? Do any of the methods of registration vary significantly from the overall partisan pattern? Which method is worthy of further exploration?
+
+A3. Overall, in September 2022 and September 2020, the statewide partisan was roughly 54-24-20 D/R/I, and September registrations in both years are somewhat consistent with that, but with much higher figures for unaffiliated voters (25-30%). Republican registrations in September 2022 were 15% of the total, down from 20% in September 2020, suggesting a drop in GOP enthusiasm/effort. A third of new voters who registered at the MVA in September 2022 were unaffiliated, and Democrats who registered this way were 49%. Registration by mail is down among Republicans compared to 2020, which probably is due to COVID's impact on 2020 and general skepticism among conservatives about the method.
 
 ```{r}
+new_registrations_sep22 <- new_registrations_sep22 %>% 
+  mutate(pct_dem22 = (dem/total)*100, pct_rep22 = (rep/total)*100, pct_unaffil22 = (unaf/total)*100)
 
+new_registrations_sep20 <- new_registrations_sep20 %>% 
+  mutate(pct_dem20 = (dem/total)*100, pct_rep20 = (rep/total)*100, pct_unaffil20 = (unaf/total)*100)
 ```
 
 Q4. Choose your own adventure! Using both the 2022 and 2020 data for one of the dataframes (changes, removals or new registrations), ask and answer a question that makes at least one comparison and requires code to answer. That could involve calculating a percentage, percentage change or the raw difference between two columns.
@@ -164,3 +171,7 @@ A4.
 ```{r}
 
 ```
+
+Q5. What's the best story idea or question you've seen as a result of the work you've done in this lab?
+
+A5. 

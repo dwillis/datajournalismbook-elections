@@ -18,8 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the libraries you'll need
-
+# Load the libraries you will need
 
 ```
 
@@ -43,48 +42,40 @@ You will need to read in and clean up the data so that it can be used for analys
 
 ```{r}
 # Party registrations
-
 ```
 
 ```{r}
 # Removals
-
 ```
 
 ```{r}
 # Changes
-
 ```
 
 ```{r}
 # Current registrations
-
 ```
 
 ## Rinse, Repeat: September 2020 data
 
-Do all of that again, for the [September 2020 voter registration update](https://elections.maryland.gov/pdf/vrar/2020_09.pdf), so we can compare the two. If you've done well, this is easy: just do the same steps in Tabula, export the files and use the same code to read in and clean up the data, *but remember to give these dataframes slightly different names*, although similar enough so that you know how to compare September 2022 to September 2020.
+Do all of that again, for the [September 2020 voter registration update](https://elections.maryland.gov/pdf/vrar/2020_09.pdf), so we can compare the two. If you've done well, this is easy: just do the same steps in Tabula, export the files and use the same code to read in and clean up the data, *just remember to give these dataframes different names*, although similar enough so that you know how to compare September 2022 to September 2020.
 
-To answer the following questions, you'll need to calculate percentages and do other calculations. Whether you do that after combining or joining dataframes or you write code to run separately on both is up to you, but joining _would_ make it easier.
+To answer the following questions, you'll need to calculate percentages and do other calculations. Whether you do that by combining or joining dataframes or you write code to run separately on both is up to you.
 
 ```{r}
 # Party registrations
-
 ```
 
 ```{r}
 # Removals
-
 ```
 
 ```{r}
 # Changes
-
 ```
 
 ```{r}
 # Current registrations
-
 ```
 
 
@@ -105,11 +96,13 @@ A2.
 ```
 
 
-Q3.  
+Q3. Do the party percentages of new registrants (% Dem, % Rep, % Unaffiliated) from September 2022 and September 2020 match the overall percentage of partisan registration in the state at those times?
+
+In other words, did new registrants mirror the overall partisan composition of the electorate, or were they different? Do any of the methods of registration vary significantly from the overall partisan pattern? Which method is worthy of further exploration?
+
 A3. 
 
 ```{r}
-
 ```
 
 Q4. Choose your own adventure! Using both the 2022 and 2020 data for one of the dataframes (changes, removals or new registrations), ask and answer a question that makes at least one comparison and requires code to answer. That could involve calculating a percentage, percentage change or the raw difference between two columns.
@@ -117,4 +110,9 @@ Q4. Choose your own adventure! Using both the 2022 and 2020 data for one of the 
 A4. 
 
 ```{r}
+
 ```
+
+Q5. What's the best story idea or question you've seen as a result of the work you've done in this lab?
+
+A5. 
