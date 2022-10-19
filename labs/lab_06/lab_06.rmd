@@ -1,7 +1,7 @@
 ---
 title: "lab_06"
 author: "derek willis"
-date: "8/26/2021"
+date: "10/18/2022"
 output: html_document
 ---
 
@@ -9,127 +9,112 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## About this lab
+## You will need
 
-To complete this lab, you need to:
-* [install Tabula](https://tabula.technology/)
-* run existing code as directed (look for **Task**).
-* write code as directed (look for **Task**).
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
-
-When you are finished, commit changes in the lab_06 folder and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+* Tabula
 
 ## Load libraries and establish settings
-
-**Task** Run the codeblock below to load the Tidyverse. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
-
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse.
-library(tidyverse)
+# Load the libraries you'll need
+
+
 ```
 
 ## Get Our PDF
 
-We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_07.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository).
-
-**Task** Download the file from the above link and save it to your Downloads or labs folder.
+We'll be working with the [Maryland monthly voter registration update](https://elections.maryland.gov/pdf/vrar/2022_09.pdf) from the State Board of Elections. You'll want to download it to a place you'll remember (like your Downloads folder, or the labs folder in your repository). The goal is to write a couple of paragraphs that summarize the changes in voter registration in Maryland during the month of September.
 
 ## Setup Tabula
 
-**Task** Start Tabula and load the PDF, then extract your tables
-
 Start Tabula, then go to http://127.0.0.1:8080/ in your browser. Click the "Browse" button and find the PDF file and click "open", and then click the "Import button" in Tabula. This will take a few seconds.
 
-This PDF has multiple possible tables to extract. We're going to make three dataframes: new registrations by party, removals by party, and current registrations by county. You will need to draw boxes around and export three CSV files (you could probably do this with just two files, but three is easier) that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean. Let's export those CSVs (each one should be called `tabula-2022-07.csv` by default, so rename them to something more descriptive) to your lab_06/data folder.
+This PDF has multiple possible tables to extract. We're going to make four dataframes: new registrations by party, removals by party, changes in registration and current registrations by county. You will need to draw boxes around four sections and export four CSV files that you will load into R. In Tabula, draw a box around the borders of those tables and click the "Preview & Export Extracted Data" button for each one. The export should look pretty clean.
 
-## Cleaning up the data in R
+Export each CSV (each one should be called `tabula-2022-09.csv` by default, so you should rename them for clarity) to your lab_06/data folder.
 
-From there, you will need to clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)):
+From there, you will need to read in and clean up the data, and in particular the headers. You can choose to include the headers from the PDF in your exported CSV files OR to exclude them and add them when importing. `read_csv` allows us to do this ([and more](https://readr.tidyverse.org/reference/read_delim.html)).
 
-**Task** Write code to read the CSV files into three dataframes called `party_registrations`, `party_removals` and `current_registrations`. You may have to skip 1 or more rows and you may want to supply easier-to-use column names that use underscores and don't begin with numbers. You also may need to ensure that columns containing numbers have a numeric datatype.
+## Load and clean up the data in R
 
-```{r}
-# Write the code to load the CSV file here
-```
-
-Add a column that will contain the month for the update and populate it:
-
-**Task** Write the code to add a `migration_type` column to the data and give it the value of "international"
+You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and they should have meaningful names, not "x1" or something similar. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R), but you can use select() with or without the minus sign to include or exclude certain columns. You also can use the `rename` function to, well, rename columns.
 
 ```{r}
-# Write the code to add the column here
+# Party registrations
+
 ```
+
+```{r}
+# Removals
+
+```
+
+```{r}
+# Changes
+
+```
+
+```{r}
+# Current registrations
+
+```
+
+## Rinse, Repeat: September 2020 data
+
+Do all of that again, for the [September 2020 voter registration update](https://elections.maryland.gov/pdf/vrar/2020_09.pdf), so we can compare the two. If you've done well, this is easy: just do the same steps in Tabula, export the files and use the same code to read in and clean up the data, *but remember to give these dataframes slightly different names*, although similar enough so that you know how to compare September 2022 to September 2020.
+
+To answer the following questions, you'll need to calculate percentages and do other calculations. Whether you do that after combining or joining dataframes or you write code to run separately on both is up to you, but joining _would_ make it easier.
+
+```{r}
+# Party registrations
+
+```
+
+```{r}
+# Removals
+
+```
+
+```{r}
+# Changes
+
+```
+
+```{r}
+# Current registrations
+
+```
+
 
 ## Answer questions
 
-**Q1** 
-You'll need to add and populate a column representing the percent of total using `mutate`.
-**A1** [write your answer here]
+Q1. Calculate the percentage of registered Democrats, Republicans and unaffiliated voters for the entire state in September 2022 and September 2020, and then calculate the percentage change for those three party categories (the formula for percentage change is easy to remember: (New-Old)/Old). How would you describe the changes in these partisan categories in a story? What's the most interesting thing about these changes that would be the lede of that story?
+
+A1. 
 
 ```{r}
-# Write the code to produce your answer here
+```
+
+Q2. Among the Maryland jurisdictions with the most registered voters, which one had the biggest percentage increase in unaffiliated voters between 2020 and 2022? How did that county vote for governor in 2018 and for president in 2020? Contrast the partisan percentages of that county with the county that had the second-largest percentage increase in unaffiliated voters. You should display information from the data that shows the counties with the largest percentage increase first.
+
+A2. 
+
+```{r}
+```
+
+
+Q3.  
+A3. 
+
+```{r}
 
 ```
 
-**Q2** Write a sentence or two that describes the data you produced in A1. Try to convey the most important idea.
-**A2** [write your answer here]
+Q4. Choose your own adventure! Using both the 2022 and 2020 data for one of the dataframes (changes, removals or new registrations), ask and answer a question that makes at least one comparison and requires code to answer. That could involve calculating a percentage, percentage change or the raw difference between two columns.
 
-**Q3** Which region & jurisdiction had the largest percentage change (either negative or positive) for international migration between July 2018 and July 2017? The formula for percentage change is easy to remember: (New-Old)/Old.
-**A3** [write your answer here]
+A4. 
 
 ```{r}
-# Write the code to produce your answer here
-
 ```
-
-**Q4** What's your best guess as to why these changes occurred, and in those places in particular?
-**A4** [write your answer here]
-
-
-## Back to Tabula
-
-**Task** Extract second table from Tabula
-
-Let's go to page 31 of the PDF, Table 2B, "Domestic Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". In Tabula, hit the "Clear All Selections" button and then draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV to your lab_06/data folder. (and rename it to `tabula-md-statistical-handbook-domestic.csv`).
-
-## Cleaning up the data in R
-
-Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner:
-
-**Task** Write code to read the CSV file into a dataframe called `domestic_migration`. As in the pre_lab, you may have to skip 1 or more rows and you may want to supply easier to use column names that use underscores. Your work on the international file should serve as a guide.
-
-```{r}
-# Write the code to load the CSV file here
-```
-
-Add a column for the type of migration ("domestic") and populate it:
-
-**Task** Write the code to add a `migration_type` column to the data and populate it with the value of "domestic"
-
-```{r}
-# Write the code to add the column here
-```
-
-## Answer questions
-**Q5** Which Maryland individual jurisdiction saw the largest net decrease in domestic migration overall?
-**A5** [write your answer here]
-
-```{r}
-# Write the code to produce your answer here
-
-```
-
-**Q6** How many regions & jurisdictions had net positive migration for July 2017, July 2018 and July 2019 (not just individually but all three together)?
-**A6** [write your answer here]
-
-```{r}
-# Write the code to produce your answer here
-
-```
-
-**Q7** How would you describe this data? Is there a county or region that stands out, and why?
-**A7** [write your answer here]

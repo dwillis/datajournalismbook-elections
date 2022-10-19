@@ -1,7 +1,7 @@
 ---
 title: "lab_06"
 author: "derek willis"
-date: "8/25/2021"
+date: "10/18/2022"
 output: html_document
 ---
 
@@ -39,15 +39,14 @@ From there, you will need to read in and clean up the data, and in particular th
 
 ## Load and clean up the data in R
 
-You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and should have meaningful names, not "x1" or something similar. For all four files you should add columns representing the month (9) and year (2022) and populate them. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R), but you can use select() with or without the minus sign to include or exclude certain columns. 
+You will need to read in and clean up the data so that it can be used for analysis. By "clean" I mean the column headers should not contain spaces and they should have meaningful names, not "x1" or something similar. The current registrations dataframe *MUST* include the county name, but should not include the columns under `Changes` and `Party Affiliation From`. How you do that is up to you (and could involve something outside R), but you can use select() with or without the minus sign to include or exclude certain columns. You also can use the `rename` function to, well, rename columns.
 
 ```{r}
 # Party registrations
 new_registrations_sep22 <- read_csv("data/party_registrations.csv") %>% clean_names()
 
 new_registrations_sep22 <- new_registrations_sep22 %>% 
-  rename(category = x1) %>% 
-  mutate(year = 2022, month = 9)
+  rename(category = x1)
 ```
 
 ```{r}
@@ -55,8 +54,7 @@ new_registrations_sep22 <- new_registrations_sep22 %>%
 removals_sep22 <- read_csv("data/removals.csv") %>% clean_names()
 
 removals_sep22 <- removals_sep22 %>% 
-  rename(category = x1) %>% 
-  mutate(year = 2022, month = 9)
+  rename(category = x1)
 ```
 
 ```{r}
@@ -64,8 +62,7 @@ removals_sep22 <- removals_sep22 %>%
 changes_sep22 <- read_csv("data/changes.csv") %>% clean_names()
 
 changes_sep22 <- changes_sep22 %>% 
-  rename(county = x1) %>% 
-  mutate(year = 2022, month = 9)
+  rename(county = x1)
 
 ```
 
@@ -77,74 +74,93 @@ current_sep22 <- read_csv("data/current.csv") %>%
 
 current_sep22 <- current_sep22 %>% 
   rename(county = x1) %>% 
-  rename(dem = dem_12, rep = rep_13, grn = grn_14, lib = lib_15, wcp = wcp_16, unaf = unaf_17, oth = oth_18, total = total_19) %>%
-  mutate(year = 2022, month = 9)
+  rename(dem22 = dem_12, rep22 = rep_13, grn22 = grn_14, lib22 = lib_15, wcp22 = wcp_16, unaf22 = unaf_17, oth22 = oth_18, total22 = total_19)
 ```
+
+## Rinse, Repeat: September 2020 data
+
+Do all of that again, for the [September 2020 voter registration update](https://elections.maryland.gov/pdf/vrar/2020_09.pdf), so we can compare the two. If you've done well, this is easy: just do the same steps in Tabula, export the files and use the same code to read in and clean up the data, *just remember to give these dataframes different names*, although similar enough so that you know how to compare September 2022 to September 2020.
+
+To answer the following questions, you'll need to calculate percentages and do other calculations. Whether you do that by combining or joining dataframes or you write code to run separately on both is up to you.
+
+```{r}
+# Party registrations
+new_registrations_sep20 <- read_csv("data/party_registrations20.csv") %>% clean_names()
+
+new_registrations_sep20 <- new_registrations_sep20 %>% 
+  rename(category = x1)
+```
+
+```{r}
+# Removals
+removals_sep20 <- read_csv("data/removals20.csv") %>% clean_names()
+
+removals_sep20 <- removals_sep20 %>% 
+  rename(category = x1)
+```
+
+```{r}
+# Changes
+changes_sep20 <- read_csv("data/changes20.csv") %>% clean_names()
+
+changes_sep20 <- changes_sep20 %>% 
+  rename(county = x1)
+```
+
+```{r}
+# Current registrations
+current_sep20 <- read_csv("data/current20.csv") %>%
+  select(-c(2,3,4,5,6,7,8,9,10,11)) %>% 
+  clean_names()
+
+current_sep20 <- current_sep20 %>% 
+ rename(county = x1) %>% 
+ rename(dem = dem_12, rep = rep_13, grn = grn_14, lib = lib_15, wcp = wcp_16, unaf = unaf_17, oth = oth_18, total = total_19)
+```
+
 
 ## Answer questions
 
-Q1. Which region and county/city below the state level accounted for the largest percentage of international migration overall?  You'll need to add and populate columns representing percent of total using `mutate`.
-A1. Suburban Washington (62.8%). Montgomery County (36.8%).
+Q1. Calculate the percentage of registered Democrats, Republicans and unaffiliated voters for the entire state in September 2022 and September 2020, and then calculate the percentage change for those three party categories (the formula for percentage change is easy to remember: (New-Old)/Old). How would you describe the changes in these partisan categories in a story? What's the most interesting thing about these changes that would be the lede of that story?
+
+A1. 
 
 ```{r}
-international_migration %>%
-  mutate(pct_total=(total/198996)*100) %>%
-  select(jurisdiction, pct_total) %>%
-  arrange(desc(pct_total))
+current_sep22 <- current_sep22 %>% 
+  mutate(pct_dem22 = (dem22/total22)*100, pct_rep22 = (rep22/total22)*100, pct_unaffil22 = (unaf22/total22)*100)
+
+current_sep20 <- current_sep20 %>% 
+  mutate(pct_dem20 = (dem/total)*100, pct_rep20 = (rep/total)*100, pct_unaffil20 = (unaf/total)*100)
+
+current_compare <- current_sep22 %>% 
+  left_join(current_sep20, by='county') %>% 
+  mutate(dem_pct_change = (dem22-dem)/dem*100, rep_pct_change = (rep22-rep)/rep*100, unaffil_pct_change = (unaf22-unaf)/unaf*100)
 ```
 
-Q2. Write a sentence or two that describes the data you produced in A1. Treat this as if you were trying to convey the most important part.
-A2. International migrants to Maryland during the past 10 years were drawn mostly to the suburbs surrounding Washington, D.C., which accounted for more than six of every 10 foreign residents that moved to the state between July 2010 and July 2019.
+Q2. Among the Maryland jurisdictions with the most registered voters, which one had the biggest percentage increase in unaffiliated voters between 2020 and 2022? How did that county vote for governor in 2018 and for president in 2020? Contrast the partisan percentages of that county with the county that had the second-largest percentage increase in unaffiliated voters. You should display information from the data that shows the counties with the largest percentage increase first.
 
-Q3. Which region & jurisdiction had the biggest percentage change for international migration between July 2018 and July 2017? The formula for percentage change is easy to remember: (New-Old)/Old.
-A3. Calvert County's international migrants declined 76 percent (albeit from a small population), and the Southern Maryland region declined 58.5 percent.
+A2. Frederick County had the largest percentage increase, 13.2 percent. Republican Gov. Larry Hogan [won 67% of the vote in 2018 in Frederick](https://www.elections.maryland.gov/elections/2018/results/general/gen_results_2018_2_by_county_11-1.html), while [Joe Biden won the county with 53.3% of the vote in 2020](https://www.elections.maryland.gov/elections/2020/results/general/gen_results_2020_4_by_county_11-1.html).
+
+Frederick County's partisan split is much narrower than Prince George's County, which had the second-largest percentage increase in unaffiliated voters. But Frederick is slowly trending Democratic, with 39% of current voters there choosing that party, while Prince George's is actually losing Democratic voters.
 
 ```{r}
-international_migration %>%
-  mutate(pct_change=((july_2018-july_2017)/july_2017)*100) %>%
-  select(jurisdiction, pct_change) %>%
-  arrange(pct_change)
+current_compare %>% 
+  filter(total22 > 100000) %>% 
+  arrange(desc(unaffil_pct_change))
 ```
 
-Q4. What's your best guess as to why these declines occurred, and in those area in particular?
-A4. One answer is that with the advent of the Trump administration, controls on international migration tightened.
 
-## Back to Tabula
-
-Let's go to page 31 of the PDF, Table 2B, "Domestic Migration for Maryland's Jurisdictions, July 1, 2010 to July 1, 2019". In Tabula, hit the "Clear All Selections" button and then draw a box around that table's border and click the "Preview & Export Extracted Data" button. It should look pretty clean. Let's export that CSV to your Downloads folder (let's rename it to `tabula-md-statistical-handbook-domestic.csv`).
-
-## Cleaning up the data in R
-
-Let's load it into R, and in doing so we'll skip the first two rows and add our own headers that are cleaner:
+Q3.  
+A3. 
 
 ```{r}
-domestic_migration <- read_csv('tabula-md-statistical-handbook-domestic.csv', skip=2, col_names=c("jurisdiction", "july_2011", "july_2012", "july_2013", "july_2014", "july_2015", "july_2016", "july_2017", "july_2018", "july_2019", "total"))
+
 ```
 
-Add a column for the type of migration ("domestic") and populate it:
+Q4. Choose your own adventure! Using both the 2022 and 2020 data for one of the dataframes (changes, removals or new registrations), ask and answer a question that makes at least one comparison and requires code to answer. That could involve calculating a percentage, percentage change or the raw difference between two columns.
+
+A4. 
 
 ```{r}
-domestic_migration <- domestic_migration %>% mutate(type='domestic')
+
 ```
-
-## Answer questions
-Q5. Which Maryland individual jurisdiction saw the largest net decrease in domestic migration overall?
-A5. Baltimore City, with -62,834, with Prince George's County not far behind at -60,167.
-
-```{r}
-domestic_migration %>%
-  select(jurisdiction, total) %>%
-  arrange(total)
-```
-
-Q6. How many regions & jurisdictions had net positive migration for July 2017, July 2018 and July 2019?
-A6. 14, including the Southern Maryland and Upper Eastern Shore regions.
-
-```{r}
-domestic_migration %>%
-  filter(july_2017 > 0 & july_2018 > 0 & july_2019 > 0) %>%
-  select(jurisdiction, july_2017, july_2018, july_2019)
-```
-
-Q7. How would you describe this data? Is there a county or region that stands out, and why?
-A7. Frederick and Charles stand out for consistent growth, and Caroline for trending downwards.
