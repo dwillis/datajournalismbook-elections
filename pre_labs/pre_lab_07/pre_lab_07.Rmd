@@ -209,23 +209,23 @@ Let's read in our Maryland campaign finance data on donors:
 md_contribs <- read_rds("data/lab_07.rds")
 ```
 
-**Task** We need a 5- digit zip code (again), so run the following codeblock to create a populate a new column called `zip5`, then find the zip code with the largest total amount of loans.
+**Task** We need a 5- digit zip code (again), so run the following codeblock to create a populate a new column called `zip5`, then find the zip code with the largest total amount of contributions.
 
 ```{r}
-maryland_ppp <- maryland_ppp %>%
-  mutate(zip5 = str_sub(zip, 1, 5))
+md_contribs <- md_contribs %>%
+  mutate(zip5 = str_sub(contributor_zip, 1, 5))
 
-top_zips <- maryland_ppp %>%
+top_zips <- md_contribs %>%
  group_by(zip5) %>%
- summarise(total=sum(amount)) %>%
+ summarise(total=sum(contribution_receipt_amount)) %>%
  arrange(desc(total))
 ```
 
 **Task** Let's get ZCTA household income data from the ACS using tidycensus for the top zip code in `top_zips`. Run the following codeblock to retrieve household income data for all Maryland ZCTAs first, then join them to `top_zips` using the GEOID column. Of the 20 zip codes with the largest amounts, which ones have estimated median household incomes of less than $50,000?
-**Answer**
+**Answer** 
 
 ```{r}
-md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD')
+md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
 md_zips_with_acs <- top_zips %>% left_join(md_zipcodes, by=c('zip5'='GEOID'))
 md_zips_with_acs <- md_zips_with_acs %>% mutate(min=(estimate-moe), max=(estimate+moe))
 ```
