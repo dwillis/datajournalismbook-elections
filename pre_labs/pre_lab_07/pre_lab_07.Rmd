@@ -206,7 +206,7 @@ Let's read in our Maryland campaign finance data on donors:
 **Task** Run the following codeblock to load the RDS file:
 
 ```{r}
-md_contribs <- read_rds("data/lab_07.rds")
+md_contribs <- read_rds("data/pre_lab_07.rds")
 ```
 
 **Task** We need a 5- digit zip code (again), so run the following codeblock to create a populate a new column called `zip5`, then find the zip code with the largest total amount of contributions.
