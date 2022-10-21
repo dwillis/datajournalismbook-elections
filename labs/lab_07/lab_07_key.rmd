@@ -100,11 +100,14 @@ combined_5_17 <- speak_spanish_5_17 %>%
 **Q4** Given the counties with the largest percentage of 5-17 year-olds that speak Spanish at home, what stands out to you about the data? How would you describe the top 5 counties? How would you describe Garrett County's numbers?
 **A4** Talbot County stands out - it has a tiny population compared to Prince George's and Montgomery but as many as 10 percent of its 5-17 year-olds speak Spanish at home and speak English very well. The top 5 are a combination of the largest jurisdictions (except Baltimore city and County) and some very small ones. We may not be able to accurately describe the percentage for Garrett County, given the margin of error, but it seems very, very small.
 
-**Q5** Which 5-digit zip code had the most removed PPP applications, and what is the percentage of Black population in that zip code according to the ACS? To answer this question, you will need to creeate separate dataframes with ACS data on total population by zip code and Black population by zip code. In each dataframe, rename the `estimate` column and remove the `variable` column. You'll need to combine the two dataframes in order to calculate the percentage, and then you can combine it with the PPP data. Remember: the PPP data may not have only 5-digit zip codes!
+**Q5** Which Maryland state assembly district (the lower house of the state legislature) has the largest percentage of Black population, according to the ACS? What was the 
+
+
+To answer this question, you will need to creeate separate dataframes with ACS data on total population by zip code and Black population by zip code. In each dataframe, rename the `estimate` column and remove the `variable` column. You'll need to combine the two dataframes in order to calculate the percentage, and then you can combine it with the PPP data. Remember: the PPP data may not have only 5-digit zip codes!
 **A5**
 
 ```{r}
-black_pop_zip <- get_acs('zcta', variables = "B02001_003", year=2019) %>%
+black_pop_house <- get_acs('state legislative district (lower chamber)', variables = "B02001_003", state="MD", year=2020) %>%
   rename('black_population'='estimate') %>%
   select(-variable)
 total_pop_zip <- get_acs('zcta', variables = "B02001_001", year=2019) %>%
