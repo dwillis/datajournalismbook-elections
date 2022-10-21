@@ -1,7 +1,7 @@
 ---
-title: "lab_07"
-author: "sean mussenden"
-date: "8/25/2021"
+title: "lab_08"
+author: "derek willis"
+date: "10/21/2022"
 output: html_document
 ---
 
@@ -9,172 +9,124 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## About this lab
+## You will need
 
-To complete this lab, you need to:
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
-
-When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+* A Census API key
 
 ## Load libraries and establish settings
-**Task**: Load rvest, janitor and the tidyverse
+
+You'll need to load two packages for this: the tidyverse and tidycensus.
+
+**Task** load these two packages
+
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse,rvest,janitor
-library(rvest)
+# Load the tidyverse.
 library(tidyverse)
-library(janitor)
+library(tidycensus)
 ```
 
+## Setup Census API
 
-Q1. How many individual cases has the U.S. Department of Justice filed against people accused of fraud related to the PPP or EIDL loan program, according to the DOJ website listing those cases: https://www.justice.gov/criminal-fraud/cares-act-fraud?  An example of one case that appears on this page is "U.S. v. Richard Ayvazyan et al". To answer this question, you will need to use rvest to scrape the data on this single webpage into a dataframe that lists only case names. Hint: you will need to make use of html_elements() and html_text() -- a function that extracts text inside of an html tag -- for this.
-A1. 101 (but one appears to be a duplicate)
+You'll need your Census API Key:
+
+**Task** set your API Key
+
+```{r echo=FALSE}
+#census_api_key("YOUR KEY HERE", install=TRUE)
+```
+
+## Load and view ACS variables
+
+You'll also need to load the list of American Community Survey variables from the 2019 5-year estimates so you can identify the codes you need:
+
+**Task** load the variables from the 2020 5-year ACS and save them to a dataframe
 
 ```{r}
-# Define URL
-doj_url <- "https://www.justice.gov/criminal-fraud/cares-act-fraud"
-
-# Get html of page, extract all elements that are a bold tag nested inside of an li tag nested inside a ul tag.  Extract the text, turn it into a dataframe, then count the number of rows.  
-cases <- doj_url %>%
-  read_html()  %>%
-  html_elements('ul li b') %>%
-  html_text() %>%
-  as_tibble()
-
-# Count cases
-cases %>%
-  summarise(
-    count_cases=n()
-  )
+v20 <- load_variables(2020, "acs5", cache=TRUE)
 ```
 
-Q2. In how many individual judicial districts has the U.S. Department of Justice filed cases against people accused of fraud related to the PPP or EIDL loan program, according to the DOJ website listing those cases: https://www.justice.gov/criminal-fraud/cares-act-fraud?  Note: an example of a judicial district is "Southern District of Florida". You will need to use rvest scrape the data on this single webpage into a dataframe.
-A2. 31.
+## Load Election Data
+
+You'll also need to load an RDS file of TKTK
+
+**Task** read the RDS file and save it to a dataframe
 
 ```{r}
-# Define URL
-doj_url <- "https://www.justice.gov/criminal-fraud/cares-act-fraud"
-
-# Get html of page, extract all elements that are in a p tag.  Extract the text, turn it into a dataframe, keep only rows 14 and up, then count the number of rows.  
-case_districts <- doj_url %>%
-  read_html()  %>%
-  html_elements('p b i') %>%
-  html_text() %>%
-  as_tibble()
-
-# Count districts
-case_districts %>%
-  summarise(
-    count_districts=n()
-  )
+removed_ppp <- read_rds('data/lab_08.rds')
 ```
 
-Q4. The website (https://www.justice.gov/criminal-fraud/cares-act-fraud) shows that the DOJ filed more cases in the Southern District of Florida than in any other district. One of those cases was filed against someone named "Diamond Blue Smith". Who is Smith, and what was he accused of, according to the criminal complaint? If you were an editor, would you have assigned a reporter to write a story about this case when the complaint was filed in court? Why or why not?
-A4. Prosecutors allege that Smith, a rapper, allegedly used falsified documents to obtain a PPP loan, using some of the proceeds to buy a Ferrari, and to helping many others obtain fraudulent loans.  
+## Answer questions
 
-Q5. In what percentage of all judicial districts has the U.S. Department of Justice filed cases cases against people accused of fraud related to the PPP or EIDL loan program, according to the DOJ website listing those cases: https://www.justice.gov/criminal-fraud/cares-act-fraud? In answering this question, you should also produce a list of judicial districts where DOJ has NOT filed a case, according to this site.  Note: to answer this question, you will need to scrape a table of all district courts on this up-to-date Wikipedia page under the heading "Active Courts": https://en.wikipedia.org/wiki/List_of_United_States_district_and_territorial_courts  
-A5. 29.8 percent
-
+**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2020 5-year estimates? You will need to find the variable for median age first.
+**A1** Baltimore City, with an estimated median age of 35.4 years and a margin of error of 0.2 years.
 
 ```{r}
-# Define URL of DOJ site
-doj_url <- "https://www.justice.gov/criminal-fraud/cares-act-fraud"
-
-# Get html of page, extract all elements that are in a p tag.  Extract the text, turn it into a dataframe, keep only rows 14 and up, change name of value column to districts, clean whitespace that will prevent a proper join, create a column indicating that anything on this is a cares act district.
-case_districts <- doj_url %>%
-  read_html()  %>%
-  html_elements('p') %>%
-  html_text() %>%
-  as_tibble() %>%
-  slice(14:41) %>%
-  rename(districts = value) %>%
-  mutate(districts = str_trim(districts,side="both")) %>%
-  mutate(cares_act_district = "yes")
-
-# Define Wiki district courts URL
-wiki_url <- "https://en.wikipedia.org/wiki/List_of_United_States_district_and_territorial_courts"
-
-# Get html from wiki page, extract all html tables into nested list of dataframes
-all_districts <- wiki_url %>%
-  read_html()  %>%
-  html_table()
-
-# Keep the third table, clean names
-all_districts <- all_districts[[3]] %>%
-  clean_names()
-
-# Join case_districts to all districts, populate non-cares act districts with no, group and count by cares act district column, create a column with total districts, then calculate percentage.
-
-all_districts_count <- all_districts %>%
-  left_join(case_districts, by=c("region"="districts")) %>%
-  mutate(cares_act_district = case_when(
-    is.na(cares_act_district) ~ "no",
-    TRUE ~ cares_act_district
-  )) %>%
-  group_by(cares_act_district) %>%
-  summarise(
-    count=n()
-  ) %>%
-  mutate(total_districts = sum(count)) %>%
-  mutate(pct_districts = count/total_districts*100)
-
-# Display count
-all_districts_count
+md_median_age <- get_acs(geography='county', variables=c(median_age='B01002_001'), state='MD')
+arrange(md_median_age, estimate)
 ```
-Q6. What might explain why, according to this site, the DOJ has filed PPP-related fraud cases in less than half of the country's judicial districts?
-A6. The DOJ press website could be wrong; it could have missed related cases filed in other districts. It also only lists "publicly charged" cases; there may be additional cases filed later that are currently under investigation. There could be less fraud happening in districts where no cases were filed. The U.S. Attorney in charge of bringing cases in a judicial district that has no cases may have other priorities.  
 
-Q7. Which state had the most approved PPP loans per 100,000 population? [This web page](https://dwillis.github.io/jour472files/ppp_scraping_example/index.html) has links to 52 individual web pages, one for each state (plus Washington, D.C. and Puerto Rico). Each of those web pages contains a one-row html table that has the name of the state, the number of approved loans, and the 2019 population. Here's an example for [Alabama](https://dwillis.github.io/jour472files/ppp_scraping_example/states/alabama.html). You'll need to loop over the individual state urls, scrape each individual page and combine the information on each page into a single dataframe to answer this question. Don't forget to calculation the loans per 100,000.
-A7. South Dakota, with 7379.5 loans per 100,000 population.
+**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50.
+**A2** Talbot and Worcester counties
+
 ```{r}
-
-# Define the URL for that has all the urls for each state
-state_url <- "https://dwillis.github.io/jour472files/ppp_scraping_example/index.html"
-
-# Grab the table that contains the urls
-state_urls <- state_url %>%
-  read_html() %>%
-  html_table()
-
-# Extract the table from the nested list
-state_urls <- state_urls[[1]]
-
-# Create an empty dataframe to hold information from each state
-state_ppp_all <- tibble()
-
-# Loop through each URL on the list we made above.
-for (row_number in 1:nrow(state_urls)) {
-
-  # Keep only the row for a given row number, get rid of every other row
-  each_row_df <- state_urls %>%
-    slice(row_number)
-
-  # Define url of page to get
-  url <- each_row_df$url
-
-  # Create a dataframe called individual_state_info by visiting the URL for a state, read in the html, and extract the table as a nested list.
-  individual_state_info <- url %>%
-    read_html() %>%
-    html_table()
-
-  # Extract the table from the nested list, select only the URL column and turn it into a proper list.
-  individual_state_info <- individual_state_info[[1]]
-
-  # Bind each individual state info dataframe to the empty dataframe we created above
-  state_ppp_all <- state_ppp_all %>%
-    bind_rows(individual_state_info)
-
-}
-
-# Update the table by calculating the nubmer of loans per 100K population
-state_ppp_all <- state_ppp_all %>%
-  mutate(loans_per_100K = total_ppp_loans/population*100000) %>%
-  arrange(desc(loans_per_100K))
-
-# Display the table
-state_ppp_all
-
+md_median_age %>% filter(estimate >= 50)
 ```
+
+**Q3** We're interested in knowing which Maryland counties have the highest percentage of 5-17 year-olds who speak Spanish at home and *also* speak English fluently. Start with the code you wrote for Q1 and alter it to show the total population of 5-17 year-olds by county. Then create a second dataframe to show the number of 5-17 year-olds by county living in homes where Spanish is spoken but who speak English "very well" according to the ACS. To do this, you will need to find the ACS variables that represent those subjects.
+
+For each dataframe, rename the `estimate` column to a meaningful name you've given the ACS variable, remove the `variable` columns in each using select and then join them on GEOID and NAME. Then you can add a column to calculate the percentage of the total 5-17 population that speaks Spanish at home.
+
+Which county has the highest percentage of 5-17 year-olds who speak Spanish at home and also speak English very well?
+
+**A3** Prince George's County, with 19%, or nearly one in five.
+
+```{r}
+speak_spanish_5_17 <- get_acs(geography='county', variables=c(speak_spanish_5_17='B16004_005'), state='MD') %>%
+   rename('speak_spanish_5_17'='estimate') %>%
+   select(-variable)
+md_population_5_17 <- get_acs(geography='county', variables=c(total_pop_5_17='B16004_002'), state='MD') %>%
+   rename('total_pop_5_17'='estimate') %>%
+   select(-variable)
+
+combined_5_17 <- speak_spanish_5_17 %>%
+  inner_join(md_population_5_17, by=c('GEOID', 'NAME')) %>%
+  mutate(pct_of_total = (speak_spanish_5_17/total_pop_5_17)*100) %>%
+  arrange(desc(pct_of_total))
+```
+
+**Q4** Given the counties with the largest percentage of 5-17 year-olds that speak Spanish at home, what stands out to you about the data? How would you describe the top 5 counties? How would you describe Garrett County's numbers?
+**A4** Talbot County stands out - it has a tiny population compared to Prince George's and Montgomery but as many as 10 percent of its 5-17 year-olds speak Spanish at home and speak English very well. The top 5 are a combination of the largest jurisdictions (except Baltimore city and County) and some very small ones. We may not be able to accurately describe the percentage for Garrett County, given the margin of error, but it seems very, very small.
+
+**Q5** Which 5-digit zip code had the most removed PPP applications, and what is the percentage of Black population in that zip code according to the ACS? To answer this question, you will need to creeate separate dataframes with ACS data on total population by zip code and Black population by zip code. In each dataframe, rename the `estimate` column and remove the `variable` column. You'll need to combine the two dataframes in order to calculate the percentage, and then you can combine it with the PPP data. Remember: the PPP data may not have only 5-digit zip codes!
+**A5**
+
+```{r}
+black_pop_zip <- get_acs('zcta', variables = "B02001_003", year=2019) %>%
+  rename('black_population'='estimate') %>%
+  select(-variable)
+total_pop_zip <- get_acs('zcta', variables = "B02001_001", year=2019) %>%
+  rename('total_population'='estimate') %>%
+  select(-variable)
+zip_combined <- black_pop_zip %>%
+  inner_join(total_pop_zip, by='GEOID') %>%
+  mutate(pct_black = (black_population/total_population)*100) %>%
+  arrange(desc(pct_black))
+
+removed_by_zip <- removed_ppp %>%
+  mutate(zip5=str_sub(zip, 1, 5)) %>%
+  group_by(zip5) %>%
+  summarise(count = n())%>%
+  arrange(desc(count))
+
+removed_by_zip %>% left_join(zip_combined, by=c('zip5'='GEOID')) %>%
+  arrange(desc(count))
+```
+
+**Q6** How would you describe to an editor the top 10 zip codes with the most removed application in terms of Black population? Where are they located, and what do they have in common? Are there any zip codes that seem different, and if so why?
+**A6**
+
+**Q7** What other columns from the PPP data could be useful in reporting on what happened to this removed loans?
+**A7**
