@@ -1,5 +1,5 @@
 ---
-title: "pre_lab_08.Rmd"
+title: "pre_lab_07.Rmd"
 author: "derek willis"
 date: "10/18/2022"
 output: html_document
@@ -229,3 +229,6 @@ md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', y
 md_zips_with_acs <- top_zips %>% left_join(md_zipcodes, by=c('zip5'='GEOID'))
 md_zips_with_acs <- md_zips_with_acs %>% mutate(min=(estimate-moe), max=(estimate+moe))
 ```
+
+**Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes?
+**Answer** 
