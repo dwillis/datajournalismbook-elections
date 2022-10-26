@@ -1,0 +1,23 @@
+```{r}
+library(tidyverse)
+library(lubridate)
+library(janitor)
+```
+
+```{r}
+mail_apps <- read_delim("~/Downloads/VR_SWMailBallot_External 20221025.TXT", delim = '|') %>% mutate(DateofBirth = mdy(DateofBirth), AppIssueDate = mdy(AppIssueDate), AppReturnDate = mdy(AppReturnDate), ElectionDate = mdy(ElectionDate)) %>% mutate(zip = str_extract(CSZ, "[:digit:][:digit:][:digit:][:digit:][:digit:]")) %>% clean_names() %>% select(-x26)
+```
+```{r}
+head(mail_apps)
+```
+
+```{r}
+ballot_returned_zips <- mail_apps %>% filter(!is.na(ballot_returned_date), !is.na(zip), zip != "00000") %>% group_by(zip) %>% summarize(count = n())
+```
+
+```{r}
+mail_apps %>% filter(zip == '06268')
+
+
+```
+
