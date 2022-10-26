@@ -35,7 +35,7 @@ You'll need your Census API Key:
 **Task** set your API Key
 
 ```{r echo=FALSE}
-#census_api_key("YOUR KEY HERE", install=TRUE)
+census_api_key("102c0c72d8f8eb880608f9dacb53fdf9100f8ba0", overwrite=TRUE)
 ```
 
 ## Load and view ACS variables
@@ -100,36 +100,18 @@ combined_5_17 <- speak_spanish_5_17 %>%
 **Q4** Given the counties with the largest percentage of 5-17 year-olds that speak Spanish at home, what stands out to you about the data? How would you describe the top 5 counties? How would you describe Garrett County's numbers?
 **A4** Talbot County stands out - it has a tiny population compared to Prince George's and Montgomery but as many as 10 percent of its 5-17 year-olds speak Spanish at home and speak English very well. The top 5 are a combination of the largest jurisdictions (except Baltimore city and County) and some very small ones. We may not be able to accurately describe the percentage for Garrett County, given the margin of error, but it seems very, very small.
 
-**Q5** Which Maryland state assembly district (the lower house of the state legislature) has the largest percentage of Black population, according to the ACS? What was the 
+**Q5** Pennsylvanians are currently requesting and submitting mail ballots for the November election. You'd like to know more about the people who live in the areas sending in mail ballots. Read in the `zip_totals.csv` file in the data folder containing the number of returned mail ballots per zip code. Then create a dataframe of Pennsylvania ZCTAs that include the following variables from the 2019 ACS: total population and median income. You will need to add `output = "wide"` to the get_acs function so that you get columns for those two variables' estimates and margins of error.
 
+Then join the ZCTA dataframe to the zip totals dataframe and calculate a per capita rate for mail ballots per 100 population
 
-To answer this question, you will need to creeate separate dataframes with ACS data on total population by zip code and Black population by zip code. In each dataframe, rename the `estimate` column and remove the `variable` column. You'll need to combine the two dataframes in order to calculate the percentage, and then you can combine it with the PPP data. Remember: the PPP data may not have only 5-digit zip codes!
-**A5**
+**A5** 
 
 ```{r}
-black_pop_house <- get_acs('state legislative district (lower chamber)', variables = "B02001_003", state="MD", year=2020) %>%
-  rename('black_population'='estimate') %>%
-  select(-variable)
-total_pop_zip <- get_acs('zcta', variables = "B02001_001", year=2019) %>%
-  rename('total_population'='estimate') %>%
-  select(-variable)
-zip_combined <- black_pop_zip %>%
-  inner_join(total_pop_zip, by='GEOID') %>%
-  mutate(pct_black = (black_population/total_population)*100) %>%
-  arrange(desc(pct_black))
+zip_totals <- read_csv("data/pa_zip_totals.csv")
 
-removed_by_zip <- removed_ppp %>%
-  mutate(zip5=str_sub(zip, 1, 5)) %>%
-  group_by(zip5) %>%
-  summarise(count = n())%>%
-  arrange(desc(count))
+pa_zips <- get_acs(geography = 'zcta', state = 'PA', variables= c(total_pop = 'B01003_001', median_income='B19013_001'), year=2019, output = "wide")
 
-removed_by_zip %>% left_join(zip_combined, by=c('zip5'='GEOID')) %>%
-  arrange(desc(count))
+pa_zips_with_ballots <- zip_totals %>% inner_join(pa_zips, by=c("zip"="GEOID")) %>% mutate(ballots_per_100 = (count/total_popE)*100)
+
 ```
 
-**Q6** How would you describe to an editor the top 10 zip codes with the most removed application in terms of Black population? Where are they located, and what do they have in common? Are there any zip codes that seem different, and if so why?
-**A6**
-
-**Q7** What other columns from the PPP data could be useful in reporting on what happened to this removed loans?
-**A7**
