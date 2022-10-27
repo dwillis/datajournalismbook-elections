@@ -1,7 +1,7 @@
 ---
-title: "lab_08"
+title: "lab_09"
 author: "derek willis"
-date: "8/26/2021"
+date: "10/26/2022"
 output: html_document
 ---
 
@@ -15,9 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load libraries and establish settings
 
-You'll need to load two packages for this: the tidyverse and tidycensus.
-
-**Task** load these two packages
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
 
 ```{r}
 # Turn off scientific notation
@@ -26,102 +24,150 @@ options(scipen=999)
 # Load the tidyverse.
 library(tidyverse)
 library(tidycensus)
+library(janitor)
+
+# Establish API Key for Census
+census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
+
 ```
 
-## Setup Census API
+## Questions 
 
-You'll need your Census API Key:
+**Q1.** Which day in April 2020 saw the most loans approved in West Virginia? 
 
-**Task** set your API Key
+You MUST do the following things when answering this question:
+* Use the WV ppp loan data, which is in the data folder and is called lab_09.rds.
+* Make a line chart with ggplot that:
+  * has each date in April (i.e. 04-01-20, 04-02-20) labeled on the x axis (and only dates in April, no other month). To clarify, no data for any other month than April 2020 should appear on the chart. 
+  * sets the height of the line for any given date -- its y axis value -- to the total number of loans on that date.
+  * has an appropriate title, source, and x and y axis titles. 
+  * adds a small circle (called a "point") on the line for dates that had loans. And to the left of each circle/point, shows the number of loans on that date.  I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out! 
 
-```{r echo=FALSE}
-#census_api_key("YOUR KEY HERE", install=TRUE)
+Basically, your chart should look like this image, which will appear when you run the codeblock below. 
+
+**A1.** April 28 saw the most, with 2381. 
+```{r}
+knitr::include_graphics(rep("images/chart_1.png"))
 ```
-
-## Load and view ACS variables
-
-You'll also need to load the list of American Community Survey variables from the 2019 5-year estimates so you can identify the codes you need:
-
-**Task** load the variables from the 2019 5-year ACS and save them to a dataframe
 
 ```{r}
-v19 <- load_variables(2019, "acs5", cache=TRUE)
+
+# Load data
+ppp_wv_loans <- read_rds("data/lab_09.rds")
+
+# Group by date and count total loans.  Filter to keep only loans in April 2020
+ppp_wv_loans <- ppp_wv_loans %>%
+  group_by(date_approved) %>%
+  summarise(
+    total_loans=n()
+  ) %>%
+  filter(date_approved >= "2020-04-01" & date_approved <= "2020-04-30")
+
+# Plot the data.  Use geom_line to draw the line, geom_point to add points, geom_text to add labels.  Use scale_x_date to set breaks at 1 day. 
+ppp_wv_loans %>%
+  ggplot() + 
+  geom_line(aes(x=date_approved, y=total_loans)) + 
+  geom_point(aes(x=date_approved, y=total_loans)) + 
+  geom_text(aes(x=date_approved, y=total_loans, label=total_loans),hjust=1, vjust=0) + 
+  scale_x_date(date_breaks = "1 day", date_labels = "%m-%d-%y") +
+  theme(
+    axis.text.x = element_text(angle = 45,  hjust=1)
+  ) + labs(
+    title="A spike in WV PPP loan approvals at end of April",
+    x = "Date",
+    y = "Total Loans",
+    caption = "source: SBA PPP Loan Data"
+    
+  ) 
+
 ```
 
-## Load PPP data
+**Q2.** What are the top 10 states that got the most PPP loans per 100,000 people? You MUST do the following things when answering this question:
 
-You'll also need to load an RDS file of PPP loan applications that were removed from the original data by lenders in July.
+* Make a codeblock below to write your code in.
+* Use the csv of total PPP loans by state in the data folder (state_ppp_all) as your source for total PPP loans by state.  
+* Use the tidycensus API to get a table of total population by state from the American Community Survey (ACS). To do this, you'll use use the alphanumeric variable for total population, which has the following "label" and "concept": "Estimate!!Total:" and "SEX BY AGE".  
+* Use ggplot to make a horizontal bar chart that shows the top 10 states, with the length of the bar determined by the state's total PPP loans per 100,000 people. Give it an appropriate title, source, and x and y axis titles. 
+* Make the bars on the chart blue! I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out.  
 
-**Task** read the RDS file and save it to a dataframe
+**A2.** See the chart.  South Dakota is first through Montana, 10. 
+```{r}
+
+# Load ACS5 vairables to determine the varialbe number for total population.  Examine in the dataframe viewer. 
+variables <- load_variables(2019, "acs5", cache=TRUE)
+
+# Load a table of state population using get_acs(), and clean it up to keep only state name and total ppulation
+state_total_population <- get_acs(geography='state', variables=c(total_population='B01001_001')) %>%
+  rename(total_population = estimate) %>%
+  clean_names() %>%
+  select(name, total_population)
+
+# Read in the csv of total ppp loans by state.  It has a problem, though, that prevents proper joining in the next step.  North and South Dakota are abbreviated in this data set, but not the population dataset.  Fix this using mutate and case when. 
+state_total_loans <- read_csv("data/state_ppp_all.csv") %>%
+    mutate(state = case_when(
+    state == "N Dakota" ~ "North Dakota",
+    state == "S Dakota" ~ "South Dakota",
+    TRUE ~ state
+  ))
+
+# Join state total loans to population, on state / name, and then calculate loans per 100k.  Sort and keep top 10 records. 
+state_total_loans_population <- state_total_loans %>%
+  inner_join(state_total_population, by=c("state" = "name")) %>%
+  mutate(loans_per_100k = total_ppp_loans/total_population*100000) %>%
+  arrange(desc(loans_per_100k)) %>%
+  head(10)
+
+# Make a ggplot bar chart with geom_bar.  Use "fill" inside geom_bar to make bars blue.  Use coord_flip to make horizontal.  Add labels. 
+state_total_loans_population %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(state,loans_per_100k), weight=loans_per_100k), fill = "blue") +
+  coord_flip() + 
+  labs(
+    title="Top 10 states by ppp loans per 100,000 people",
+    x = "State",
+    y = "Loans per 100K",
+    caption = "source: SBA PPP loan; U.S. Census."
+    
+  ) 
+
+```
+
+**Q3.**  A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis.  For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid. 
+
+Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable.  A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html).  The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
 
 ```{r}
-removed_ppp <- read_rds('data/lab_08.rds')
+knitr::include_graphics(rep("images/chart_2.png"))
 ```
 
-## Answer questions
+We're going to use a scatterplot a little differently, to get a visual sense of two key variables: the amount of an approved PPP loan, and the amount that was later forgiven. We'll use it to answer some questions in a broad sense, about loan forgiveness.  This is just a jumping off point for further exploration. 
 
-**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2019 5-year estimates? You will need to find the variable for median age first.
-**A1** Baltimore City, with an estimated median age of 35.4 years and a margin of error of 0.2 years.
+Our questions include: Were there a lot of people who had their loans fully forgiven?  Were there a lot of people who didn't have their loans forgiven? Were there a lot of people who had some of the loan forgiven? 
+To answer those questions, do the following:
+
+1. Start with the a subset of the WV ppp loan data we loaded earlier.
+2. Filter the data to examine only those loans less than $25,000.
+3. There are a bunch of NAs in the forgiveness amount column, for the purposes of this assignment only, let's assume those are actually supposed to be 0. So make all the NAs 0. 
+4. Make a scatterplot. I didn't show you how to do this, so look it up! 
+5. In the answer space below, describe what you see and answer the questions posed above.  In a general sense, what do you think this means?  
+
+**A3.**  This data shows that there were a lot of loans that a lot of loans were totally forgiven. Those are represented by the overlapping points running at a 45 degree angle from the bottom left to the top right of the graphic.  And there were a lot of loans that weren't forgiven at all.  That's represented by the overlapping points running in a straight line on the x axis (bottom left to bottom right).  And then there a smaller collection of loans in the middle space, that were partially forgiven. If you look closely, you'll see the traces of a broken line running parallell to the loans that were totally forgiven. Could this suggest that there's some formula the SBA used to determine forgiveness? Loans forgiven except for 10 percent, 20 percent, 30 percent. 
 
 ```{r}
-md_median_age <- get_acs(geography='county', variables=c(median_age='B01002_001'), state='MD')
-arrange(md_median_age, estimate)
+
+# Load PPP loan data for WV
+ppp_wv_loans <- read_rds("data/lab_09.rds")
+
+# Filter to keep only loans less than $25K, use mutate, case when and is.na to convert all NAs to 0. 
+ppp_wv_loans <- ppp_wv_loans %>%
+  filter(amount < 25000) %>%
+  mutate(forgiveness_amount = case_when(
+    is.na(forgiveness_amount) ~ 0,
+    TRUE ~ forgiveness_amount
+  )) 
+
+# Plot it using geom_point.
+ppp_wv_loans %>%
+  ggplot() +
+  geom_point(aes(x=amount,y=forgiveness_amount)) 
 ```
-
-**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this.
-**A2** Talbot and Worcester counties
-
-```{r}
-md_median_age %>% filter(estimate >= 50)
-```
-
-**Q3** A better answer to Q3 involves calculating percentages of children between 5 and 17 that speak Spanish at home. Which counties have the highest percentage of 5-17 year-olds that speak Spanish at home? Start with the code you wrote for Q4 and add a second dataframe with the total population of 5-17 year-olds by county. For each dataframe, rename the `estimate` column to a meaningful name you've given the ACS variable, remove the `variable` columns in each using select and then join them based on GEOID and NAME. Then you can add a column to calculate the percentage of the total 5-17 population that speaks Spanish at home.
-**A3**
-
-```{r}
-speak_spanish_5_17 <- get_acs(geography='county', variables=c(speak_spanish_5_17='B16007_004'), state='MD') %>%
-   rename('speak_spanish_5_17'='estimate') %>%
-   select(-variable)
-md_population_5_17 <- get_acs(geography='county', variables=c(total_pop_5_17='B16007_002'), state='MD') %>%
-   rename('total_pop_5_17'='estimate') %>%
-   select(-variable)
-
-combined_5_17 <- speak_spanish_5_17 %>%
-  inner_join(md_population_5_17, by=c('GEOID', 'NAME')) %>%
-  mutate(pct_of_total = (speak_spanish_5_17/total_pop_5_17)*100) %>%
-  arrange(desc(pct_of_total))
-```
-
-**Q4** Given the counties with the largest percentage of 5-17 year-olds that speak Spanish at home, what stands out to you about the data? How would you describe the top 5 counties? How would you describe Garrett County's numbers?
-**A4** Caroline County stands out - it has a tiny population compared to Prince George's and Montgomery but as many as 10 percent of its 5-17 year-olds speak Spanish at home. The top 5 are a combination of the largest jurisdictions (except Baltimore city and County) and some very small ones. We may not be able to accurately describe the percentage for Garrett County, given the margin of error for those speaking Spanish at home, but it seems very, very small.
-
-**Q5** Which 5-digit zip code had the most removed PPP applications, and what is the percentage of Black population in that zip code according to the ACS? To answer this question, you will need to creeate separate dataframes with ACS data on total population by zip code and Black population by zip code. In each dataframe, rename the `estimate` column and remove the `variable` column. You'll need to combine the two dataframes in order to calculate the percentage, and then you can combine it with the PPP data. Remember: the PPP data may not have only 5-digit zip codes!
-**A5**
-
-```{r}
-black_pop_zip <- get_acs('zcta', variables = "B02001_003", year=2019) %>%
-  rename('black_population'='estimate') %>%
-  select(-variable)
-total_pop_zip <- get_acs('zcta', variables = "B02001_001", year=2019) %>%
-  rename('total_population'='estimate') %>%
-  select(-variable)
-zip_combined <- black_pop_zip %>%
-  inner_join(total_pop_zip, by='GEOID') %>%
-  mutate(pct_black = (black_population/total_population)*100) %>%
-  arrange(desc(pct_black))
-
-removed_by_zip <- removed_ppp %>%
-  mutate(zip5=str_sub(zip, 1, 5)) %>%
-  group_by(zip5) %>%
-  summarise(count = n())%>%
-  arrange(desc(count))
-
-removed_by_zip %>% left_join(zip_combined, by=c('zip5'='GEOID')) %>%
-  arrange(desc(count))
-```
-
-**Q6** How would you describe to an editor the top 10 zip codes with the most removed application in terms of Black population? Where are they located, and what do they have in common? Are there any zip codes that seem different, and if so why?
-**A6**
-
-**Q7** What other columns from the PPP data could be useful in reporting on what happened to this removed loans?
-**A7**
