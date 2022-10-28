@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load libraries and establish settings
 
-**Task** Create a codeblock and load appropriate packages and settings for this lab.
+**Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts and using Census data.
 
 ```{r}
 # Turn off scientific notation
@@ -31,54 +31,50 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 
 ```
 
-## Questions 
+## Load data
 
-**Q1.** Which day in April 2020 saw the most loans approved in West Virginia? 
+**Task** Create a codeblock and load the following data from the data folder:
 
-You MUST do the following things when answering this question:
-* Use the WV ppp loan data, which is in the data folder and is called lab_09.rds.
-* Make a line chart with ggplot that:
-  * has each date in April (i.e. 04-01-20, 04-02-20) labeled on the x axis (and only dates in April, no other month). To clarify, no data for any other month than April 2020 should appear on the chart. 
-  * sets the height of the line for any given date -- its y axis value -- to the total number of loans on that date.
-  * has an appropriate title, source, and x and y axis titles. 
-  * adds a small circle (called a "point") on the line for dates that had loans. And to the left of each circle/point, shows the number of loans on that date.  I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out! 
+* Maryland active registered voters - `md_active_voters.csv`
+* Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
 
-Basically, your chart should look like this image, which will appear when you run the codeblock below. 
+You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
 
-**A1.** April 28 saw the most, with 2381. 
+
 ```{r}
-knitr::include_graphics(rep("images/chart_1.png"))
+md_active_voters <- read_csv("data/md_active_voters.csv")
+md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names() %>% mutate(county_name = str_to_title(county_name))
 ```
 
+## Questions 
+
+**Q1.** Which county has the highest percentage of total absentee ballots returned of total ballots sent? Make a bar chart of the top 10 counties. Your bar chart must have:
+
+* A clear title that states the main idea/finding
+* Good labels for the x & y axis and a caption for the source, which is the Maryland State Board of Elections
+* Readable bars - the values shouldn't be overlapping
+
+**A1.** 
+
 ```{r}
 
-# Load data
-ppp_wv_loans <- read_rds("data/lab_09.rds")
-
-# Group by date and count total loans.  Filter to keep only loans in April 2020
-ppp_wv_loans <- ppp_wv_loans %>%
-  group_by(date_approved) %>%
-  summarise(
-    total_loans=n()
-  ) %>%
-  filter(date_approved >= "2020-04-01" & date_approved <= "2020-04-30")
+# Calculate the percentage
+md_absentee_ballots <- md_absentee_ballots %>%
+  mutate(pct_returned = total_received/total_sent*100) %>% 
+  arrange(desc(pct_returned))
 
 # Plot the data.  Use geom_line to draw the line, geom_point to add points, geom_text to add labels.  Use scale_x_date to set breaks at 1 day. 
-ppp_wv_loans %>%
+md_absentee_ballots %>%
+  head(10) %>% 
   ggplot() + 
-  geom_line(aes(x=date_approved, y=total_loans)) + 
-  geom_point(aes(x=date_approved, y=total_loans)) + 
-  geom_text(aes(x=date_approved, y=total_loans, label=total_loans),hjust=1, vjust=0) + 
-  scale_x_date(date_breaks = "1 day", date_labels = "%m-%d-%y") +
-  theme(
-    axis.text.x = element_text(angle = 45,  hjust=1)
-  ) + labs(
-    title="A spike in WV PPP loan approvals at end of April",
-    x = "Date",
-    y = "Total Loans",
-    caption = "source: SBA PPP Loan Data"
-    
-  ) 
+  geom_bar(aes(x=reorder(county_name,pct_returned), weight=pct_returned)) + 
+  coord_flip() +
+  labs(
+    title="Smallest Maryland Counties Returning More Absentee Ballots",
+    x = "percentage of ballots returned",
+    y = "county",
+    caption = "source: Maryland State Board of Elections"
+  )
 
 ```
 
