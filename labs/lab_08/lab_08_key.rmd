@@ -43,7 +43,7 @@ You may want to clean up the column names and standardize the names of counties 
 
 ```{r}
 md_active_voters <- read_csv("data/md_active_voters.csv")
-md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names() %>% mutate(county_name = str_to_title(county_name))
+md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names() %>% mutate(county_name = str_to_title(county_name), geoid = as.character(geoid))
 ```
 
 ## Questions 
@@ -57,7 +57,6 @@ md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names(
 **A1.** 
 
 ```{r}
-
 # Calculate the percentage
 md_absentee_ballots <- md_absentee_ballots %>%
   mutate(pct_returned = total_received/total_sent*100) %>% 
@@ -70,100 +69,94 @@ md_absentee_ballots %>%
   geom_bar(aes(x=reorder(county_name,pct_returned), weight=pct_returned)) + 
   coord_flip() +
   labs(
-    title="Smallest Maryland Counties Returning More Absentee Ballots",
-    x = "percentage of ballots returned",
-    y = "county",
+    title="Smaller Maryland Counties Returning More Absentee Ballots",
+    y = "percentage of ballots returned",
+    x = "county",
     caption = "source: Maryland State Board of Elections"
   )
 
 ```
 
-**Q2.** What are the top 10 states that got the most PPP loans per 100,000 people? You MUST do the following things when answering this question:
+**Q2.** What are the top 10 counties with the lowest percentage of ballots returned by Democratic voters, and what is the difference between the percentage returned for Democrats and Republicans in those counties? You MUST do the following things when answering this question:
 
 * Make a codeblock below to write your code in.
-* Use the csv of total PPP loans by state in the data folder (state_ppp_all) as your source for total PPP loans by state.  
-* Use the tidycensus API to get a table of total population by state from the American Community Survey (ACS). To do this, you'll use use the alphanumeric variable for total population, which has the following "label" and "concept": "Estimate!!Total:" and "SEX BY AGE".  
-* Use ggplot to make a horizontal bar chart that shows the top 10 states, with the length of the bar determined by the state's total PPP loans per 100,000 people. Give it an appropriate title, source, and x and y axis titles. 
-* Make the bars on the chart blue! I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out.  
+* Calculate the percentage of ballots returned by both Democrats and Republicans.
+* Arrange the dataframe to show the counties with the smallest percentage of returned ballots from Democrats first.
+* Use ggplot to make a horizontal bar chart that shows just the first 10 counties, with the length of the bar determined by the county's percentage of ballots returned by Democrats. Give it an appropriate title, source, and x and y axis titles. 
 
-**A2.** See the chart.  South Dakota is first through Montana, 10. 
+**A2.** 
 ```{r}
+md_absentee_ballots <- md_absentee_ballots %>%
+  mutate(pct_returned_dem = dem_received/dem_sent*100, pct_returned_rep = rep_received/rep_sent*100, pct_returned_oth = oth_received/oth_sent*100, dem_rep_diff = pct_returned_dem-pct_returned_rep) %>% 
+  arrange(pct_returned_dem)
 
-# Load ACS5 vairables to determine the varialbe number for total population.  Examine in the dataframe viewer. 
-variables <- load_variables(2019, "acs5", cache=TRUE)
-
-# Load a table of state population using get_acs(), and clean it up to keep only state name and total ppulation
-state_total_population <- get_acs(geography='state', variables=c(total_population='B01001_001')) %>%
-  rename(total_population = estimate) %>%
-  clean_names() %>%
-  select(name, total_population)
-
-# Read in the csv of total ppp loans by state.  It has a problem, though, that prevents proper joining in the next step.  North and South Dakota are abbreviated in this data set, but not the population dataset.  Fix this using mutate and case when. 
-state_total_loans <- read_csv("data/state_ppp_all.csv") %>%
-    mutate(state = case_when(
-    state == "N Dakota" ~ "North Dakota",
-    state == "S Dakota" ~ "South Dakota",
-    TRUE ~ state
-  ))
-
-# Join state total loans to population, on state / name, and then calculate loans per 100k.  Sort and keep top 10 records. 
-state_total_loans_population <- state_total_loans %>%
-  inner_join(state_total_population, by=c("state" = "name")) %>%
-  mutate(loans_per_100k = total_ppp_loans/total_population*100000) %>%
-  arrange(desc(loans_per_100k)) %>%
-  head(10)
-
-# Make a ggplot bar chart with geom_bar.  Use "fill" inside geom_bar to make bars blue.  Use coord_flip to make horizontal.  Add labels. 
-state_total_loans_population %>%
-  ggplot() +
-  geom_bar(aes(x=reorder(state,loans_per_100k), weight=loans_per_100k), fill = "blue") +
-  coord_flip() + 
+md_absentee_ballots %>% 
+  head(10) %>% 
+  ggplot() + 
+  geom_bar(aes(x=reorder(county_name,-pct_returned_dem), weight=pct_returned_dem)) + 
+  coord_flip() +
   labs(
-    title="Top 10 states by ppp loans per 100,000 people",
-    x = "State",
-    y = "Loans per 100K",
-    caption = "source: SBA PPP loan; U.S. Census."
-    
-  ) 
+    title="Maryland's Largest Counties Returning Fewer Absentee Ballots",
+    y = "percentage of ballots returned",
+    x = "county",
+    caption = "source: Maryland State Board of Elections"
+  )
 
 ```
 
 **Q3.**  A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis.  For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid. 
 
-Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable.  A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html).  The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
+Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable.  A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html). The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
 
 ```{r}
-knitr::include_graphics(rep("images/chart_2.png"))
+knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
 ```
 
-We're going to use a scatterplot a little differently, to get a visual sense of two key variables: the amount of an approved PPP loan, and the amount that was later forgiven. We'll use it to answer some questions in a broad sense, about loan forgiveness.  This is just a jumping off point for further exploration. 
+We're going to use a scatterplot a little differently, to get a visual sense of two key variables: the percentage of absentee ballots returned by Republican voters in each county, and the percentage of people 65 and older in each county (using Census API data). We'll use them to answer some questions in a broad sense about absentee ballots and Maryland Republicans. This is just a jumping off point for further exploration. 
 
-Our questions include: Were there a lot of people who had their loans fully forgiven?  Were there a lot of people who didn't have their loans forgiven? Were there a lot of people who had some of the loan forgiven? 
+Our questions include: Does the percentage of returned ballots by Republicans vary depending on the percentage of older residents? Which counties see  Republicans returning a greater percentage of absentee ballots and which do not?
+
 To answer those questions, do the following:
 
-1. Start with the a subset of the WV ppp loan data we loaded earlier.
-2. Filter the data to examine only those loans less than $25,000.
-3. There are a bunch of NAs in the forgiveness amount column, for the purposes of this assignment only, let's assume those are actually supposed to be 0. So make all the NAs 0. 
-4. Make a scatterplot. I didn't show you how to do this, so look it up! 
-5. In the answer space below, describe what you see and answer the questions posed above.  In a general sense, what do you think this means?  
+1. Join the two MD dataframes (absentee ballots and active voters) using the county names in each.
+2. Calculate the percentage of registered Republicans in each county.
+3. Use tidycensus to create a dataframe with the total population of each Maryland county and its population aged 65 and over. You should include both variables in your get_acs() function and use `output="wide"` to make it easy to calculate a percentage.
+4. Join the Census dataframe to your combined MD dataframe using GEOID.
+4. Make a scatterplot showing the percentage of ballots returned by Republicans in each county on one axis and the percentage of residents 65+ in each county on the other axis. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
+4. Give it an appropriate title, source, and x and y axis titles.
+5. Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible.
+6. In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means?  
 
-**A3.**  This data shows that there were a lot of loans that a lot of loans were totally forgiven. Those are represented by the overlapping points running at a 45 degree angle from the bottom left to the top right of the graphic.  And there were a lot of loans that weren't forgiven at all.  That's represented by the overlapping points running in a straight line on the x axis (bottom left to bottom right).  And then there a smaller collection of loans in the middle space, that were partially forgiven. If you look closely, you'll see the traces of a broken line running parallell to the loans that were totally forgiven. Could this suggest that there's some formula the SBA used to determine forgiveness? Loans forgiven except for 10 percent, 20 percent, 30 percent. 
+**A3.**  
 
 ```{r}
+md_ballots_and_voters <- md_absentee_ballots %>%
+  inner_join(md_active_voters, by=c("county_name"="County")) %>% 
+  mutate(pct_rep = REP/TOTAL*100)
+  
+md_older_population <- get_acs(geography = "county",
+                               variables = c('total_pop' = 'B01001_001', '65_plus' ="B16004_046"),
+                               year = 2020,
+                               state = 'MD',
+                               output = 'wide'
+                               )
 
-# Load PPP loan data for WV
-ppp_wv_loans <- read_rds("data/lab_09.rds")
+md_older_population <- md_older_population %>% 
+  mutate(pct_65plus = `65_plusE`/total_popE *100)
 
-# Filter to keep only loans less than $25K, use mutate, case when and is.na to convert all NAs to 0. 
-ppp_wv_loans <- ppp_wv_loans %>%
-  filter(amount < 25000) %>%
-  mutate(forgiveness_amount = case_when(
-    is.na(forgiveness_amount) ~ 0,
-    TRUE ~ forgiveness_amount
-  )) 
+md_ballots_and_pop <- md_ballots_and_voters %>% 
+  inner_join(md_older_population, by=c('geoid'='GEOID'))
+
 
 # Plot it using geom_point.
-ppp_wv_loans %>%
+md_ballots_and_pop %>%
   ggplot() +
-  geom_point(aes(x=amount,y=forgiveness_amount)) 
+  geom_point(aes(x=pct_65plus,y=pct_returned_rep)) +
+  geom_text(aes(x=pct_65plus,y=pct_returned_rep, label=county_name), vjust=1) +
+  labs(
+    title="Maryland Counties with Older Populations Return Absentee Ballots Faster",
+    y = "percentage of ballots returned",
+    x = "percent 65+ population",
+    caption = "source: Maryland State Board of Elections"
+  )
 ```
