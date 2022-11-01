@@ -118,7 +118,8 @@ Our questions include: Does the percentage of returned ballots by Republicans va
 
 To answer those questions, do the following:
 
-1. Join the two MD dataframes (absentee ballots and active voters) using the county names in each.
+1. Load in the early voting CSV data produced by the state that is located here: https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv.
+
 2. Calculate the percentage of registered Republicans in each county.
 3. Use tidycensus to create a dataframe with the total population of each Maryland county and its population aged 65 and over. You should include both variables in your get_acs() function and use `output="wide"` to make it easy to calculate a percentage.
 4. Join the Census dataframe to your combined MD dataframe using GEOID.
@@ -130,9 +131,7 @@ To answer those questions, do the following:
 **A3.**  
 
 ```{r}
-md_ballots_and_voters <- md_absentee_ballots %>%
-  inner_join(md_active_voters, by=c("county_name"="County")) %>% 
-  mutate(pct_rep = REP/TOTAL*100)
+md_early_voting <- read_csv("https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv")
   
 md_older_population <- get_acs(geography = "county",
                                variables = c('total_pop' = 'B01001_001', '65_plus' ="B16004_046"),
