@@ -9,13 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## You will need
-
-* A Census API key
-
 ## Load libraries and establish settings
 
-**Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts and using Census data.
+**Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts and cleaning up data.
 
 ```{r}
 # Turn off scientific notation
@@ -25,9 +21,7 @@ options(scipen=999)
 library(tidyverse)
 library(tidycensus)
 library(janitor)
-
-# Establish API Key for Census
-census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
+library(ggrepel)
 
 ```
 
@@ -36,14 +30,9 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 **Task** Create a codeblock and load the following data from the data folder:
 
 * Maryland active registered voters - `md_active_voters.csv`
-* Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
-
-You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
-
 
 ```{r}
 md_active_voters <- read_csv("data/md_active_voters.csv")
-md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names() %>% mutate(county_name = str_to_title(county_name), geoid = as.character(geoid))
 ```
 
 ## Questions 
@@ -112,50 +101,50 @@ Statisticians use scatterplots to show graphically whether one variable is corre
 knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
 ```
 
-We're going to use a scatterplot a little differently, to get a visual sense of two key variables: the percentage of absentee ballots returned by Republican voters in each county, and the percentage of people 65 and older in each county (using Census API data). We'll use them to answer some questions in a broad sense about absentee ballots and Maryland Republicans. This is just a jumping off point for further exploration. 
+We're going to use a scatterplot a little differently, to get a visual sense of two key variables: 
 
-Our questions include: Does the percentage of returned ballots by Republicans vary depending on the percentage of older residents? Which counties see  Republicans returning a greater percentage of absentee ballots and which do not?
+Our questions include: Does the percentage of returned ballots by younger voters vary depending on the percentage of younger residents? Are there differences in party and gender? Do certain counties have a higher number of younger voters casting ballots early?
 
 To answer those questions, do the following:
 
-1. Load in the early voting CSV data produced by the state that is located here: https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv.
-
-2. Calculate the percentage of registered Republicans in each county.
-3. Use tidycensus to create a dataframe with the total population of each Maryland county and its population aged 65 and over. You should include both variables in your get_acs() function and use `output="wide"` to make it easy to calculate a percentage.
-4. Join the Census dataframe to your combined MD dataframe using GEOID.
-4. Make a scatterplot showing the percentage of ballots returned by Republicans in each county on one axis and the percentage of residents 65+ in each county on the other axis. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
+1. Load in the early voting data here: https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv and isolate the 18-24 age group.
+2. Create a dataframe adding up the total number of early votes cast, grouping by GEOID, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
+3. Replace that dataframe with a version that uses `pivot_wider` to turn the gender values into columns (https://tidyr.tidyverse.org/reference/pivot_wider.html#ref-examples), rename the NA column to "UNK" and then replace any NAs in the gender columns with 0s using the same approach you used in step 2. Finally, calculate the total number of votes cast and the percentage of male and female early voters for each county.
+4. Make a scatterplot showing the percentage of early votes cast by gender in each county, with male and female on separate axes. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
 4. Give it an appropriate title, source, and x and y axis titles.
-5. Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible.
-6. In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means?  
+5. Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible - 
+6. In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
 **A3.**  
 
 ```{r}
-md_early_voting <- read_csv("https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv")
-  
-md_older_population <- get_acs(geography = "county",
-                               variables = c('total_pop' = 'B01001_001', '65_plus' ="B16004_046"),
-                               year = 2020,
-                               state = 'MD',
-                               output = 'wide'
-                               )
+md_early_voting <- read_csv("https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv") %>% filter(AgeGroup == '18-24')
 
-md_older_population <- md_older_population %>% 
-  mutate(pct_65plus = `65_plusE`/total_popE *100)
+md_early_voting <- md_early_voting %>% mutate(fips_code = case_when(
+  COUNTY_CODE < 10 ~ paste0("2400",COUNTY_CODE),
+  COUNTY_CODE >= 10 ~ paste0("240",COUNTY_CODE))
+) %>% 
+  mutate(across(where(is.numeric), ~ replace_na(., 0))) %>% 
+  select(-Day7, -Day8)
 
-md_ballots_and_pop <- md_ballots_and_voters %>% 
-  inner_join(md_older_population, by=c('geoid'='GEOID'))
-
+md_early_voting_county_gender <- md_early_voting %>% 
+  group_by(fips_code, COUNTY_NAME, GENDER_CODE) %>% 
+  summarize(total = sum(c_across(starts_with('Day')))) %>% 
+  pivot_wider(names_from = GENDER_CODE, values_from = total) %>% 
+  rename(UNK = `NA`) %>% 
+  mutate(across(where(is.numeric), ~ replace_na(., 0))) %>% 
+  mutate(total = M + F + UNK) %>% 
+  mutate(pct_male = M/total *100, pct_female = F/total * 100)
 
 # Plot it using geom_point.
-md_ballots_and_pop %>%
+md_early_voting_county_gender %>%
   ggplot() +
-  geom_point(aes(x=pct_65plus,y=pct_returned_rep)) +
-  geom_text(aes(x=pct_65plus,y=pct_returned_rep, label=county_name), vjust=1) +
+  geom_point(aes(x=pct_male,y=pct_female)) +
+  geom_text_repel(aes(x=pct_male,y=pct_female, label=COUNTY_NAME), position=position_jitter(width=1,height=-1)) +
   labs(
-    title="Maryland Counties with Older Populations Return Absentee Ballots Faster",
-    y = "percentage of ballots returned",
-    x = "percent 65+ population",
+    title="Significant Gender Gaps in Younger Maryland Early Voters",
+    y = "percent female",
+    x = "percent male",
     caption = "source: Maryland State Board of Elections"
   )
 ```
