@@ -25,6 +25,9 @@ options(scipen=999)
 **Task** Create a codeblock and load the following data from the data folder:
 
 * Maryland active registered voters - `md_active_voters.csv`
+* Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
+
+You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
 
 ```{r}
 ```

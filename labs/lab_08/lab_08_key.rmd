@@ -30,9 +30,13 @@ library(ggrepel)
 **Task** Create a codeblock and load the following data from the data folder:
 
 * Maryland active registered voters - `md_active_voters.csv`
+* Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
+
+You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
 
 ```{r}
 md_active_voters <- read_csv("data/md_active_voters.csv")
+md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names()
 ```
 
 ## Questions 
@@ -58,7 +62,7 @@ md_absentee_ballots %>%
   geom_bar(aes(x=reorder(county_name,pct_returned), weight=pct_returned)) + 
   coord_flip() +
   labs(
-    title="Smaller Maryland Counties Returning More Absentee Ballots",
+    title="Smaller Maryland Counties Returning More Mail Ballots",
     y = "percentage of ballots returned",
     x = "county",
     caption = "source: Maryland State Board of Elections"
@@ -140,7 +144,7 @@ md_early_voting_county_gender <- md_early_voting %>%
 md_early_voting_county_gender %>%
   ggplot() +
   geom_point(aes(x=pct_male,y=pct_female)) +
-  geom_text_repel(aes(x=pct_male,y=pct_female, label=COUNTY_NAME), position=position_jitter(width=1,height=-1)) +
+  geom_text_repel(aes(x=pct_male,y=pct_female, label=COUNTY_NAME), position=position_jitter(width=1,height=1)) +
   labs(
     title="Significant Gender Gaps in Younger Maryland Early Voters",
     y = "percent female",
