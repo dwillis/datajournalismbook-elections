@@ -107,12 +107,12 @@ knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-crea
 
 We're going to use a scatterplot a little differently, to get a visual sense of two key variables: 
 
-Our questions include: Does the percentage of returned ballots by younger voters vary depending on the percentage of younger residents? Are there differences in party and gender? Do certain counties have a higher number of younger voters casting ballots early?
+Our questions include: Does the percentage of early votes cast by younger voters vary depending on the county? Are there differences in gender?
 
 To answer those questions, do the following:
 
 1. Load in the early voting data here: https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv and isolate the 18-24 age group.
-2. Create a dataframe adding up the total number of early votes cast, grouping by GEOID, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
+2. Create a dataframe adding up the total number of early votes cast, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
 3. Replace that dataframe with a version that uses `pivot_wider` to turn the gender values into columns (https://tidyr.tidyverse.org/reference/pivot_wider.html#ref-examples), rename the NA column to "UNK" and then replace any NAs in the gender columns with 0s using the same approach you used in step 2. Finally, calculate the total number of votes cast and the percentage of male and female early voters for each county.
 4. Make a scatterplot showing the percentage of early votes cast by gender in each county, with male and female on separate axes. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
 4. Give it an appropriate title, source, and x and y axis titles.
