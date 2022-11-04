@@ -30,64 +30,44 @@ library(sf)
 library(janitor)
 ```
 
-First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ESRI, which created the most widely-used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
+First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ERSI, which created the most widely used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
 
-So more often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified. There's also a newer format from ESRI called a geodatabase (.gdb) that contains all of the elements that shapefiles do. We can use the `sf` library to read either format.
+So more often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified.
 
-The data we're going to be working with is a file from the Maryland Citizens Redistricting Commission showing data about political districts in the state and their demographic characteristics.
+You also might be working with a GeoDatabase, or a .gdb file. That's a slightly different, more compact version of a Shapefile.
+
+The data we're going to be working with is a GeoDatabase from the [Prince George's County Department of Planning](https://gisdata.pgplanning.org/opendata/) that contains information about the county's election precincts.
 
 Similar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our hospitals data. And then glimpse it to look at the columns.
 
 ```{r}
-blocks <- st_read("data/Adjusted2020.gdb")
+pg_precincts <- st_read("data/Election_Precinct_2022_Py.gdb")
 
-glimpse(blocks)
+glimpse(pg_precincts)
 ```
 
-This looks like a normal dataframe, and mostly it is.  We have one row per Census block - the smallest geographic census unit - and each column is some feature of that block: the census tract, county and state it is located in and more.  What sets this data apart from other dataframes we've used is the last column, "geometry", which is of a new data type.  It's not a character or a number, it's a "MULTIPOLYGON", which is composed of a shape that, when we plot it on a map, will be highlighted. If you've ever filled in a "connect the dots" picture by drawing lines between points, in order to reveal a hidden shape, then you're familiar with the concept.
+This looks like a normal dataframe, and mostly it is.  We have one row per precinct, and each column is some feature of that precinct: the ID, name and more.  What sets this data apart from other dataframes we've used is the last column, "Shape", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
 
-You can see the [full description of the data](https://redistricting.maryland.gov/Documents/Data/DataDictionary.pdf).
+Let's look at these precincts. We have 356 of them, according to this data.
 
-Let's look at just Baltimore City census blocks. Good news -- `sf` plays very nicely with the tidyverse, so we can filter data the way we are accustomed. The County column represents what is called a FIPS code, which is a unique code for a geographic unit like state or county. All Maryland FIPS codes begin with "24", which is the code for the state as a whole.
-
-```{r}
-baltimore_city_blocks <- blocks %>%
-  filter(County == "24510")
-
-baltimore_city_blocks
-```
-
-We have 10,025 blocks, according to this data. Now we can try to get a sense of the population in them. In how many blocks does the number of Hispanic population 18 and over exceed both non-Hispanic white 18 and over population and non-Hispanic Black 18 and over population?
+But where in Prince George's County are these places? We can simply plot them on a longitude-latitude grid using ggplot and geom_sf.
 
 ```{r}
-baltimore_city_blocks %>%
-  filter(Adj_H18__Pop > Adj_NH18__Wht & Adj_H18__Pop > Adj_NH18__Blk)
-```
-
-So there are 386 Census blocks with adult Hispanic population greater than either white or Black adult population. Where are they? We can simply plot them on a longitude-latitude grid using ggplot.
-
-```{r}
-baltimore_hispanic_blocks <- baltimore_city_blocks %>%
-  filter(Adj_H18__Pop > Adj_NH18__Wht & Adj_H18__Pop > Adj_NH18__Blk)
-```
-
-
-```{r}
-baltimore_hispanic_blocks %>%
+pg_precincts %>%
   ggplot() +
   geom_sf() +
   theme_minimal()
 ```
 
-Each shape is a Census block.
+Each shape is a precinct, with the boundaries plotted according to its degrees of longitude and latitude.
 
-If you know anything about the shape of Baltimore, you can kinda identify it here. The untouched area in the lower right is probably the harbor, right? But this map is not exactly ideal. It would help to have a state and county map layered underneath of it, to help make sense of the spatial nature of this data.
+If you know anything about Prince George's, you can kinda pick out the geographic context here. To the west is the District of Columbia, for example. College Park is near the top. But this map is not exactly ideal. It would help to have a state and county map layered underneath of it, to help make sense of the spatial nature of this data.
 
-This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland jurisdiction outlines.
+This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland county outlines.
 
 Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census.  The package is called `tigris` and it's developed by the same person who made `tidycensus`.
 
-In the console, install tigris with the install packages function
+In the console, install tigris with `install.packages('tigris')`
 
 Then load it:
 
@@ -130,7 +110,7 @@ baltimore_city <- md_counties %>%
   filter(COUNTYFP == "510")
 ```
 
-With this map, we can layer our Census block data.
+With this county map, we can layer our places data.
 
 Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
 
@@ -138,44 +118,37 @@ We're also going to change things up a bit to put the datasets we want to displa
 
 ```{r}
 ggplot() +
-  geom_sf(data=baltimore_city) +
-  geom_sf(data=baltimore_hispanic_blocks) +
+  geom_sf(data=md_counties %>% filter(COUNTYFP == "033")) +
+  geom_sf(data=pg_precincts) +
   theme_minimal()
 ```
-What can we tell from this?
+Notice the subtle differences at the boundaries?
 
-Well, Census blocks where adult Hispanic population outnumbers both white and Black adult population are clustered in the city's eastern and southwestern areas. There are fewer such blocks in the northern parts of the city. We're also missing the water - the harbor, rivers and streams. But we can add those, too! The city offers various GIS data, including the [locations of waterways](https://data.baltimorecity.gov/datasets/water/explore?location=89.796632%2C-66.364958%2C0.00).
-
+Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](https://elections.maryland.gov/press_room/2022_stats/Official%20by%20Party%20and%20Precinct.csv) to determine this. 
 
 ```{r}
-water <- st_read("data/Water.shp")
+primary_22 <- read_csv("data/Official by Party and Precinct.csv") %>% clean_names()
+pg_turnout <- primary_22 %>% 
+  filter(lbe == "Prince George's") %>% 
+  group_by(precinct) %>% 
+  summarise(total_polls = sum(polls), total_early = sum(early_voing), total_absentee = sum(absentee), total_provisional = sum(provisional), total_eligible = sum(eligible_voters))
+
+View(pg_turnout)
 ```
 
-Now let's add that to our previous map. The order here matters - we want the outline of the city first, followed by water and then the Hispanic population blocks:
+Now we can join the precincts to the turnout data.
+
+```{r}
+pg_precincts_with_turnout <- pg_precincts %>% left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
+```
+
+Now we can use color to distinguish precincts from each other. Let's use the total eligible voters to start with, and we'll use a color scale that will help us see the differences:
 
 ```{r}
 ggplot() +
-  geom_sf(data=baltimore_city) +
-  geom_sf(data=water) +
-  geom_sf(data=baltimore_hispanic_blocks) +
-  theme_minimal()
-```
-
-
-Better, but this is a pretty blunt visualization. Not all Census blocks are equally sized. Some have more people than the others, for example. It's hard to differentiate that here.
-
-We can get a sense of where the largest Hispanic populations are, by changing the color of the shapes according to the number of people. We do this by setting the aesthetic -- or aes -- to use the Adj_H18__POP column inside of the geom_sf function.  To make the differences easier to see, we're going to change the fill of the city white, too, and use a special color palette, viridis magma. We're also going to make the shapes slightly bigger.
-
-
-```{r}
-
-ggplot() +
-  geom_sf(data=baltimore_city, fill="white") +
-  geom_sf(data=water) +
-  geom_sf(data=baltimore_hispanic_blocks, aes(color=Adj_H18__Pop), size=2) +
+  geom_sf(data=pg_precincts_with_turnout, aes(fill=total_eligible)) +
   scale_colour_viridis_b(option="magma") +
   theme_minimal()
-
 ```
 
-With these changes, what else can we make out here?  Well, definitely the eastern and southwestern blocks have larger Hispanic populations, and then there's the northwest corner that stands out, too. You should have questions.
+With these changes, what else can we make out here? First, you can pretty easily spot our "ghost precincts" - they are the ones in white, where there are no eligible voters. But you also can see that there's some pretty big variation among the number of eligible voters per precinct across the county, with some very large ones in the middle.

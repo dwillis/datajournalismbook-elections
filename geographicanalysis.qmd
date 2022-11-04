@@ -1,6 +1,6 @@
 # Geographic analysis
 
-In the previous chapter, we looked at the demographics of Census blocks in Baltimore city and made a nice map. Let's go little further and combine demographic data with political data to learn more about Maryland's political geography.
+In the previous chapter, we looked at election precincts in Prince George's County to show a bit of a pattern regarding concentration of the precincts with the most and 0 eligible voters. Let's go little further and look at voters statewide.
 
 First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
 
@@ -14,75 +14,138 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 
 ```
 
-And now let's load a dataframe of Maryland county population information from the 2020 Census, but this time we'll add in county geographic data.
+For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in voter registration by county in Maryland. Our question: by examining the number of Democrats/Republicans/Unaffiliated voters per 100,000 people in each county, what regional geographic patterns can we identify?
+
+We've got voters by county, so let's load that and take a look:
 
 ```{r}
-#| error: true
+voters_by_county <- read_csv("data/eligible_voters.csv")
 
-maryland_counties <- read_csv("data/md_counties_2020.csv")
-maryland_county_shapes <- st_read("data/Maryland2020_County.json")
-
-maryland_counties_with_shapes <- maryland_counties %>% inner_join(maryland_county_shapes, by=c('GEOID'='GEOID20'))
-
-```
-And there's that join error: we've got incompatible data types. We can quickly fix that:
-
-```{r}
-maryland_counties <- read_csv("data/md_counties_2020.csv") %>% mutate(GEOID = as.character(GEOID))
-maryland_county_shapes <- st_read("data/Maryland2020_County.json")
-
-maryland_counties_with_shapes <- maryland_counties %>% inner_join(maryland_county_shapes, by=c('GEOID'='GEOID20'))
-```
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in registered voters and population by county and in Maryland. Our starting question: by examining the number of voters and the population in each county, what regional geographic patterns can we identify?
-
-First we need to load voter registration data - since the population data is from 2020, we'll use the county totals as of the 2020 general election. And we'll make sure that the FIPS code that we need to join on is a character column:
-
-```{r}
-maryland_voters_by_county <- read_csv("data/maryland_voters_2020g.csv") %>% mutate(FIPS=as.character(FIPS))
+voters_by_county %>% arrange(desc(TOTAL))
 ```
 
-Now let's combine our two dataframes:
+So, what do we see here? Montgomery County has the most, followed by Prince George's & Baltimore County. Checks out.
+
+Next, we'll go out and get population data for each county from tidycensus. The variable for total population is B01001_001.  
 
 ```{r}
-maryland_voters_by_county_with_pop <- maryland_voters_by_county %>% inner_join(maryland_counties_with_shapes, by=c('FIPS'='GEOID'))
+md_county_population <- get_acs(geography = "county",
+              variables = c(population = "B01001_001"),
+              state = "MD")
+
+md_county_population
 ```
 
-Now we can do some calculations and visualize them on a map. Let's calculate the number of Unaffiliated (no party) voters per 10,000 people and take a look at just the numbers.
+Ultimately, we're going to join this county population table with our voters by county table, and then calculate a voters per 50,000 people statistic.  But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile.  Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
 
 ```{r}
-md_una_per_10k <- maryland_voters_by_county_with_pop %>%
-  mutate(una_per_10k = UNA/TOTAL_POP*10000) %>%
-  arrange(desc(una_per_10k)) %>%
-  select(County, DEM, REP, OTH, UNA, TOTAL, una_per_10k, geometry)
+md_county_population <- get_acs(geography = "county",
+              variables = c(population = "B01001_001"),
+              state = "MD",
+              geometry = TRUE)
 
-md_una_per_10k
+md_county_population
 ```
-Let's take a look at the result of this table. We might call this where the swing voters are, although political science tells us that most independents actually vote with a party most of the time. Frederick, Howard, Calvert, Anne Arundel and Carroll counties all have some competitive races at the local and state level, so that makes some sense. Montgomery, the state's largest jurisdiction, has more independents than Republicans.
 
-Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 10K on a color gradient.
+We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
+
+The next step will be to join our population data to our voter data on the county column.
+
+But there's a problem.  The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it.  The voter data just has the name of the county.  For example, the population data has "Anne Arundel County, Maryland" and the voter data has "Anne Arundel".
 
 ```{r}
-#| error: true
+md_county_population
 
+voters_by_county
+```
+
+If they're going to join properly, we need to clean one of them up to make it match the other.  
+
+Let's clean the population table. We're going to rename the "NAME" column to "County", then remove ", Maryland" and "County" and make the county titlecase. Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
+
+```{r}
+md_county_population <- md_county_population %>%
+  rename(County = NAME) %>%
+  mutate(County = str_to_title(str_remove_all(County,", Maryland|County"))) %>%
+  mutate(County = str_trim(County,side="both")) %>%
+  rename(population = estimate) %>%
+  select(County, population, geometry)
+
+md_county_population
+```
+
+Now we can join them.  
+
+```{r}
+md_voters_per_10k <- md_county_population %>%
+  left_join(voters_by_county)
+
+md_voters_per_10k
+```
+
+Hang on - there's at least one county with NA values - St. Mary's, which is spelled "Saint Mary's" in the voter dataframe. And Baltimore County didn't match, either. Let's fix that using if_else, which allows us to conditionally mutate:
+
+```{r}
+md_county_population <- md_county_population %>%
+  mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) %>% 
+  mutate(County = if_else(County == "Baltimore", "Baltimore County", County))
+```
+
+Our final step before visualization, let's calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.
+
+```{r}
+md_voters_per_10k <- md_county_population %>%
+  left_join(voters_by_county) %>%
+  mutate(voters_per_10k = TOTAL/population*10000) %>%
+  arrange(desc(voters_per_10k))
+
+md_voters_per_10k
+```
+
+Let's take a look at the result of this table.  There are some surprising ones at the top, some of Maryland's smallest counties! Worcester, Queen Anne's, Talbot may not have that many voters, but they also don't have a lot of people.  
+
+Okay, now let's visualize.  We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of voters per 10K on a color gradient.
+
+```{r}
 ggplot() +
-  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k)) +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
   theme_minimal()
 ```
-So this error message is pretty sneaky, because it's saying that it can't find a geometry column. But we *have* a geometry column - it's called geometry! What's happening here is that ggplot expects certain details in order to be able to locate the column with geometry in it, and sometimes when we build a new dataframe through joins those details get dropped. Luckily, we can explicitly tell ggplot where to find it:
 
-```{r}
-ggplot() +
-  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k, geometry=geometry)) +
-  theme_minimal()
-```
 This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_una_per_10k, aes(fill=una_per_10k, geometry=geometry)) +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
   theme_minimal() +
   scale_fill_viridis_b(option="magma")
 ```
-Some interesting regional patterns finally emerge.
 
-The highest number of unaffiliated voters per capita are clustered close to DC and Baltimore, with the notable exception of Prince George's County. The further west you go, the lower number of unaffiliated voters per capita there are (and that's somewhat true for the Eastern Shore, too). You could swap out UNA for Republicans or Democrats, or look at this another way, but what you're trying to see here are potential patterns for further exploration.
+The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between other counties.
+
+So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
+  theme_minimal() +
+  scale_fill_viridis_b(option="magma",trans = "log")
+```
+
+Let's repeat that for Unaffiliated voters:
+
+```{r}
+md_voters_per_10k <- md_voters_per_10k %>% 
+  mutate(una_voters_per_10k = UNA/population*10000)
+```
+
+And then map it:
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=una_voters_per_10k)) +
+  theme_minimal() +
+  scale_fill_viridis_b(option="magma",trans = "log")
+```
+
+What regional patterns do you see, especially on the ends of the scale?
