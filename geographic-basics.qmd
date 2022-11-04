@@ -78,6 +78,7 @@ library(tigris)
 Now, let's use the counties() function from tigris to pull down a shapefile of all U.S. counties.
 
 ```{r}
+#| output: false
 
 counties <- counties()
 
