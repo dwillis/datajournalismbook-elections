@@ -150,7 +150,7 @@ md_counties %>%
   theme_minimal()
 ```
 
-With this county map, we can layer our places data.
+With this county map, we can layer our places data. We'll narrow it down to just Prince George's County to get an outline.
 
 Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
 
@@ -161,15 +161,14 @@ We're also going to change things up a bit to put the datasets we want to displa
 **Answer**
 
 ```{r}
-
 ggplot() +
-  geom_sf(data=md_counties) +
+  geom_sf(data=md_counties %>% filter(COUNTYFP == "033")) +
   geom_sf(data=pg_precincts) +
   theme_minimal()
 ```
-Now we can put Prince George's in a broader state context, and we could load data for the state's entire set of election precincts if we wanted to.
+Notice the subtle differences at the boundaries?
 
-But let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](https://elections.maryland.gov/press_room/2022_stats/Official%20by%20Party%20and%20Precinct.csv) to determine this. 
+Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](https://elections.maryland.gov/press_room/2022_stats/Official%20by%20Party%20and%20Precinct.csv) to determine this. 
 
 ### Task: Run code to load the turnout data from the July 2022 Primary election
 **Task** Run the following code. Describe the output in the space below.
@@ -184,7 +183,7 @@ pg_turnout <- primary_22 %>%
 
 View(pg_turnout)
 ```
-
+Now we can join the precincts to the turnout data.
 
 ### Task: Run code to join the precinct shapes with the voter turnout data
 **Task** Run the following code. Describe the output in the space below.
@@ -201,12 +200,10 @@ Now we can use color to distinguish precincts from each other. Let's use the tot
 **Answer**
 
 ```{r}
-
 ggplot() +
   geom_sf(data=pg_precincts_with_turnout, aes(fill=total_eligible)) +
   scale_colour_viridis_b(option="magma") +
   theme_minimal()
-
 ```
 
 With these changes, what else can we make out here? First, you can pretty easily spot our "ghost precincts" - they are the ones in white, where there are no eligible voters. But you also can see that there's some pretty big variation among the number of eligible voters per precinct across the county, with some very large ones in the middle.
@@ -251,7 +248,6 @@ Next, we'll go out and get population data for each county from tidycensus. The 
 **Answer**
 
 ```{r}
-
 md_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
               state = "MD")
@@ -261,13 +257,11 @@ md_county_population
 
 Ultimately, we're going to join this county population table with our voters by county table, and then calculate a voters per 50,000 people statistic.  But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile.  Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
 
-
 ### Task: Run code
 **Task** Run the following code. Describe the output in the space below.
 **Answer**
 
 ```{r}
-
 md_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
               state = "MD",
@@ -275,20 +269,17 @@ md_county_population <- get_acs(geography = "county",
 
 md_county_population
 ```
-
 We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
 
-The next step will be to join our population data to our hospital bed data on the county column.
+The next step will be to join our population data to our voter data on the county column.
 
-But there's a problem.  The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it.  The voter data just has the name of the county.  For example, the population data has "Anne Arundel County, Maryland" and the beds data has "Anne Arundel".
-
+But there's a problem.  The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it.  The voter data just has the name of the county.  For example, the population data has "Anne Arundel County, Maryland" and the voter data has "Anne Arundel".
 
 ### Task: Run code
 **Task** Run the following code. Describe the output in the space below.
 **Answer**
 
 ```{r}
-
 md_county_population
 
 voters_by_county
@@ -311,11 +302,8 @@ md_county_population <- md_county_population %>%
   select(County, population, geometry)
 
 md_county_population
-
 ```
-
 Now we can join them.  
-
 
 ### Task: Run code
 **Task** Run the following code. Describe the output in the space below.
@@ -329,6 +317,9 @@ md_voters_per_10k
 ```
 Hang on - there's at least one county with NA values - St. Mary's, which is spelled "Saint Mary's" in the voter dataframe. And Baltimore County didn't match, either. Let's fix that using if_else, which allows us to conditionally mutate:
 
+### Task: Run code
+**Task** Run the following code. Describe the output in the space below.
+**Answer**
 
 ```{r}
 md_county_population <- md_county_population %>%
@@ -337,7 +328,6 @@ md_county_population <- md_county_population %>%
 ```
 
 Our final step before visualization, let's calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.
-
 
 ### Task: Run code
 **Task** Run the following code. Describe the output in the space below.
@@ -367,7 +357,6 @@ ggplot() +
 ```
 This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
 
-
 ### Task: Run code
 **Task** Run the following code. Describe the output in the space below.
 **Answer**
@@ -378,7 +367,7 @@ ggplot() +
   theme_minimal() +
   scale_fill_viridis_b(option="magma")
 ```
-The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between counties.
+The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between other counties.
 
 So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
 
@@ -406,7 +395,7 @@ md_voters_per_10k <- md_voters_per_10k %>%
 And then map it:
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the lower end of the scale?
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale?
 **Answer** 
 
 ```{r}
