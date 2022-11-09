@@ -1,7 +1,7 @@
 ---
 title: "lab_09"
-author: "sean mussenden"
-date: "8/26/2021"
+author: "Derek Willis"
+date: "11/09/2022"
 output: html_document
 ---
 
@@ -11,62 +11,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* A Census API key
+* the tidyverse, janitor and tigris libraries
+* you might choose to use the tidycensus library for Q3
 
 ## Load libraries and establish settings
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab.
 
-## Questions
+```{r}
+# Turn off scientific notation
+options(scipen=999)
 
-**Q1.** Which day in April 2020 saw the most loans approved in West Virginia? 
+# Load libraries
 
-You MUST do the following things when answering this question:
-* Use the WV ppp loan data, which is in the data folder and is called lab_09.rds.
-* Make a line chart with ggplot that:
-  * has each date in April (i.e. 04-01-20, 04-02-20) labeled on the x axis (and only dates in April, no other month). To clarify, no data for any other month than April 2020 should appear on the chart. 
-  * sets the height of the line for any given date -- its y axis value -- to the total number of loans on that date.
-  * has an appropriate title, source, and x and y axis titles. 
-  * adds a small circle (called a "point") on the line for dates that had loans. And to the left of each circle/point, shows the number of loans on that date.  I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out! 
+```
 
-Basically, your chart should look like this image, which will appear when you run the codeblock below. 
+Let's explore the election results from last night and make some maps! 
+
+## Questions 
+
+**Q1.** Make a county-level map of Maryland's results for governor, calculating the difference between Wes Moore's percentage of the total votes and Dan Cox's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
+
+**A1.**  
 
 ```{r}
-knitr::include_graphics(rep("images/chart_1.png"))
 ```
-**A1.** 
 
-**Q2.** What are the top 10 states that got the most PPP loans per 100,000 people? You MUST do the following things when answering this question:
+**Q2.** Make another map showing the difference between Dan Cox's county-level performance in 2022 and Larry Hogan's in 2018, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2018 results and join them to it before proceeding. Are there any counties where Cox got a higher percentage than Hogan? How would you describe the map showing the Hogan-Cox difference?
 
-* Make a codeblock below to write your code in.
-* Use the csv of total PPP loans by state in the data folder (state_ppp_all) as your source for total PPP loans by state.  
-* Use the tidycensus API to get a table of total population by state from the American Community Survey (ACS). To do this, you'll use use the alphanumeric variable for total population, which has the following "label" and "concept": "Estimate!!Total:" and "SEX BY AGE".  
-* Use ggplot to make a horizontal bar chart that shows the top 10 states, with the length of the bar determined by the state's total PPP loans per 100,000 people. Give it an appropriate title, source, and x and y axis titles. 
-* Make the bars on the chart blue! I didn't show you how to do this in the prelab, so do some web sleuthing to figure it out.  
+Also answer this: is a map the best way to present this data? What else could you make that might convey more information?
 
 **A2.** 
 
-**Q3.**  A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis.  For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid. 
-
-Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable.  A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html).  The scatterplot below (press play to load the image) shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
-
 ```{r}
-knitr::include_graphics(rep("images/chart_2.png"))
 ```
 
-We're going to use a scatterplot a little differently, to get a visual sense of two key variables: the amount of an approved PPP loan, and the amount that was later forgiven. We'll use it to answer some questions in a broad sense, about loan forgiveness.  This is just a jumping off point for further exploration. 
-
-Our questions include: Were there a lot of people who had their loans fully forgiven?  Were there a lot of people who didn't have their loans forgiven? Were there a lot of people who had some of the loan forgiven? 
-
-To answer those questions, make a codeblock and do the following:
-
-1. Start with the a subset of the WV ppp loan data we loaded earlier.
-2. Filter the data to examine only those loans less than $25,000.
-3. There are a bunch of NAs in the forgiveness amount column, for the purposes of this assignment only, let's assume those are actually supposed to be 0. So make all the NAs 0. 
-4. Make a scatterplot. I didn't show you how to do this, so look it up! 
-5. In the answer space below, describe what you see and answer the questions posed above.  In a general sense, what do you think this means?  
+**Q3.** Choose your own map adventure! In the data folder I've included county-level results for several other 2022 contests, including the Comptroller, Attorney General and the marijuana legalization amendment. I've also added the 2020 presidential results by county. Using one of the 2022 races that we haven't already used and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
 
 **A3.**  
 
+```{r}
 
+```
 -30-
