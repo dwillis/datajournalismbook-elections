@@ -41,7 +41,7 @@ Let's explore the election results from last night and make some maps!
 md_gov <- read_csv("data/md_gov_county.csv") %>% 
   clean_names() %>% 
   mutate(geoid = as.character(geoid)) %>% 
-  mutate(total = cox + moore + lashar + wallace + harding) %>% 
+  mutate(total = cox + moore + lashar + wallace + harding + write_ins) %>% 
   mutate(pct_moore = moore/total * 100, pct_cox = cox/total *100, moore_cox_diff = pct_moore - pct_cox)
 
 counties <- counties()
