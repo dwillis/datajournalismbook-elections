@@ -67,69 +67,32 @@ knitr::include_graphics("images/datawrapper6.png")
 
 ### Making a Map
 
-Let's create a choropleth map - one that shows the data we displayed above in geographic terms. Let's take the `md_gop_gov.csv` data we just finished with and start there. We will need to add some information to it to make it possible to display on a map, so we'll need to read it back in.
+Let's create a choropleth map - one that shows variations between the percentage of votes received by Wes Moore across Maryland counties. We'll read that in from the data folder.
 
 ```{r}
-md_gop_gov <- read_csv('data/md_gop_gov.csv')
+md_gov_county <- read_csv("data/md_gov_county.csv")
 ```
 
-In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a [FIPS Code](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our md_gop_gov dataframe doesn't have a FIPS code for each county, but this is a solved problem thanks to the Tigris library. Let's install it:
+In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a [FIPS Code](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our md_gov_county dataframe has a FIPS code for each county, but if you ever need one for a county, this is a solved problem thanks to the Tigris library that we used in pre_lab 9.
+
+We'll need to write code to add columns showing the total number of votes for each county and the percentage of votes received by Wes Moore in each county, then replace the CSV file in the data folder with it
+
 
 ```{r}
-#install.packages('tigris',repos = "http://cran.us.r-project.org")
-library(tigris)
-```
 
-Once we've done that, we have access to a dataframe containing all fips codes. Let's isolate the Maryland codes:
+md_gov_county <- md_gov_county %>% 
+  mutate(Total = Cox + Moore + Lashar + Wallace + Harding + `Write-ins`) %>% 
+  mutate(PctMoore = Moore/Total * 100)
 
-```{r}
-all_fips <- fips_codes %>% as_tibble()
-md_fips <- all_fips %>% filter(state == 'MD')
-```
-
-Looks good, but there are two issues: Datawrapper expects a 5-digit FIPS code (the state code plus the county code, so "24001" for Allegany County) and the county names don't match the `jurisdiction` in the primary data. Let's fix the first issue - adding a full FIPS code based on its components using the function `str_c`, which concatenates multiple strings:
-
-```{r}
-md_fips <- md_fips %>% mutate(fips_code = str_c(state_code, county_code))
-```
-
-Now we'll deal with the county names in `md_counties`. They are all caps and contain no punctuation, we could:
-
-1. Change counties in `md_gop_gov` to match `md_fips`
-2. Change counties in `md_fips` to match `md_gop_gov`
-
-Let's do the latter. We'll use mutate to remove " COUNTY", replace the quotemarks with nothing, change counties so they match the primary data and fix both Baltimore city and Baltimore County:
-
-Change the county names in `md_fips`
-
-```{r}
-md_fips <- md_fips %>%
-   mutate(match_county = str_replace(county, ' County', '')) %>%
-   mutate(match_county = str_replace(match_county, "St. Mary", "Saint Mary")) %>%
-   mutate(match_county = str_replace(match_county, "Baltimore city", "Baltimore City")) %>%
-   mutate(match_county = if_else(match_county == "Baltimore", "Baltimore County", match_county))
-
-```
-
-Now we'll join `md_gop_gov` and `md_fips` together using our new `match_county` column:
-
-```{r}
-md_gop_gov_with_fips <- md_gop_gov %>%
-  left_join(md_fips, by=c('jurisdiction'='match_county'))
-```
-
-Then we'll write `md_gop_gov_with_fips` to a CSV in the data folder using write_csv:
-
-```{r}
-write_csv(md_gop_gov_with_fips, "data/md_gop_gov_with_fips.csv")
+write_csv(md_gov_county, "data/md_gov_county_with_percent.csv")
 ```
 
 Go back to Datawrapper and click on "New Map". Click on "Choropleth map" and then choose "USA >> Counties (2022)" for the map base and click the Proceed button.
 
-Now we can upload the `md_gop_gov_with_fips.csv` file we just saved using the Upload File button. It should look like the following image:
+Now we can upload the `md_gov_county_with_percent.csv` file we just saved using the Upload File button. It should look like the following image:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper7.png"))
+knitr::include_graphics("images/datawrapper7.png")
 ```
 
 We'll need to make sure that Datawrapper understands what the data is and where the FIPS code is. Click on the "Match" tab and make sure that yours looks like the image below:
