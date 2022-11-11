@@ -120,7 +120,6 @@ library(ggthemes)
 
 And now we'll apply the economist theme from that package with theme_economist()
 ```{r}
-```{r}
 maryland_top_counties %>%
   ggplot() +
   geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF)) +

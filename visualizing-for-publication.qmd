@@ -6,7 +6,7 @@ But simple stuff -- and even some slightly complicated stuff -- can be done with
 
 The tool we're going to use is called [Datawrapper](https://www.datawrapper.de/).
 
-First, let's get some data and work with it. Let's use the county-level results from the 2022 Republican Governor primary in Maryland that we scraped with rvest. Let's look at it.
+First, let's get some data and work with it. Let's use a simple CSV of total votes cast for four Maryland Republicans who ran for statewide office in the 2022 general election. Let's look at it.
 
 ```{r}
 #| output: false
@@ -14,23 +14,11 @@ library(tidyverse)
 ```
 
 ```{r}
-md_gop_gov <- read_csv("data/md_primary_2022_gov_rep.csv")
+md_gop_cands <- read_csv("data/md_gop_cands.csv")
 ```
 
 ```{r}
-head(md_gop_gov)
-```
-
-Let's make this data a bit more useful by calculating percentages for each candidate, using the total of all votes in each county in the gubernatorial primary. Then we can calculate the difference in percentages between Dan Cox, the nominee, and Kelly Schulz, who came in second. Finally we can write that CSV file out using `write_csv`, because that's what we'll need for Datawrapper:
-
-```{r}
-md_gop_gov <- md_gop_gov %>%
-  mutate(total = cox + ficker + schulz + werner) %>%
-  mutate(pct_cox = cox/total, pct_ficker = ficker/total, pct_schulz = schulz/total, pct_werner = werner/total) %>%
-  mutate(cox_schulz_diff = (pct_cox - pct_schulz)*100) %>%
-  select(jurisdiction, cox_schulz_diff)
-
-write_csv(md_gop_gov, "~/Downloads/md_gop_gov.csv")
+head(md_gop_cands)
 ```
 
 ## Datawrapper
@@ -42,26 +30,26 @@ First, go to [datawrapper.de](https://www.datawrapper.de/) and sign up for an ac
 Once logged in, you'll click on New Chart.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/ppp_datawrapper1.png"))
+knitr::include_graphics("images/datawrapper1.png")
 ```
 
-The first thing we'll do is upload our CSV that we created before. Click on XLS/CSV and upload the file.
+The first thing we'll do is upload our CSV. Click on XLS/CSV and upload the file.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper2.png"))
+knitr::include_graphics("datawrapper2.png")
 ```
 
 Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly. Click on the "Proceed" button.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper3.png"))
+knitr::include_graphics("images/datawrapper3.png")
 ```
-Now we make a chart. Bar chart comes up by default, which is good, because with a single percentage difference, that's what we have.
+Now we make a chart. Bar chart comes up by default, which is good, because with totals, that's what we have.
 
-Click on Refine. The first option we want to change is the Number Format, because we have percentages to display and we want to make it as easy as possible for readers to understand what we're displaying. Datawrapper has a list of popular formats and an excellent reference for its [custom formats](https://academy.datawrapper.de/article/207-custom-number-formats-that-you-can-display-in-datawrapper) that you can consult. Let's choose `0.0%`, which adds a percentage sign and abbreviates larger amounts:
+Click on Refine. The first option we want to change is column we're using for the bars, which defaults to "Early Voting". Let's make it "Votes. Let's also choose to sort the bars so that the largest value (and bar appears first). We do that by clicking on the "Sort bars" button.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper4.png"))
+knitr::include_graphics("images/datawrapper4.png")
 ```
 
 Now we need to annotate our charts. Every chart needs a title, a source line and a credit line. Most need chatter (called description here). Click on the "Annotate" tab to get started.
@@ -69,12 +57,12 @@ Now we need to annotate our charts. Every chart needs a title, a source line and
 Really think about the title and description: the title is like a headline and the description is provides some additional context. Another way to think about it: the title is the most important lesson from the graphic, and the description could be the next most important lesson or could provide more context to the title.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper5.png"))
+knitr::include_graphics("images/datawrapper5.png")
 ```
 To publish, we click the "Publish & Embed" tab. Some publication systems allow for the embedding of HTML into a post or a story. Some don't. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there's always a way to export your chart as a PNG file, which you can upload like any photo.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper6.png"))
+knitr::include_graphics("images/datawrapper6.png")
 ```
 
 ### Making a Map
