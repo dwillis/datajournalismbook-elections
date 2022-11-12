@@ -13,7 +13,7 @@ First, let's get some data and work with it. Let's use a simple CSV of total vot
 library(tidyverse)
 ```
 
-```{r}
+```{r, message=FALSE}
 md_gop_cands <- read_csv("data/md_gop_cands.csv")
 ```
 
@@ -36,7 +36,7 @@ knitr::include_graphics("images/datawrapper1.png")
 The first thing we'll do is upload our CSV. Click on XLS/CSV and upload the file.
 
 ```{r, echo=FALSE}
-knitr::include_graphics("datawrapper2.png")
+knitr::include_graphics("images/datawrapper2.png")
 ```
 
 Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly. Click on the "Proceed" button.
@@ -69,7 +69,7 @@ knitr::include_graphics("images/datawrapper6.png")
 
 Let's create a choropleth map - one that shows variations between the percentage of votes received by Wes Moore across Maryland counties. We'll read that in from the data folder.
 
-```{r}
+```{r, message=FALSE}
 md_gov_county <- read_csv("data/md_gov_county.csv")
 ```
 
@@ -113,7 +113,9 @@ Look for the "Show color legend" label and add a caption for the legend, which i
 
 That's better, but check out the tooltip by hovering over a county. It's not super helpful. Let's change the tooltip behavior to show the county name and a better-formatted number.
 
-Click the "Customize tooltips" button so it expands down. Change {{ fips }} to {{ jurisdiction }} and {{ cox_schulz_diff }} to {{ FORMAT(cox_schulz_diff, "0.0%")}}
+Click the "Customize tooltips" button so it expands down. Change {{ fips_code }} to {{ county }} and {{ pctmoore }} to {{ FORMAT(pctmoore, "00.0%")}}
+
+Experiment with the "Show labels" options to see if you can add county labels to your map.
 
 Ok, that looks better. Let's publish!
 
