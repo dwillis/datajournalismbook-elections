@@ -14,17 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 * A Datawrapper account
 * Election data in CSV files in the `data` folder
 
-## You might need
-
-* A Census API key
-
 ## Load libraries and establish settings
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab.
 
 ```{r}
 library(tidyverse)
-library(tidycensus)
 ```
 
 ## Questions
@@ -46,22 +41,42 @@ You MUST do the following things when answering this question:
 ```{r}
 ```
 
-**Q2.** 
+**Q2.** You're interested in seeing how the methods of voting have changed in Maryland since 2018. Using data from the top of the ticket (governor in 2018 and 2022, president in 2020), make a chart showing the percentage of votes cast in each category - early voting, election day and mail - over the three years. You'll need to make those percentages in R and then export the CSV using `write_csv`, then make the chart in Datawrapper. Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+
+HINT: In Datawrapper's "Check and Describe" tab, you can click on a column to get the option of "hiding" it in any visualization.
+
+What do you think the story here is? Put the answer below along with the URL of your chart.
 
 **A2.** 
 
 ```{r}
-md_voters <- read_csv("data/md_active_voters.csv") %>% 
-  mutate(pct_dr = (DEM+REP)/TOTAL*100)
+md_votes_by_type <- read_csv("data/md_votes_by_type.csv") %>% 
+  mutate(pct_early = Early/Total *100, pct_election_day = `Election Day`/Total *100, pct_mail = Mail/Total *100)
 
 
-write_csv(md_voters, "data/md_voters.csv")
+write_csv(md_votes_by_type, "data/md_votes_by_type.csv")
 ```
 
 
-**Q3.** 
+**Q3.** You want to know the geography of ActBlue donors who live in Maryland, so load in the `md_actblue_zip.csv` file in the data folder and calculate a grand total of the totals for each zip code in the dataframe. Using that total, calculate a percentage of the total for each zip code (you can hard code that number). The export the dataframe using `write_csv` and make a choropleth map in Datawrapper. You will need to:
+
+* Search for Maryland zip codes (use the 2020 data) as the base map
+* Upload the CSV file
+* Change the tooltip to show both the amount and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
+* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+
+What do you think the story here is, and what would you want to know more about? Put the answer below along with the URL of your chart.
 
 **A3.** 
 
 ```{r}
+
+md_actblue_zip <- read_csv("data/md_actblue_zip.csv") 
+
+md_actblue_zip %>% summarise(grand_total = sum(total))
+
+md_actblue_zip <- md_actblue_zip %>% 
+  mutate(pct_of_total = total/20439426 * 100)
+
+write_csv(md_actblue_zip, "data/md_actblue_zip_for_map.csv")
 ```
