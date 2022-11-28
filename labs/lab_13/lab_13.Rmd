@@ -1,0 +1,82 @@
+---
+title: "lab_12"
+author: "derek willis"
+date: "11/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Turn off scientific notation
+options(scipen=999)
+```
+
+## You will need
+
+* Our usual libraries for working with data, plus rvest and possibly readxl
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+# load libraries
+```
+
+## Getting the Data
+
+We're continuing our contrasting of the 2022 and 2018 elections, but this time we're switching to a different state: Utah. Utah had an unusual Senate election in 2022: Democrats did not nominate a candidate to run against incumbent Republican Mike Lee and instead endorsed an independent, Evan McMullin, in the race. Broadly, we want to dig into the differences between the 2022 Senate results and the 2018 Senate race, when Republican Mitt Romney defeated Democrat Jenny Wilson.
+
+Let's start with the 2022 results. You'll need to locate and scrape the 2022 county-level results for the U.S. Senate race from the Utah Elections site (https://electionresults.utah.gov/elections/). Utah has 29 counties, so if you don't have at least 29 rows in your dataframe, you've scraped the wrong page.
+
+**Task** Scrape the county-level results for the U.S. Senate race in 2022, which can be found at https://electionresults.utah.gov/elections/, into a dataframe. You will need to make sure that you have clean headers, which may involve renaming them, and you will need to remove the total row. Make sure that the columns containing votes are numeric.
+
+```{r}
+```
+
+Next, we'll get the 2018 results. Unlike the 2022 results, these are stored in an Excel file located here: https://elections.utah.gov/Media/Default/2018%20Election/2018%20General%20Election%20Canvass.xlsx. You can choose how to get the U.S. Senate results - whether you download and save the file in this lab_13 folder (we did this in pre_lab_12) or whether you download it manually and create a CSV file from the Senate results sheet in this directory. Like the 2022 results, you'll want to make a dataframe with clean headers, no total row and numeric columns for the votes.
+
+**Task** Get the county-level results for the U.S. Senate race in 2018, which can be found at https://elections.utah.gov/Media/Default/2018%20Election/2018%20General%20Election%20Canvass.xlsx, and turn them into a dataframe. You will need to make sure that you have clean headers, which may involve renaming them, and you will need to remove the total row. Make sure that the columns containing votes are numeric.
+
+```{r}
+```
+
+Finally, join the two dataframes together:
+
+**Task** Join the 2022 and 2018 results into a single dataframe.
+
+```{r}
+```
+
+## Questions
+
+**Q1.** Calculate the difference in votes between Evan McMullin and Jenny Wilson and save it your combined dataframe. Write up some sentences that could go in a story describing where McMullin outperformed Wilson and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor, such as 2020 presidential vote).
+
+**A1.** 
+
+```{r}
+
+```
+
+**Q2** Calculate the difference in votes between Mike Lee and Mitt Romney and save it your combined dataframe. Write up some sentences that could go in a story describing where Romney outperformed Lee and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor).
+
+**A2** 
+
+```{r}
+```
+
+**Q3** You want to know which members of the U.S. House of Representatives propose (sponsor) and support (cosponsor) legislation the most and least. Scrape the information at https://www.congress.gov/sponsors-cosponsors/117th-congress/representatives/ALL and clean up the data and headers so that the columns reflect the web page and the numbers are, in fact, numbers.
+
+Then answer the following questions:
+
+   * What is the average number of bills sponsored?
+   * Which lawmaker who has sponsored 0 bills has the most cosponsored bills? Do some searching on that person - what committees do they serve on?
+   * Of lawmakers with more than 1,000 cosponsorships, how many are Democrats and how many are Republicans?
+
+Finally, what's one question you have about the data you see here? An interesting lawmaker or pattern that stands out to you?
+
+**A3** 
+
+```{r}
+```
+
