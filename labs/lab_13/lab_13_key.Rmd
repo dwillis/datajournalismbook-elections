@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* Our usual libraries for working with data, plus rvest and possibly readxl
+* Our usual libraries for working with data, plus rvest and possibly readxl for reading Excel files.
 
 ## Load libraries and establish settings
 
@@ -25,6 +25,7 @@ library(readxl)
 library(tidyverse)
 library(janitor)
 library(rvest)
+library(lubridate)
 ```
 
 ## Getting the Data
@@ -105,29 +106,42 @@ combined_senate %>%
   arrange(lee_romney_diff)
 ```
 
-**Q3** You want to know which members of the U.S. House of Representatives propose (sponsor) and support (cosponsor) legislation the most and least. Scrape the information at https://www.congress.gov/sponsors-cosponsors/117th-congress/representatives/ALL and clean up the data and headers so that the columns reflect the web page and the numbers are, in fact, numbers.
+**Q3** Sen. Ben Cardin, D-Maryland, has posted hundreds of press releases at https://www.cardin.senate.gov/?post_type=press-releases. It would be great to have all of them in a dataframe that has the following columns: date, title and url.
 
-Then answer the following questions:
+To do this, you will need to scrape the page's html and save that to a variable, and _then_ extract the dates, titles and urls into separate dataframes using html_elements(). The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; google to find out what it is.
 
-   * What is the average number of bills sponsored?
-   * Which lawmaker who has sponsored 0 bills has the most cosponsored bills? Do some searching on that person - what committees do they serve on?
-   * Of lawmakers with more than 1,000 cosponsorships, how many are Democrats and how many are Republicans?
+At the end, you'll have three dataframes that you want to combine into a single dataframe. When we want to combine the rows of identical dataframes, we used `bind_rows()`. There's an alternative you can use to do the same for combining columns, and it works the same way.
+
+When you're done, rename the columns so they make sense, then make sure the date column is an actual date.
+
+Finally, tell me what questions you could ask of this data. Be creative.
 
 **A3** 
 
 ```{r}
 
-results <- "https://www.congress.gov/sponsors-cosponsors/117th-congress/representatives/ALL" %>% 
-  read_html() %>% 
-  html_table()
+results <- "https://www.cardin.senate.gov/?post_type=press-releases" %>% 
+  read_html() 
 
-members <- results[[1]] %>% 
-  clean_names() %>% 
-  slice(c(-1:-2)) %>% 
-  rename(member = 1, bills_sponsored = 2, amendments_sponsored = 3, bills_cosponsored = 4, amendments_cosponsored = 5, withdrawn=6) %>% 
-  mutate(across(c(2:6), as.numeric))
+dates <- results %>% 
+  html_elements("h5") %>% 
+  html_text() %>% 
+  as_tibble()
 
-members %>% 
-  summarize(avg_bills_sponsored = mean(bills_sponsored))
+titles <- results %>% 
+  html_elements("h3 a") %>% 
+  html_text() %>% 
+  as_tibble()
+
+urls <- results %>% 
+  html_elements("h3 a") %>% 
+  html_attr('href') %>% 
+  as_tibble()
+
+releases <- bind_cols(dates, titles, urls)
+
+releases <- releases %>% 
+  rename(date = 1, title = 2, url = 3) %>% 
+  mutate(date = mdy(date))
 
 ```

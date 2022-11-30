@@ -7,20 +7,25 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# Turn off scientific notation
-options(scipen=999)
 ```
 
 ## You will need
 
-* Our usual libraries for working with data, plus rvest and possibly readxl
+* Our usual libraries for working with data, plus rvest and possibly readxl for reading Excel files.
 
 ## Load libraries and establish settings
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab.
 
 ```{r}
-# load libraries
+# Turn off scientific notation
+options(scipen=999)
+
+library(readxl)
+library(tidyverse)
+library(janitor)
+library(rvest)
+library(lubridate)
 ```
 
 ## Getting the Data
@@ -39,6 +44,7 @@ Next, we'll get the 2018 results. Unlike the 2022 results, these are stored in a
 **Task** Get the county-level results for the U.S. Senate race in 2018, which can be found at https://elections.utah.gov/Media/Default/2018%20Election/2018%20General%20Election%20Canvass.xlsx, and turn them into a dataframe. You will need to make sure that you have clean headers, which may involve renaming them, and you will need to remove the total row. Make sure that the columns containing votes are numeric.
 
 ```{r}
+
 ```
 
 Finally, join the two dataframes together:
@@ -52,31 +58,30 @@ Finally, join the two dataframes together:
 
 **Q1.** Calculate the difference in votes between Evan McMullin and Jenny Wilson and save it your combined dataframe. Write up some sentences that could go in a story describing where McMullin outperformed Wilson and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor, such as 2020 presidential vote).
 
-**A1.** 
+**A1.** McMullin did better than Wilson in all but one county, San Juan, which has fewer than 15,000 people. In particular, McMullin did much better in Utah County, which includes Brigham Young University. McMullin got within 4,000 votes of Joe Biden's total in 2018 here.
 
 ```{r}
-
 ```
 
 **Q2** Calculate the difference in votes between Mike Lee and Mitt Romney and save it your combined dataframe. Write up some sentences that could go in a story describing where Romney outperformed Lee and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor).
 
-**A2** 
+**A2** Romney got more votes in 13 of Utah's 29 counties, and in particular Salt Lake and Davis counties. In the counties where Lee outperformed Romney, the margin was a matter of less than a thousand votes in all but one case. Lee's best performance relative to Romney was in Washington County, a reliably conservative county.
 
 ```{r}
 ```
 
-**Q3** You want to know which members of the U.S. House of Representatives propose (sponsor) and support (cosponsor) legislation the most and least. Scrape the information at https://www.congress.gov/sponsors-cosponsors/117th-congress/representatives/ALL and clean up the data and headers so that the columns reflect the web page and the numbers are, in fact, numbers.
+**Q3** Sen. Ben Cardin, D-Maryland, has posted hundreds of press releases at https://www.cardin.senate.gov/?post_type=press-releases. It would be great to have all of them in a dataframe that has the following columns: date, title and url.
 
-Then answer the following questions:
+To do this, you will need to scrape the page's html and save that to a variable, and _then_ extract the dates, titles and urls into separate dataframes using html_elements(). The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; google to find out what it is.
 
-   * What is the average number of bills sponsored?
-   * Which lawmaker who has sponsored 0 bills has the most cosponsored bills? Do some searching on that person - what committees do they serve on?
-   * Of lawmakers with more than 1,000 cosponsorships, how many are Democrats and how many are Republicans?
+At the end, you'll have three dataframes that you want to combine into a single dataframe. When we want to combine the rows of identical dataframes, we used `bind_rows()`. There's an alternative you can use to do the same for combining columns, and it works the same way.
 
-Finally, what's one question you have about the data you see here? An interesting lawmaker or pattern that stands out to you?
+When you're done, rename the columns so they make sense, then make sure the date column is an actual date.
+
+Finally, tell me what questions you could ask of this data. Be creative.
 
 **A3** 
 
 ```{r}
-```
 
+```
