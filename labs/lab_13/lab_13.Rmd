@@ -72,7 +72,7 @@ Finally, join the two dataframes together:
 
 **Q3** Sen. Ben Cardin, D-Maryland, has posted hundreds of press releases at https://www.cardin.senate.gov/?post_type=press-releases. It would be great to have all of them in a dataframe that has the following columns: date, title and url.
 
-To do this, you will need to scrape the page's html and save that to a variable, and _then_ extract the dates, titles and urls into separate dataframes using html_elements(). The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; google to find out what it is.
+To do this, you will need to scrape the page's html and save that to a variable, and separately use that variable to then extract the dates, titles and urls into separate dataframes using html_elements(). The function `html_text()` pulls out the contents of a tag, but for urls we want the HTML attribute. Rvest gives you a way to extract the URL from a link; google to find out what it is.
 
 At the end, you'll have three dataframes that you want to combine into a single dataframe. When we want to combine the rows of identical dataframes, we used `bind_rows()`. There's an alternative you can use to do the same for combining columns, and it works the same way.
 
