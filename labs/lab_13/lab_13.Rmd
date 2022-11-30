@@ -58,14 +58,14 @@ Finally, join the two dataframes together:
 
 **Q1.** Calculate the difference in votes between Evan McMullin and Jenny Wilson and save it your combined dataframe. Write up some sentences that could go in a story describing where McMullin outperformed Wilson and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor, such as 2020 presidential vote).
 
-**A1.** McMullin did better than Wilson in all but one county, San Juan, which has fewer than 15,000 people. In particular, McMullin did much better in Utah County, which includes Brigham Young University. McMullin got within 4,000 votes of Joe Biden's total in 2018 here.
+**A1.** 
 
 ```{r}
 ```
 
 **Q2** Calculate the difference in votes between Mike Lee and Mitt Romney and save it your combined dataframe. Write up some sentences that could go in a story describing where Romney outperformed Lee and where he didn't. Mention the margins and describe the counties you mention (location, population or another factor).
 
-**A2** Romney got more votes in 13 of Utah's 29 counties, and in particular Salt Lake and Davis counties. In the counties where Lee outperformed Romney, the margin was a matter of less than a thousand votes in all but one case. Lee's best performance relative to Romney was in Washington County, a reliably conservative county.
+**A2** 
 
 ```{r}
 ```
