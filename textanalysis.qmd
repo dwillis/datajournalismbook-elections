@@ -16,25 +16,27 @@ library(janitor)
 library(lubridate)
 ```
 
-Here's the question we're going to go after: How did federal politicians talk about the coronavirus pandemic on Twitter?
+Here's the question we're going to go after: what words or phrases appear most in Maryland Sen. Ben Cardin's press releases?
 
-To answer this question, we'll use a dataset of tweets posted by federal politicians from both campaign and official accounts that mentioned either "COVID" or "coronavirus" beginning on Feb. 1, 2020. This dataset doesn't include retweets, only original tweets. Let's read in this data and examine it:
+To answer this question, we'll use the text of Cardin's most recent 999 press releases.
+
+Let's read in this data and examine it:
 
 ```{r}
-covid_tweets <- read_rds('data/covid_tweets.rds')
+releases <- read_rds("data/cardin_releases.rds")
 ```
 
 We can see what it looks like with head:
 
 ```{r}
-head(covid_tweets)
+head(releases)
 ```
 
-What we want to do is to make the `content` column easier to analyze. Let's say we want to find out the most commonly used words. We'll probably want to remove URLs from the text of the tweets since they aren't actual words. Let's use mutate to make that happen:
+What we want to do is to make the `text` column easier to analyze. Let's say we want to find out the most commonly used words. We'll want to remove URLs from the text of the releases since they aren't actual words. Let's use mutate to make that happen:
 
 ```{r}
-covid_tweets <- covid_tweets %>%
-  mutate(content = gsub("http.*","", content))
+releases <- releases %>%
+  mutate(text = gsub("http.*","", text))
 ```
 
 If you are trying to create a list of unique words, R will treat differences in capitalization as unique and also will include punctuation by default, even using its `unique` function:
@@ -44,11 +46,11 @@ a_list_of_words <- c("Dog", "dog", "dog", "cat", "cat", ",")
 unique(a_list_of_words)
 ```
 
-Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `content` column:
+Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `text` column:
 
 ```{r}
-unique_words <- covid_tweets %>% select(content) %>%
-  unnest_tokens(word, content)
+unique_words <- releases %>% select(text) %>%
+  unnest_tokens(word, text)
 View(unique_words)
 ```
 
@@ -65,13 +67,27 @@ unique_words %>%
   coord_flip() +
       labs(x = "Count",
       y = "Unique words",
-      title = "Count of unique words found in tweets")
+      title = "Count of unique words found in Cardin releases")
 ```
 
-Well, that's a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like "a" and "the" are known as "stop words". In most cases you'll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them:
+Well, that's a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like "a" and "the" are known as "stop words". In most cases you'll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them that we'll load, and then we'll add some of our own.
 
 ```{r}
 data("stop_words")
+
+stop_words <- stop_words %>% 
+  add_row(word = "ben") %>% 
+  add_row(word = "cardin") %>% 
+  add_row(word = "senator") %>%
+  add_row(word = "senators") %>%
+  add_row(word = "maryland") %>%
+  add_row(word = 'federal') %>% 
+  add_row(word = 'u.s') %>% 
+  add_row(word = 'md') %>% 
+  add_row(word = 'senate') %>% 
+  add_row(word = "hollen") %>% 
+  add_row(word = "van") %>% 
+  add_row(word = "chris")
 ```
 
 Then we're going to use a function we haven't used yet called an `anti_join`, which filters out any matches. So we'll `anti_join` the stop words and get a list of words that aren't stop words.
@@ -87,39 +103,39 @@ unique_words %>%
   top_n(10)
 ```
 
-Those seem like more relevant unique words. Now, here's where we can start to do more interesting and meaningful analysis. Let's create two dataframes of unique words based on time: one for all of 2020 and the other for all of 2021:
+Those seem like more relevant unique words. Now, here's where we can start to do more interesting and meaningful analysis. Let's create two dataframes of unique words based on time: one for all of 2021 and the other for all of 2022:
 
 ```{r}
-unique_words_2020 <- covid_tweets %>%
-  filter(created < '2021-01-01') %>%
-  select(content) %>%
-  unnest_tokens(word, content)
+unique_words_2021 <- releases %>%
+  filter(date < '2022-01-01') %>%
+  select(text) %>%
+  unnest_tokens(word, text)
 
-unique_words_2021 <- covid_tweets %>%
-  filter(created >= '2021-01-01') %>%
-  select(content) %>%
-  unnest_tokens(word, content)
+unique_words_2022 <- releases %>%
+  filter(date >= '2022-01-01') %>%
+  select(text) %>%
+  unnest_tokens(word, text)
 ```
 
 Then we can create top 10 lists for both of them and compare:
 
 ```{r}
-unique_words_2020 %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
-  top_n(10)
-
 unique_words_2021 %>%
   anti_join(stop_words) %>%
   group_by(word) %>%
   tally(sort=TRUE) %>%
   mutate(percent = (n/sum(n))*100) %>%
   top_n(10)
+
+unique_words_2022 %>%
+  anti_join(stop_words) %>%
+  group_by(word) %>%
+  tally(sort=TRUE) %>%
+  mutate(percent = (n/sum(n))*100) %>%
+  top_n(10)
 ```
 
-In the 2021 top 10 list, "vaccine" and its variations are much more prominent, which makes sense, while "testing" drops out of the top 10 compared to 2020.
+In the 2021 top 10 list, "covid" and "pandemic" appear, which makes sense, while the 2022 doesn't reference the same topic aside from the more generic "health".
 
 ## Going beyond a single word
 
@@ -129,7 +145,7 @@ The code to make ngrams is similar to what we did above, but involves some more 
 
 So this block is is going to do the following:
 
-1.  Use the covid_tweets data we created above, and filter for pre-2021 tweets.
+1. Use the releases data we created above, and filter for pre-2022 releases.
 2.  Unnest the tokens again, but instead we're going to create a field called bigram, break apart summary, but we're going to specify the tokens in this case are ngrams of 2.
 3.  We're going to make things easier to read and split bigrams into word1 and word2.
 4.  We're going to filter out stopwords again, but this time we're going to do it in both word1 and word2 using a slightly different filtering method.
@@ -138,9 +154,9 @@ So this block is is going to do the following:
 7.  We'll then use top_n to give us the top 10 bigrams.
 
 ```{r}
-covid_tweets %>%
-  filter(created < '2021-01-01') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
+releases %>%
+  filter(date < '2022-01-01') %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
   separate(bigram, c("word1", "word2"), sep = " ") %>%
   filter(!word1 %in% stop_words$word) %>%
   filter(!word2 %in% stop_words$word) %>%
@@ -151,12 +167,12 @@ covid_tweets %>%
   top_n(10)
 ```
 
-And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care" and "public health" are among the top 2-word phrases. What about after 2021?
+And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care", "human rights" and "chesapeake bay" are among the top 2-word phrases. What about after 2021?
 
 ```{r}
-covid_tweets %>%
-  filter(created >= '2021-01-01') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
+releases %>%
+  filter(date >= '2022-01-01') %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
   separate(bigram, c("word1", "word2"), sep = " ") %>%
   filter(!word1 %in% stop_words$word) %>%
   filter(!word2 %in% stop_words$word) %>%
@@ -167,65 +183,9 @@ covid_tweets %>%
   top_n(10)
 ```
 
-While "covid 19" is still the leading phrase, vaccine-related phrases dominate the top 10, and "public health" and "health care" have slipped down the list.
+While "covid 19" is still a top phrase, it's not _the_ leading phrase any longer. "Mental health" makes an appearance, too. You'll notice that the percentages are very small; that's not irrelevant but in some cases it's the differences in patterns that's more important.
 
-So far, we've only looked at the entire set of tweets, not any characteristics of who posted them. Would these lists be any different for Democrats and Republicans? To find out, we just need to add to our filter.
-
-```{r}
-covid_tweets %>%
-  filter(created < '2021-01-01', party == 'D') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
-  top_n(10)
-
-covid_tweets %>%
-  filter(created < '2021-01-01', party == 'R') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
-  top_n(10)
-```
-
-Now we can begin to see some differences between the parties. We also could do the same for different kinds of accounts: the `title` column represents the role of the account, and if it includes "Candidate" then the tweet is from a campaign account. Let's compare House of Representatives' official and campaign tweets during 2020:
-
-```{r}
-covid_tweets %>%
-  filter(created < '2021-01-01', title == 'House Representative') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
-  top_n(10)
-
-covid_tweets %>%
-  filter(created < '2021-01-01', title == 'House Candidate') %>%
-  unnest_tokens(bigram, content, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
-  top_n(10)
-```
-
-There are some differences here, too, but also some potential challenges to doing an analysis. For one, there are variations of words like "vaccine" that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.
+There are some potential challenges to doing an analysis. For one, there are variations of words that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.
 
 ## Sentiment Analysis
 
@@ -234,16 +194,16 @@ Another popular use of text analysis is to measure the sentiment of a word - whe
 ```{r}
 bing <- get_sentiments("bing")
 
-bing_word_counts_2020 <- unique_words_2020 %>%
-  inner_join(bing) %>%
-  count(word, sentiment, sort = TRUE)
-
 bing_word_counts_2021 <- unique_words_2021 %>%
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE)
 
-View(bing_word_counts_2020)
+bing_word_counts_2022 <- unique_words_2022 %>%
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE)
+
 View(bing_word_counts_2021)
+View(bing_word_counts_2022)
 ```
 
 Gauging the sentiment of a word can be heavily dependent on the context, and as with other types of text analysis sometimes larger patterns are more meaningful than individual results. But the potential with text analysis is vast: knowing what words and phrases that public officials employ can be a way to evaluate their priorities, cohesiveness and tactics for persuading voters and their colleagues. And those words and phrases are data.
