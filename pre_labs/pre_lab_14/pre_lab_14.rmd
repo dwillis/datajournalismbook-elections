@@ -93,7 +93,7 @@ a_list_of_words <- c("Dog", "dog", "dog", "cat", "cat", ",")
 unique(a_list_of_words)
 ```
 
-Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `content` column:
+Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `text` column:
 
 ### Task 6: Trying out unnest_tokens
 **Task** Run the following code and describe the output of using the `unnest_tokens` function.
@@ -241,7 +241,7 @@ releases %>%
   top_n(10)
 ```
 
-And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care" and "public health" are among the top 2-word phrases. What about after 2021?
+And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care", "human rights" and "chesapeake bay" are among the top 2-word phrases. What about after 2021?
 
 ### Task 13: Create a dataframe with the top 10 two-word phrases for 2022
 **Task** Run the following code and describe the results.
@@ -261,7 +261,7 @@ releases %>%
   top_n(10)
 ```
 
-While "covid 19" is still a top phrase, it's not _the_ leading phrase any longer. You'll notice that the percentages are very small; that's not irrelevant but in some cases it's the differences in patterns that's more important.
+While "covid 19" is still a top phrase, it's not _the_ leading phrase any longer. "Mental health" makes an appearance, too. You'll notice that the percentages are very small; that's not irrelevant but in some cases it's the differences in patterns that's more important.
 
 There are some potential challenges to doing an analysis. For one, there are variations of words that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.
 
