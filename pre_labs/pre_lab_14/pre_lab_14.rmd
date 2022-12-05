@@ -269,7 +269,7 @@ There are some potential challenges to doing an analysis. For one, there are var
 
 Another popular use of text analysis is to measure the sentiment of a word - whether it expresses a positive or negative idea - and tidytext has built-in tools to make that possible. We use word counts like we've already calculated and bring in a dataframe of words (called a lexicon) along with their sentiments using a function called `get_sentiments`. The most common dataframe is called "bing" which has nothing to do with the Microsoft search engine. Let's load it:
 
-### Task 15: Load the bing lexicon and produce sentiments for our 2021 and 2022 unique words
+### Task 14: Load the bing lexicon and produce sentiments for our 2021 and 2022 unique words
 **Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive?
 **Answer**
 
