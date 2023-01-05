@@ -281,7 +281,7 @@ Ok, but what about a side-by-side comparison? Can we put the October and June pe
 **Task** Run the following code to make a better bar chart. What are the main differences between them?
 **Answer** 
 
-```{r fig.width=9}
+```{r}
 library(cowplot)
 plot_oct <- new_reg_oct_jun %>% 
   filter(total > 10, method != 'TOTAL') %>% 
