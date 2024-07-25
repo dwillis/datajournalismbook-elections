@@ -1,21 +1,53 @@
-# Using GitHub
+# Setting Up Your Computer To Use GitHub
+
+You will use your computer a LOT in this class. There is no way to avoid that. So you will need to get comfortable with using your computer in predictable and replicable ways. This is not the place for coming up with different ways to use your computer. Repetition is a good thing for this class.
+
+It is technically possible to do most of the work for this class with a ChromeBook, but I don't recommend it. If you have an older Mac (pre-2017), you may need to install an older version of R, but you should come and see me. It will help if you have the latest version of your operating system installed.
+
+## Space, the Final Frontier
+
+You will need to have a substantial amount of hard drive space to store the files for this class. If you are not in the practice of deleting files because "everything's in the cloud" anyway, you will need to clear out some space on your laptop. How much space? The more, the better, but let's go with at least 10GB.
+
+## GitHub
 
 GitHub is a platform for managing and storing files, data and code built atop Git, a popular open source version control software. GitHub accounts are free and it's [easy to get started](https://docs.github.com/en/get-started/quickstart). The one prerequisite is that you have [Git installed on your local computer](https://docs.github.com/en/get-started/quickstart/set-up-git). There are installers for Mac, Windows and Linux.
 
-## How It Works
+### How GitHub Works
 
 Version control is based on the ideas that you want to keep track of changes you make to a collection of files and that multiple people can work together without getting in each other's way or having to do things in a set order. For individual users, it's great for making sure that you always have your work.
 
-GitHub users work in what are known as repositories on their local computers and also _push_ changes to a remote repository located on GitHub. That remote repository is key: if you lose your computer, you can fetch a version of your files from GitHub. If you want to work with someone else on the same files, you can each have a local copy, push changes to GitHub and then pull each others' changes back to your local computers.
+GitHub users work in what are known as repositories on their local computers and also *push* changes to a remote repository located on GitHub. That remote repository is key: if you lose your computer, you can fetch a version of your files from GitHub. If you want to work with someone else on the same files, you can each have a local copy, push changes to GitHub and then pull each others' changes back to your local computers.
 
-So, like Microsoft Word's track changes but with a remote backup and multiple editors.
+So, like Microsoft Word's track changes, but with a remote backup and multiple editors.
 
-## Getting Started
+### Getting Started with GitHub
 
 After installing Git and signing up for a GitHub account, [download and install GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop). It will have you sign into your GitHub account and then you'll have access to any existing repositories. If you don't have any, that's fine! You can [make one locally](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/overview/creating-your-first-repository-using-github-desktop).
 
-GitHub has [good documentation for working in the Desktop app](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop), and while the emphasis in this book will be on using GitHub for version control, it also supports recording issues (read: problems or questions) with your files, contributing to projects that aren't yours and more.
+GitHub has [good documentation for working in the Desktop app](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop), and while the emphasis in this book will be on using GitHub for version control, it also supports recording issues (read: problems or questions) with your files, contributing to projects that aren't yours and more.
 
-## Advanced Use
+### A Place for Your Stuff
 
-Although our focus is on the GitHub Desktop app, you can use Git and GitHub from your computer's command line interface, and GitHub has a purpose-built [command line client](https://docs.github.com/en/github-cli), too. GitHub  can also serve as a publishing platform for many types of files, and entire websites are hosted on [GitHub Pages](https://docs.github.com/en/pages).
+We all will be working in the same way, and every student will have a repository for class assignments. Go [here](https://github.com/dwillis/data_journalism_2024_fall) and click the "Use this template" button and choose "Create a new repository". This will create a copy of the repository in your GitHub account. Give it a name that makes sense, like `data_journalism_2024_fall`. Your work will occur in that repository and you will submit links to individual documents. Pro tip: do not put assignment files outside your repository.
+
+You will clone your repository from GitHub.com to your laptop. You can sync it to multiple machines as long as you have GitHub Desktop (or the command line version) installed. The iMacs in the classroom have both, so you can use them during class if needed.
+
+You can store your repository anywhere on your computer, but my STRONG RECOMMENDATION is that you NOT store it in your Downloads or Desktop folders. Instead, make a new folder at the root (or home) directory and put your files there. Why? Because many folks have their Download and Desktop folders as part of their iCloud or OneNote setups, and Git DOES NOT LIKE THAT. Unless you want to spend time troubleshooting seemingly inexplicable problems, avoid those folders.
+
+Also, maybe clean up those Download and Desktop folders.
+
+### Local vs. GitHub
+
+GitHub works on a system of pulling and pushing changes to files between what you have on your computer and what is on your GitHub.com account. Here's how you should work:
+
+When you are working _locally_, before you start you should pull from GitHub.com to make sure you have the latest version of your files. When you finish, you should save and add, commit and push any changes/additions to GitHub.com. You can add/commit/push as often as you like, and there's reason not to do it often.
+
+The nature of Git and GitHub means that you can have a copy of your files on the Web and on your computer. You can work offline and then update your file when you connect to the Internet again. When submitting your assignments, you need to submit the full URL to your assignment's file from GitHub.com.
+
+### GitHub Tips
+
+In your class repository you will see various files that begin with a period, such as .gitignore. These are essentially helper files that contain metadata or instructions that tell Git and RStudio what to do and not do. For example, .gitignore contains a list of files and file types that should NOT be under version control. Maybe you have a big data file (GitHub doesn't really deal well with files of more than 50MB) or you have files containing credentials that you don't want on the Internet. Those files can still be in your local folder, but they won't be added to your GitHub repository.
+
+### Advanced GitHub Use
+
+Although our focus is on the GitHub Desktop app, you can use Git and GitHub from your computer's command line interface, and GitHub has a purpose-built [command line client](https://docs.github.com/en/github-cli), too. GitHub can also serve as a publishing platform for many types of files, and entire websites are hosted on [GitHub Pages](https://docs.github.com/en/pages).

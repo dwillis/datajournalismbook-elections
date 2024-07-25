@@ -43,7 +43,7 @@ If the AP's replication rules are to be followed, journalism needs to become muc
 
 ## The stylebook
 
-Troy Thibodeaux, the editor of the AP's data journalism team, said the stylebook entry started when the data team found themselves answering the same questions over and over. With a grant from the Knight Foundation, the team began to document their own standards and turn that into a stylebook section.
+Troy Thibodeaux, previously the editor of the AP's data journalism team, said the stylebook entry started when the data team found themselves answering the same questions over and over. With a grant from the Knight Foundation, the team began to document their own standards and turn that into a stylebook section.
 
 From the beginning, they had a fairly clear idea of what they wanted to do -- think through a project and ask what the frequently asked questions are that came up. It was not going to be a soup-to-nuts guide to how to do a data project.
 
@@ -57,7 +57,7 @@ Thibodeaux said the AP data team has two audiences when it comes to replication 
 
 ## Replication
 
-Meyer, now 86, said he's delighted to see replication up for discussion now, but warned that we shouldn't take it too far.
+Meyer said he was delighted to see replication up for discussion now, but warned that we shouldn't take it too far.
 
 "Making the analysis replicable was something I worried about from the very beginning," he wrote in an email. So much so that in 1967, after publishing stories from his landmark survey after the Detroit riots, he shipped the data and backup materials about it to a social science data repository at the University of North Carolina.
 
@@ -119,7 +119,7 @@ An increasing number of data journalists are switching to tools like analysis no
 
 Combined with online sharing tools like GitHub, analysis notebooks seem to solve the problem of replication. But the number using them is small compared to those using spreadsheets. Recent examples of news organizations using analysis notebooks include the [Los Angeles Times](https://github.com/datadesk), the [New York Times](https://github.com/TheUpshot), [FiveThirtyEight](https://github.com/fivethirtyeight/data), and [Buzzfeed](https://github.com/BuzzFeedNews).
 
-Peter Aldous, a data journalist at Buzzfeed recently published a story about how the online news site used machine learning to [find airplanes being used to spy on people in American cities](https://www.buzzfeednews.com/article/peteraldhous/us-marshals-spy-plane-over-mexico#.qqYnVj0B). Published with the story is the [code Aldous used to build his case](https://github.com/BuzzFeedNews/2017-08-spy-plane-finder).
+Peter Aldous, a data journalist at Buzzfeed, published a story about how the online news site used machine learning to [find airplanes being used to spy on people in American cities](https://www.buzzfeednews.com/article/peteraldhous/us-marshals-spy-plane-over-mexico#.qqYnVj0B). Published with the story is the [code Aldous used to build his case](https://github.com/BuzzFeedNews/2017-08-spy-plane-finder).
 
 "I think of it this way: As a journalist, I don't like to simply trust what people tell me. Sometimes sources lie. Sometimes they're just mistaken. So I like to verify what I'm told," he wrote in an email. "By the same token, why should someone reading one of my articles believe my conclusions, if I don't provide the evidence that explains how I reached them?"
 
@@ -147,7 +147,7 @@ Though written almost half a century ago, Meyer foresaw how data journalism was 
 
 Meyer optimistically wrote that journalism schools were prepared to provide that talent -- they were not then, and only small handful are now -- but students were unlikely to be drawn to these new skills if they didn't see a chance to use those skills in their careers.
 
-It's taken 45 years, but we are now at this point.
+It's taken 50 years, but we are now at this point.
 
 "The potential for receptivity, especially among the younger generation of newspaper managers, is high," Meyer wrote.
 

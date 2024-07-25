@@ -31,7 +31,7 @@ Think of your own reaction to seeing a page of words. Now imagine it as a page o
 
 Instead, picture the number "five". It's easy. It might be fingers or it might be a team on a basketball court. But it's simple to understand.
 
-Now picture the number 275 million. It's hard. Unfortunately, 275 billion isn't much harder, even though it's magnitudes larger. (A million seconds goes by in about 11 days but you may not have been alive for a billion seconds -- about 36 years.)
+Now picture the number 275 million. It's hard. Unfortunately, 275 billion isn't much harder, even though it's magnitudes larger. (A million seconds goes by in about 11 days but you almost surely have not have been alive for a billion seconds -- about 36 years.)
 
 The easiest way to get used to some numbers is to learn ways to cut them down to size by calculating rates, ratios or percentages. In your analysis, keep an eye out for the simplest *accurate* way to characterize the numbers you want to use. "Characterize" is the important word here -- it's not usually necessary to be overly precise so long as your story doesn't hinge on a nuanced reading of small differences. (And is anything that depends on that news? It may not be.)
 
@@ -39,11 +39,11 @@ Here's one example of putting huge numbers in perspective. Pay attention to what
 
 <blockquote style="font-size:smaller;">
 
-The Chicago hedge fund billionaire Kenneth C. Griffin, for example, earns about \$68.5 million a month after taxes, according to court filings made by his wife in their divorce. He has given a total of \$300,000 to groups backing Republican presidential candidates. That is a huge sum on its face, yet is the equivalent of only \$21.17 for a typical American household, according to Congressional Budget Office data on after-tax income. <br><br> *"[Buying Power](https://www.nytimes.com/interactive/2015/10/11/us/politics/2016-presidential-election-super-pac-donors.html)", Nicholas Confessore, Sarah Cohen and Karen Yourish, The New York Times, October 2015*
+The Chicago hedge fund billionaire Kenneth C. Griffin, for example, earns about \$68.5 million a month after taxes, according to court filings made by his wife in their divorce. In 2016, he had given a total of \$300,000 to groups backing Republican presidential candidates. That is a huge sum on its face, yet is the equivalent of only \$21.17 for a typical American household, according to Congressional Budget Office data on after-tax income. <br><br> *"[Buying Power](https://www.nytimes.com/interactive/2015/10/11/us/politics/2016-presidential-election-super-pac-donors.html)", Nicholas Confessore, Sarah Cohen and Karen Yourish, The New York Times, October 2015*
 
 </blockquote>
 
-Originally the reporters had written it even more simply, but editors found the facts so unbelievable that they wanted give readers a chance to do the math themselves. That's reasonable, but here's an even simpler way to say it: "earned nearly \$1 billion after taxes...He has given \$300,000 to groups backing candidates, the equivalent of a dinner at Olive Garden for the typical American family , based on Congressional Budget Office income data." (And yes, the reporter checked the price for an Olive Garden meal at the time for four people.)
+Originally the reporters had written it even more simply, but editors found the facts so unbelievable that they wanted give readers a chance to do the math themselves. That's reasonable, but here's an even simpler way to say it: "earned nearly \$1 billion after taxes...He has given \$300,000 to groups backing candidates, the equivalent of a dinner at Olive Garden for the typical American family, based on Congressional Budget Office income data." (And yes, the reporter checked the price for an Olive Garden meal at the time for four people.)
 
 ## Put math in its place
 
@@ -78,4 +78,4 @@ Once you find the humanity in your numbers, by cutting them down to size and rel
 ```
 ## Exercises
 
-- Imagine that someone gave you \$1 million and you could spend it on anything you want. Write down a list of things that would add up to about that amount. That should be easy. Now, imagine someone gave you \$1 billion and you could spend it on whatever you want, but anything left over after a year had to be returned. How would you spend it? (You can give away money, but it can't be more than 50% of a charity's annual revenues. So you can't give 10 \$100 million gifts!) See how far you get trying to spend it. A few homes, a few yachts, student loan repayments for all of your friends? You've hardly gotten started.
+-   Imagine that someone gave you \$1 million and you could spend it on anything you want. Write down a list of things that would add up to about that amount. That should be easy. Now, imagine someone gave you \$1 billion and you could spend it on whatever you want, but anything left over after a year had to be returned. How would you spend it? (You can give away money, but it can't be more than 50% of a charity's annual revenues. So you can't give 10 \$100 million gifts!) See how far you get trying to spend it. A few homes, a few yachts, student loan repayments for all of your friends? You've hardly gotten started.

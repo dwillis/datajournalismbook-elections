@@ -2,13 +2,17 @@
 
 If you were at all paying attention in pre-college science classes, you have probably seen this equation:
 
-    d = rt or distance = rate*time
+```         
+d = rt or distance = rate*time
+```
 
 In English, that says we can know how far something has traveled if we know how fast it's going and for how long. If we multiply the rate by the time, we'll get the distance.
 
 If you remember just a bit about algebra, you know we can move these things around. If we know two of them, we can figure out the third. So, for instance, if we know the distance and we know the time, we can use algebra to divide the distance by the time to get the rate.
 
-    d/t = r or distance/time = rate
+```         
+d/t = r or distance/time = rate
+```
 
 In 2012, the South Florida Sun Sentinel found a story in this formula.
 
@@ -46,11 +50,7 @@ Combining them together has the power to change policy, expose injustice and dee
 
 ## Installations
 
-This book is all in the R statistical language. To follow along, you'll do the following:
-
-1.  Install the R language on your computer. Go to the [R Project website](https://www.r-project.org/), click download R and select a mirror closest to your location. Then download the version for your computer.
-
-2.  Install [R Studio Desktop](https://www.rstudio.com/products/rstudio/#Desktop). The free version is great.
+This book is all in the R statistical language. To follow along, you'll go [here](https://posit.co/download/rstudio-desktop/) and download and install both R the language and RStudio.
 
 Going forward, you'll see passages like this:
 
@@ -58,7 +58,7 @@ Going forward, you'll see passages like this:
 install.packages("tidyverse")
 ```
 
-That is code that you'll need to run in your R Studio. When you see that, you'll know what to do.
+That is code that you'll need to run in your RStudio. When you see that, you'll know what to do.
 
 ## About this book
 
@@ -68,9 +68,9 @@ There's some things you should know about it:
 
 -   It is free for students.
 -   The topics will remain the same but the text is going to be constantly tinkered with.
--   What is the work of the authors is copyright Matt Waite 2020, Sarah Cohen 2022 and Derek Willis and Sean Mussenden 2022.
+-   What is the work of the authors is copyright Matt Waite 2020, Sarah Cohen 2022 and Derek Willis, Daniel Trielli and Sean Mussenden 2024.
 -   The text is [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) Creative Commons licensed. That means you can share it and change it, but only if you share your changes with the same license and it cannot be used for commercial purposes. I'm not making money on this so you can't either.\
--   As such, the whole book -- authored in Quarto -- in its original form is [open sourced on Github](https://github.com/dwillis/datajournalismbook). Pull requests welcomed!
+-   As such, the whole book -- authored in Quarto -- in its original form is [open sourced on Github](https://github.com/dwillis/datajournalismbook-elections). Pull requests welcomed!
 
 ## What we'll cover
 

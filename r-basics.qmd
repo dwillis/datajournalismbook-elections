@@ -4,7 +4,7 @@
 
 Like all programming languages, it has certain built-in functions.
 
-There are many ways you can write and execute R code. The first, and most basic, is the console, shown here as part of a software tool called [RStudio (Desktop Open Source Edition)](https://www.rstudio.com/products/rstudio/) that we'll be using all semester.
+There are many ways you can write and execute R code. The first, and most basic, is the console, shown here as part of a software tool called [RStudio (Desktop Open Source Edition)](https://posit.co/products/open-source/rstudio/) that we'll be using all semester.
 
 ![ready](images/verybasics1.png)
 

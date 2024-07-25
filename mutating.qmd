@@ -1,6 +1,6 @@
 # Mutating data
 
-Often the data you have will prompt questions that it doesn't immediately answer. The PPP loan applications include a total amount column but also columns for different categories the money would be used for: payroll, utilities, rent, etc. Amounts are great, but comparing absolute numbers to each other is only useful if you have a very small number. We need percentages!
+Often the data you have will prompt questions that it doesn't immediately answer. The amount of donations or number of votes are great, but comparing absolute numbers to each other is only useful if you have a very small number. We need percentages!
 
 To do that in R, we can use `dplyr` and `mutate` to calculate new metrics in a new field using existing fields of data. That's the essence of `mutate` - using the data you have to answer a new question.
 
@@ -11,10 +11,10 @@ So first we'll import the tidyverse so we can read in our data and begin to work
 library(tidyverse)
 ```
 
-Now we'll import a dataset of county-level election results from Maryland's 2018 primary that is in the data folder in this chapter's pre-lab directory. We'll use this to explore ways to create new information from existing data.
+Now we'll import a dataset of county-level election results from Maryland's 2024 primary that is in the data folder in this chapter's pre-lab directory. We'll use this to explore ways to create new information from existing data.
 
 ```{r}
-primary_18 <- read_csv('data/maryland_primary_2018.csv')
+primary_24 <- read_csv('data/maryland_primary_2024.csv')
 ```
 
 First, let's add a column called `percent_election_day` for the percentage of votes that were cast on election day for each candidate result in a county. The code to calculate a percentage is pretty simple. Remember, with `summarize`, we used `n()` to count things. With `mutate`, we use very similar syntax to calculate a new value -- a new column of data -- using other values in our dataset.
@@ -22,42 +22,46 @@ First, let's add a column called `percent_election_day` for the percentage of vo
 If we look at what we got when we imported the data, you'll see there's `election_day` as the numerator, and we'll use `votes` as the denominator. We can simply things by only selecting a few columns.
 
 ```{r}
-primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
+primary_24 |>
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
   mutate(
   percent_election_day = election_day/votes
 )
 ```
+
 Now we've got our `percent_election_day` column. But what do you see right away? Do those numbers look like we expect them to? No. They're a decimal expressed as a percentage. So let's fix that by multiplying by 100.
 
 ```{r}
-primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
+primary_24 |>
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
 )
 ```
+
 Now, does this ordering do anything for us? No. Let's fix that with arrange.
 
 ```{r}
-primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
+primary_24 |>
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
-)  %>% arrange(desc(percent_election_day))
+)  |> 
+  arrange(desc(percent_election_day))
 ```
 
 So now we have results ordered by `percent_election_day` with the highest percentage first. To see the lowest percentage first, we can reverse that `arrange` function.
 
 ```{r}
-primary_18 %>%
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) %>%
+primary_24 |>
+  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
-)  %>% arrange(percent_election_day)
+)  |> 
+  arrange(percent_election_day)
 ```
 
-Only a handful of candidates got less than 50 percent of their total votes in a county on election day. What a difference a pandemic makes.
+TKTK conclusion
 
 ## Another use of mutate
 
@@ -74,41 +78,41 @@ You'll notice that there's a mix of styles: "Baltimore" and "BALTIMORE" for exam
 So how can we fix that? Mutate - it's not just for math! And a function called `str_to_upper` that will convert a character column into all uppercase. Now we can say exactly how many donations came from Baltimore (I mean, of course, BALTIMORE).
 
 ```{r}
-standardized_maryland_cities <- maryland_cities %>%
+standardized_maryland_cities <- maryland_cities |>
   mutate(
     upper_city = str_to_upper(city)
 )
 ```
 
-There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
+Note that mutate doesn't literally combine similar records together - you'll still need to do another group_by and summarize block - but it does make your data more accurate. There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
 ## A more powerful use
 
 Mutate is even more useful when combined with some additional functions. Let's focus on individual contributions from Maryland donors via WinRed; we'd like to group their donations by amount into one of four categories:
 
-1. Under $100
-2. $101-$499
-3. $500-$2,900
-4. More than $2,901
+1.  Under \$100
+2.  \$101-\$499
+3.  \$500-\$2,900
+4.  More than \$2,901
 
-Mutate can make that happen by creating a new column and putting in a category value _based on the amount_ of each record. First, let's load the individual contributions:
+Mutate can make that happen by creating a new column and putting in a category value *based on the amount* of each record. First, let's load the individual contributions that we did in the previous chapter:
 
 ```{r}
-maryland_winred <- read_csv("data/winred_md_q2_2022.csv")
+maryland_winred_contributions <- read_rds("data/maryland_winred.rds")
 
-head(maryland_winred)
+head(maryland_winred_contributions)
 ```
 
 Now that we've gotten a look, we can use `case_when` to give our new category column a value using some standard numeric logic:
 
 ```{r}
-maryland_winred_categories <- maryland_winred %>%
+maryland_winred_categories <- maryland_winred_contributions |>
   mutate(
     amount_category = case_when(
         amount < 100 ~ "Less than $100",
         amount >= 100 & amount <= 500 ~ "Between $100 and $500",
-        amount > 500 & amount <= 2900 ~ "Between $501 and $2900",
-        amount > 2900 ~ "More than $2,900"
+        amount > 500 & amount <= 3300 ~ "Between $501 and $3300",
+        amount > 3300 ~ "More than $3,300"
       )
   )
 ```
@@ -116,12 +120,12 @@ maryland_winred_categories <- maryland_winred %>%
 We can then use our new `amount_category` column in group_by statements to make summarizing easier:
 
 ```{r}
-maryland_winred_categories %>%
-  group_by(amount_category) %>%
-  summarize(total_amount = sum(amount)) %>%
+maryland_winred_categories |>
+  group_by(amount_category) |>
+  summarize(total_amount = sum(amount)) |>
   arrange(desc(total_amount))
 ```
 
-The largest category - by far - in dollar amount is the sub-$100 category, which makes sense for an online fundraising platform. Big little money.
+The largest category - by far - in dollar amount is the sub-\$100 category, which makes sense for an online fundraising platform. Big little money.
 
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.

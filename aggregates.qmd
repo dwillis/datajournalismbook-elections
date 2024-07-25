@@ -2,7 +2,7 @@
 
 ## Libraries
 
-R is a statistical programming language that is purpose built for data analysis.
+R is a statistical programming language that is purpose-built for data analysis.
 
 Base R does a lot, but there are a mountain of external libraries that do things to make R better/easier/more fully featured. We already installed the tidyverse -- or you should have if you followed the instructions for the last assignment -- which isn't exactly a library, but a collection of libraries. Together, they make up the Tidyverse. Individually, they are extraordinarily useful for what they do. We can load them all at once using the tidyverse name, or we can load them individually. Let's start with individually.
 
@@ -100,25 +100,25 @@ We can also click on the data name in the R Studio environment window to explore
 
 So what if we wanted to know how many contributions went to each recipient?
 
-To do that by hand, we'd have to take each of the 54,247 individual rows (or observations or records) and sort them into a pile. We'd put them in groups -- one for each recipient -- and then count them.
+To do that by hand, we'd have to take each of the 133,363 individual rows (or observations or records) and sort them into a pile. We'd put them in groups -- one for each recipient -- and then count them.
 
 `dplyr` has a group by function in it that does just this. A massive amount of data analysis involves grouping like things together and then doing simple things like counting them, or averaging them together. So it's a good place to start.
 
-So to do this, we'll take our dataset and we'll introduce a new operator: `%>%`. The best way to read that operator, in my opinion, is to interpret that as "and then do this."
+So to do this, we'll take our dataset and we'll introduce a new operator: `|>`. The best way to read that operator, in my opinion, is to interpret that as "and then do this."
 
-We're going to establish a pattern that will come up again and again throughout this book: `data %>% function`. In English: take your data set and then do this specific action to it.
+We're going to establish a pattern that will come up again and again throughout this book: `data |> function`. In English: take your data set and then do this specific action to it.
 
 The first step of every analysis starts with the data being used. Then we apply functions to the data.
 
-In our case, the pattern that you'll use many, many times is: `data %>% group_by(COLUMN NAME) %>% summarize(VARIABLE NAME = AGGREGATE FUNCTION(COLUMN NAME))`
+In our case, the pattern that you'll use many, many times is: `data |> group_by(COLUMN NAME) |> summarize(VARIABLE NAME = AGGREGATE FUNCTION(COLUMN NAME))`
 
 In our dataset, the column with recipient information is called "memo_text"
 
 Here's the code to count the number of contributions to each recipient:
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text) %>%
+maryland_winred_contributions |>
+  group_by(memo_text) |>
   summarise(
     count_contribs = n()
   )
@@ -134,33 +134,35 @@ Inside the parentheses in summarize, we set up the summaries we want. In this ca
 
 When we run that, we get a list of recipients with a count next to them. But it's not in any order.
 
-So we'll add another "and then do this" symbol -- %\>% -- and use a new function called `arrange()`. Arrange does what you think it does -- it arranges data in order. By default, it's in ascending order -- smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:
+So we'll add another "and then do this" symbol -- `|>` -- and use a new function called `arrange()`. Arrange does what you think it does -- it arranges data in order. By default, it's in ascending order -- smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text) %>%
+maryland_winred_contributions |>
+  group_by(memo_text) |>
   summarise(
     count_contribs = n()
-  ) %>%
+  ) |>
   arrange(desc(count_contribs))
 ```
 
-The Save America Joint Fundraising Committee has 7,809 contributions, more than any other recipient.
+The Trump National Committee JFC Inc. has 41,835 contributions, more than any other recipient.
 
 We can, if we want, group by more than one thing.
 
 The WinRed data contains a column detailing the date of the contribution: "date".
 
-We can group by "memo_text" and "date" to see how many contributions occurred on every date to every recipient. We'll sort by recipient and then date
+We can group by "memo_text" and "date" to see how many contributions occurred on every date to every recipient. We'll sort by the count of contributions in descending order.
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text, date) %>%
+maryland_winred_contributions |>
+  group_by(memo_text, date) |>
   summarise(
     count_contribs = n()
-  ) %>%
-  arrange(memo_text, date)
+  ) |>
+  arrange(desc(count_contribs))
 ```
+
+Ok, now go and find out why contributions to Trump would be exponentially higher at the end of May.
 
 ## Other summarization methods: summing, mean, median, min and max
 
@@ -169,26 +171,26 @@ In the last example, we grouped like records together and counted them, but ther
 Let's say we wanted to know the total dollar amount of contributions to each recipient? For that, we could use the `sum()` function to add up all of the loan values in the column "amount". We put the column we want to total -- "amount" -- inside the sum() function `sum(amount)`. Note that we can simply add a new summarize function here, keeping our count_contribs field in our output table.
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text) %>%
+maryland_winred_contributions |>
+  group_by(memo_text) |>
   summarise(
     count_contribs = n(),
     total_amount = sum(amount)
-  ) %>%
+  ) |>
   arrange(desc(total_amount))
 ```
 
 We can also calculate the average amount for each recipient -- the mean -- and the amount that sits at the midpoint of our data -- the median.
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text) %>%
+maryland_winred_contributions |>
+  group_by(memo_text) |>
   summarise(
     count_contribs = n(),
     total_amount = sum(amount),
     mean_amount = mean(amount),
     median_amount = median(amount)
-  ) %>%
+  ) |>
   arrange(desc(count_contribs))
 ```
 
@@ -197,8 +199,8 @@ We see something interesting here. The mean contribution amount is higher than t
 What about the highest and lowest amounts for each recipient? For that, we can use the `min()` and `max()` functions.
 
 ```{r}
-maryland_winred_contributions %>%
-  group_by(memo_text) %>%
+maryland_winred_contributions |>
+  group_by(memo_text) |>
   summarise(
     count_contribs = n(),
     total_amount = sum(amount),
@@ -206,7 +208,7 @@ maryland_winred_contributions %>%
     median_amount = median(amount),
     min_amount = min(amount),
     max_amount = max(amount)
-  ) %>%
+  ) |>
   arrange(desc(max_amount))
 ```
 
@@ -215,9 +217,9 @@ From this, we can see that some committees focus on small-dollar donors while ot
 It would be interesting to see what the largest donation was. To do that, we could simply take our original data set and sort it from highest to lowest on the amount.
 
 ```{r}
-maryland_winred_contributions %>%
+maryland_winred_contributions |>
   arrange(desc(amount))
 
 ```
 
-Lots of \$5,800 contributions, which probably seems like a weirdly specific number. And it is! That's the maximum contribution an individual can give for both a primary and a general election.
+Only two contributions of \$10,000 or more. That's because the maximum contribution an individual can give for both a primary and a general election in this cycle is \$3,300, but campaigns have to report whatever they are given, no matter how large (they likely will refund the difference).
