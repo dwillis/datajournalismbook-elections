@@ -23,7 +23,7 @@ If we look at what we got when we imported the data, you'll see there's `electio
 
 ```{r}
 primary_24 |>
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
+  select(office_name, office_district, candidate_name, party, county_name, election_day, votes) |>
   mutate(
   percent_election_day = election_day/votes
 )
@@ -33,7 +33,7 @@ Now we've got our `percent_election_day` column. But what do you see right away?
 
 ```{r}
 primary_24 |>
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
+  select(office_name, office_district, candidate_name, party, county_name, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
 )
@@ -43,7 +43,7 @@ Now, does this ordering do anything for us? No. Let's fix that with arrange.
 
 ```{r}
 primary_24 |>
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
+  select(office_name, office_district, candidate_name, party, county_name, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
 )  |> 
@@ -54,14 +54,14 @@ So now we have results ordered by `percent_election_day` with the highest percen
 
 ```{r}
 primary_24 |>
-  select(office, district, name_raw, party, jurisdiction, election_day, votes) |>
+  select(office_name, office_district, candidate_name, party, county_name, election_day, votes) |>
   mutate(
   percent_election_day = (election_day/votes)*100
 )  |> 
   arrange(percent_election_day)
 ```
 
-TKTK conclusion
+Mutating can help us make different amounts easier to compare. We also can use filter to limit the data to meet certain conditions. For example, we could only look at the election day percentages of candidates who received at least 100 votes in a jurisdiction.
 
 ## Another use of mutate
 

@@ -46,9 +46,9 @@ And now we only have five columns of data for whatever analysis we might want to
 So let's say we wanted to see all the candidates for Senate and the number of votes each received in Prince George's County. We can do this a number of ways. The first is we can chain together a whole lot of filters.
 
 ```{r}
-prince_georges_governor <- primary_24 |> filter(jurisdiction == "Prince George's") |> filter(office == "U.S. Senator")
+prince_georges_senate <- primary_24 |> filter(jurisdiction == "Prince George's") |> filter(office == "U.S. Senator")
 
-nrow(prince_georges_governor)
+nrow(prince_georges_senate)
 ```
 
 That gives us 10 applicants. But that's repetitive, no? We can do better using boolean operators -- AND and OR. In this case, AND is `&` and OR is `|`.

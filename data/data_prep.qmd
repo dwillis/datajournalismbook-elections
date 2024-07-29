@@ -1,0 +1,33 @@
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+```{r}
+dem24_primary <- read_csv("PP24_AllPrecinctsDemocratic.csv") |> clean_names()
+rep24_primary <- read_csv("PP24_AllPrecinctsRepublican.csv") |> clean_names()
+
+all_primary <- bind_rows(dem24_primary, rep24_primary)
+```
+
+
+
+```{r}
+maryland_primary_2024 <- all_primary |> group_by(county_name, office_name, office_district, candidate_name, party) |> 
+  summarize(early_voting = sum(early_votes), election_day = sum(election_night_votes), absentee = sum(mail_in_ballot_1_votes), provisional = sum(provisional_votes), second_absentee = sum(mail_in_ballot_2_votes)) |> mutate(votes = early_voting + election_day + absentee + provisional + second_absentee)
+```
+
+Need to remove records with an office_district value that are not U.S. Congress.
+
+```{r}
+non_congress <- maryland_primary_2024 |> filter(is.na(office_district)) |> filter(!office_name == 'U.S. Congress')
+
+congress <- maryland_primary_2024 |> filter(!is.na(office_district)) |> filter(office_name == 'U.S. Congress')
+
+federal <- bind_rows(congress, non_congress)
+
+write_csv(federal, "maryland_primary_2024.csv")
+
+```
+
+
