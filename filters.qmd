@@ -22,7 +22,7 @@ The data we want to filter on is in `jurisdiction`. So we're going to use filter
 **Be careful: `=` is not `==` and `=` is not "equal to". `=` is an assignment operator in most languages -- how things get named.**
 
 ```{r}
-prince_georges <- primary_18 |> filter(jurisdiction == "Prince George's")
+prince_georges <- primary_24 |> filter(county_name == "Prince George's County")
 
 head(prince_georges)
 ```
@@ -34,7 +34,7 @@ We also have more data than we might want. For example, we may only want to work
 To simplify our dataset, we can use select.
 
 ```{r}
-selected_prince_georges <- prince_georges |> select(office, district, name_raw, party, votes)
+selected_prince_georges <- prince_georges |> select(office_name, office_district, candidate_name, party, votes)
 
 head(selected_prince_georges)
 ```
@@ -46,19 +46,19 @@ And now we only have five columns of data for whatever analysis we might want to
 So let's say we wanted to see all the candidates for Senate and the number of votes each received in Prince George's County. We can do this a number of ways. The first is we can chain together a whole lot of filters.
 
 ```{r}
-prince_georges_senate <- primary_24 |> filter(jurisdiction == "Prince George's") |> filter(office == "U.S. Senator")
+prince_georges_senate <- primary_24 |> filter(county_name == "Prince George's County") |> filter(office_name == "U.S. Senator")
 
 nrow(prince_georges_senate)
 ```
 
-That gives us 10 applicants. But that's repetitive, no? We can do better using boolean operators -- AND and OR. In this case, AND is `&` and OR is `|`.
+That gives us 17 candidates. But that's repetitive, no? We can do better using boolean operators -- AND and OR. In this case, AND is `&` and OR is `|`.
 
 The difference? With AND, both things must be true to be included. With OR, any of those two things can be true and it will be included.
 
 Here's the difference.
 
 ```{r}
-and_prince_georges <- primary_24 |> filter(jurisdiction == "Prince George's" & office == "Governor / Lt. Governor")
+and_prince_georges <- primary_24 |> filter(county_name == "Prince George's County" & office_name == "U.S. Senator")
 
 nrow(and_prince_georges)
 ```
@@ -66,11 +66,11 @@ nrow(and_prince_georges)
 So AND gives us the same answer we got before. What does OR give us?
 
 ```{r}
-or_prince_georges <- primary_24 |> filter(jurisdiction == "Prince George's" | office == "Governor / Lt. Governor")
+or_prince_georges <- primary_24 |> filter(county_name == "Prince George's County" | office_name == "U.S. Senator")
 
 nrow(or_prince_georges)
 ```
 
-So there's XXX rows that are EITHER in Prince George's OR are governor results. OR is additive; AND is restrictive.
+So there's 428 rows that are EITHER in Prince George's OR are Senate results. OR is additive; AND is restrictive.
 
 A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes.
