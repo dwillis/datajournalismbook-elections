@@ -2,11 +2,11 @@
 
 The next circle of Hell on the Dante's Inferno of Data Journalism is the PDF. Governments everywhere love the PDF and publish all kinds of records in a PDF. The problem is a PDF isn't a data format -- it's a middle finger, saying I've Got Your Accountability Right Here, Pal.
 
-It's so ridiculous that there's a constellation of tools that do nothing more than try to harvest tables out of PDFs. There are online services like [CometDocs](https://www.cometdocs.com/) where you can upload your PDF and point and click your way into an Excel file. There are mobile device apps that take a picture of a table and convert it into a spreadsheet. But one of the best is a tool called [Tabula](https://tabula.technology/). It was build by journalists for journalists.
+It's so ridiculous that there's a constellation of tools that do nothing more than try to harvest tables out of PDFs. There are online services like [CometDocs](https://www.cometdocs.com/) where you can upload your PDF and point and click your way into an Excel file. There are mobile device apps that take a picture of a table and convert it into a spreadsheet. One of the best is a tool called [Tabula](https://tabula.technology/). It was build by journalists for journalists.
 
 There is a version of Tabula that will run inside of R -- a library called Tabulizer -- but the truth is I'm having the hardest time installing it on my machine, which leads me to believe that trying to install it across a classroom of various machines would be disastrous. The standalone version works just fine, and it provides a useful way for you to see what's actually going on.
 
-Unfortunately, harvesting tables from PDFs with Tabula is an exercise in getting your hopes up, only to have them dashed. We'll start with an example. First, let's load the tidyverse and janitor.
+Unfortunately, harvesting tables from PDFs with Tabula sometimes is an exercise in getting your hopes up, only to have them dashed. We'll start with an example. First, let's load the tidyverse and janitor.
 
 ```{r}
 #| output: false
@@ -14,10 +14,9 @@ library(tidyverse)
 library(janitor)
 ```
 
-
 ## Easy does it
 
-Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://elections.maryland.gov/press_room/2020_stats/Eligible%20Active%20Voters%20by%20County%20-%20PG20.pdf).
+Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://elections.maryland.gov/press_room/2022_stats/GG22/Eligible%20Active%20Voters%20by%20County%20-%20GG22.pdf).
 
 [Download and install Tabula](https://tabula.technology/). Tabula works much the same way as Open Refine does -- it works in the browser by spinning up a small webserver in your computer.
 
@@ -36,7 +35,7 @@ knitr::include_graphics(rep("images/md_voters2.png"))
 You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R:
 
 ```{r}
-voters_by_county <- read_csv("data/tabula-Eligible Active Voters by County - PG20.csv")
+voters_by_county <- read_csv("data/tabula-Eligible Active Voters by County - GG22.csv")
 
 voters_by_county
 ```
@@ -45,7 +44,7 @@ Boom - we're good to go.
 
 ## When it looks good, but needs a little fixing
 
-Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
+Here's a slightly more involved PDF, 2022 Missouri primary election precinct results from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/camden_1.png"))
@@ -70,10 +69,11 @@ Now you can hit the green "Preview & Export Extracted Data" button on the top ri
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/camden_4.png"))
 ```
+
 You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names and some other things:
 
 ```{r}
-camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
+camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") |> clean_names()
 
 camden_2022
 ```
@@ -83,13 +83,13 @@ camden_2022
 The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
 
 ```{r}
-camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
+camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") |> clean_names()
 
-camden_2022 <- camden_2022 %>%
-  rename(precinct = x1) %>%
+camden_2022 <- camden_2022 |>
+  rename(precinct = x1) |>
   mutate(voters = as.numeric(voters),
          turnout = as.numeric(str_replace(turnout, '%',''))
-         ) %>%
+         ) |>
   mutate(precinct = case_when(
     precinct == 'SUNRISE BEACH 2 & 3 AND WILSON' ~ 'SUNRISE BEACH 2 & 3 AND WILSON BEND',
     TRUE ~ precinct
@@ -101,10 +101,11 @@ camden_2022
 Ok, now we have numbers. Next we'll get rid of the rows where `cast` is NA (why not `voters`?). To do that, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where cast is NOT NA").
 
 ```{r}
-camden_2022 <- camden_2022 %>% filter(!is.na(cast))
+camden_2022 <- camden_2022 |> filter(!is.na(cast))
 
 camden_2022
 ```
+
 All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
 
 Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.

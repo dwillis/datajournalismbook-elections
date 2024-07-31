@@ -1,20 +1,16 @@
 # Data Cleaning Part III: Open Refine
 
-Gather 'round kids and let me tell you a tale about one of your authors. In college, this author (Matt Waite) got involved in a project where he mapped crime in Lincoln, Nebraska, looking specifically in the neighborhoods surrounding campus. This was in the mid 1990s. Computers were under powered. Tools were pretty primitive. I was given a database of nearly 50,000 calls for service.
+Gather 'round kids and let me tell you a tale. Back in the previous century, Los Angeles Times journalists Sara Fritz and Dwight Morris wanted to answer this seemingly simple question: what do political campaigns spend their money on?
 
-And then I learned that addresses were not stored in a standard way. However the officer wrote it down, that's how it was recorded.
+While campaigns are required to list a purpose of each expenditure, the problem is that they can choose what words to use. There's no standard dictionary or drop-down menu to choose from. Want to call that donut purchase "Food"? Sure. What about "Supplies for volunteers"? Works for me. How about "Meals"? Mom might disagree, but the FEC won't.
 
-What did that mean?
+In order to answer their initial question, the reporters had to standardize their data. In other words, all food-related purchases had to be labeled "Food". All travel expenses had to be "Travel". It took them months - many months - to do this for every federal candidate.
 
-It meant the Lincoln Police Department came up with dozens of ways to say a single place. And since the mapping software needed the addressed to be in a specific form, I had to fix them. For example, I will go to my grave knowing that Lincoln High School's street address is 2229 J Street. Police officers wrote down LHS, L.H.S., Lincoln HS, Lincoln H.S., LHS (J Street), 2229 J, 2229 J ST, St., Street and on and on and on. That one was relatively easy. The local convenience store chain, with 8 locations around the city, was harder. I had to use the patrol district to locate them.
+I tell you this because if they had Open Refine, it would have taken them a week or two, not months.
 
-It took me four months to clean up more than 30,000 unique addresses and map them.
+I did data standardization before Open Refine, and every time I think about it, I get mad.
 
-I tell you this because if I had Open Refine, it would have taken me a week, not four months.
-
-Every time I talk about Open Refine, I remember this, and I get mad.
-
-Fortunately (unfortunately?) several columns in the PPP loan data we're working with are flawed in exactly the same way. There are dozens of variations on just "Baltimore".
+Fortunately (unfortunately?) several columns in the campaign finance data we'll work with are flawed in the same way that the LA Times' data was, so we can do this work in a better, faster way.
 
 We're going to explore two ways into Open Refine: Through R, and through Open Refine itself.
 
@@ -43,15 +39,15 @@ dc_food <- read_csv("data/dc_food.csv")
 
 Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "W" or lowercase "w" using the function `str_detect()` with a regular expression.
 
-The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W".
+The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "\^" symbol means "starts with") a lowercase "w" OR (the vertical "\|", called a pipe, means OR) an uppercase "W".
 
 ```{r}
-dc_food %>%
-  group_by(recipient_name) %>%
+dc_food |>
+  group_by(recipient_name) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_name, '^w|^W')) %>%
+  ) |>
+  filter(str_detect(recipient_name, '^w|^W')) |>
   arrange(recipient_name)
 ```
 
@@ -66,47 +62,51 @@ The key collision merge function takes each string and extracts the key parts of
 One rule you should follow when using this is: **do not overwrite your original fields**. Always work on a copy. If you overwrite your original field, how will you know if it did the right thing? How can you compare it to your original data? To follow this, I'm going to mutate a new field called clean_city and put the results of key collision merge there.
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=key_collision_merge(recipient_name)) %>%
-  select(recipient_name, recipient_clean, everything())
+cleaned_dc_food <- dc_food |>
+  mutate(recipient_clean=key_collision_merge(recipient_name)) |>
+  select(recipient_name, recipient_clean, everything()) |> 
+  arrange(recipient_clean)
 
 cleaned_dc_food
 
 ```
+
 To examine changes `refinr` made, let's examine the changes it made to cities that start with the letter "W".
 
 ```{r}
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
+cleaned_dc_food |>
+  group_by(recipient_name, recipient_clean) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
+  ) |>
+  filter(str_detect(recipient_clean, "^w|^W")) |>
   arrange(recipient_clean)
 ```
+
 You can see several changes on the second page of results, including that refinr made "PIZZA, WE THE" into "WE THE PIZZA" which is pretty smart. Other potential changes, grouping together "WASHINGTON NATIONALS" and "WASHINGTON NATIONALS BASEBALL CLUB", didn't happen. Key collision will do well with different cases, but all of our records are upper case.
 
-There's another merging algorithim that's part of refinr that works a bit differently, called `n_gram_merge()`.  Let's try applying that one.
+There's another merging algorithim that's part of refinr that works a bit differently, called `n_gram_merge()`. Let's try applying that one.
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=n_gram_merge(recipient_name)) %>%
+cleaned_dc_food <- dc_food |>
+  mutate(recipient_clean=n_gram_merge(recipient_name)) |>
   select(recipient_name, recipient_clean, everything())
 
 cleaned_dc_food
 ```
 
-To examine changes `refinr` made with this algorithm, let's again look at cities that start with the letter "A". Examining Aberdeen and Annapolis, we see there wasn't a substantial change from the previous method.
+To examine changes `refinr` made with this algorithm, let's again look at recipients starting with W. We see there wasn't a substantial change from the previous method.
 
 ```{r}
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
+cleaned_dc_food |>
+  group_by(recipient_name, recipient_clean) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
+  ) |>
+  filter(str_detect(recipient_clean, "^w|^W")) |>
   arrange(recipient_clean)
 ```
+
 This method also made some good changes, but not in every case. No single method will be perfect and often a combination is necessary.
 
 That's how you use the Open Refine r package, refinr.
@@ -119,7 +119,7 @@ Open Refine is free software. [You should download and install it](https://openr
 
 For bigger datasets, Open Refine is the way to go. And it has a lot more tools than refinr does (by design).
 
-After you install it, run it. (If you are on a Mac it might tell you that it can't run the program. Go to System Preferences -> Security & Privacy -> General and click "Open Anyway".) Open Refine works in the browser, and the app spins up a small web server visible only on your computer to interact with it. A browser will pop up automatically.
+After you install it, run it. (If you are on a Mac it might tell you that it can't run the program. Go to System Preferences -\> Security & Privacy -\> General and click "Open Anyway".) Open Refine works in the browser, and the app spins up a small web server visible only on your computer to interact with it. A browser will pop up automatically.
 
 You first have to import your data into a project. Click the choose files button and upload a csv of the DC food-related expenditures.
 
@@ -133,15 +133,16 @@ After your data is loaded into the app, you'll get a screen to look over what th
 knitr::include_graphics(rep("images/open2.png"))
 ```
 
-Open Refine has many, many tools.  We're going to use one piece of it, as a tool for data cleaning. To learn how to use it, we're going to clean the "recipient_name" field.
+Open Refine has many, many tools. We're going to use one piece of it, as a tool for data cleaning. To learn how to use it, we're going to clean the "recipient_name" field.
 
 First, let's make a copy of the original recipient_name column so that we can preserve the original data while cleaning the new one.
 
-Click the dropdown arrow next to the recipient_name column, choose "edit column" > "Add column based on this column":
+Click the dropdown arrow next to the recipient_name column, choose "edit column" \> "Add column based on this column":
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/open2a.png"))
 ```
+
 On the window that pops up, type "recipient_name_orig" in the "new column name" field. Then hit the OK button.
 
 ```{r, echo=FALSE}
@@ -162,7 +163,7 @@ After that, a new box will appear on the left. It tells us how many unique recip
 knitr::include_graphics(rep("images/open4.png"))
 ```
 
-Click the cluster button.  A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.
+Click the cluster button. A new window will pop up, a tool to help us identify things that need to be cleaned, and quickly clean them.
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/open5.png"))
@@ -172,14 +173,13 @@ The default "method" used is a clustering algorithim called "key collision", usi
 
 At the top, you'll see which method was used, and how many clusters that algorithm identified. There are several different methods, each of which work slightly differently and produce different results.
 
-
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/open6.png"))
 ```
 
-Then, below that, you can see what those clusters are. Right away, we can see how useful this program is.  It identified 99 rows that have some variation on "Hawk N Dove" in the recipient_name field.  It proposed changing them all to "HAWK N DOVE".
+Then, below that, you can see what those clusters are. Right away, we can see how useful this program is. It identified 99 rows that have some variation on "Hawk N Dove" in the recipient_name field. It proposed changing them all to "HAWK N DOVE".
 
-Using human judgement, you can say if you agree with the cluster. If you do, click the "merge" checkbox. When it merges, the new result will be what it says in New Cell Value. Most often, that's the row with the most common result. You also can manually edit the "New Cell Value" if you want it to be something else:
+Using human judgment, you can say if you agree with the cluster. If you do, click the "merge" checkbox. When it merges, the new result will be what it says in New Cell Value. Most often, that's the row with the most common result. You also can manually edit the "New Cell Value" if you want it to be something else:
 
 Now begins the fun part: You have to look at all 88 clusters found and decide if they are indeed valid. The key collision method is very good, and very conservative. You'll find that most of them are usually valid.
 
@@ -205,4 +205,4 @@ knitr::include_graphics(rep("images/open7.png"))
 
 A question for all data analysts -- if the dataset is bad enough, can it ever be cleaned?
 
-There's no good answer. You have to find it yourself.
+There's no single definitive answer. You have to find it yourself.
