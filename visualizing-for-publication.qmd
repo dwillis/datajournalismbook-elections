@@ -44,6 +44,7 @@ Next up is to check and see what Datawrappper did with our data when we uploaded
 ```{r, echo=FALSE}
 knitr::include_graphics("images/datawrapper3.png")
 ```
+
 Now we make a chart. Bar chart comes up by default, which is good, because with totals, that's what we have.
 
 Click on Refine. The first option we want to change is column we're using for the bars, which defaults to "Early Voting". Let's make it "Votes. Let's also choose to sort the bars so that the largest value (and bar appears first). We do that by clicking on the "Sort bars" button.
@@ -59,6 +60,7 @@ Really think about the title and description: the title is like a headline and t
 ```{r, echo=FALSE}
 knitr::include_graphics("images/datawrapper5.png")
 ```
+
 To publish, we click the "Publish & Embed" tab. Some publication systems allow for the embedding of HTML into a post or a story. Some don't. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there's always a way to export your chart as a PNG file, which you can upload like any photo.
 
 ```{r, echo=FALSE}
@@ -77,17 +79,16 @@ In order to make a map, we need to be able to tell Datawrapper that a certain co
 
 We'll need to write code to add columns showing the total number of votes for each county and the percentage of votes received by Wes Moore in each county, then replace the CSV file in the data folder with it
 
-
 ```{r}
 
-md_gov_county <- md_gov_county %>% 
-  mutate(Total = Cox + Moore + Lashar + Wallace + Harding + `Write-ins`) %>% 
+md_gov_county <- md_gov_county |> 
+  mutate(Total = Cox + Moore + Lashar + Wallace + Harding + `Write-ins`) |> 
   mutate(PctMoore = Moore/Total * 100)
 
 write_csv(md_gov_county, "data/md_gov_county_with_percent.csv")
 ```
 
-Go back to Datawrapper and click on "New Map". Click on "Choropleth map" and then choose "USA >> Counties (2022)" for the map base and click the Proceed button.
+Go back to Datawrapper and click on "New Map". Click on "Choropleth map" and then choose "USA \>\> Counties (2022)" for the map base and click the Proceed button.
 
 Now we can upload the `md_gov_county_with_percent.csv` file we just saved using the Upload File button. It should look like the following image:
 

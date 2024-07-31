@@ -10,10 +10,10 @@ Go to the console and install it with `install.packages("sf")`
 
 To understand geographic queries, you have to get a few things in your head first:
 
-1. Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
-2. Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
-3. Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
-4. See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
+1.  Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
+2.  Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
+3.  Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
+4.  See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/geolayers.jpg"))
@@ -46,14 +46,14 @@ pg_precincts <- st_read("data/Election_Precinct_2022_Py.gdb")
 glimpse(pg_precincts)
 ```
 
-This looks like a normal dataframe, and mostly it is.  We have one row per precinct, and each column is some feature of that precinct: the ID, name and more.  What sets this data apart from other dataframes we've used is the last column, "Shape", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
+This looks like a normal dataframe, and mostly it is. We have one row per precinct, and each column is some feature of that precinct: the ID, name and more. What sets this data apart from other dataframes we've used is the last column, "Shape", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
 
 Let's look at these precincts. We have 356 of them, according to this data.
 
 But where in Prince George's County are these places? We can simply plot them on a longitude-latitude grid using ggplot and geom_sf.
 
 ```{r}
-pg_precincts %>%
+pg_precincts |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -65,7 +65,7 @@ If you know anything about Prince George's, you can kinda pick out the geographi
 
 This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland county outlines.
 
-Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census.  The package is called `tigris` and it's developed by the same person who made `tidycensus`.
+Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census. The package is called `tigris` and it's developed by the same person who made `tidycensus`.
 
 In the console, install tigris with `install.packages('tigris')`
 
@@ -87,10 +87,10 @@ glimpse(counties)
 
 This looks pretty similar to our Census blocks shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column.
 
-This county shapefile has all 3233 U.S. counties.  We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties.  There is no STATE column, but there is a STATEFP column, with each number representing a state.  Maryland's FP number is 24.
+This county shapefile has all 3233 U.S. counties. We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties. There is no STATE column, but there is a STATEFP column, with each number representing a state. Maryland's FP number is 24.
 
 ```{r}
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
 ```
@@ -98,7 +98,7 @@ md_counties <- counties %>%
 To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
 
 ```{r}
-md_counties %>%
+md_counties |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -107,7 +107,7 @@ md_counties %>%
 Hey, look, it's Maryland! Of course, we just need Baltimore City, so let's get that:
 
 ```{r}
-baltimore_city <- md_counties %>%
+baltimore_city <- md_counties |>
   filter(COUNTYFP == "510")
 ```
 
@@ -115,23 +115,24 @@ With this county map, we can layer our places data.
 
 Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
 
-We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe.  We have two to plot now, so it's easier this way.
+We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe. We have two to plot now, so it's easier this way.
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_counties %>% filter(COUNTYFP == "033")) +
+  geom_sf(data=md_counties |> filter(COUNTYFP == "033")) +
   geom_sf(data=pg_precincts) +
   theme_minimal()
 ```
+
 Notice the subtle differences at the boundaries?
 
-Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](https://elections.maryland.gov/press_room/2022_stats/Official%20by%20Party%20and%20Precinct.csv) to determine this. 
+Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](https://elections.maryland.gov/press_room/2022_stats/Official%20by%20Party%20and%20Precinct.csv) to determine this.
 
 ```{r}
-primary_22 <- read_csv("data/Official by Party and Precinct.csv") %>% clean_names()
-pg_turnout <- primary_22 %>% 
-  filter(lbe == "Prince George's") %>% 
-  group_by(precinct) %>% 
+primary_22 <- read_csv("data/Official by Party and Precinct.csv") |> clean_names()
+pg_turnout <- primary_22 |> 
+  filter(lbe == "Prince George's") |> 
+  group_by(precinct) |> 
   summarise(total_polls = sum(polls), total_early = sum(early_voing), total_absentee = sum(absentee), total_provisional = sum(provisional), total_eligible = sum(eligible_voters))
 
 View(pg_turnout)
@@ -140,7 +141,7 @@ View(pg_turnout)
 Now we can join the precincts to the turnout data.
 
 ```{r}
-pg_precincts_with_turnout <- pg_precincts %>% left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
+pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
 ```
 
 Now we can use color to distinguish precincts from each other. Let's use the total eligible voters to start with, and we'll use a color scale that will help us see the differences:

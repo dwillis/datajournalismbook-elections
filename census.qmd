@@ -18,10 +18,6 @@ library(tidycensus)
 
 To use the API, you need an API key. To get that, you need to [apply for an API key with the Census Bureau](https://api.census.gov/data/key_signup.html). It takes a few minutes and you need to activate your key via email. Once you have your key, you need to set that for this session. Just FYI: Your key is your key. Do not share it around.
 
-```{r, include=FALSE}
-census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
-```
-
 ```{r, eval=FALSE}
 census_api_key("YOUR KEY HERE", install=TRUE)
 ```
@@ -97,18 +93,19 @@ You may be asking: hey, wasn't there a 2020 Census? Where's that data? The answe
 
 ## The ACS
 
-In 2010, the Census Bureau replaced SF3 with the American Community Survey. The Good News is that the data would be updated on a rolling basis. The bad news is that it's more complicated because it's more like survey data with a large sample. That means there's margins of error and confidence intervals to worry about. By default, using `get_acs` fetches data from the 5-year estimates (currently 2016-2020), but you can specify 1-year estimates for jurisdictions with at least 65,000 people (many counties and cities).
+In 2010, the Census Bureau replaced SF3 with the American Community Survey. The Good News is that the data would be updated on a rolling basis. The bad news is that it's more complicated because it's more like survey data with a large sample. That means there's margins of error and confidence intervals to worry about. By default, using `get_acs` fetches data from the 5-year estimates (currently 2018-2022), but you can specify 1-year estimates for jurisdictions with at least 65,000 people (many counties and cities).
 
 Here's an example using the 5-year ACS estimates:
 
 What is Maryland's richest county?
 
 We can measure this by median household income. That variable is `B19013_001`, so we can get that data like this (I'm narrowing it to the top 20 for simplicity):
+
 ```{r}
 md <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
-              year = 2020)
+              year = 2022)
 
 md <- md %>% arrange(desc(estimate)) %>% top_n(20, estimate)
 
@@ -116,7 +113,7 @@ md
 
 ```
 
-Howard, Calvert, Montgomery, Anne Arundel, Charles. What do they all have in common? Lots of suburban flight from DC and Baltimore. But do the margins of error let us say one county is richer than the other. We can find this out visually using error bars. Don't worry much about the code here --  we'll cover that soon enough.
+Howard, Calvert, Montgomery, Anne Arundel, Charles. What do they all have in common? Lots of suburban flight from DC and Baltimore. But do the margins of error let us say one county is richer than the other. We can find this out visually using error bars. Don't worry much about the code here -- we'll cover that soon enough.
 
 ```{r}
 md %>%
@@ -125,7 +122,7 @@ md %>%
   geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
   geom_point(color = "red") +
   labs(title = "Household income by county in Maryland",
-       subtitle = "2016-2020 American Community Survey",
+       subtitle = "2018-2022 American Community Survey",
        y = "",
        x = "ACS estimate (bars represent margin of error)")
 ```
@@ -137,10 +134,10 @@ Let's ask another question of the ACS -- did any counties lose income from the t
 Let's re-label our first household income data.
 
 ```{r}
-md20 <- get_acs(geography = "county",
+md22 <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
-              year = 2020)
+              year = 2022)
 ```
 
 And now we grab the 2010 median household income.
@@ -156,15 +153,15 @@ What I'm going to do next is a lot, but each step is simple. I'm going to join t
 
 ```{r}
 md10 %>%
-  inner_join(md20, by=c("GEOID", "NAME")) %>%
-  rename(estimate2010=estimate.x, estimate2020=estimate.y) %>%
-  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2020 = estimate2020-moe.y, max2020 = estimate2020+moe.y) %>%
+  inner_join(md22, by=c("GEOID", "NAME")) %>%
+  rename(estimate2010=estimate.x, estimate2022=estimate.y) %>%
+  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2020 = estimate2022-moe.y, max2020 = estimate2022+moe.y) %>%
   select(-variable.x, -variable.y, -moe.x, -moe.y) %>%
-  mutate(change = ((estimate2020-estimate2010)/estimate2010)*100) %>%
+  mutate(change = ((estimate2022-estimate2010)/estimate2010)*100) %>%
   arrange(change)
 ```
 
-So according to this, Somerset and Caroline counties had the smallest change between 2010 and 2020, while all other jurisdictions saw double-digit percentage increases.
+So according to this, Caroline County had the smallest change between 2010 and 2022, while all other jurisdictions saw percentage increases of at least 20 percent.
 
 But did they?
 
@@ -173,7 +170,7 @@ Look at the min and max values for both. Is the change statistically significant
 The ACS data has lots of variables, just like the decennial Census does. To browse them, you can do this:
 
 ```{r}
-v20 <- load_variables(2020, "acs5", cache=TRUE)
+v22 <- load_variables(2022, "acs5", cache=TRUE)
 ```
 
 And then view `v20` to see what kinds of variables are available via the API.
@@ -182,16 +179,15 @@ And then view `v20` to see what kinds of variables are available via the API.
 
 Although one of the chief strengths of tidycensus is that it offers a, well, tidy display of Census data, it also has the ability to view multiple variables spread across columns. This can be useful for creating percentages and comparing multiple variables.
 
-
 ## Sorting Results
 
-You'll notice that we've used `arrange` to sort the results of tidycensus functions, although that's done after we create a new variable to hold the data. There's another way to use `arrange` that you should know about, one that you can use for exploratory analysis. An example using median household income from 2020:
+You'll notice that we've used `arrange` to sort the results of tidycensus functions, although that's done after we create a new variable to hold the data. There's another way to use `arrange` that you should know about, one that you can use for exploratory analysis. An example using median household income from 2022:
 
 ```{r}
-md20 <- get_acs(geography = "county",
+md22 <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
-              year = 2020)
+              year = 2022)
 arrange(md20, desc(estimate))
 ```
 
