@@ -1,7 +1,7 @@
 ---
 title: "lab_01"
 author: "Derek Willis"
-date: "7/21/2022"
+date: "2024-08-01"
 output: html_document
 ---
 
@@ -13,12 +13,7 @@ options(scipen=999)
 
 ## About this lab
 
-To complete this lab, you need to:
-* run existing code as directed (look for **Task**).
-* modify existing code as directed (look for **Task**).
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
-When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+To complete this lab, you need to: \* run existing code as directed (look for **Task**). \* modify existing code as directed (look for **Task**). \* write code in empty codeblocks provided to answer questions included (look for **Q**). \* write out the answer in the form of a complete sentence in the space given (look for **A**). When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
 
 Remember to add any new verbs or concepts to your reference notebook!
 
@@ -44,9 +39,11 @@ wv_winred_contribs <- read_rds("lab_01.rds")
 
 ## Examine Data
 
-**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
-**Q1** How many rows and columns does this dataframe have?
-**A1** 13,382 rows and 24 columns
+**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data. 
+
+**Q1** How many rows and columns does this dataframe have? 
+
+**A1** 40,441 rows and 24 columns
 
 ```{r}
 
@@ -56,8 +53,9 @@ glimpse(wv_winred_contribs)
 
 ## Answer questions
 
-**Q2** Which West Virginia city provided the largest number of contributions? How many?
-**A2** Martinsburg, with 781.
+**Q2** Which West Virginia city provided the largest number of contributions? How many? 
+
+**A2** Charleston, with 3,226.
 
 ```{r}
 wv_winred_contribs %>%
@@ -67,7 +65,9 @@ wv_winred_contribs %>%
   ) %>%
   arrange(desc(total_contribs))
 ```
-**Q3** Which West Virginia city accounted for the fewest contributions? How many?
+
+**Q3** Which West Virginia cities accounted for the fewest contributions? How many? 
+
 **A3** Dozens of them, with 1 contribution.
 
 ```{r}
@@ -78,11 +78,14 @@ wv_winred_contribs %>%
   ) %>%
   arrange(total_contribs)
 ```
-**Q4** What's your best educated guess to explain why the city identified in question 2 had more contributions compared to the cities identified in question 3? Hint: you won't find the answer in the data, you'll need to do some quick web research. You do not need to write any code for this question, so no codeblock is provided.  
-**A4** Population, mostly, and Martinsburg is in the fastest-growing area of the state. At the other end of the spectrum you have tiny towns spread across the state.
 
-**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation?
-**A5** Save America Joint Fundraising Committee, with $66.972.89 from 2,448 contributions. The average was $27.36.
+**Q4** What's your best educated guess to explain why the city identified in question 2 had more contributions compared to the cities identified in question 3? Hint: you won't find the answer in the data, you'll need to do some quick web research. You do not need to write any code for this question, so no codeblock is provided.
+
+**A4** Population, mostly, and Charleston is the capital. At the other end of the spectrum you have tiny towns spread across the state.
+
+**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation? 
+
+**A5** Trump National Committee JFC, with \$463,944 from 14,063 contributions. The average was \$32.99.
 
 ```{r}
 wv_winred_contribs %>%
@@ -96,20 +99,15 @@ wv_winred_contribs %>%
   arrange(desc(total_amount))
 ```
 
-**Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set.  You do not need to write any code for this question, so no codeblock is provided.  
-**A6** Save America JFC is the main fundraising organization for former President Donald Trump. It splits money between his PAC, Save America, and other organizations. Trump won 68% of the vote in West Virginia in 2020.
+**Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set. You do not need to write any code for this question, so no codeblock is provided.
 
-**Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city):
-* count of contributions
-* total amount of all contributions
-* the average contribution amount
-* the median contribution amount
-* the smallest contribution amount
-* the largest contribution amount
+**A6** Trump National Committee JFC is the main fundraising organization for former President Donald Trump. It splits money between his campaign and other organizations. Trump won 68% of the vote in West Virginia in 2020.
+
+**Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city): \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
 
 Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
 
-**A7**. 
+**A7**.
 
 ```{r}
 wv_summary <- wv_winred_contribs %>%
