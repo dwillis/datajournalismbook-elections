@@ -27,7 +27,7 @@ create_credentials(GROQ_API_KEY = "YOUR API KEY HERE")
 
 See that "Please restart your R session for changes to take effect."? Go ahead and do that; you'll need to rerun the `library()` function above.
 
-Let's make sure that worked:
+Let's make sure that worked. We'll be using the [Llama 3.1 model released by Meta](https://ai.meta.com/blog/meta-llama-3-1/).
 
 ```{r}
 groq_response <- axolotr::ask(
