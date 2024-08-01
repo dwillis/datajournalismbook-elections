@@ -92,8 +92,9 @@ Mutate is even more useful when combined with some additional functions. Let's f
 
 1.  Under \$100
 2.  \$101-\$499
-3.  \$500-\$2,900
-4.  More than \$2,901
+3.  \$500-\$1,499
+4.  \$1,500-\$2,999
+5.  More than \$2,999
 
 Mutate can make that happen by creating a new column and putting in a category value *based on the amount* of each record. First, let's load the individual contributions that we did in the previous chapter:
 
@@ -106,15 +107,17 @@ head(maryland_winred_contributions)
 Now that we've gotten a look, we can use `case_when` to give our new category column a value using some standard numeric logic:
 
 ```{r}
-maryland_winred_categories <- maryland_winred_contributions |>
+maryland_winred_categories <- maryland_winred_contributions %>%
   mutate(
     amount_category = case_when(
         amount < 100 ~ "Less than $100",
-        amount >= 100 & amount <= 500 ~ "Between $100 and $500",
-        amount > 500 & amount <= 3300 ~ "Between $501 and $3300",
-        amount > 3300 ~ "More than $3,300"
+        amount >= 100 & amount < 500 ~ "Between $100 and $499",
+        amount >= 500 & amount < 1500 ~ "Between $500 and $1499",
+        amount >= 1500 & amount < 3000 ~ "Between $500 and $2999",
+        amount >= 3000 ~ "$3,000 or more"
       )
   )
+head(maryland_winred_categories)
 ```
 
 We can then use our new `amount_category` column in group_by statements to make summarizing easier:
