@@ -22,7 +22,7 @@ Then we can load that library and, using your API key, setup your credentials:
 ```{r}
 library(axolotr)
 
-create_credentials(GROQ_API_KEY = "")
+create_credentials(GROQ_API_KEY = "YOUR API KEY HERE")
 ```
 
 See that "Please restart your R session for changes to take effect."? Go ahead and do that; you'll need to rerun the `library()` function above.
