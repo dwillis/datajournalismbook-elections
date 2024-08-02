@@ -1,7 +1,7 @@
 ---
 title: "lab_03"
 author: "Derek Willis"
-date: "8/10/2022"
+date: "2024-08-01"
 output: html_document
 ---
 
@@ -10,58 +10,51 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Load libraries and establish settings
+
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the tidyverse here
+# Load the tidyverse
+library(tidyverse)
 
-# Load janitor here
-
+# Load janitor
+library(janitor)
 ```
 
 ## Load data
+
 ```{r}
-# Write code to load MD slice of FEC House candidate contribution data and call it md_contribs.
-# The data is called lab_03.rds, and is in the data folder alongside lab_03.Rmd (this data notebook)
-
-
+# Load MD slice of FEC House candidate contribution data
+md_contribs <- read_rds("data/lab_03.rds")
 ```
 
 ## Answer questions
 
-Q1: Which seven cities in Maryland had the largest _number_ of contributions from donors? How many did each have? To answer this question, you'll have to clean the messy "contributor_city" field.
+Q1: Which seven cities in Maryland had the largest *number* of contributions from donors? How many did each have? To answer this question, you'll have to clean the messy "contributor_city" field.
 
 Note: To answer this question, you'll need to see every variation of the "contributor_city" for the top seven cities, which you should identify through some initial analysis. Then find variations of them and change those variations into the most common version.
 
 A1:
-```{r}
 
-# Write your code in this codeblock.
+```{r}
 
 ```
 
-Q2: Find the 5-digit ZIP code in Maryland that had the highest total amount of contributions (by dollar value). Where is that zip code and what kind of area is it? Which committee is the largest recipient of money from that zip code? How many of the top five recipients are Maryland candidates?
+Q2: Find the 5-digit ZIP code in Maryland that had the highest total amount of contributions (by dollar value). You will need to use mutate to ensure that you have a zip code column with the first five characters from the existing zip code column.
 
-A2:
+Where is that zip code and what kind of area is it, demographically? Which committee is the largest recipient of money from that zip code? How many of the top five recipients are Maryland candidates?
+
+A2: 
 
 ```{r}
-# Hint
-# First, create a dataframe that shows the top 5-digit ZIP code by total dollar amount
-# Second, use the top ZIP code in the dataframe you just created and create a new dataframe that shows the committee that got the most money from that ZIP code.
 
 ```
 
-Q3: Let's look at top individual donors to House campaigns. Write code to generate a list of top donors using name and city, adding up the total amount of contributions. One of the top few donors has a very strong connection to the U.S. House - who is that and what does he do? How does his donation pattern differ from the second-largest donor, and what can you say about that second-largest donor?
+Q3: Let's look at top individual donors. Write code to generate a list of top donors using name and city, adding up the total amount of contributions. What does the original data say about the top two donors - who are they and what do they do? Do you see anything in the list of top 10 donors that would make you uncertain about the accuracy of these results?
 
-Feel free to add any interesting "color" (little interesting details) you find in your research.  
-
-A3:
+A3: 
 
 ```{r}
-
-# Hint
-# First, create a dataframe of top individual contributors
-# Second, use information from that dataframe to examine individual donations from the original md_contribs dataframe.
 
 ```

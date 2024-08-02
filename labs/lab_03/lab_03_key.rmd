@@ -1,7 +1,7 @@
 ---
 title: "lab_03"
 author: "Derek Willis"
-date: "8/10/2022"
+date: "2024-08-01"
 output: html_document
 ---
 
@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Load libraries and establish settings
+
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
@@ -22,6 +23,7 @@ library(janitor)
 ```
 
 ## Load data
+
 ```{r}
 # Load MD slice of FEC House candidate contribution data
 md_contribs <- read_rds("data/lab_03.rds")
@@ -29,11 +31,11 @@ md_contribs <- read_rds("data/lab_03.rds")
 
 ## Answer questions
 
-Q1: Which seven cities in Maryland had the largest _number_ of contributions from donors? How many did each have? To answer this question, you'll have to clean the messy "contributor_city" field.
+Q1: Which seven cities in Maryland had the largest *number* of contributions from donors? How many did each have? To answer this question, you'll have to clean the messy "contributor_city" field.
 
 Note: To answer this question, you'll need to see every variation of the "contributor_city" for the top seven cities, which you should identify through some initial analysis. Then find variations of them and change those variations into the most common version.
 
-A1: The top seven cities are BALTIMORE (6726), BETHESDA (5860), SILVER SPRING (4659), CHEVY CHASE (3260), POTOMAC (2301), ROCKVILLE (2213) and ANNAPOLIS (2001).
+A1: The top seven cities are BETHESDA (1177), CHEVY CHASE (704), BALTIMORE (690), ANNAPOLIS (490), POTOMAC (490), SILVER SPRING (405) and ROCKVILLE (358).
 
 ```{r}
 # initial list of cities are: BALTIMORE, BETHESDA, SILVER SPRING, CHEVY CHASE, POTOMAC, ROCKVILLE, ANNAPOLIS
@@ -45,17 +47,11 @@ md_contribs_by_city <- md_contribs %>%
 # clean those cities
 md_contribs_by_city_fixed <- md_contribs %>% 
   mutate(contributor_city=case_when(
-    contributor_city == "BALITMORE" ~ "BALTIMORE",
+    contributor_city == "BALRIMORE" ~ "BALTIMORE",
     contributor_city == "ANAPOLIS" ~ "ANNAPOLIS",
-    contributor_city == "ANNAPOLID" ~ "ANNAPOLIS",
-    contributor_city == "ANNNAPOLIS" ~ "ANNAPOLIS",
-    contributor_city == "ANRETIREDPOLIS" ~ "ANNAPOLIS",
-    contributor_city == "BETHESA" ~ "BETHESDA",
-    contributor_city == "BETHSDA" ~ "BETHESDA",
+    contributor_city == "CHEVY CHASE M.D." ~ "CHEVY CHASE",
     contributor_city == "POTAMIC" ~ "POTOMAC",
-    contributor_city == "SILVER SPRING, MD" ~ "SILVER SPRING",
     contributor_city == "SILVER SPRINGS" ~ "SILVER SPRING",
-    contributor_city == "SLIVER SPRING" ~ "SILVER SPRING",
     TRUE ~ contributor_city
   )) %>%
   group_by(contributor_city) %>%
@@ -68,9 +64,9 @@ md_contribs_by_city_fixed
 
 Q2: Find the 5-digit ZIP code in Maryland that had the highest total amount of contributions (by dollar value). Where is that zip code and what kind of area is it? Which committee is the largest recipient of money from that zip code? How many of the top five recipients are Maryland candidates?
 
-A2: A ZIP code (20815) in Chevy Chase is responsible for more contributions to House candidates than anywhere else in the state. Chevy Chase is a very wealthy area bordering D.C. and home to prominent business people, government officials and others with a stake in government. 
+A2: A ZIP code (20817) in Bethesda is responsible for more contributions to candidates this year than anywhere else in the state. Bethesda is a very wealthy area bordering D.C. and home to prominent business people, government officials and others with a stake in government.
 
-Jamie Raskin got the most money from that zip code among House candidates, which makes some sense because it's located in the district that he represents. Just two of the top five are Maryland candidates.
+Dan Helmer, a Democrat running in a district just across the Potomac River in Virginia, was the leading recipient. Just two of the top five are Maryland candidates (Democrats Jamie Raskin and April McClain Delaney).
 
 ```{r}
 # Create a dataframe that shows the top ZIP code by total dollar amount
@@ -87,7 +83,7 @@ md_contribs_zip
 # Use the top ZIP code in the dataframe you just created and create a new dataframe that shows the committee that got the most money from that ZIP code.
 md_zip_top_recipient <- md_contribs %>%
   mutate(zip_five = str_sub(contributor_zip, start=1L, end=5L)) %>%
-  filter(zip_five == "20815") %>%
+  filter(zip_five == "20817") %>%
   group_by(committee_name) %>%
   summarise(
     total_amount = sum(contribution_receipt_amount)
@@ -99,11 +95,9 @@ md_zip_top_recipient
 
 ```
 
-Q3: Let's look at top individual donors to House campaigns. Write code to generate a list of top donors using name and city, adding up the total amount of contributions. One of the top few donors has a very strong connection to the U.S. House - who is that and what does he do? How does his donation pattern differ from the second-largest donor, and what can you say about that second-largest donor?
+Q3: Let's look at top individual donors. Write code to generate a list of top donors using name and city, adding up the total amount of contributions. What does the original data say about the top two donors - who are they and what do they do? Do you see anything in the list of top 10 donors that would make you uncertain about the accuracy of these results?
 
-Feel free to add any interesting "color" (little interesting details) you find in your research.  
-
-A3: The top individual Maryland donor to U.S. House campaigns is David Trone, the CEO of Total Wine & More, who is a member of the House himself representing Maryland's 6th District. His giving is to his Democratic colleagues and candidates and he usually gives $2,900, the individual maximum contribution, or $1,000. The second-largest donor is Juanita Mason, who lives in Baltimore and has made more than 3,000 separate donations to Republican candidates, mostly in much smaller amounts of $15, $25 or $50. Her address is reported variously as 414 Water St. or 424 Water St., the latter of which doesn't seem to exist as a residence.
+A3: The top individual Maryland donor to U.S. House campaigns is Melanie Jacobsen, a former SEC senior special counsel, and her spouse Mark Jacobsen. They describe their occupations as farming and banking, respectively. Looking at the top ten, Mark appears twice, so he actually might be the top donor. William and Bill Pugh might also be the same person.
 
 ```{r}
 
@@ -115,10 +109,7 @@ md_contribs_top_indiv <- md_contribs %>%
 
 md_contribs_top_indiv
 
-# Check out Trone's donations
-trone_donations <- md_contribs %>%
-  filter(str_detect(contributor_name, '^TRONE, DAVID'))
-
-mason_donations <- md_contribs %>%
-  filter(str_detect(contributor_name, '^MASON, JUANITA'))
+# Check out Jacobsen donations
+jacobsen_donations <- md_contribs %>%
+  filter(str_detect(contributor_name, '^JACOBSEN,'))
 ```
