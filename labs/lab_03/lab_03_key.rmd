@@ -39,13 +39,13 @@ A1: The top seven cities are BETHESDA (1177), CHEVY CHASE (704), BALTIMORE (690)
 
 ```{r}
 # initial list of cities are: BALTIMORE, BETHESDA, SILVER SPRING, CHEVY CHASE, POTOMAC, ROCKVILLE, ANNAPOLIS
-md_contribs_by_city <- md_contribs %>%
-  group_by(contributor_city) %>% 
-  summarize(count = n()) %>% 
+md_contribs_by_city <- md_contribs |>
+  group_by(contributor_city) |> 
+  summarize(count = n()) |> 
   arrange(desc(count))
 
 # clean those cities
-md_contribs_by_city_fixed <- md_contribs %>% 
+md_contribs_by_city_fixed <- md_contribs |> 
   mutate(contributor_city=case_when(
     contributor_city == "BALRIMORE" ~ "BALTIMORE",
     contributor_city == "ANAPOLIS" ~ "ANNAPOLIS",
@@ -53,9 +53,9 @@ md_contribs_by_city_fixed <- md_contribs %>%
     contributor_city == "POTAMIC" ~ "POTOMAC",
     contributor_city == "SILVER SPRINGS" ~ "SILVER SPRING",
     TRUE ~ contributor_city
-  )) %>%
-  group_by(contributor_city) %>%
-  summarise(total = n()) %>%
+  )) |>
+  group_by(contributor_city) |>
+  summarise(total = n()) |>
   arrange(desc(total))
 
 md_contribs_by_city_fixed
@@ -70,24 +70,24 @@ Dan Helmer, a Democrat running in a district just across the Potomac River in Vi
 
 ```{r}
 # Create a dataframe that shows the top ZIP code by total dollar amount
-md_contribs_zip <- md_contribs %>%
-  mutate(zip_five = str_sub(contributor_zip, start=1L, end=5L)) %>%
-  group_by(zip_five) %>%
+md_contribs_zip <- md_contribs |>
+  mutate(zip_five = str_sub(contributor_zip, start=1L, end=5L)) |>
+  group_by(zip_five) |>
   summarise(
     total_amount = sum(contribution_receipt_amount)
-  ) %>%
+  ) |>
   arrange(desc(total_amount))
 
 md_contribs_zip
 
 # Use the top ZIP code in the dataframe you just created and create a new dataframe that shows the committee that got the most money from that ZIP code.
-md_zip_top_recipient <- md_contribs %>%
-  mutate(zip_five = str_sub(contributor_zip, start=1L, end=5L)) %>%
-  filter(zip_five == "20817") %>%
-  group_by(committee_name) %>%
+md_zip_top_recipient <- md_contribs |>
+  mutate(zip_five = str_sub(contributor_zip, start=1L, end=5L)) |>
+  filter(zip_five == "20817") |>
+  group_by(committee_name) |>
   summarise(
     total_amount = sum(contribution_receipt_amount)
-  ) %>%
+  ) |>
   arrange(desc(total_amount))
   head(1)
 
@@ -102,14 +102,14 @@ A3: The top individual Maryland donor to U.S. House campaigns is Melanie Jacobse
 ```{r}
 
 # Create a dataframe of top individual contributors
-md_contribs_top_indiv <- md_contribs %>%
-  group_by(contributor_name, contributor_city) %>% 
-  summarize(total_amount = sum(contribution_receipt_amount)) %>% 
+md_contribs_top_indiv <- md_contribs |>
+  group_by(contributor_name, contributor_city) |> 
+  summarize(total_amount = sum(contribution_receipt_amount)) |> 
   arrange(desc(total_amount))
 
 md_contribs_top_indiv
 
 # Check out Jacobsen donations
-jacobsen_donations <- md_contribs %>%
+jacobsen_donations <- md_contribs |>
   filter(str_detect(contributor_name, '^JACOBSEN,'))
 ```

@@ -1,16 +1,14 @@
-
 ```{r}
 library(tidyverse)
 library(janitor)
 ```
+
 ```{r}
 dem24_primary <- read_csv("PP24_AllPrecinctsDemocratic.csv") |> clean_names()
 rep24_primary <- read_csv("PP24_AllPrecinctsRepublican.csv") |> clean_names()
 
 all_primary <- bind_rows(dem24_primary, rep24_primary)
 ```
-
-
 
 ```{r}
 maryland_primary_2024 <- all_primary |> group_by(county_name, office_name, office_district, candidate_name, party) |> 
@@ -30,4 +28,17 @@ write_csv(federal, "maryland_primary_2024.csv")
 
 ```
 
+```{r}
+winred_q2 <- read_csv("~/code/aosc247/sa1800865.csv.zip")
+```
+
+```{r}
+wv_winred <- winred_q2 |> filter(state == "WV")
+write_rds(wv_winred, "~/code/datajournalismbook-elections/labs/lab_01/lab_01.rds")
+```
+
+
+```{r}
+md_contribs <- read_csv("~/Downloads/mdcontribs.csv") |> filter(entity_type == 'IND', recipient_committee_type == 'H')
+```
 
