@@ -36,7 +36,7 @@ all_primary_precinct_results <- all_primary_precinct_results |> clean_names()
 Next, let's read in the precinct voting location data and make sure you clean up the column names in the same way you did before:
 
 ```{r}
-precinct_voting_locations <- read_csv('data/precinct_voting_locations.csv') |> clean_names()
+precinct_voting_locations <- read_csv('data/md_precinct_voting_locations.csv') |> clean_names()
 ```
 
 Next join the two on the unique combination of precinct and county. You'll need to figure out which columns to use from both dataframes and you will need to fix one of those columns using `mutate()` in order to make the join work.

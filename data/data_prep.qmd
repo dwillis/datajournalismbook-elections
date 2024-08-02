@@ -45,3 +45,7 @@ md_contribs <- read_csv("~/Downloads/mdcontribs.csv") |> filter(entity_type == '
 precinct_voting_locations <- read_csv("~/code/datajournalismbook-elections/data/md_polling_places_p24.csv") |> clean_names() |> mutate(election_district_precinct = str_remove(election_district_precinct_part, "-\\d+$")) |> select(-poll_id, -election_district_precinct_part)
 ```
 
+```{r}
+precinct_voting_locations <- read_csv("md_precinct_voting_locations.csv")
+```
+
