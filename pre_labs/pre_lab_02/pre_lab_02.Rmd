@@ -194,9 +194,10 @@ maryland_winred_categories |>
   summarize(total_amount = sum(amount)) |> 
   arrange(desc(total_amount))
 ```
+
 What's the largest category in terms of dollar amount?
 
-**Answer** 
+**Answer**
 
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
 

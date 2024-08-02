@@ -1,7 +1,7 @@
 ---
 title: "lab_02"
 author: "derek willis"
-date: "8/09/2022"
+date: "2024-08-01"
 output: html_document
 ---
 
@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Load libraries and establish settings
+
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
@@ -22,7 +23,7 @@ library(lubridate)
 
 ## Load Data
 
-Let's keep working with the slice of WinRed contribution data from West Virginia.  
+Let's keep working with the slice of WinRed contribution data from West Virginia.
 
 ```{r}
 wv_winred_contribs <- read_rds("data/lab_02.rds")
@@ -32,60 +33,66 @@ wv_winred_contribs <- read_rds("data/lab_02.rds")
 
 ## Answer questions
 
-**Q1** Create a new column that divides the contribution amounts into the following options - less than $10, $10-$25, $26-$50, $51_$100, $101-$500, $501 and up - and calculates how many contributions are in each group. How would you describe the distribution of contributions in a sentence?
-A1. The two largest groups are for contributions of $25 or less, with only a few dozen contributions that are larger than $500.
+**Q1** Create a new column that divides the contribution amounts into the following options - less than \$10, \$10-\$100,  \$101-\$1000, \$1001 and up - and calculates how many contributions are in each group. Describe the distribution of contribution groups in a sentence.
+
+A1. The two largest groups are for contributions of less than \$10, with only 60 contributions that are larger than \$1000.
 
 ```{r}
-wv_winred_contribs %>%
+wv_winred_contribs |>
   mutate(
     amount_group = case_when(
       amount < 10 ~ 'under_10',
-      amount >= 10 & amount <= 25 ~ '10_25',
-      amount > 25 & amount <= 50 ~ '26_50',
-      amount > 50 & amount <= 100 ~ '51_100',
-      amount > 100 & amount <= 500 ~ '101_500',
-      amount > 500 ~ '501_plus'
+      amount >= 10 & amount <= 100 ~ '10_100',
+      amount > 100 & amount <= 1000 ~ '101_1000',
+      amount > 1000 ~ '1001_plus'
     )
-  ) %>%
-  group_by(amount_group) %>%
+  ) |>
+  group_by(amount_group) |>
   summarise(
     total = n()
-  ) %>%
+  ) |>
   arrange(desc(total))
 ```
 
-Q2. Which West Virginia donors made the most contributions of less than $10? You'll need to use a combination of columns to get unique donors.  
-A2. The Rev. Dr. John Almond of Beckley made at least 293 contributions of less than $10, more than 100 more than the next most-frequent donor, Franco Colonna of South Charleston.
+Q2. Which West Virginia donors made the most contributions of less than \$10? You'll need to use a combination of columns to get unique donors. There's something unusual about the second-most frequent donor; use the [FEC website](https://www.fec.gov/data/receipts/individual-contributions/?two_year_transaction_period=2024&min_date=01%2F01%2F2023&max_date=12%2F31%2F2024) to look into donations from that person's city.
+
+A2. Dr. Noel Corbell of Charles Town made at least 1,492 contributions of less than \$10, nearly 500 more than the next most-frequent donor, John Pam her of Fort Ashby.
 
 ```{r}
-wv_winred_contribs %>%
-  filter(amount < 10) %>% 
-  group_by(last_name, first_name, address_one, city) %>%
+wv_winred_contribs |>
+  filter(amount < 10) |> 
+  group_by(last_name, first_name, address_one, city) |>
   summarise(
     total = n()
-  ) %>%
+  ) |>
   arrange(desc(total))
 ```
 
-Q3. What questions do the results of Q2 raise in your mind? How could you use the data to explore them?
-A3. Potential questions might include who Almond and Colonna give to and how frequently, or why a pastor gives political contributions (there's no prohibition, but many clergy avoid it). Is there a pattern of giving among the most frequent donors? We could use the dates, recipients and amounts to help explore these questions.
+Q3. What questions do the results of Q2 raise in your mind? How could you use the data to explore them? 
 
-Q4. Which month saw the most contributions?
-A4. June 2022, with 4,636.
+A3. 
+
+Q4. Which month saw the largest number of contributions? 
+A4. May 2024, with 14,639.
 
 ```{r}
-wv_winred_contribs %>%
-  mutate(Month = floor_date(date, "month")) %>%
-  group_by(Month) %>%
-  summarise(total = n()) %>%
+wv_winred_contribs |>
+  mutate(Month = floor_date(date, "month")) |>
+  group_by(Month) |>
+  summarise(total = n()) |>
   arrange(desc(total))
 ```
 
-Q5. How many contributions of $2,900 - the individual maximum donation - were there, and who did they go to? How many of the recipients are from West Virginia? Do some googling to find out.
-A5. There are 6 contributions of $2,900, and three of them went to Carol Miller, while one each went to David McKinley, Ryan Zinke and Steven Palazzo. Miller and McKinley are from WV.
+Q5. Write code to find contributions where the amount is less than \$10 _and_ the memo_text contains the word "TRUMP". The way to find a word inside a column is to use the `str_detect()` function inside the filter function, like so: str_detect(column_name, "STRING YOU ARE SEARCHING FOR"). Then keep going and show the total number of contributions for each city, with the largest number of contributions first. Which three cities have the most contributions under \$10? Are there any in the top 10 that stand out? Say why.
+
+A5. The top three cities are Charleston, Martinsburg and Charles Town, which makes sense, population-wise. And there's Fort Ashby, population approximately 1,300 - it's our guy from A2.
 
 ```{r}
-wv_winred_contribs %>%
-  filter(amount == 2900) %>%
-  arrange(date)
+wv_winred_contribs |>
+  filter(amount < 10 & str_detect(memo_text, "TRUMP")) |> 
+  group_by(city) |> 
+  summarize(contributions = n()) |> 
+  arrange(desc(contributions))
 ```
+
+
