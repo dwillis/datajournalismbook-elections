@@ -41,4 +41,7 @@ write_rds(wv_winred, "~/code/datajournalismbook-elections/labs/lab_01/lab_01.rds
 ```{r}
 md_contribs <- read_csv("~/Downloads/mdcontribs.csv") |> filter(entity_type == 'IND', recipient_committee_type == 'H')
 ```
+```{r}
+precinct_voting_locations <- read_csv("~/code/datajournalismbook-elections/data/md_polling_places_p24.csv") |> clean_names() |> mutate(election_district_precinct = str_remove(election_district_precinct_part, "-\\d+$"))
+```
 
