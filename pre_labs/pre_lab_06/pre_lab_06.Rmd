@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_06.Rmd"
 author: "derek willis"
-date: "8/24/2021"
+date: "2024-08-05"
 output: html_document
 ---
 
@@ -10,10 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Points to hit
-1. Review of fifth lab questions/problems.
-2. Demonstration of PDF parsing with Tabula
+
+1.  Review of fifth lab questions/problems.
+2.  Demonstration of PDF parsing with Tabula
 
 ### Task 1: Load libraries
+
 **Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
 
 ```{r}
@@ -24,11 +26,11 @@ library(tidyverse)
 
 ## PDF Parsing with Tabula
 
-Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://www.elections.maryland.gov/press_room/2022_stats/Eligible%20Active%20Voters%20by%20County%20-%20GP22.pdf).
+Tabula works best when tables in PDFs are clearly defined and have nicely-formatted information. Here's a perfect example: [active voters by county in Maryland](https://elections.maryland.gov/press_room/2024_stats/Eligible%20Active%20Voters%20by%20County%20-%20PP24.pdf).
 
 ### Task 1: Download and Install Tabula
 
-**Task**: [Download and install Tabula](https://tabula.technology/). Tabula works much the same way as Open Refine does -- it works in the browser by spinning up a small webserver in your computer. Start it as you would any other desktop application, then go to http://127.0.0.1:8080/ in your browser.
+**Task**: [Download and install Tabula](https://tabula.technology/). Tabula works much the same way as Open Refine does -- it works in the browser by spinning up a small webserver in your computer. Start it as you would any other desktop application, then go to <http://127.0.0.1:8080/> in your browser.
 
 When Tabula opens, you click browse to find the PDF on your computer somewhere, and then click import. After it imports, click autodetect tables. You'll see red boxes appear around what Tabula believes are the tables. You'll see it does a pretty good job at this.
 
@@ -45,24 +47,26 @@ knitr::include_graphics(rep("images/md_voters2.png"))
 You can now export that extracted table to a CSV file using the "Export" button. Put it in your pre_lab_06 folder. And then we can read it into R:
 
 ### Task 2: Load data
+
 **Task** Load the Maryland voters by county data by running the following codeblock.
 
 ```{r}
-voters_by_county <- read_csv("tabula-Eligible Active Voters by County - GP22.csv")
+voters_by_county <- read_csv("tabula-Eligible Active Voters by County - PP24.csv")
 View(voters_by_county)
 ```
 
-Boom - we're good to go.
+Boom - we're good to go: a nice, tidy dataframe.
 
 ## When it looks good, but needs a little fixing
 
-Here's a slightly more involved PDF, from our Missouri primary election collection efforts! It's from [Camden County](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
+Here's a slightly more involved PDF: precinct-level election results from [Camden County, Missouri's 2022 primary election](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/camden_1.png"))
 ```
 
 ### Task 3: Get it into Tabula
+
 **Task** Save the PDF and import to Tabula
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).
@@ -74,6 +78,7 @@ knitr::include_graphics(rep("images/camden_2.png"))
 ```
 
 ### Task 4: Draw a Box
+
 **Task** Using your cursor, draw a box across the first table so it looks like the image below.
 
 This is pretty good, but we want to capture the second line of the headers - `Voters`, `Cast` and `Turnout` - and for our purposes we only want the first page of the PDF for now. So hit "Clear All Selections" button at the top and let's draw a box around what we want. Using your cursor, click and drag a box across the first page so it looks like this:
@@ -90,10 +95,9 @@ knitr::include_graphics(rep("images/camden_4.png"))
 
 You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names and some other things:
 
-### Task 5: Export the CSV file 
-**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data?
-**Answer** 
+### Task 5: Export the CSV file
 
+**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer**
 
 ```{r}
 camden_2022 <- read_csv("tabula-camden_county_election_results.csv") %>% clean_names()
@@ -106,9 +110,8 @@ camden_2022
 The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
 
 ### Task 6: Cleaning up
-**Task** Clean up the columns, datatypes & precinct names by running the codeblock below. What problems remain?
-**Answer**
 
+**Task** Clean up the columns, datatypes & precinct names by running the codeblock below. What problems remain? **Answer**
 
 ```{r}
 camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") %>% clean_names()
@@ -129,14 +132,15 @@ camden_2022
 Ok, now we have numbers. Next we'll get rid of the rows where `cast` is NA (why not `voters`?). To do that, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where cast is NOT NA").
 
 ### Task 7: Get rid of rows we don't need
-**Task** Run the codeblock below. How many rows does the dataframe have now compared to Task 6?
-**Answer** 
+
+**Task** Run the codeblock below. How many rows does the dataframe have now compared to Task 6? **Answer**
 
 ```{r}
 camden_2022 <- camden_2022 %>% filter(!is.na(cast))
 
 camden_2022
 ```
+
 All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
 
 Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.
