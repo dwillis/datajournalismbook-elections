@@ -1,7 +1,7 @@
 ---
 title: "lab_04"
 author: "derek willis"
-date: "2024-08-01"
+date: "2024-08-05"
 output: html_document
 ---
 
@@ -39,76 +39,68 @@ Next, let's read in the precinct voting location data and make sure you clean up
 precinct_voting_locations <- read_csv('data/md_precinct_voting_locations.csv') |> clean_names()
 ```
 
-Next join the two on the unique combination of precinct and county. You'll need to figure out which columns to use from both dataframes and you will need to fix one of those columns using `mutate()` in order to make the join work.
+Next join the two on the unique combination of precinct and county (you have county names and codes). You'll need to figure out which columns to use from both dataframes and you will need to fix one of those columns using `mutate()` in order to make the join work.
 
 ```{r}
-all_primary_precinct_results <- all_primary_precinct_results |> mutate(county = )
+all_primary_precinct_results <- all_primary_precinct_results |> mutate(county_code = as.numeric(county))
 
-primary_precinct_results_with_voting_locations <- all_primary_precinct_results |> left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="county_code"))
-```
-
-```{r}
-all_primary_precinct_results <- all_primary_precinct_results |> mutate(election_district_precinct = as.character(election_district_precinct))
-
-# now we can join on precinct and county
-
-primary_precinct_results_with_voting_locations <- all_primary_precinct_results |> left_join(precinct_voting_locations, by=c("election_district_precinct"="precinct_code", "county"="county_code"))
+primary_precinct_results_with_voting_locations <- all_primary_precinct_results |> inner_join(precinct_voting_locations, join_by(election_district_precinct, county_code==jurisdiction_code))
 ```
 
 ## Answer questions
 
-Q1. Using the newly-created dataframe and isolating just the results for Wes Moore and Aruna Miller, write code that calculates how many voting locations each county has, showing the county with the most voting locations first. There's a catch: multiple precincts can share the same voting location, so you'll need to calculate the distinct number of locations (Google is your friend).
-
-Does the county with the most voting locations have the largest population in the state (ask yourself: where have you seen county population figures recently)?
+Q1. Using the newly-created dataframe and isolating just the results for Angela Alsobrooks, write code that calculates how many voting locations each county has, showing the county with the most voting locations first. Does the county with the most voting locations have the largest population in the state (ask yourself: where have you seen county population figures recently)?
 
 A1. Prince George's County has 240 voting locations, but it's not the most populous county - that's Montgomery, which has 15 fewer voting locations. (Pre_lab_04 has county population data.)
 
 ```{r}
 primary_precinct_results_with_voting_locations |> 
-  filter(candidate_name == 'Wes Moore and Aruna Miller') |>
-  group_by(county_name) |> 
-  summarise(voting_locations = n_distinct(location_name)) |> 
+  filter(candidate_name == 'Angela Alsobrooks') |>
+  group_by(county_name.x) |> 
+  summarise(voting_locations = n_distinct(poll_name)) |> 
   arrange(desc(voting_locations))
 ```
 
-Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column permanently. Next, separately write code to show each county and precinct and calculate the total votes in the Governor's race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the governor's race?
+Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column permanently. Next, separately write code to show each county and precinct and calculate the total votes in the Presidential race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the presidential race?
 
-A2. Precinct 15005 in Prince George's County, which votes at Wise High School, had 2,396 votes in the governor's race.
+A2. Precinct 15-005 in Prince George's County, which votes at Wise High School, had 5,022 votes in the presidential race.
 
 ```{r}
 primary_precinct_results_with_voting_locations <- primary_precinct_results_with_voting_locations |> 
   mutate(votes = early_votes + election_night_votes + provisional_votes + mail_in_ballot_1_votes + mail_in_ballot_2_votes)
 
 primary_precinct_results_with_voting_locations |> 
-  filter(office_name == 'Governor / Lt. Governor') |> 
-  group_by(county_name, election_district_precinct, location_name) |> 
+  filter(office_name == 'President - Vice Pres') |> 
+  group_by(county_name.x, election_district_precinct, poll_name) |> 
   summarise(total_votes = sum(votes)) |> 
   arrange(desc(total_votes))
 
 ```
 
-Q3. Let's look at the average number of votes in each party's primary race for governor. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for governor. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story?
+Q3. Let's look at the average number of votes in each party's primary race for U.S. Senate. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for senator. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story?
 
 Finally, write code to calculate the average and median number of total votes across all precincts statewide (so you want to see just two numbers - the average and median). To do this, you will need to use the `ungroup()` function on your new dataframe *before* you do the math - <https://www.rdocumentation.org/packages/multiplyr/versions/0.1.1/topics/ungroup>. There's no state column here, so you aren't grouping by anything, but can still use summarize to do the math.
 
 Take a look at the the Annotated Code of Maryland's election laws (<https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf>) - can you find a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
 
-A3. There are 12, and four of them are in Prince George's County. It would be useful to know how many registered voters are assigned to this precinct - if it's a sizeable amount (more than 25, say), that's probably worth looking into. The average number of votes across all precincts is 465, and the median is 418. Maryland has no limit on the number of voters assigned to a precinct (although many states do), so having 2,000+ voters at one location and 400 at another could mean that more voting machines and poll workers would be needed at the former location.
+A3. There are 10, and six of them are in Prince George's County. It would be useful to know how many registered voters are assigned to this precinct - if it's a sizeable amount (more than 25, say), that's probably worth looking into. The average number of votes across all precincts is 488, and the median is 425. Maryland has no limit on the number of voters assigned to a precinct (although many states do), so having 2,000+ voters at one location and 400 at another could mean that more voting machines and poll workers would be needed at the former location.
 
 ```{r}
-gov_precinct_totals <- primary_precinct_results_with_voting_locations |> 
-  filter(office_name == 'Governor / Lt. Governor') |> 
-  group_by(county_name, election_district_precinct, location_name) |> 
+senate_precinct_totals <- primary_precinct_results_with_voting_locations |> 
+  filter(office_name == 'U.S. Senator') |> 
+  group_by(county_name.x, election_district_precinct, poll_name) |> 
   summarise(total_votes = sum(votes)) |> 
   arrange(desc(total_votes))
 
-gov_precinct_totals |> filter(total_votes == 0)
+senate_precinct_totals |> filter(total_votes == 0)
 
-gov_precinct_totals |> ungroup() |> summarise(average = mean(total_votes), median = median(total_votes))
+senate_precinct_totals |> ungroup() |> summarise(average = mean(total_votes), median = median(total_votes))
 
 ```
 
-Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the U.S. Senate primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me or Ramsay for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help. A4: [backup questions:]
+Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the presidential primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help. 
+
+A4:
 
 ```{r}
 

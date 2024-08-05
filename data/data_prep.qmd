@@ -46,6 +46,6 @@ precinct_voting_locations <- read_csv("~/code/datajournalismbook-elections/data/
 ```
 
 ```{r}
-precinct_voting_locations <- read_csv("md_precinct_voting_locations.csv")
+write_csv(precinct_voting_locations, "~/code/datajournalismbook-elections/labs/lab_04/data/md_precinct_voting_locations.csv")
 ```
 
