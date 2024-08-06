@@ -10,7 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### Task 1: Load libraries and settings
-**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library and the tidycensus library (remove the comment in front of install.packages if you need to install the latter)  
+
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library and the tidycensus library (remove the comment in front of install.packages if you need to install the latter)
 
 ```{r}
 # turn off sci notation
@@ -28,6 +29,7 @@ We're going to use a library called `tidycensus` which makes calls to the Census
 To use the API, you need to [an API key from the Census Bureau](https://api.census.gov/data/key_signup.html). It takes a few minutes and you need to activate your key via email. Once you have your key, you need to set that for this session. Just FYI: Your key is your key. Do not share it.
 
 ### Task 2: Sign up for an API Key and set it
+
 **Task** Replace YOUR KEY HERE in the codeblock below with your Census API Key (leave the quotemarks).
 
 ```{r echo=FALSE}
@@ -39,6 +41,7 @@ The `install=TRUE` part saves your key for future use.
 So to give you some idea of how complicated the data is, let's pull up just one file from the decennial Census. We'll use Summary File 1, or SF1. That has the major population and housing stuff.
 
 ### Task 3: Examining Census data
+
 **Task** Run the following codeblock and look at the resulting variable.
 
 ```{r}
@@ -82,9 +85,9 @@ As you can see, we have a GEOID, NAME, then variable and value. Variable and val
 **Task** Run the following codeblock to rename the population total columns in each dataframe:
 
 ```{r}
-p10 %>% select(GEOID, NAME, value) %>% rename(Population2010=value) -> p10
+p10 |> select(GEOID, NAME, value) |> rename(Population2010=value) -> p10
 
-p00 %>% select(GEOID, NAME, value) %>% rename(Population2000=value) -> p00
+p00 |> select(GEOID, NAME, value) |> rename(Population2000=value) -> p00
 ```
 
 Now we join the data together.
@@ -92,17 +95,15 @@ Now we join the data together.
 **Task** Run the following codeblock to combine the two dataframes into a single variable called `alldata`:
 
 ```{r}
-alldata <- p00 %>% inner_join(p10)
+alldata <- p00 |> inner_join(p10)
 ```
 
 And now we calculate the percent change.
 
-**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below.
-**Answer**
-
+**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer**
 
 ```{r}
-alldata %>% mutate(change = ((Population2010-Population2000)/Population2000)*100) %>% arrange(desc(change))
+alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
 ```
 
 You may be asking: hey, wasn't there a 2020 Census? Where's that data? The answer is that it's coming - the Census Bureau has a [schedule of releases](https://www.census.gov/programs-surveys/popest/about/schedule.html). There are some variables available:
@@ -122,45 +123,42 @@ We can measure this by median household income. That variable is `B19013_001`, s
 
 ### Task 5: Answer Questions with ACS Data
 
-**Task** Run the following codeblock to find the Maryland county with the highest median household income and put the answer below.
-**Answer**
+**Task** Run the following codeblock to find the Maryland county with the highest median household income and put the answer below. **Answer**
 
 ```{r}
 md <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
-              year = 2019)
+              year = 2022)
 
-md <- md %>% arrange(desc(estimate)) %>% top_n(20, estimate)
+md <- md |> arrange(desc(estimate)) |> top_n(20, estimate)
 
 md
 ```
 
-What do the top counties all have in common? Lots of suburban flight from D.C and Baltimore. But do the margins of error let us say one county is richer than the other? We can find this out visually using error bars. Don't worry much about the code here --  we'll cover that soon enough.
+What do the top counties all have in common? Lots of suburban flight from D.C and Baltimore. But do the margins of error let us say one county is richer than the other? We can find this out visually using error bars. Don't worry much about the code here -- we'll cover that soon enough.
 
 ### Task 6: Margins of Error
 
 **Task** Run the following codeblock to create a chart showing the margin of error for each county.
 
 ```{r}
-md %>%
-  mutate(NAME = gsub(" County, Maryland", "", NAME)) %>%
+md |>
+  mutate(NAME = gsub(" County, Maryland", "", NAME)) |>
   ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
   geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
   geom_point(color = "red") +
   labs(title = "Household income by county in Maryland",
-       subtitle = "2015-2019 American Community Survey",
+       subtitle = "2018-2022 American Community Survey",
        y = "",
        x = "ACS estimate (bars represent margin of error)")
 ```
 
 As you can see, some of the error bars are quite wide. Some are narrow. But if the bars overlap, it means the difference between the two counties is within the margin of error, and the differences aren't statistically significant.
 
-Is the difference between Calvert and Montgomery significant?
-**Answer**
+Is the difference between Calvert and Montgomery significant? **Answer**
 
-Is the difference between Howard and everyone else significant?
-**Answer**
+Is the difference between Howard and everyone else significant? **Answer**
 
 ### Task 7: Joining Multiple Years Together
 
@@ -168,13 +166,13 @@ Let's ask another question of the ACS -- did any counties lose income from the t
 
 Let's re-label our first household income data.
 
-**Task** Run the following codeblock to retrieve Maryland county median income from 2010 and from 2019.
+**Task** Run the following codeblock to retrieve Maryland county median income from 2010 and from 2022.
 
 ```{r}
-md20 <- get_acs(geography = "county",
+md22 <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
-              year = 2020)
+              year = 2022)
 
 md10 <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
@@ -184,24 +182,23 @@ md10 <- get_acs(geography = "county",
 
 What we're going to do next is a lot, but each step is simple. We're going to join the data together, so each county has one line of data. Then we're going to rename some fields that repeat. Then we're going to calculate the minimum and maximum value of the estimate using the margin of error. That'll help us later. After that, we're going to calculate a percent change and sort it by that change.
 
-**Task** Run the following codeblock to join the data, rename the population estimates and then calculate the values we need. Notice how we select _after_ we do the initial calculations so we only see the columns we're interested in (and drop the ones we don't want to see). Also note how the select function has the minus sign (-) in front of some columns? That means we don't want to see them in our result. Did any counties see their median incomes fall from 2010-2020? Is the change outside the margin of error for both?
-**Answer**
+**Task** Run the following codeblock to join the data, rename the population estimates and then calculate the values we need. Notice how we select *after* we do the initial calculations so we only see the columns we're interested in (and drop the ones we don't want to see). Also note how the select function has the minus sign (-) in front of some columns? That means we don't want to see them in our result. Did any counties see their median incomes fall from 2010-2020? Is the change outside the margin of error for both? **Answer**
 
 ```{r}
-md10 %>%
+md10 |>
   # join md10 to md20 using the shared GEOID and NAME columns
-  inner_join(md20, by=c("GEOID", "NAME")) %>%
+  inner_join(md22, by=c("GEOID", "NAME")) |>
   # rename the first estimate to clarify that it's from 2010 and the second estimate to clarify that it's from 2020
-  rename(estimate2010=estimate.x, estimate2020=estimate.y) %>%
-  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2020 = estimate2020-moe.y, max2020 = estimate2020+moe.y) %>%
-  select(-variable.x, -variable.y, -moe.x, -moe.y) %>%
-  mutate(change = ((estimate2020-estimate2010)/estimate2010)*100) %>%
+  rename(estimate2010=estimate.x, estimate2022=estimate.y) |>
+  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2022 = estimate2022-moe.y, max2022 = estimate2022+moe.y) |>
+  select(-variable.x, -variable.y, -moe.x, -moe.y) |>
+  mutate(change = ((estimate2022-estimate2010)/estimate2010)*100) |>
   arrange(change)
 ```
 
 ### Task 8: Combine with Election Data
 
-Let's read in our Maryland campaign finance data on donors:
+Let's read in some campaign finance data of Maryland donors:
 
 **Task** Run the following codeblock to load the RDS file:
 
@@ -212,23 +209,27 @@ md_contribs <- read_rds("data/pre_lab_07.rds")
 **Task** We need a 5- digit zip code (again), so run the following codeblock to create a populate a new column called `zip5`, then find the zip code with the largest total amount of contributions.
 
 ```{r}
-md_contribs <- md_contribs %>%
+md_contribs <- md_contribs |>
   mutate(zip5 = str_sub(contributor_zip, 1, 5))
 
-top_zips <- md_contribs %>%
- group_by(zip5) %>%
- summarise(total=sum(contribution_receipt_amount)) %>%
+top_zips <- md_contribs |>
+ group_by(zip5) |>
+ summarise(total=sum(contribution_receipt_amount)) |>
  arrange(desc(total))
 ```
 
-**Task** Let's get ZCTA household income data from the ACS using tidycensus for the top zip code in `top_zips`. Run the following codeblock to retrieve household income data for all Maryland ZCTAs first, then join them to `top_zips` using the GEOID column. Of the 20 zip codes with the largest amounts, which ones have estimated median household incomes of less than $50,000?
-**Answer** 
+**Task** Let's get ZCTA household income data from the ACS using tidycensus for the top zip code in `top_zips`. Run the following codeblock to retrieve household income data for all Maryland ZCTAs first, then join them to `top_zips` using the GEOID column.
+
+Note that the year is 2019, which is the latest year that we have data from every zip code in the state. As you drill down into smaller geographic units, you sacrifice more recent data.
+
+Of the 20 zip codes with the largest amounts, which ones have estimated median household incomes of less than \$50,000? 
+
+**Answer**
 
 ```{r}
 md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
-md_zips_with_acs <- top_zips %>% left_join(md_zipcodes, by=c('zip5'='GEOID'))
-md_zips_with_acs <- md_zips_with_acs %>% mutate(min=(estimate-moe), max=(estimate+moe))
+md_zips_with_acs <- top_zips |> left_join(md_zipcodes, by=c('zip5'='GEOID'))
+md_zips_with_acs <- md_zips_with_acs |> mutate(min=(estimate-moe), max=(estimate+moe))
 ```
 
-**Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes?
-**Answer** 
+**Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes? **Answer**
