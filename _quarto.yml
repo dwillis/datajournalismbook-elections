@@ -23,18 +23,18 @@ book:
     - data-cleaning-part-i.qmd
     - data-cleaning-part-ii.qmd
     - open-refine.qmd
-    - pdfs.qmd
     - merging.qmd
+    - pdfs.qmd
     - rvest.qmd
     - census.qmd
     - visualizing-for-reporting.qmd
     - visualizing-for-publication.qmd
     - geographic-basics.qmd
     - geographicanalysis.qmd
+    - ai_and_llms.qmd
     - textanalysis.qmd
     - basicstats.qmd
     - writingwithdata.qmd
-    - ai_and_llms.qmd
 
 format:
   html:
