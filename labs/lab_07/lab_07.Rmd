@@ -1,7 +1,7 @@
 ---
 title: "lab_07"
 author: "derek willis"
-date: "10/21/2022"
+date: "2024-08-07"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* A Census API key
+-   A Census API key
 
 ## Load libraries and establish settings
 
@@ -23,15 +23,16 @@ You'll need to load two packages for this: the tidyverse and tidycensus.
 # Turn off scientific notation
 options(scipen=999)
 
-# Load the libraries you'll need
-
+# Load the tidyverse.
+library(tidyverse)
+library(tidycensus)
 ```
 
 ## Setup Census API
 
 You'll need your Census API Key:
 
-**Task** set your API Key if you haven't already
+**Task** set your API Key _only_ if you haven't already
 
 ```{r echo=FALSE}
 census_api_key("YOUR API KEY", overwrite=TRUE)
@@ -39,55 +40,62 @@ census_api_key("YOUR API KEY", overwrite=TRUE)
 
 ## Load and view ACS variables
 
-You'll also need to load the list of American Community Survey variables from the 2020 5-year estimates so you can identify the codes you need:
+You'll also need to load the list of American Community Survey variables from the 2022 5-year estimates so you can identify the codes you need:
 
-**Task** load the variables from the 2020 5-year ACS and save them to a dataframe
+**Task** load the variables from the 2022 5-year ACS and save them to a dataframe
 
 ```{r}
 ```
 
 ## Answer questions
 
-**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2020 5-year estimates? You will need to find the variable for median age first.
-**A1**
+**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2022 5-year estimates? You will need to find the variable for median age first. 
+
+**A1** 
 
 ```{r}
 ```
 
-**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50.
+**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. 
+
 **A2** 
 
 ```{r}
 ```
 
-**Q3** We're interested in knowing which Maryland counties have the highest percentage of 5-17 year-olds who speak Spanish at home and *also* speak English fluently. Start with the code you wrote for Q1 and alter it to show the total population of 5-17 year-olds by county. Then create a second dataframe to show the number of 5-17 year-olds by county living in homes where Spanish is spoken but who speak English "very well" according to the ACS. To do this, you will need to find the ACS variables that represent those subjects. HINT: the phrase "very well" shows up in multiple variables - you want the one that doesn't include other factors like citizenship. 
+## Ticket-Splitting
 
-For each dataframe, rename the `estimate` column to a meaningful name you've given the ACS variable, remove the `variable` columns in each using select and then join them on GEOID and NAME. Then you can add a column to calculate the percentage of the total 5-17 population that speaks Spanish at home.
+Ticket-splitting (voting for candidates from multiple parties) in today's political environment seems like a rarity, but it does happen, even in states like Maryland. For the remaining questions you'll be looking at cast vote records from Frederick County - Maryland's most competitive county - for the 2022 general election. You'll be trying to identify the zip codes where ticket-splitting is happening the most and to learn more about those places. To do that, you'll need to read in two CSV files, join them and then also bring in data from the Census API.
 
-Which county has the highest percentage of 5-17 year-olds who speak Spanish at home and also speak English very well?
+### Setup
+
+Load the two CSV files in the `data` folder: one containing the ballot choices of Frederick voters in five races (governor, comptroller, attorney general and U.S. House) and the other containing information about Frederick's voting locations. You'll need to join them together.
+
+```{r}
+
+```
+
+**Q3** Let's answer some basic questions about ticket-splitting: how many voters voted for different parties in the governor and comptroller's race? How many voted for the same party in both races? What percentage of all voters split their tickets in those races? In how many cases did voters choose the same party in all five contests? What percentage of all voters does that represent?
 
 **A3** 
 
 ```{r}
+
 ```
 
-**Q4** Given the counties with the largest percentage of 5-17 year-olds that speak Spanish at home, which county stands out to you in the data as different from the others? How would you describe the top 5 counties? How would you describe Garrett County's numbers?
+**Q4** Now let's look for the zip codes where voters preferred Republicans in every race _except_ the governor's race, where Dan Cox lost to Wes Moore by a wide margin. Write code to generate a dataframe of zip codes with the number of those voters for each of those zip codes, ordering the dataframe so that the zip code with the most ticket-splitters appears first.
 
 **A4** 
 
-**Q5** Pennsylvanians are currently requesting and submitting mail ballots for the November election. You'd like to know more about the people who live in the areas sending in mail ballots. Read in the `zip_totals.csv` file in the data folder containing the number of returned mail ballots per zip code. Then create a dataframe of Pennsylvania ZCTAs that include the following variables from the 2019 ACS: total population and median income. You will need to add `output = "wide"` to the get_acs function so that you get columns for those two variables' estimates and margins of error.
-
-Join the ZCTA dataframe to the zip totals dataframe and calculate a per capita rate for mail ballots per 100 population in each ZCTA, and write code to answer the following questions?
-
-* Which zip code *that has returned at least 100 mail ballots* has the highest per capita rate? 
-* Where is that zip code and what does Census Reporter say about its demographics? 
-* For zip codes with a per capita rate of at least 10 returned ballots per 100 people, how many have median incomes of at least $100,000? 
-* How many have median incomes less than the state figure of $68,957? 
-* What's the most interesting one from this last result?
-
-**A5**
-
 ```{r}
 
+```
+
+
+**Q5** Let's find out more about those zip codes from A4. Using tidycensus, get a dataframe of Maryland zip codes and their median ages, then join it to the dataframe you produced in A4. NOTE: you'll need to ensure that the two columns you use for the join are the same datatype. Summarize your findings; how would you describe the zip codes with more non-Cox Republicans compared to those with fewer? Where are those leading zip codes located?
+
+**A5** 
+
+```{r}
 ```
 
