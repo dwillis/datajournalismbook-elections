@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_11.Rmd"
-author: "sean mussenden"
-date: "8/24/2021"
+author: "Derek Willis"
+date: "2024-08-08"
 output: html_document
 ---
 
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Chapter 20
+## Chapter 29
 
 Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like per capita rates, or looked at how data changes over time.
 
@@ -21,13 +21,13 @@ Go to the console and install it with `install.packages("sf")`
 
 To understand geographic queries, you have to get a few things in your head first:
 
-1. Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
-2. Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
-3. Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
-4. See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
+1.  Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
+2.  Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
+3.  Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
+4.  See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/geolayers.jpg"))
+knitr::include_graphics("images/geolayers.jpg")
 ```
 
 ## Importing and viewing data
@@ -35,120 +35,76 @@ knitr::include_graphics(rep("images/geolayers.jpg"))
 Let's start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.
 
 ### Task 1: Load packages
+
 **Task** Run the following code to load packages.
 
 ```{r}
 library(tidyverse)
 library(sf)
 library(janitor)
+#library(maptools)
 ```
 
 First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ERSI, which created the most widely used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
 
-So more often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified.
+More often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified. You also might be working with a GeoDatabase, or a .gdb file. That's a slightly different, more compact version of a Shapefile.
 
-The data we're going to be working with is a file from the Department of Homeland Security that is every hospital in the US and the number of beds they have. I'm writing this during the days of coronavirus, and suddenly the number of hospital beds is a top concern. So let's look at where hospital beds are and how many of them are there.
+The data we're going to be working with is a Shapefile of Maryland zip codes from the [state's GIS data catalog](https://data.imap.maryland.gov/datasets/38f3f8bc61bb4261b59d71b3642e3cd6_3/explore?location=38.810313%2C-77.268250%2C8.83).
 
-When you do, it should look something like this:
+### Task: Load the Maryland zip code map data.
 
-### Task: Load image
-**Task** Run the following code to load an image. Describe what you see in the answer space below.
-**Answer**
-
-```{r, echo=FALSE}
-knitr::include_graphics(rep("images/geolayers2.png"))
-```
-
-Simlar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our hospitals data. And then glimpse it to look at the columns.
+Simlar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our zip code data. And then glimpse it to look at the columns.
 
 ### Task: Load data
-**Task** Run the following code to load data. Describe what you see in the answer space below. What columns exist in this data?
-**Answer**
+
+**Task** Run the following code to load data. Describe what you see in the answer space below. What columns exist in this data? **Answer**
 
 ```{r}
-hospitals <- st_read("data/Hospitals/Hospitals.shp")
+md_zips <- st_read("data/md_zips/BNDY_ZIPCodes11Digit_MDP.shp")
 
-glimpse(hospitals)
+glimpse(md_zips)
 ```
 
-This looks like a normal dataframe, and mostly it is.  We have one row per hospital, and each column is some feature of that hospital: the name, the address, it's open/closed status and more.  What sets this data apart from other dataframes we've used is the last column, "geometry", which is of a new data type.  It's not a character or a number, it's a "POINT", which is composed of a longitude value and a latitude value.  When we plot these on a grid of latitude and longitude, it will place a point where those two numbers intersect.
+This looks like a normal dataframe, and mostly it is. We have one row per zipcode, and each column is some feature of that zip code: the fipscode, name and more. What sets this data apart from other dataframes we've used is the last column, "geometry", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
 
-Let's look at just Maryland hospitals. Good news -- `sf` plays very nicely with the tidyverse, so we can filter data the way we are accustomed.
+Let's look at these zip codes We have 526 of them, according to this data.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below: what kind of information does it contain? **Answer**
 
 ```{r}
-md_hospitals <- hospitals %>%
-  filter(STATE == "MD")
-
-md_hospitals
+View(md_zips)
 ```
 
-We have 72 hospitals, according to this data.
-
-What kind of hospitals do we have?
+But where in Maryland are these places? We can simply plot them on a longitude-latitude grid using ggplot and geom_sf.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_hospitals %>%
-  group_by(TYPE) %>%
-  summarise(
-    count=n()
-  ) %>%
-  arrange(desc(count))
-```
-
-Let's narrow our data to only look at the 50 "General Acute Care hospitals."
-
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
-
-```{r}
-
-md_hospitals <- hospitals %>%
-  filter(STATE == "MD") %>%
-  filter(TYPE == "GENERAL ACUTE CARE")
-
-md_hospitals
-
-```
-
-That gives us 50 hospitals in Maryland. Where are they?
-
-We can simply plot them on a longitude-latitude grid using ggplot.
-
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
-
-```{r}
-md_hospitals %>%
+md_zips |>
   ggplot() +
   geom_sf() +
   theme_minimal()
 ```
 
-Each point is a hospital. Each hospital has been plotted according to its degrees of longitude and latitude.
+Each shape is a zip code, with the boundaries plotted according to its degrees of longitude and latitude.
 
-If you know anything about the state of Maryland, you can kinda pick out the shape of the state there. The point in the top left is in Western Maryland. The point at the extreme bottom right is on the Eastern Shore. But this map is not exactly ideal. It would help to have a state and county map layered underneath of it, to help make sense of the spatial nature of this data.
+If you know anything about Maryland, you can pick out the geographic context here. You can basically see where Baltimore is and where the borders of the District of Columbia touch Maryland. But this map is not exactly ideal. It would help to have a county map layered underneath of it, to help make sense of the spatial nature of this data.
 
 This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland county outlines.
 
-Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census.  The package is called `tigris` and it's developed by the same person who made `tidycensus`.
+Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census. The package is called `tigris` and it's developed by the same person who made `tidycensus`.
 
 In the console, install tigris with `install.packages('tigris')`
 
 Then load it:
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
 # install.packages('tigris')
@@ -158,8 +114,9 @@ library(tigris)
 Now, let's use the counties() function from tigris to pull down a shapefile of all U.S. counties.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
 ```{r}
 
 counties <- counties()
@@ -167,20 +124,16 @@ counties <- counties()
 glimpse(counties)
 ```
 
-This looks pretty similar to our hospital shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column.
+This looks pretty similar to our places shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column (this time called `geometry`, which is pretty common).
 
-But instead of POINT, this geometry is of the datatype "MULTIPOLYGON".  Points are shape data represented by one pair of longitude or latitude coordinates. Polygons are made up of LOTS of pairs of longitude and latitude coordinates, connected by a boundary line into a complex shape.  
-
-If you've ever filled in a "connect the dots" picture by drawing lines between points, in order to reveal a hidden shape, then you're familiar with the concept.
-
-This county shapefile has all 3233 U.S. counties.  We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties.  There is no STATE column, but there is a STATEFP column, with each number representing a state.  Maryland's FP number is 24.
+This county shapefile has all 3233 U.S. counties. We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties. There is no STATE column, but there is a STATEFP column, with each number representing a state. Maryland's FP number is 24.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
 ```
@@ -188,67 +141,80 @@ md_counties <- counties %>%
 To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_counties %>%
+md_counties |>
   ggplot() +
   geom_sf() +
   theme_minimal()
 ```
 
-With this county map, we can layer our hospital data.
+With this county map, we can layer our places data.
 
 Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
 
-We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe.  We have two to plot now, so it's easier this way.
+We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe. We have two to plot now, so it's easier this way.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-
 ggplot() +
   geom_sf(data=md_counties) +
-  geom_sf(data=md_hospitals) +
+  geom_sf(data=md_zips) +
   theme_minimal()
 ```
-What can we tell from this?
 
-Well, hospitals are clustered around the state's most populous areas, the Baltimore to Washington corridor. There are fewer hospitals in rural Eastern and Western counties. And two counties have no hospital at all.
+Notice the subtle differences at the boundaries?
 
-This is a pretty blunt visualization. Not all hospitals are equal. Some have more beds than the others, and bed space is a critical factor in how full hospitals get during COVID-19 surges.  
+Let's dive back into zip codes and this time bring along data on 2022 Maryland registered voters' party affiliation by zip code. Let's load it.
 
-We can get a sense of where the largest hospitals are, by changing the color of the points according to the number of beds. We do this by setting the aesthetic -- or aes -- to use the BEDS column inside of the geom_sf function.  To make the differences easier to see, we're going to change the fill of the counties white, too, and use a special color palette, viridis magma. We're also going to make the points slightly bigger.
+### Task: Run code to load the voter data.
 
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
+md_voters_zip <- read_csv("data/md_voters_zip.csv") |> 
+  mutate(RESIDENTIALZIP5 = as.character(RESIDENTIALZIP5))
 
-ggplot() +
-  geom_sf(data=md_counties, fill="white") +
-  geom_sf(data=md_hospitals, aes(color=BEDS), size=2) +
-  scale_colour_viridis_b(option="magma") +
-  theme_minimal()
-
+View(md_voters_zip)
 ```
 
-With these changes, what else can we make out here?  Well, not only are most hospitals clustered in the center of Maryland, the largest ones are too. Rural areas have fewer and typically smaller hospitals.
+Now we can join the zip codes to the voter data.
 
+### Task: Run code to join the zip code shapes with the foreclosure notice data
 
-## Chapter 21
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
-In the previous chapter, we looked at Maryland's hospitals and used layers to show where hospitals sit on a map of Maryland's counties, and to show a bit of a pattern regarding concentration of the largest hospitals. Let's go little further.
+```{r}
+zip_codes_with_voters <- md_zips |> left_join(md_voters_zip, join_by(ZIPCODE1==RESIDENTIALZIP5))
+```
+
+Now we can use color to distinguish zip codes from each other. Let's use the percentage of Democrats to start with:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+county_centroids <- st_centroid(zip_codes_with_voters)
+
+ggplot() +
+  geom_sf(data=zip_codes_with_voters, aes(fill=PCT_DEM)) +
+  scale_colour_viridis_b(option="magma") +
+  theme_minimal()
+```
+
+With these changes, what can we make out here? First, you can pretty easily spot zip codes with a high percentage of Democratic voters - in Prince George's County in particular, along with zip codes around Baltimore.
 
 First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
 
 ### Task: Load libraries
-**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key. **Answer**
 
 ```{r}
 library(tidyverse)
@@ -256,74 +222,35 @@ library(sf)
 library(janitor)
 library(tidycensus)
 #census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
-
 ```
 
-And now let's load the dataframe of hospital information from the previous chapter, and filter for the 50 General Acute Care hospitals in Maryland.
+For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns among unaffiliated voters in Maryland. What geographic patterns can we identify?
 
-
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
-
-```{r}
-md_hospitals <- st_read("data/Hospitals/Hospitals.shp") %>%
-  filter(STATE == "MD") %>%
-  filter(TYPE == "GENERAL ACUTE CARE")
-
-md_hospitals
-```
-
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in hospital bed availability by county in Maryland. Our question: by examining the number of hospital beds per 100,000 people in each county, what regional geographic patterns can we identify?
-
-Each hospital exists inside of a county, so we're going to first calculate the total number of beds in each county. We do this by first converting the md_hospitals data to a standard dataframe (instead of a spatial dataframe) using as_tibble(), then grouping by county and totaling the number of beds. Finally, let's sort by total_beds to see which county has the most.
-
+First, we'll go out and get the county voter data and population data for each county using tidycensus. The variable for total population is B01001_001
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-
-md_beds_by_county <- md_hospitals %>%
-  as_tibble() %>%
-  group_by(COUNTY) %>%
-  summarise(
-    total_beds = sum(BEDS)
-  ) %>%
-  arrange(desc(total_beds))
-
-md_beds_by_county
-```
-So, what do we see here? Baltimore City has the most, followed by Montgomery, Baltimore County and Prince George's.  All big counties.
-
-Next, we'll go out and get population data for each county from tidycensus.  The variable for total population is B01001_001.  
-
-
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
-
-```{r}
+md_una_voters <- read_csv("data/md_una_voters.csv") 
 
 md_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
+              year = 2022,
               state = "MD")
-
-md_county_population
 ```
 
-Ultimately, we're going to join this county population table with our beds by county table, and then calculate a beds per 100,000 people statistic.  But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile.  Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
-
+Ultimately, we're going to join this county table with population with foreclosure notices by county, and then calculate a percentage. But remember, we then want to visualize this data by drawing a zip code map that helps us pick out trends. Thinking ahead, we know we'll need a zip code map shapefile. Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-
 md_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
+              year = 2021,
               state = "MD",
               geometry = TRUE)
 
@@ -332,132 +259,111 @@ md_county_population
 
 We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
 
-The next step will be to join our population data to our hospital bed data on the county column.
+The next step will be to join our population data to our foreclosure data on the county column.
 
-But there's a problem.  The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it.  The beds data just has the uppercase name of the county.  For example, the population data has "Anne Arundel County, Maryland" and the beds data has "ANNE ARUNDEL".
-
+But there's a problem. The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it. The foreclosure data just has the name of the county. For example, the population data has "Anne Arundel County, Maryland" and the foreclosure data has "Anne Arundel County".
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-
 md_county_population
 
-md_beds_by_county
+md_county_notices
 ```
 
-If they're going to join properly, we need to clean one of them up to make it match the other.  
+If they're going to join properly, we need to clean one of them up to make it match the other.
 
-Let's clean the population table. We're going to rename the "NAME" column to "COUNTY", then convert it to uppercase while also removing ", Maryland" and "County". Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
-
+Let's clean the population table. We're going to rename the "NAME" column to "county", then remove ", Maryland" and make the county titlecase. Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_county_population <- md_county_population %>%
-  rename(COUNTY = NAME) %>%
-  mutate(COUNTY = toupper(str_remove_all(COUNTY,", Maryland|County"))) %>%
-  mutate(COUNTY = str_trim(COUNTY,side="both")) %>%
-  rename(population = estimate) %>%
-  select(COUNTY, population, geometry)
+md_county_population <- md_county_population |>
+  rename(county = NAME) |>
+  mutate(county = str_to_title(str_remove_all(county,", Maryland"))) |>
+  mutate(county = str_trim(county,side="both")) |>
+  rename(population = estimate) |>
+  select(county, population, geometry)
 
 md_county_population
-
 ```
 
-Now we can join them.  
-
+Now we can join them!
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county)
+md_pop_with_foreclosures <- md_county_population |>
+  left_join(md_county_notices, join_by(county))
 
-md_beds_per_100k
+md_pop_with_foreclosures
 ```
 
-
-We have two NAs after we join, for Queen Anne's County and Caroline County.  That's not an error.  There are no General Acute Care hospitals in those counties, according to our data (it's why our beds table has 22 rows, not 24).  So let's convert those values to 0 using replace_na().
-
+Our final step before visualization, let's calculate the number of foreclosure notices per 1000 population and sort from highest to lowest to see what trends we can identify just from the table.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
-  mutate(total_beds = replace_na(total_beds,0))
+md_pop_with_foreclosures <- md_county_population |>
+  left_join(md_county_notices, join_by(county)) |> 
+  mutate(rate = notices/population*1000) |>
+  arrange(desc(rate))
 
-md_beds_per_100k
+md_pop_with_foreclosures
 ```
 
-Our final step before visualization, let's calculate the number of beds per 100,000 for each county and sort from highest to lowest to see waht trends we can identify just from the table.
+Let's take a look at the result of this table. The variances in the rates aren't huge, but there are some clear differences: Charles County and Prince George's County have higher rates, followed by Baltimore City and some more rural counties.
 
-
-### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
-
-```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
-  mutate(total_beds = replace_na(total_beds,0)) %>%
-  mutate(beds_per_100k = total_beds/population*100000) %>%
-  arrange(desc(beds_per_100k))
-
-md_beds_per_100k
-```
-
-Let's take a look at the result of this table.  Baltimore City is still up there at the top, even when measuring by beds per 100k.  But there are some surpising ones at the top, some of Maryland's smallest counties! Allegany, Talbot, Somerset may not have that many beds, but they also don't have a lot of people.  
-
-Okay, now let's visualize.  We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of beds per 100K on a color gradient.  
-
+Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of notices per 1K population on a color gradient.
 
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
+
+county_centroids <- st_centroid(md_counties)
+county_centroids_df <- as.data.frame(st_coordinates(county_centroids))
+county_centroids_df$NAME <- county_centroids$NAME
+
 ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
+  geom_sf(data=md_pop_with_foreclosures, aes(fill=rate)) +
+  geom_text(aes(x = X, y = Y, label = NAME), data = county_centroids_df, size = 3, check_overlap = TRUE) +
   theme_minimal()
 ```
+
 This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
 
-
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below.
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
+  geom_sf(data=md_pop_with_foreclosures, aes(fill=rate)) +
   theme_minimal() +
   scale_fill_viridis_b(option="magma")
 ```
-The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between counties.
+
+The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between other counties.
 
 So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
 
-
 ### Task: Run code
-**Task** Run the following code. Describe the output in the space below. What patterns do you see?
-**Answer**
+
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer**
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_beds_per_100k, aes(fill=beds_per_100k)) +
+  geom_sf(data=md_pop_with_foreclosures, aes(fill=rate)) +
   theme_minimal() +
   scale_fill_viridis_b(option="magma",trans = "log")
 ```
-Some interesting regional patterns finally emerge.  
-
-The Eastern Shore and Western Maryland have more beds per capita than Central Maryland (with the exception of Baltimore City). And Southern Maryland -- PG, Charles, Calvert and St. Mary's -- has by far the fewest beds per capita of any other region.
