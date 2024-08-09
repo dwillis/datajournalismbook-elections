@@ -42,7 +42,6 @@ Let's start with the absolute basics of geographic data: loading and viewing. Lo
 library(tidyverse)
 library(sf)
 library(janitor)
-#library(maptools)
 ```
 
 First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ERSI, which created the most widely used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
@@ -170,7 +169,7 @@ ggplot() +
 
 Notice the subtle differences at the boundaries?
 
-Let's dive back into zip codes and this time bring along data on 2022 Maryland registered voters' party affiliation by zip code. Let's load it.
+Let's dive back into zip codes and this time bring along August 2024 data on Maryland registered voters' party affiliation by zip code. Let's load it.
 
 ### Task: Run code to load the voter data.
 
@@ -210,21 +209,56 @@ ggplot() +
 
 With these changes, what can we make out here? First, you can pretty easily spot zip codes with a high percentage of Democratic voters - in Prince George's County in particular, along with zip codes around Baltimore.
 
-First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
+What if we wanted to find the zip codes that were closely divided between Democrats, Republicans and unaffiliated (independent) voters? For that, we can use a measure called the Gini Coefficient. Usually it's used to gauge inequality, but it also can be used to show how alike, or equal, things are. We'll need to install a package to use it:
+
+### Task: Install ineq library
+
+**Task** Run the following code
+
+```{r}
+install.packages("ineq")
+library(ineq)
+```
+
+Then we'll use the following code to calculate the zip codes with the most equal and unequal distribution of percentages for the three categories (PCT_DEM, PCT_REP and PCT_UNA). The `rowwise()` function allows us to calculate the coefficient on each row, and `ungroup()` returns the dataframe to its original state after we do the calculation. Then we sort by the smallest coefficient to find the zip codes with the most similar distributions of voters:
+
+**Task** Run the following code
+
+```{r}
+md_voters_zip_gini <- zip_codes_with_voters |> 
+  rowwise() |> 
+  mutate(gini_coefficient = ineq(c(PCT_DEM, PCT_REP, PCT_UNA), type="Gini")) |> 
+  ungroup() |> 
+  arrange(gini_coefficient) |> 
+  select(ZIPCODE1, DEM, REP, UNA, TOTAL, PCT_DEM, PCT_REP, PCT_UNA, gini_coefficient, geometry)
+
+```
+
+Finally, let's put that on a map, using `scale_fill_viridis_b()` to make the distinctions between the values clearer. Remember, a darker color means more similarity.
+
+**Task** Run the following code and describe the results below. Where are the more similar zip codes?
+
+**Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_zip_gini, aes(fill=gini_coefficient)) +
+  scale_fill_viridis_b(option="magma") +
+  theme_minimal()
+```
+
+For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns among unaffiliated voters in Maryland. What geographic patterns can we identify?
 
 ### Task: Load libraries
 
-**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key. **Answer**
+**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key if you haven't already. **Answer**
 
 ```{r}
 library(tidyverse)
 library(sf)
 library(janitor)
 library(tidycensus)
-#census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 ```
-
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns among unaffiliated voters in Maryland. What geographic patterns can we identify?
 
 First, we'll go out and get the county voter data and population data for each county using tidycensus. The variable for total population is B01001_001
 
@@ -326,7 +360,7 @@ md_pop_with_una <- md_county_population |>
 md_pop_with_una
 ```
 
-Let's take a look at the result of this table. The variances in the rates aren't huge, but there are some clear differences: Frederick is the clear leader, followed by Howard and Anne Arundel. Prince George's has the smallest rate of unaffiliated voters in the state.
+Let's take a look at the result of this table. The variances in the rates aren't huge, but there are some clear differences: Frederick is the clear leader, followed by Howard and Anne Arundel. Prince George's has the second-smallest rate of unaffiliated voters in the state.
 
 Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 1K population on a color gradient.
 
@@ -373,4 +407,3 @@ ggplot() +
   theme_minimal() +
   scale_fill_viridis_b(option="magma",trans = "log")
 ```
-Maryland's independent voters are, literally, in the middle of the state.
