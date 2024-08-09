@@ -1,6 +1,8 @@
 ```{r}
 library(tidyverse)
 library(janitor)
+library(arrow)
+library(ineq)
 ```
 
 ```{r}
@@ -37,15 +39,73 @@ wv_winred <- winred_q2 |> filter(state == "WV")
 write_rds(wv_winred, "~/code/datajournalismbook-elections/labs/lab_01/lab_01.rds")
 ```
 
-
 ```{r}
 md_contribs <- read_csv("~/Downloads/mdcontribs.csv") |> filter(entity_type == 'IND', recipient_committee_type == 'H')
 ```
+
 ```{r}
 precinct_voting_locations <- read_csv("~/code/datajournalismbook-elections/data/md_polling_places_p24.csv") |> clean_names() |> mutate(election_district_precinct = str_remove(election_district_precinct_part, "-\\d+$")) |> select(-poll_id, -election_district_precinct_part, -municipalities, -board_of_education_district, -orphans_court_district, -commissioner_district) |> distinct()
 ```
 
 ```{r}
 write_csv(precinct_voting_locations, "~/code/datajournalismbook-elections/labs/lab_04/data/md_precinct_voting_locations.csv")
+```
+
+```{r}
+ds <- open_dataset("~/Downloads/release")
+
+ds |> count(office) |> collect()
+```
+```{r}
+frederick_precincts <- precinct_voting_locations |> filter(county_name == 'Frederick')
+
+frederick_cvr_test <- frederick_cvr |> 
+  mutate(governor_lt_governor = case_when(
+    governor_lt_governor == 'Moore-Miller' ~ 'DEM',
+    governor_lt_governor == 'Cox-Schifanelli' ~ 'REP',
+    governor_lt_governor == 'Harding-White' ~ 'WCP',
+    governor_lt_governor == 'Lashar-Logansmith' ~ 'LIB',
+    governor_lt_governor == 'Wallace-Elder' ~ 'GRE',
+    governor_lt_governor == 'undervote' ~ 'undervote',
+    governor_lt_governor == 'or write-in:' ~ 'write-in'
+  )) |> 
+  mutate(comptroller = case_when(
+    comptroller == 'Barry Glassman' ~ 'REP',
+    comptroller == 'Brooke Elizabeth Lierman' ~ 'DEM',
+    comptroller == 'or write-in:' ~ 'write-in',
+    .default = comptroller
+  )) |> 
+  mutate(attorney_general = case_when(
+    attorney_general == 'Michael Anthony Peroutka' ~ 'REP',
+    attorney_general == 'Anthony G. Brown' ~ 'DEM',
+    attorney_general == 'or write-in:' ~ 'write-in',
+    .default = attorney_general
+  )) |> 
+  mutate(u_s_senator = case_when(
+    u_s_senator == 'Chris Chaffee' ~ 'REP',
+    u_s_senator == 'Chris Van Hollen' ~ 'DEM',
+    u_s_senator == 'or write-in:' ~ 'write-in',
+    .default = u_s_senator
+  )) |> 
+  mutate(representative_in_congress_6 = case_when(
+    representative_in_congress_6 == 'Neil C. Parrott' ~ 'REP',
+    representative_in_congress_6 == 'David J. Trone' ~ 'DEM',
+    representative_in_congress_6 == 'or write-in:' ~ 'write-in',
+    .default = representative_in_congress_6
+  ))
+
+write_csv(frederick_cvr_test, "~/code/datajournalismbook-elections/labs/lab_07/data/frederick_cvr.csv")
+
+```
+
+
+```{r}
+library(ineq)
+library(dplyr)
+
+md_voters_zip_gini <- md_voters_zip %>%
+  rowwise() %>%
+  mutate(gini_coefficient = ineq(c(PCT_DEM, PCT_REP, PCT_UNA), type="Gini")) %>%
+  ungroup()
 ```
 

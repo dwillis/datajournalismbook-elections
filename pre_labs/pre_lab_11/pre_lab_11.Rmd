@@ -199,8 +199,6 @@ Now we can use color to distinguish zip codes from each other. Let's use the per
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-county_centroids <- st_centroid(zip_codes_with_voters)
-
 ggplot() +
   geom_sf(data=zip_codes_with_voters, aes(fill=PCT_DEM)) +
   scale_colour_viridis_b(option="magma") +
