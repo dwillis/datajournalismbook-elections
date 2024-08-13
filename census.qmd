@@ -188,7 +188,7 @@ md22 <- get_acs(geography = "county",
               variables = c(medincome = "B19013_001"),
               state = "MD",
               year = 2022)
-arrange(md20, desc(estimate))
+arrange(md22, desc(estimate))
 ```
 
 In this case we don't save the sorted results to a variable, we can just see the output in the console.

@@ -2,21 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 30&nbsp; An intro to text analysis</title>
+<title>Data Journalism with R and the Tidyverse - 26&nbsp; An intro to text analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,43 +47,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -89,7 +65,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./basicstats.html" rel="next">
-<link href="./geographicanalysis.html" rel="prev">
+<link href="./ai_and_llms.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -105,7 +81,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -114,8 +96,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -126,11 +110,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./textanalysis.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -138,190 +127,199 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Data Journalism with R and the Tidyverse</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Public records</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Setting Up Your Computer To Use GitHub</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">R Basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  <a href="./replication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Aggregates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Mutating data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working with dates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  <a href="./filters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Filters and selections</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  <a href="./merging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Combining and joining</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  <a href="./census.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Geographic data basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  <a href="./ai_and_llms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">AI and Data Journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Writing with numbers</span></span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#going-beyond-a-single-word" id="toc-going-beyond-a-single-word" class="nav-link active" data-scroll-target="#going-beyond-a-single-word"> <span class="header-section-number">30.1</span> Going beyond a single word</a></li>
-  <li><a href="#sentiment-analysis" id="toc-sentiment-analysis" class="nav-link" data-scroll-target="#sentiment-analysis"> <span class="header-section-number">30.2</span> Sentiment Analysis</a></li>
+  <li><a href="#going-beyond-a-single-word" id="toc-going-beyond-a-single-word" class="nav-link active" data-scroll-target="#going-beyond-a-single-word"><span class="header-section-number">26.1</span> Going beyond a single word</a></li>
+  <li><a href="#sentiment-analysis" id="toc-sentiment-analysis" class="nav-link" data-scroll-target="#sentiment-analysis"><span class="header-section-number">26.2</span> Sentiment Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -330,7 +328,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></h1>
+<h1 class="title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></h1>
 </div>
 
 
@@ -338,11 +336,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
 
+
 </header>
+
 
 <p>Throughout this course, we’ve been focused on finding information in structured data. We’ve learned a lot of techniques to do that, and we’ve learned how the creative mixing and matching of those skills can find new insights.</p>
 <p>What happens when the insights are in unstructured data? Like a block of text?</p>
@@ -354,32 +355,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Here’s the question we’re going to go after: How did federal politicians talk about the coronavirus pandemic on Twitter?</p>
-<p>To answer this question, we’ll use a dataset of tweets posted by federal politicians from both campaign and official accounts that mentioned either “COVID” or “coronavirus” beginning on Feb.&nbsp;1, 2020. This dataset doesn’t include retweets, only original tweets. Let’s read in this data and examine it:</p>
+<p>Here’s the question we’re going to go after: what words or phrases appear most in Maryland Sen.&nbsp;Ben Cardin’s press releases?</p>
+<p>To answer this question, we’ll use the text of Cardin’s most recent 999 press releases.</p>
+<p>Let’s read in this data and examine it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">'data/covid_tweets.rds'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>releases <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/cardin_releases.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can see what it looks like with head:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covid_tweets)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(releases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 12
-       id user_…¹ content created             branch state distr…² title first…³
-    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;dttm&gt;              &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  
-1 1.46e18 RepCha… "What … 2021-11-24 21:53:05 H      FL    13      Hous… Charlie
-2 1.46e18 swan4c… "Joe B… 2021-11-24 21:42:53 H      GA    10      Hous… Mitche…
-3 1.46e18 TonyVa… "This … 2021-11-24 21:32:43 H      NE    02      Hous… Tony   
-4 1.46e18 RepGre… "I won… 2021-11-24 21:16:48 H      FL    17      Hous… Greg   
-5 1.46e18 Squire… "Don’t… 2021-11-24 20:36:53 H      TX    22      Hous… Jim    
-6 1.46e18 RepDer… "90% o… 2021-11-24 20:33:39 H      WA    06      Hous… Derek  
-# … with 3 more variables: last_name &lt;chr&gt;, gender &lt;chr&gt;, party &lt;chr&gt;, and
-#   abbreviated variable names ¹​user_name, ²​district, ³​first_name</code></pre>
+<pre><code># A tibble: 6 × 4
+  date       title                                                   url   text 
+  &lt;date&gt;     &lt;chr&gt;                                                   &lt;chr&gt; &lt;chr&gt;
+1 2022-12-01 Cardin, Trone Lead Effort to Review Health Impacts of … http… " – …
+2 2022-12-01 Cardin Votes to Avert Rail Strike, Will Continue to Ad… http… " – …
+3 2022-12-01 Cardin Introduces Legislation to Reauthorize and Impro… http… "– U…
+4 2022-12-01 Cardin Marks World AIDS Day 2022                        http… " – …
+5 2022-12-01 Wyden, Crapo and Bipartisan Senate Finance Committee M… http… " – …
+6 2022-12-01 Cardin, Wicker Lead Legislation to Designate Wagner Gr… http… " – …</code></pre>
 </div>
 </div>
-<p>What we want to do is to make the <code>content</code> column easier to analyze. Let’s say we want to find out the most commonly used words. We’ll probably want to remove URLs from the text of the tweets since they aren’t actual words. Let’s use mutate to make that happen:</p>
+<p>What we want to do is to make the <code>text</code> column easier to analyze. Let’s say we want to find out the most commonly used words. We’ll want to remove URLs from the text of the releases since they aren’t actual words. Let’s use mutate to make that happen:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="ot">&lt;-</span> covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">content =</span> <span class="fu">gsub</span>(<span class="st">"http.*"</span>,<span class="st">""</span>, content))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>releases <span class="ot">&lt;-</span> releases <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> <span class="fu">gsub</span>(<span class="st">"http.*"</span>,<span class="st">""</span>, text))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If you are trying to create a list of unique words, R will treat differences in capitalization as unique and also will include punctuation by default, even using its <code>unique</code> function:</p>
 <div class="cell">
@@ -389,10 +389,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>[1] "Dog" "dog" "cat" ","  </code></pre>
 </div>
 </div>
-<p>Fortunately, this is a solved problem with tidytext, which has a function called <code>unnest_tokens</code> that will convert the text to lowercase and remove all punctuation. The way that <code>unnest_tokens</code> works is that we tell it what we want to call the field we’re creating with this breaking apart, then we tell it what we’re breaking apart – what field has all the text in it. For us, that’s the <code>content</code> column:</p>
+<p>Fortunately, this is a solved problem with tidytext, which has a function called <code>unnest_tokens</code> that will convert the text to lowercase and remove all punctuation. The way that <code>unnest_tokens</code> works is that we tell it what we want to call the field we’re creating with this breaking apart, then we tell it what we’re breaking apart – what field has all the text in it. For us, that’s the <code>text</code> column:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>unique_words <span class="ot">&lt;-</span> covid_tweets <span class="sc">%&gt;%</span> <span class="fu">select</span>(content) <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, content)</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>unique_words <span class="ot">&lt;-</span> releases <span class="sc">%&gt;%</span> <span class="fu">select</span>(text) <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(unique_words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can look at the top words in this dataset. Let’s limit ourselves to making a plot of the top 25 words:</p>
@@ -407,17 +407,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Count"</span>,</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Unique words"</span>,</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Count of unique words found in tweets"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Count of unique words found in Cardin releases"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Selecting by n</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="textanalysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="textanalysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>Well, that’s a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like “a” and “the” are known as “stop words”. In most cases you’ll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them:</p>
+</div>
+<p>Well, that’s a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like “a” and “the” are known as “stop words”. In most cases you’ll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them that we’ll load, and then we’ll add some of our own.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"stop_words"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"stop_words"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>stop_words <span class="ot">&lt;-</span> stop_words <span class="sc">%&gt;%</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"ben"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"cardin"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"senator"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"senators"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"maryland"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">'federal'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">'u.s'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">'md'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">'senate'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"hollen"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"van"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">word =</span> <span class="st">"chris"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we’re going to use a function we haven’t used yet called an <code>anti_join</code>, which filters out any matches. So we’ll <code>anti_join</code> the stop words and get a list of words that aren’t stop words.</p>
 <p>From there, we can get a simple word frequency by just grouping them together and counting them. We can borrow the percent code from above to get a percent of the words our top 10 words represent.</p>
@@ -429,98 +447,98 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Joining, by = "word"
+<pre><code>Joining with `by = join_by(word)`
 Selecting by percent</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
    word            n percent
    &lt;chr&gt;       &lt;int&gt;   &lt;dbl&gt;
- 1 covid       78694   2.91 
- 2 19          51817   1.91 
- 3 covid19     44862   1.66 
- 4 amp         43735   1.62 
- 5 coronavirus 35713   1.32 
- 6 health      20832   0.769
- 7 pandemic    20494   0.757
- 8 relief      17576   0.649
- 9 people      14046   0.519
-10 vaccine     12707   0.469</code></pre>
+ 1 health       1804   0.576
+ 2 support      1509   0.481
+ 3 act          1488   0.475
+ 4 funding      1457   0.465
+ 5 program      1297   0.414
+ 6 project      1255   0.400
+ 7 communities  1189   0.379
+ 8 community    1015   0.324
+ 9 public       1014   0.323
+10 covid        1008   0.322</code></pre>
 </div>
 </div>
-<p>Those seem like more relevant unique words. Now, here’s where we can start to do more interesting and meaningful analysis. Let’s create two dataframes of unique words based on time: one for all of 2020 and the other for all of 2021:</p>
+<p>Those seem like more relevant unique words. Now, here’s where we can start to do more interesting and meaningful analysis. Let’s create two dataframes of unique words based on time: one for all of 2021 and the other for all of 2022:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>unique_words_2020 <span class="ot">&lt;-</span> covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(content) <span class="sc">%&gt;%</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, content)</span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>unique_words_2021 <span class="ot">&lt;-</span> releases <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&lt;</span> <span class="st">'2022-01-01'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(text) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>unique_words_2021 <span class="ot">&lt;-</span> covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&gt;=</span> <span class="st">'2021-01-01'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(content) <span class="sc">%&gt;%</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>unique_words_2022 <span class="ot">&lt;-</span> releases <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">'2022-01-01'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(text) <span class="sc">%&gt;%</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we can create top 10 lists for both of them and compare:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>unique_words_2020 <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>unique_words_2021 <span class="sc">%&gt;%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words) <span class="sc">%&gt;%</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Joining, by = "word"
+<pre><code>Joining with `by = join_by(word)`
 Selecting by percent</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
    word            n percent
    &lt;chr&gt;       &lt;int&gt;   &lt;dbl&gt;
- 1 covid       47028   2.33 
- 2 covid19     36636   1.81 
- 3 19          34373   1.70 
- 4 coronavirus 34338   1.70 
- 5 amp         33559   1.66 
- 6 health      16697   0.826
- 7 pandemic    14957   0.740
- 8 relief      12672   0.627
- 9 people      10619   0.525
-10 crisis       9125   0.451</code></pre>
+ 1 health       1177   0.608
+ 2 act          1025   0.530
+ 3 funding       962   0.497
+ 4 support       902   0.466
+ 5 covid         807   0.417
+ 6 19            806   0.417
+ 7 communities   767   0.396
+ 8 program       736   0.380
+ 9 american      708   0.366
+10 pandemic      708   0.366</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>unique_words_2021 <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>unique_words_2022 <span class="sc">%&gt;%</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words) <span class="sc">%&gt;%</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Joining, by = "word"
+<pre><code>Joining with `by = join_by(word)`
 Selecting by percent</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
-   word         n percent
-   &lt;chr&gt;    &lt;int&gt;   &lt;dbl&gt;
- 1 covid    31666   4.61 
- 2 19       17444   2.54 
- 3 amp      10176   1.48 
- 4 vaccine   8982   1.31 
- 5 covid19   8226   1.20 
- 6 pandemic  5537   0.807
- 7 relief    4904   0.715
- 8 health    4135   0.603
- 9 vaccines  3516   0.512
-10 people    3427   0.499</code></pre>
+   word            n percent
+   &lt;chr&gt;       &lt;int&gt;   &lt;dbl&gt;
+ 1 project       834   0.695
+ 2 health        627   0.523
+ 3 support       607   0.506
+ 4 program       561   0.468
+ 5 funding       495   0.413
+ 6 act           463   0.386
+ 7 community     453   0.378
+ 8 communities   422   0.352
+ 9 funds         421   0.351
+10 baltimore     416   0.347</code></pre>
 </div>
 </div>
-<p>In the 2021 top 10 list, “vaccine” and its variations are much more prominent, which makes sense, while “testing” drops out of the top 10 compared to 2020.</p>
-<section id="going-beyond-a-single-word" class="level2" data-number="30.1">
-<h2 data-number="30.1" class="anchored" data-anchor-id="going-beyond-a-single-word"><span class="header-section-number">30.1</span> Going beyond a single word</h2>
+<p>In the 2021 top 10 list, “covid” and “pandemic” appear, which makes sense, while the 2022 doesn’t reference the same topic aside from the more generic “health”.</p>
+<section id="going-beyond-a-single-word" class="level2" data-number="26.1">
+<h2 data-number="26.1" class="anchored" data-anchor-id="going-beyond-a-single-word"><span class="header-section-number">26.1</span> Going beyond a single word</h2>
 <p>The next step in text analysis is using <code>ngrams</code>. An <code>ngram</code> is any combination of words that you specify. Two word ngrams are called bigrams (bi-grams). Three would be trigrams. And so forth.</p>
 <p>The code to make ngrams is similar to what we did above, but involves some more twists.</p>
 <p>So this block is is going to do the following:</p>
 <ol type="1">
-<li>Use the covid_tweets data we created above, and filter for pre-2021 tweets.</li>
+<li>Use the releases data we created above, and filter for pre-2022 releases.</li>
 <li>Unnest the tokens again, but instead we’re going to create a field called bigram, break apart summary, but we’re going to specify the tokens in this case are ngrams of 2.</li>
 <li>We’re going to make things easier to read and split bigrams into word1 and word2.</li>
 <li>We’re going to filter out stopwords again, but this time we’re going to do it in both word1 and word2 using a slightly different filtering method.</li>
@@ -529,9 +547,9 @@ Selecting by percent</code></pre>
 <li>We’ll then use top_n to give us the top 10 bigrams.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>releases <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&lt;</span> <span class="st">'2022-01-01'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, text, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
@@ -545,25 +563,25 @@ Selecting by percent</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
-   bigram                   n percent
-   &lt;chr&gt;                &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19             32302   3.52 
- 2 health care           4388   0.478
- 3 public health         3908   0.426
- 4 covid19 pandemic      3206   0.349
- 5 town hall             3014   0.328
- 6 coronavirus pandemic  2915   0.318
- 7 19 pandemic           2670   0.291
- 8 covid relief          2246   0.245
- 9 relief package        2062   0.225
-10 covid ー              1832   0.200</code></pre>
+   bigram              n percent
+   &lt;chr&gt;           &lt;int&gt;   &lt;dbl&gt;
+ 1 covid 19          786   0.856
+ 2 human rights      319   0.347
+ 3 19 pandemic       288   0.314
+ 4 health care       224   0.244
+ 5 chesapeake bay    190   0.207
+ 6 american rescue   166   0.181
+ 7 rescue plan       166   0.181
+ 8 public health     157   0.171
+ 9 john sarbanes     133   0.145
+10 kweisi mfume      133   0.145</code></pre>
 </div>
 </div>
-<p>And we already have a different, more nuanced result. Health was among the top single words, and we can see that “health care” and “public health” are among the top 2-word phrases. What about after 2021?</p>
+<p>And we already have a different, more nuanced result. Health was among the top single words, and we can see that “health care”, “human rights” and “chesapeake bay” are among the top 2-word phrases. What about after 2021?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&gt;=</span> <span class="st">'2021-01-01'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>releases <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">'2022-01-01'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, text, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
@@ -577,165 +595,43 @@ Selecting by percent</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
-   bigram               n percent
-   &lt;chr&gt;            &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19         17357   5.35 
- 2 19 vaccine        2638   0.814
- 3 covid relief      2159   0.666
- 4 19 pandemic       1495   0.461
- 5 covid19 vaccine   1227   0.379
- 6 covid vaccine     1099   0.339
- 7 health care        908   0.280
- 8 covid19 pandemic   872   0.269
- 9 public health      860   0.265
-10 19 relief          805   0.248</code></pre>
+   bigram                 n percent
+   &lt;chr&gt;              &lt;int&gt;   &lt;dbl&gt;
+ 1 project location     262   0.447
+ 2 covid 19             167   0.285
+ 3 health care          140   0.239
+ 4 chesapeake bay       139   0.237
+ 5 human rights         119   0.203
+ 6 amount included      113   0.193
+ 7 baltimore city       100   0.171
+ 8 prince george’s       98   0.167
+ 9 mental health         94   0.160
+10 location baltimore    85   0.145</code></pre>
 </div>
 </div>
-<p>While “covid 19” is still the leading phrase, vaccine-related phrases dominate the top 10, and “public health” and “health care” have slipped down the list.</p>
-<p>So far, we’ve only looked at the entire set of tweets, not any characteristics of who posted them. Would these lists be any different for Democrats and Republicans? To find out, we just need to add to our filter.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>, party <span class="sc">==</span> <span class="st">'D'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bigram =</span> <span class="fu">paste</span>(word1, word2, <span class="at">sep=</span><span class="st">" "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bigram) <span class="sc">%&gt;%</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Selecting by percent</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-   bigram                   n percent
-   &lt;chr&gt;                &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19             22182   3.57 
- 2 health care           3398   0.547
- 3 public health         3314   0.534
- 4 town hall             2481   0.400
- 5 covid19 pandemic      2426   0.391
- 6 19 pandemic           1923   0.310
- 7 coronavirus pandemic  1903   0.307
- 8 covid relief          1525   0.246
- 9 relief package        1478   0.238
-10 social distancing     1373   0.221</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>, party <span class="sc">==</span> <span class="st">'R'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bigram =</span> <span class="fu">paste</span>(word1, word2, <span class="at">sep=</span><span class="st">" "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bigram) <span class="sc">%&gt;%</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Selecting by percent</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-   bigram                   n percent
-   &lt;chr&gt;                &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19              9901   3.45 
- 2 coronavirus pandemic   966   0.336
- 3 health care            943   0.328
- 4 ー 19                  782   0.272
- 5 covid ー               782   0.272
- 6 covid19 pandemic       769   0.268
- 7 cares act              759   0.264
- 8 19 pandemic            733   0.255
- 9 american people        711   0.248
-10 covid relief           703   0.245</code></pre>
-</div>
-</div>
-<p>Now we can begin to see some differences between the parties. We also could do the same for different kinds of accounts: the <code>title</code> column represents the role of the account, and if it includes “Candidate” then the tweet is from a campaign account. Let’s compare House of Representatives’ official and campaign tweets during 2020:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>, title <span class="sc">==</span> <span class="st">'House Representative'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bigram =</span> <span class="fu">paste</span>(word1, word2, <span class="at">sep=</span><span class="st">" "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bigram) <span class="sc">%&gt;%</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Selecting by percent</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-   bigram                   n percent
-   &lt;chr&gt;                &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19             15796   3.53 
- 2 town hall             2265   0.507
- 3 health care           2093   0.468
- 4 public health         2033   0.455
- 5 covid19 pandemic      1851   0.414
- 6 19 pandemic           1522   0.341
- 7 coronavirus pandemic  1457   0.326
- 8 covid relief          1108   0.248
- 9 telephone town        1051   0.235
-10 relief package        1010   0.226</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>covid_tweets <span class="sc">%&gt;%</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(created <span class="sc">&lt;</span> <span class="st">'2021-01-01'</span>, title <span class="sc">==</span> <span class="st">'House Candidate'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(bigram, content, <span class="at">token =</span> <span class="st">"ngrams"</span>, <span class="at">n =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(bigram, <span class="fu">c</span>(<span class="st">"word1"</span>, <span class="st">"word2"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word1 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word2 <span class="sc">%in%</span> stop_words<span class="sc">$</span>word) <span class="sc">%&gt;%</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bigram =</span> <span class="fu">paste</span>(word1, word2, <span class="at">sep=</span><span class="st">" "</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bigram) <span class="sc">%&gt;%</span></span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> (n<span class="sc">/</span><span class="fu">sum</span>(n))<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Selecting by percent</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-   bigram                   n percent
-   &lt;chr&gt;                &lt;int&gt;   &lt;dbl&gt;
- 1 covid 19              8378   3.38 
- 2 public health          778   0.314
- 3 covid ー               722   0.291
- 4 ー 19                  721   0.291
- 5 health care            721   0.291
- 6 19 pandemic            519   0.209
- 7 social distancing      518   0.209
- 8 coronavirus pandemic   512   0.207
- 9 town hall              482   0.195
-10 covid relief           458   0.185</code></pre>
-</div>
-</div>
-<p>There are some differences here, too, but also some potential challenges to doing an analysis. For one, there are variations of words like “vaccine” that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.</p>
+<p>While “covid 19” is still a top phrase, it’s not <em>the</em> leading phrase any longer. “Mental health” makes an appearance, too. You’ll notice that the percentages are very small; that’s not irrelevant but in some cases it’s the differences in patterns that’s more important.</p>
+<p>There are some potential challenges to doing an analysis. For one, there are variations of words that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.</p>
 </section>
-<section id="sentiment-analysis" class="level2" data-number="30.2">
-<h2 data-number="30.2" class="anchored" data-anchor-id="sentiment-analysis"><span class="header-section-number">30.2</span> Sentiment Analysis</h2>
+<section id="sentiment-analysis" class="level2" data-number="26.2">
+<h2 data-number="26.2" class="anchored" data-anchor-id="sentiment-analysis"><span class="header-section-number">26.2</span> Sentiment Analysis</h2>
 <p>Another popular use of text analysis is to measure the sentiment of a word - whether it expresses a positive or negative idea - and tidytext has built-in tools to make that possible. We use word counts like we’ve already calculated and bring in a dataframe of words (called a lexicon) along with their sentiments using a function called <code>get_sentiments</code>. The most common dataframe is called “bing” which has nothing to do with the Microsoft search engine. Let’s load it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>bing <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"bing"</span>)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>bing_word_counts_2020 <span class="ot">&lt;-</span> unique_words_2020 <span class="sc">%&gt;%</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(bing) <span class="sc">%&gt;%</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word, sentiment, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bing <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"bing"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>bing_word_counts_2021 <span class="ot">&lt;-</span> unique_words_2021 <span class="sc">%&gt;%</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(bing) <span class="sc">%&gt;%</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word, sentiment, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Joining, by = "word"</code></pre>
+<pre><code>Joining with `by = join_by(word)`</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>bing_word_counts_2021 <span class="ot">&lt;-</span> unique_words_2021 <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(bing) <span class="sc">%&gt;%</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word, sentiment, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>bing_word_counts_2022 <span class="ot">&lt;-</span> unique_words_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(bing) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word, sentiment, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Joining, by = "word"</code></pre>
+<pre><code>Joining with `by = join_by(word)`</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(bing_word_counts_2020)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(bing_word_counts_2021)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(bing_word_counts_2021)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(bing_word_counts_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Gauging the sentiment of a word can be heavily dependent on the context, and as with other types of text analysis sometimes larger patterns are more meaningful than individual results. But the potential with text analysis is vast: knowing what words and phrases that public officials employ can be a way to evaluate their priorities, cohesiveness and tactics for persuading voters and their colleagues. And those words and phrases are data.</p>
 
@@ -757,7 +653,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
   }
   toggleBodyColorPrimary();  
   const icon = "";
@@ -767,9 +666,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -781,17 +694,51 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -801,55 +748,320 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./geographicanalysis.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span>
+      <a href="./ai_and_llms.html" class="pagination-link" aria-label="AI and Data Journalism">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">AI and Data Journalism</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./basicstats.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./basicstats.html" class="pagination-link" aria-label="Basic Stats: Linear Regression and The T-Test">
+        <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

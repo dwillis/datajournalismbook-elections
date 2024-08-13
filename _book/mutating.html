@@ -2,21 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 16&nbsp; Mutating data</title>
+<title>Data Journalism with R and the Tidyverse - 11&nbsp; Mutating data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,43 +47,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -105,7 +81,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -114,8 +96,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -126,11 +110,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mutating.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Mutating data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -138,190 +127,199 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Data Journalism with R and the Tidyverse</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Public records</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Setting Up Your Computer To Use GitHub</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">R Basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  <a href="./replication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Aggregates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Mutating data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working with dates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  <a href="./filters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Filters and selections</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mutating.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  <a href="./merging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Combining and joining</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  <a href="./census.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Geographic data basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  <a href="./ai_and_llms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">AI and Data Journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Writing with numbers</span></span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#another-use-of-mutate" id="toc-another-use-of-mutate" class="nav-link active" data-scroll-target="#another-use-of-mutate"> <span class="header-section-number">16.1</span> Another use of mutate</a></li>
-  <li><a href="#a-more-powerful-use" id="toc-a-more-powerful-use" class="nav-link" data-scroll-target="#a-more-powerful-use"> <span class="header-section-number">16.2</span> A more powerful use</a></li>
+  <li><a href="#another-use-of-mutate" id="toc-another-use-of-mutate" class="nav-link active" data-scroll-target="#another-use-of-mutate"><span class="header-section-number">11.1</span> Another use of mutate</a></li>
+  <li><a href="#a-more-powerful-use" id="toc-a-more-powerful-use" class="nav-link" data-scroll-target="#a-more-powerful-use"><span class="header-section-number">11.2</span> A more powerful use</a></li>
   </ul>
 </nav>
     </div>
@@ -330,7 +328,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></h1>
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Mutating data</span></h1>
 </div>
 
 
@@ -338,29 +336,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
 
+
 </header>
 
-<p>Often the data you have will prompt questions that it doesn’t immediately answer. The PPP loan applications include a total amount column but also columns for different categories the money would be used for: payroll, utilities, rent, etc. Amounts are great, but comparing absolute numbers to each other is only useful if you have a very small number. We need percentages!</p>
+
+<p>Often the data you have will prompt questions that it doesn’t immediately answer. The amount of donations or number of votes are great, but comparing absolute numbers to each other is only useful if you have a very small number. We need percentages!</p>
 <p>To do that in R, we can use <code>dplyr</code> and <code>mutate</code> to calculate new metrics in a new field using existing fields of data. That’s the essence of <code>mutate</code> - using the data you have to answer a new question.</p>
 <p>So first we’ll import the tidyverse so we can read in our data and begin to work with it.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we’ll import a dataset of county-level election results from Maryland’s 2018 primary that is in the data folder in this chapter’s pre-lab directory. We’ll use this to explore ways to create new information from existing data.</p>
+<p>Now we’ll import a dataset of county-level election results from Maryland’s 2024 primary that is in the data folder in this chapter’s pre-lab directory. We’ll use this to explore ways to create new information from existing data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2018.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>primary_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/maryland_primary_2024.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 1778 Columns: 15
+<pre><code>Rows: 895 Columns: 11
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-chr  (7): election_type, result_type, office, district, name_raw, party, jur...
-dbl  (6): votes, year, election_day, absentee, provisional, second_absentee
-lgl  (1): special
-dttm (1): end_date
+chr (5): county_name, office_name, office_district, candidate_name, party
+dbl (6): early_voting, election_day, absentee, provisional, second_absentee,...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
@@ -369,113 +368,115 @@ dttm (1): end_date
 <p>First, let’s add a column called <code>percent_election_day</code> for the percentage of votes that were cast on election day for each candidate result in a county. The code to calculate a percentage is pretty simple. Remember, with <code>summarize</code>, we used <code>n()</code> to count things. With <code>mutate</code>, we use very similar syntax to calculate a new value – a new column of data – using other values in our dataset.</p>
 <p>If we look at what we got when we imported the data, you’ll see there’s <code>election_day</code> as the numerator, and we’ll use <code>votes</code> as the denominator. We can simply things by only selecting a few columns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>primary_24 <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office_name, office_district, candidate_name, party, county_name, election_day, votes) <span class="sc">|&gt;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> election_day<span class="sc">/</span>votes</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,778 × 8
-   office                  district name_raw party juris…¹ elect…² votes perce…³
-   &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 Governor / Lt. Governor &lt;NA&gt;     Rushern… DEM   Allega…     324   413   0.785
- 2 Governor / Lt. Governor &lt;NA&gt;     Ralph J… DEM   Allega…     106   122   0.869
- 3 Governor / Lt. Governor &lt;NA&gt;     Ben Jea… DEM   Allega…     979  1170   0.837
- 4 Governor / Lt. Governor &lt;NA&gt;     James H… DEM   Allega…      99   106   0.934
- 5 Governor / Lt. Governor &lt;NA&gt;     Valerie… DEM   Allega…     118   159   0.742
- 6 Governor / Lt. Governor &lt;NA&gt;     Rich Ma… DEM   Allega…     133   169   0.787
- 7 Governor / Lt. Governor &lt;NA&gt;     Alec Ro… DEM   Allega…     175   218   0.803
- 8 Governor / Lt. Governor &lt;NA&gt;     Jim Shea DEM   Allega…     239   284   0.842
- 9 Governor / Lt. Governor &lt;NA&gt;     Krish O… DEM   Allega…     364   462   0.788
-10 Comptroller             &lt;NA&gt;     Peter F… DEM   Allega…    2518  3077   0.818
-# … with 1,768 more rows, and abbreviated variable names ¹​jurisdiction,
-#   ²​election_day, ³​percent_election_day</code></pre>
+<pre><code># A tibble: 895 × 8
+   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 U.S. Congress 06              Adrian Pet… DEM   Allega…      10    12   0.833
+ 2 U.S. Congress 06              Altimont M… DEM   Allega…       9    13   0.692
+ 3 U.S. Congress 06              April McCl… DEM   Allega…     544  1428   0.381
+ 4 U.S. Congress 06              Ashwani Ja… DEM   Allega…     125   228   0.548
+ 5 U.S. Congress 06              Brenda J. … REP   Allega…      53   120   0.442
+ 6 U.S. Congress 06              Chris Hyser REP   Allega…      99   190   0.521
+ 7 U.S. Congress 06              Dan Cox     REP   Allega…    1505  2130   0.707
+ 8 U.S. Congress 06              Destiny Dr… DEM   Allega…      23    46   0.5  
+ 9 U.S. Congress 06              Geoffrey G… DEM   Allega…      12    37   0.324
+10 U.S. Congress 06              George Glu… DEM   Allega…      26    42   0.619
+# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
+#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
 </div>
 </div>
 <p>Now we’ve got our <code>percent_election_day</code> column. But what do you see right away? Do those numbers look like we expect them to? No.&nbsp;They’re a decimal expressed as a percentage. So let’s fix that by multiplying by 100.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>primary_24 <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office_name, office_district, candidate_name, party, county_name, election_day, votes) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,778 × 8
-   office                  district name_raw party juris…¹ elect…² votes perce…³
-   &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 Governor / Lt. Governor &lt;NA&gt;     Rushern… DEM   Allega…     324   413    78.5
- 2 Governor / Lt. Governor &lt;NA&gt;     Ralph J… DEM   Allega…     106   122    86.9
- 3 Governor / Lt. Governor &lt;NA&gt;     Ben Jea… DEM   Allega…     979  1170    83.7
- 4 Governor / Lt. Governor &lt;NA&gt;     James H… DEM   Allega…      99   106    93.4
- 5 Governor / Lt. Governor &lt;NA&gt;     Valerie… DEM   Allega…     118   159    74.2
- 6 Governor / Lt. Governor &lt;NA&gt;     Rich Ma… DEM   Allega…     133   169    78.7
- 7 Governor / Lt. Governor &lt;NA&gt;     Alec Ro… DEM   Allega…     175   218    80.3
- 8 Governor / Lt. Governor &lt;NA&gt;     Jim Shea DEM   Allega…     239   284    84.2
- 9 Governor / Lt. Governor &lt;NA&gt;     Krish O… DEM   Allega…     364   462    78.8
-10 Comptroller             &lt;NA&gt;     Peter F… DEM   Allega…    2518  3077    81.8
-# … with 1,768 more rows, and abbreviated variable names ¹​jurisdiction,
-#   ²​election_day, ³​percent_election_day</code></pre>
+<pre><code># A tibble: 895 × 8
+   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 U.S. Congress 06              Adrian Pet… DEM   Allega…      10    12    83.3
+ 2 U.S. Congress 06              Altimont M… DEM   Allega…       9    13    69.2
+ 3 U.S. Congress 06              April McCl… DEM   Allega…     544  1428    38.1
+ 4 U.S. Congress 06              Ashwani Ja… DEM   Allega…     125   228    54.8
+ 5 U.S. Congress 06              Brenda J. … REP   Allega…      53   120    44.2
+ 6 U.S. Congress 06              Chris Hyser REP   Allega…      99   190    52.1
+ 7 U.S. Congress 06              Dan Cox     REP   Allega…    1505  2130    70.7
+ 8 U.S. Congress 06              Destiny Dr… DEM   Allega…      23    46    50  
+ 9 U.S. Congress 06              Geoffrey G… DEM   Allega…      12    37    32.4
+10 U.S. Congress 06              George Glu… DEM   Allega…      26    42    61.9
+# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
+#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
 </div>
 </div>
 <p>Now, does this ordering do anything for us? No.&nbsp;Let’s fix that with arrange.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>primary_24 <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office_name, office_district, candidate_name, party, county_name, election_day, votes) <span class="sc">|&gt;</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(percent_election_day))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">|&gt;</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percent_election_day))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,778 × 8
-   office                    distr…¹ name_…² party juris…³ elect…⁴ votes perce…⁵
-   &lt;chr&gt;                     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 U.S. Senator              &lt;NA&gt;    Erik J… DEM   Garrett       8     8   100  
- 2 U.S. Senator              &lt;NA&gt;    Albert… REP   Allega…      69    71    97.2
- 3 House of Delegates        01A     James … REP   Allega…     140   148    94.6
- 4 Governor / Lt. Governor   &lt;NA&gt;    James … DEM   Allega…      99   106    93.4
- 5 House of Delegates        38C     Jim Sh… REP   Wicomi…      23    25    92  
- 6 House of Delegates        01A     Wendel… REP   Allega…     947  1031    91.9
- 7 U.S. Senator              &lt;NA&gt;    Richar… DEM   Garrett      11    12    91.7
- 8 U.S. Senator              &lt;NA&gt;    Christ… REP   Allega…     863   948    91.0
- 9 U.S. Senator              &lt;NA&gt;    Marcia… DEM   Allega…     113   125    90.4
-10 Representative in Congre… 06      Christ… DEM   Allega…      37    41    90.2
-# … with 1,768 more rows, and abbreviated variable names ¹​district, ²​name_raw,
-#   ³​jurisdiction, ⁴​election_day, ⁵​percent_election_day</code></pre>
+<pre><code># A tibble: 895 × 8
+   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 U.S. Senator  &lt;NA&gt;            "Laban Y. … REP   Dorche…       5     5   100  
+ 2 U.S. Senator  &lt;NA&gt;            "Laban Y. … REP   Kent C…       6     6   100  
+ 3 U.S. Senator  &lt;NA&gt;            "John A. M… REP   Somers…      33    39    84.6
+ 4 U.S. Congress 06              "Adrian Pe… DEM   Allega…      10    12    83.3
+ 5 U.S. Senator  &lt;NA&gt;            "Moe H. Ba… REP   Garret…      36    44    81.8
+ 6 U.S. Senator  &lt;NA&gt;            "Moe H. Ba… REP   Allega…      33    41    80.5
+ 7 U.S. Congress 03              "Ray Bly"   REP   Carrol…      97   122    79.5
+ 8 U.S. Congress 06              "Kiambo \"… DEM   Garret…      10    13    76.9
+ 9 U.S. Congress 03              "Robert J.… REP   Carrol…     313   410    76.3
+10 U.S. Congress 03              "Aisha Kha… DEM   Carrol…      19    25    76  
+# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
+#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
 </div>
 </div>
 <p>So now we have results ordered by <code>percent_election_day</code> with the highest percentage first. To see the lowest percentage first, we can reverse that <code>arrange</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>primary_18 <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office, district, name_raw, party, jurisdiction, election_day, votes) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>primary_24 <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(office_name, office_district, candidate_name, party, county_name, election_day, votes) <span class="sc">|&gt;</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">percent_election_day =</span> (election_day<span class="sc">/</span>votes)<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(percent_election_day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">|&gt;</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(percent_election_day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,778 × 8
-   office                    distr…¹ name_…² party juris…³ elect…⁴ votes perce…⁵
-   &lt;chr&gt;                     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 Governor / Lt. Governor   &lt;NA&gt;    Valeri… DEM   Talbot       38    89    42.7
- 2 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Talbot       84   192    43.8
- 3 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Kent         40    85    47.1
- 4 Governor / Lt. Governor   &lt;NA&gt;    Rich M… DEM   Garrett      32    67    47.8
- 5 Governor / Lt. Governor   &lt;NA&gt;    Jim Sh… DEM   Talbot      168   345    48.7
- 6 U.S. Senator              &lt;NA&gt;    Blaine… REP   Talbot       41    84    48.8
- 7 House of Delegates        43      Urcill… DEM   Baltim…     550  1122    49.0
- 8 Governor / Lt. Governor   &lt;NA&gt;    Rusher… DEM   Talbot      286   577    49.6
- 9 House of Delegates        21      Mary A… DEM   Anne A…     407   816    49.9
-10 Representative in Congre… 06      Christ… DEM   Garrett       3     6    50  
-# … with 1,768 more rows, and abbreviated variable names ¹​district, ²​name_raw,
-#   ³​jurisdiction, ⁴​election_day, ⁵​percent_election_day</code></pre>
+<pre><code># A tibble: 895 × 8
+   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 U.S. Congress 06              Mohammad S… DEM   Garret…       0     2     0  
+ 2 U.S. Congress 08              Jamie Rask… DEM   Prince…       0     2     0  
+ 3 U.S. Senator  &lt;NA&gt;            Steven Hen… DEM   Talbot…       0     3     0  
+ 4 U.S. Congress 06              Laurie-Ann… DEM   Garret…       2    18    11.1
+ 5 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Dorche…       2    17    11.8
+ 6 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Talbot…       2    15    13.3
+ 7 U.S. Senator  &lt;NA&gt;            Marcellus … DEM   Talbot…       2    15    13.3
+ 8 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Garret…       1     7    14.3
+ 9 U.S. Senator  &lt;NA&gt;            Joseph Per… DEM   Somers…       2    12    16.7
+10 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Worces…       5    29    17.2
+# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
+#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
 </div>
 </div>
-<p>Only a handful of candidates got less than 50 percent of their total votes in a county on election day. What a difference a pandemic makes.</p>
-<section id="another-use-of-mutate" class="level2" data-number="16.1">
-<h2 data-number="16.1" class="anchored" data-anchor-id="another-use-of-mutate"><span class="header-section-number">16.1</span> Another use of mutate</h2>
+<p>Mutating can help us make different amounts easier to compare. We also can use filter to limit the data to meet certain conditions. For example, we could only look at the election day percentages of candidates who received at least 100 votes in a jurisdiction.</p>
+<section id="another-use-of-mutate" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="another-use-of-mutate"><span class="header-section-number">11.1</span> Another use of mutate</h2>
 <p>Mutate is also useful for standardizing data - for example, making different spellings of, say, cities into a single one.</p>
 <p>Let’s load some campaign contribution data - in this case Maryland donors to Republican committees via WinRed’s online platform earlier this year - and take a look at the <code>city</code> column in our data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>maryland_cities <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_cities.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 408 Columns: 3
+<pre><code>Rows: 469 Columns: 3
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr (1): city
@@ -488,50 +489,40 @@ dbl (2): count, sum
 <p>You’ll notice that there’s a mix of styles: “Baltimore” and “BALTIMORE” for example. R will think those are two different cities, and that will mean that any aggregates we create based on city won’t be accurate.</p>
 <p>So how can we fix that? Mutate - it’s not just for math! And a function called <code>str_to_upper</code> that will convert a character column into all uppercase. Now we can say exactly how many donations came from Baltimore (I mean, of course, BALTIMORE).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>standardized_maryland_cities <span class="ot">&lt;-</span> maryland_cities <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>standardized_maryland_cities <span class="ot">&lt;-</span> maryland_cities <span class="sc">|&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_city =</span> <span class="fu">str_to_upper</span>(city)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.</p>
+<p>Note that mutate doesn’t literally combine similar records together - you’ll still need to do another group_by and summarize block - but it does make your data more accurate. There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.</p>
 </section>
-<section id="a-more-powerful-use" class="level2" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="a-more-powerful-use"><span class="header-section-number">16.2</span> A more powerful use</h2>
+<section id="a-more-powerful-use" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="a-more-powerful-use"><span class="header-section-number">11.2</span> A more powerful use</h2>
 <p>Mutate is even more useful when combined with some additional functions. Let’s focus on individual contributions from Maryland donors via WinRed; we’d like to group their donations by amount into one of four categories:</p>
 <ol type="1">
 <li>Under $100</li>
 <li>$101-$499</li>
-<li>$500-$2,900</li>
-<li>More than $2,901</li>
+<li>$500-$1,499</li>
+<li>$1,500-$2,999</li>
+<li>More than $2,999</li>
 </ol>
-<p>Mutate can make that happen by creating a new column and putting in a category value <em>based on the amount</em> of each record. First, let’s load the individual contributions:</p>
+<p>Mutate can make that happen by creating a new column and putting in a category value <em>based on the amount</em> of each record. First, let’s load the individual contributions that we did in the previous chapter:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_winred <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/winred_md_q2_2022.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 54247 Columns: 24
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (13): linenumber, fec_committee_id, tran_id, flag_orgind, last_name, fi...
-dbl   (4): zip, amount, aggregate_amount, cycle
-lgl   (6): org_name, middle_name, prefix, suffix, prigen, memo_code
-date  (1): date
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/maryland_winred.rds"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 24
   linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
-  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
-1 SA11AI   C00694… A9EF36… IND     NA      Hansher Beth    NA      NA     NA    
-2 SA11AI   C00694… A64BB5… IND     NA      Leishm… Alexan… NA      NA     NA    
-3 SA11AI   C00694… A5835B… IND     NA      Bode    John    NA      NA     NA    
-4 SA11AI   C00694… AE3AF0… IND     NA      Gallag… Daniel  NA      NA     NA    
-5 SA11AI   C00694… AC5569… IND     NA      Bode    Denise  NA      NA     NA    
-6 SA11AI   C00694… A2B1EB… IND     NA      Kaplan  Joel    NA      NA     NA    
+  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
+1 SA11AI   C00694… A000BA… IND     &lt;NA&gt;    Curro   Peter   NA      NA     NA    
+2 SA11AI   C00694… A00110… IND     &lt;NA&gt;    Mukai   Peggy   NA      NA     NA    
+3 SA11AI   C00694… A0011E… IND     &lt;NA&gt;    Smith   Alan    NA      NA     NA    
+4 SA11AI   C00694… A001C3… IND     &lt;NA&gt;    Saylor… Jean    NA      NA     NA    
+5 SA11AI   C00694… A00219… IND     &lt;NA&gt;    Gillis… Troy    NA      NA     NA    
+6 SA11AI   C00694… A002A2… IND     &lt;NA&gt;    Lally   Bryan   NA      NA     NA    
 # … with 14 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
-#   state &lt;chr&gt;, zip &lt;dbl&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
+#   state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
 #   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
 #   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and abbreviated variable names ¹​linenumber,
 #   ²​fec_committee_id, ³​flag_orgind, ⁴​org_name, ⁵​last_name, ⁶​first_name,
@@ -540,30 +531,50 @@ date  (1): date
 </div>
 <p>Now that we’ve gotten a look, we can use <code>case_when</code> to give our new category column a value using some standard numeric logic:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amount_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="st">"Less than $100"</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">100</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">500</span> <span class="sc">~</span> <span class="st">"Between $100 and $500"</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">500</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;=</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"Between $501 and $2900"</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;</span> <span class="dv">2900</span> <span class="sc">~</span> <span class="st">"More than $2,900"</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amount_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="st">"Less than $100"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">100</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;</span> <span class="dv">500</span> <span class="sc">~</span> <span class="st">"Between $100 and $499"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">500</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;</span> <span class="dv">1500</span> <span class="sc">~</span> <span class="st">"Between $500 and $1499"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">1500</span> <span class="sc">&amp;</span> amount <span class="sc">&lt;</span> <span class="dv">3000</span> <span class="sc">~</span> <span class="st">"Between $500 and $2999"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&gt;=</span> <span class="dv">3000</span> <span class="sc">~</span> <span class="st">"$3,000 or more"</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_categories)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 25
+  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
+  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
+1 SA11AI   C00694… A000BA… IND     &lt;NA&gt;    Curro   Peter   NA      NA     NA    
+2 SA11AI   C00694… A00110… IND     &lt;NA&gt;    Mukai   Peggy   NA      NA     NA    
+3 SA11AI   C00694… A0011E… IND     &lt;NA&gt;    Smith   Alan    NA      NA     NA    
+4 SA11AI   C00694… A001C3… IND     &lt;NA&gt;    Saylor… Jean    NA      NA     NA    
+5 SA11AI   C00694… A00219… IND     &lt;NA&gt;    Gillis… Troy    NA      NA     NA    
+6 SA11AI   C00694… A002A2… IND     &lt;NA&gt;    Lally   Bryan   NA      NA     NA    
+# … with 15 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
+#   state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
+#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
+#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, amount_category &lt;chr&gt;, and abbreviated
+#   variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind, ⁴​org_name,
+#   ⁵​last_name, ⁶​first_name, ⁷​middle_name</code></pre>
+</div>
 </div>
 <p>We can then use our new <code>amount_category</code> column in group_by statements to make summarizing easier:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(amount_category) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_amount =</span> <span class="fu">sum</span>(amount)) <span class="sc">%&gt;%</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(amount_category) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_amount =</span> <span class="fu">sum</span>(amount)) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 2
+<pre><code># A tibble: 5 × 2
   amount_category        total_amount
   &lt;chr&gt;                         &lt;dbl&gt;
-1 Less than $100              868922.
-2 Between $100 and $500       454152.
-3 Between $501 and $2900      433948.
-4 More than $2,900            132467.</code></pre>
+1 Less than $100             1716339.
+2 Between $100 and $499      1256984.
+3 Between $500 and $1499      689883.
+4 $3,000 or more              365885.
+5 Between $500 and $2999      140922.</code></pre>
 </div>
 </div>
 <p>The largest category - by far - in dollar amount is the sub-$100 category, which makes sense for an online fundraising platform. Big little money.</p>
@@ -587,7 +598,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
   }
   toggleBodyColorPrimary();  
   const icon = "";
@@ -597,9 +611,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -611,17 +639,51 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -631,55 +693,320 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./aggregates.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></span>
+      <a href="./aggregates.html" class="pagination-link" aria-label="Aggregates">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Aggregates</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./workingwithdates.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./workingwithdates.html" class="pagination-link" aria-label="Working with dates">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working with dates</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

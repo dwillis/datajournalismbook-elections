@@ -2,21 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.18">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Journalism with R and the Tidyverse - 29&nbsp; Geographic analysis</title>
+<title>Data Journalism with R and the Tidyverse - 24&nbsp; Geographic analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,43 +47,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -88,7 +64,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./textanalysis.html" rel="next">
+<link href="./ai_and_llms.html" rel="next">
 <link href="./geographic-basics.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -105,7 +81,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -114,8 +96,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -126,11 +110,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./geographicanalysis.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -138,182 +127,191 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Data Journalism with R and the Tidyverse</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-story.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></a>
+  <a href="./start-story.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Learn a new way to read</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-math.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></a>
+  <a href="./start-math.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Newsroom math</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></a>
+  <a href="./start-data-def.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Defining “Data”</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-refresher.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">An Excel Refresher</span></a>
+  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Public records</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-filter-sort.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sorting and filtering to find stories</span></a>
+  <a href="./github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Setting Up Your Computer To Use GitHub</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-formulas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Formulas in Google Sheets</span></a>
+  <a href="./r-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">R Basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./xl-practice-noc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Practice exercise</span></a>
+  <a href="./replication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ethics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ethics in data journalism</span></a>
+  <a href="./aggregates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Aggregates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publicrecords.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Public records</span></a>
+  <a href="./mutating.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Mutating data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Using GitHub</span></a>
+  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working with dates</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">R Basics</span></a>
+  <a href="./filters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Filters and selections</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./replication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data journalism in the age of replication</span></a>
+  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aggregates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Aggregates</span></a>
+  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mutating.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Mutating data</span></a>
+  <a href="./open-refine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./workingwithdates.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working with dates</span></a>
+  <a href="./merging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Combining and joining</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./filters.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Filters and selections</span></a>
+  <a href="./pdfs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-i.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Cleaning Part I: Data smells</span></a>
+  <a href="./rvest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-cleaning-part-ii.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Cleaning Part II: Janitor</span></a>
+  <a href="./census.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./open-refine.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Cleaning Part III: Open Refine</span></a>
+  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pdfs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cleaning Data Part IV: PDFs</span></a>
+  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./merging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Combining and joining</span></a>
+  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Geographic data basics</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rvest.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Scraping data with Rvest</span></a>
+  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Geographic analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./census.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Intro to APIs: The Census</span></a>
+  <a href="./ai_and_llms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">AI and Data Journalism</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-reporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Visualizing your data for reporting</span></a>
+  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./visualizing-for-publication.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Visualizing your data for publication</span></a>
+  <a href="./basicstats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./geographic-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./geographicanalysis.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./textanalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./basicstats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Basic Stats: Linear Regression and The T-Test</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Writing with numbers</span></a>
+  <a href="./writingwithdata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Writing with numbers</span></span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
@@ -323,7 +321,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Geographic analysis</span></h1>
+<h1 class="title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Geographic analysis</span></h1>
 </div>
 
 
@@ -331,13 +329,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
 
+
 </header>
 
-<p>In the previous chapter, we looked at the demographics of Census blocks in Baltimore city and made a nice map. Let’s go little further and combine demographic data with political data to learn more about Maryland’s political geography.</p>
+
+<p>In the previous chapter, we looked at election precincts in Prince George’s County to show a bit of a pattern regarding concentration of the precincts with the most and 0 eligible voters. Let’s go little further and look at voters statewide.</p>
 <p>First, let’s load the libraries we’ll need. We’re also going to load tidycensus and set an API key for tidycensus.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -346,140 +347,437 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">census_api_key</span>(<span class="st">"549950d36c22ff16455fe196bbbd01d63cfbe6cf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>And now let’s load a dataframe of Maryland county population information from the 2020 Census, but this time we’ll add in county geographic data.</p>
+<p>For the rest of this chapter, we’re going to work on building a map that will help us gain insight into geographic patterns in voter registration by county in Maryland. Our question: by examining the number of Democrats/Republicans/Unaffiliated voters per 100,000 people in each county, what regional geographic patterns can we identify?</p>
+<p>We’ve got voters by county, so let’s load that and take a look:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>maryland_counties <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/md_counties_2020.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>voters_by_county <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/eligible_voters.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 24 Columns: 39
+<pre><code>Rows: 24 Columns: 10
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-chr  (8): SUMLEV, GEOCODE, NAME, BASENAME, FILEID, STUSAB, CHARITER, CIFSN
-dbl (31): GEOID, LOGRECNO, TOTAL_POP, POP_ONE_RACE, POP_WHITE, POP_BLACK, PO...
+chr (1): County
+dbl (9): DEM, REP, BAR, GRN, LIB, WCP, OTH, UNA, TOTAL
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>maryland_county_shapes <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Maryland2020_County.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>voters_by_county <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(TOTAL))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `Maryland2020_County' from data source 
-  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
-  using driver `ESRIJSON'
-Simple feature collection with 24 features and 18 fields
-Geometry type: POLYGON
+<pre><code># A tibble: 24 × 10
+   County              DEM    REP   BAR   GRN   LIB   WCP   OTH    UNA  TOTAL
+   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Montgomery       409636  97505     0  1113  2227   446  5468 156978 673373
+ 2 Prince George's  462097  37739     0   789  1313   593 10733  85143 598407
+ 3 Baltimore County 309297 137378     0   898  2493   687  5921 106789 563463
+ 4 Anne Arundel     173922 129893     0   632  2257   434  2951  96403 406492
+ 5 Baltimore City   303620  28211     0   908  1080   666  3984  56665 395134
+ 6 Howard           120954  49011     0   351   894   134  1981  56199 229524
+ 7 Frederick         76712  68334     0   318  1147   179  1060  48035 195785
+ 8 Harford           65127  80005     0   238  1182   202  1628  40778 189160
+ 9 Carroll           33572  63771     0   191   797   102  1033  28139 127605
+10 Charles           74373  23334     0   129   425   143   864  21819 121087
+# … with 14 more rows</code></pre>
+</div>
+</div>
+<p>So, what do we see here? Montgomery County has the most, followed by Prince George’s &amp; Baltimore County. Checks out.</p>
+<p>Next, we’ll go out and get population data for each county from tidycensus. The variable for total population is B01001_001.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>md_county_population <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">"county"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">variables =</span> <span class="fu">c</span>(<span class="at">population =</span> <span class="st">"B01001_001"</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">state =</span> <span class="st">"MD"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Getting data from the 2017-2021 5-year ACS</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>md_county_population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 24 × 5
+   GEOID NAME                          variable   estimate   moe
+   &lt;chr&gt; &lt;chr&gt;                         &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;
+ 1 24001 Allegany County, Maryland     population    68684    NA
+ 2 24003 Anne Arundel County, Maryland population   584064    NA
+ 3 24005 Baltimore County, Maryland    population   850702    NA
+ 4 24009 Calvert County, Maryland      population    92515    NA
+ 5 24011 Caroline County, Maryland     population    33234    NA
+ 6 24013 Carroll County, Maryland      population   172148    NA
+ 7 24015 Cecil County, Maryland        population   103370    NA
+ 8 24017 Charles County, Maryland      population   165209    NA
+ 9 24019 Dorchester County, Maryland   population    32486    NA
+10 24021 Frederick County, Maryland    population   267498    NA
+# … with 14 more rows</code></pre>
+</div>
+</div>
+<p>Ultimately, we’re going to join this county population table with our voters by county table, and then calculate a voters per 50,000 people statistic. But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we’ll need a county map shapefile. Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding “geometry = TRUE” to our get_acs function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>md_county_population <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">"county"</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">variables =</span> <span class="fu">c</span>(<span class="at">population =</span> <span class="st">"B01001_001"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">state =</span> <span class="st">"MD"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">geometry =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Getting data from the 2017-2021 5-year ACS</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |                                                                      |   1%
+  |                                                                            
+  |=                                                                     |   1%
+  |                                                                            
+  |=                                                                     |   2%
+  |                                                                            
+  |==                                                                    |   2%
+  |                                                                            
+  |==                                                                    |   3%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |======                                                                |   8%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |====================                                                  |  28%
+  |                                                                            
+  |==============================                                        |  42%
+  |                                                                            
+  |=================================                                     |  47%
+  |                                                                            
+  |==========================================                            |  61%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |===========================================                           |  62%
+  |                                                                            
+  |============================================                          |  63%
+  |                                                                            
+  |============================================                          |  64%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==============================================                        |  65%
+  |                                                                            
+  |==============================================                        |  66%
+  |                                                                            
+  |===============================================                       |  68%
+  |                                                                            
+  |================================================                      |  68%
+  |                                                                            
+  |================================================                      |  69%
+  |                                                                            
+  |=================================================                     |  71%
+  |                                                                            
+  |===================================================                   |  73%
+  |                                                                            
+  |========================================================              |  80%
+  |                                                                            
+  |========================================================              |  81%
+  |                                                                            
+  |=========================================================             |  81%
+  |                                                                            
+  |=========================================================             |  82%
+  |                                                                            
+  |==========================================================            |  82%
+  |                                                                            
+  |==========================================================            |  83%
+  |                                                                            
+  |===========================================================           |  84%
+  |                                                                            
+  |============================================================          |  85%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |=============================================================         |  87%
+  |                                                                            
+  |==============================================================        |  88%
+  |                                                                            
+  |===============================================================       |  90%
+  |                                                                            
+  |================================================================      |  91%
+  |                                                                            
+  |=================================================================     |  93%
+  |                                                                            
+  |==================================================================    |  94%
+  |                                                                            
+  |==================================================================    |  95%
+  |                                                                            
+  |====================================================================  |  97%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>md_county_population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 24 features and 5 fields
+Geometry type: MULTIPOLYGON
 Dimension:     XY
-Bounding box:  xmin: -79.48765 ymin: 37.8866 xmax: -74.98628 ymax: 39.72304
-Geodetic CRS:  NAD83</code></pre>
+Bounding box:  xmin: -79.48765 ymin: 37.91172 xmax: -75.04894 ymax: 39.72304
+Geodetic CRS:  NAD83
+First 10 features:
+   GEOID                             NAME   variable estimate moe
+1  24047       Worcester County, Maryland population    52322  NA
+2  24003    Anne Arundel County, Maryland population   584064  NA
+3  24033 Prince George's County, Maryland population   957767  NA
+4  24025         Harford County, Maryland population   259162  NA
+5  24015           Cecil County, Maryland population   103370  NA
+6  24011        Caroline County, Maryland population    33234  NA
+7  24023         Garrett County, Maryland population    28955  NA
+8  24029            Kent County, Maryland population    19335  NA
+9  24041          Talbot County, Maryland population    37510  NA
+10 24045        Wicomico County, Maryland population   103223  NA
+                         geometry
+1  MULTIPOLYGON (((-75.66061 3...
+2  MULTIPOLYGON (((-76.83849 3...
+3  MULTIPOLYGON (((-77.07995 3...
+4  MULTIPOLYGON (((-76.0921 39...
+5  MULTIPOLYGON (((-76.23326 3...
+6  MULTIPOLYGON (((-76.01505 3...
+7  MULTIPOLYGON (((-79.48765 3...
+8  MULTIPOLYGON (((-76.27737 3...
+9  MULTIPOLYGON (((-76.34647 3...
+10 MULTIPOLYGON (((-75.92033 3...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>maryland_counties_with_shapes <span class="ot">&lt;-</span> maryland_counties <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(maryland_county_shapes, <span class="at">by=</span><span class="fu">c</span>(<span class="st">'GEOID'</span><span class="ot">=</span><span class="st">'GEOID20'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>Error in `inner_join()`:
-! Can't join on `x$GEOID` x `y$GEOID` because of incompatible types.
-ℹ `x$GEOID` is of type &lt;double&gt;&gt;.
-ℹ `y$GEOID` is of type &lt;character&gt;&gt;.</code></pre>
 </div>
-</div>
-<p>And there’s that join error: we’ve got incompatible data types. We can quickly fix that:</p>
+<p>We now have a new column, geometry, that contains the “MULTIPOLYGON” data that will draw an outline of each county when we go to draw a map.</p>
+<p>The next step will be to join our population data to our voter data on the county column.</p>
+<p>But there’s a problem. The column in our population data that has county names is called “NAME”, and it has the full name of the county spelled out in title case – first word capitalized and has “County” and “Maryland” in it. The voter data just has the name of the county. For example, the population data has “Anne Arundel County, Maryland” and the voter data has “Anne Arundel”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>maryland_counties <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/md_counties_2020.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">GEOID =</span> <span class="fu">as.character</span>(GEOID))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 24 Columns: 39
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (8): SUMLEV, GEOCODE, NAME, BASENAME, FILEID, STUSAB, CHARITER, CIFSN
-dbl (31): GEOID, LOGRECNO, TOTAL_POP, POP_ONE_RACE, POP_WHITE, POP_BLACK, PO...
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>maryland_county_shapes <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/Maryland2020_County.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>md_county_population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `Maryland2020_County' from data source 
-  `/Users/derekwillis/code/datajournalismbook-elections/data/Maryland2020_County.json' 
-  using driver `ESRIJSON'
-Simple feature collection with 24 features and 18 fields
-Geometry type: POLYGON
+<pre><code>Simple feature collection with 24 features and 5 fields
+Geometry type: MULTIPOLYGON
 Dimension:     XY
-Bounding box:  xmin: -79.48765 ymin: 37.8866 xmax: -74.98628 ymax: 39.72304
-Geodetic CRS:  NAD83</code></pre>
+Bounding box:  xmin: -79.48765 ymin: 37.91172 xmax: -75.04894 ymax: 39.72304
+Geodetic CRS:  NAD83
+First 10 features:
+   GEOID                             NAME   variable estimate moe
+1  24047       Worcester County, Maryland population    52322  NA
+2  24003    Anne Arundel County, Maryland population   584064  NA
+3  24033 Prince George's County, Maryland population   957767  NA
+4  24025         Harford County, Maryland population   259162  NA
+5  24015           Cecil County, Maryland population   103370  NA
+6  24011        Caroline County, Maryland population    33234  NA
+7  24023         Garrett County, Maryland population    28955  NA
+8  24029            Kent County, Maryland population    19335  NA
+9  24041          Talbot County, Maryland population    37510  NA
+10 24045        Wicomico County, Maryland population   103223  NA
+                         geometry
+1  MULTIPOLYGON (((-75.66061 3...
+2  MULTIPOLYGON (((-76.83849 3...
+3  MULTIPOLYGON (((-77.07995 3...
+4  MULTIPOLYGON (((-76.0921 39...
+5  MULTIPOLYGON (((-76.23326 3...
+6  MULTIPOLYGON (((-76.01505 3...
+7  MULTIPOLYGON (((-79.48765 3...
+8  MULTIPOLYGON (((-76.27737 3...
+9  MULTIPOLYGON (((-76.34647 3...
+10 MULTIPOLYGON (((-75.92033 3...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>maryland_counties_with_shapes <span class="ot">&lt;-</span> maryland_counties <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(maryland_county_shapes, <span class="at">by=</span><span class="fu">c</span>(<span class="st">'GEOID'</span><span class="ot">=</span><span class="st">'GEOID20'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>For the rest of this chapter, we’re going to work on building a map that will help us gain insight into geographic patterns in registered voters and population by county and in Maryland. Our starting question: by examining the number of voters and the population in each county, what regional geographic patterns can we identify?</p>
-<p>First we need to load voter registration data - since the population data is from 2020, we’ll use the county totals as of the 2020 general election. And we’ll make sure that the FIPS code that we need to join on is a character column:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>maryland_voters_by_county <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/maryland_voters_2020g.csv"</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">FIPS=</span><span class="fu">as.character</span>(FIPS))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 24 Columns: 11
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (1): County
-dbl (10): FIPS, DEM, REP, BAR, GRN, LIB, WCP, OTH, UNA, TOTAL
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-</div>
-<p>Now let’s combine our two dataframes:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>maryland_voters_by_county_with_pop <span class="ot">&lt;-</span> maryland_voters_by_county <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(maryland_counties_with_shapes, <span class="at">by=</span><span class="fu">c</span>(<span class="st">'FIPS'</span><span class="ot">=</span><span class="st">'GEOID'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now we can do some calculations and visualize them on a map. Let’s calculate the number of Unaffiliated (no party) voters per 10,000 people and take a look at just the numbers.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>md_una_per_10k <span class="ot">&lt;-</span> maryland_voters_by_county_with_pop <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">una_per_10k =</span> UNA<span class="sc">/</span>TOTAL_POP<span class="sc">*</span><span class="dv">10000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(una_per_10k)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(County, DEM, REP, OTH, UNA, TOTAL, una_per_10k, geometry)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>md_una_per_10k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>voters_by_county</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24 × 8
-   County       DEM    REP   OTH    UNA  TOTAL una_p…¹                  geometry
-   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;             &lt;POLYGON [°]&gt;
- 1 Frederick  72487  68767   801  42961 186356   2069. ((-77.62017 39.48469, -7…
- 2 Howard    118705  52748  2035  51909 226634   2067. ((-77.041 39.23419, -77.…
- 3 Calvert    24587  28181   567  14178  67984   1999. ((-76.69195 38.68377, -7…
- 4 Anne Aru… 174494 135457  2715  90162 405616   1977. ((-76.81615 39.12143, -7…
- 5 Carroll    33662  63967  1072  25770 125361   1908. ((-77.19802 39.57543, -7…
- 6 Cecil      21601  30880   727  15110  68819   1878. ((-75.93711 39.72188, -7…
- 7 Harford    66258  80038  1535  37942 187092   1875. ((-76.45929 39.50719, -7…
- 8 Queen An…  11091  18930   280   7133  37678   1824. ((-76.04684 39.16321, -7…
- 9 Saint Ma…  26373  30661   606  15661  73833   1813. ((-76.82022 38.43505, -7…
-10 Montgome… 410935 105561  5816 147417 673198   1800. ((-77.43151 39.23217, -7…
-# … with 14 more rows, and abbreviated variable name ¹​una_per_10k</code></pre>
+<pre><code># A tibble: 24 × 10
+   County              DEM    REP   BAR   GRN   LIB   WCP   OTH    UNA  TOTAL
+   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Allegany          11793  22732     0    76   223    73   382   8337  43616
+ 2 Anne Arundel     173922 129893     0   632  2257   434  2951  96403 406492
+ 3 Baltimore City   303620  28211     0   908  1080   666  3984  56665 395134
+ 4 Baltimore County 309297 137378     0   898  2493   687  5921 106789 563463
+ 5 Calvert           23779  27912     0    94   410    69   548  15169  67981
+ 6 Caroline           6250  10539     0    34   108    40   160   4454  21585
+ 7 Carroll           33572  63771     0   191   797   102  1033  28139 127605
+ 8 Cecil             20666  31961     0   111   447   104   678  16360  70327
+ 9 Charles           74373  23334     0   129   425   143   864  21819 121087
+10 Dorchester         9608   8965     0    22   110    33   191   3745  22674
+# … with 14 more rows</code></pre>
 </div>
 </div>
-<p>Let’s take a look at the result of this table. We might call this where the swing voters are, although political science tells us that most independents actually vote with a party most of the time. Frederick, Howard, Calvert, Anne Arundel and Carroll counties all have some competitive races at the local and state level, so that makes some sense. Montgomery, the state’s largest jurisdiction, has more independents than Republicans.</p>
-<p>Okay, now let’s visualize. We’re going to build a choropleth map, with the color of each county – the fill – set according to the number of unaffiliated voters per 10K on a color gradient.</p>
+<p>If they’re going to join properly, we need to clean one of them up to make it match the other.</p>
+<p>Let’s clean the population table. We’re going to rename the “NAME” column to “County”, then remove “, Maryland” and “County” and make the county titlecase. Next we’ll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We’re also going to rename the column that contains the population information from “estimate” to “population” and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_una_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>una_per_10k)) <span class="sc">+</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>Error in `check_required_aesthetics()`:
-! stat_sf requires the following missing aesthetics: geometry</code></pre>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>md_county_population <span class="ot">&lt;-</span> md_county_population <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">County =</span> NAME) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">County =</span> <span class="fu">str_to_title</span>(<span class="fu">str_remove_all</span>(County,<span class="st">", Maryland|County"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">County =</span> <span class="fu">str_trim</span>(County,<span class="at">side=</span><span class="st">"both"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">population =</span> estimate) <span class="sc">|&gt;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(County, population, geometry)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>md_county_population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 24 features and 2 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -79.48765 ymin: 37.91172 xmax: -75.04894 ymax: 39.72304
+Geodetic CRS:  NAD83
+First 10 features:
+            County population                       geometry
+1        Worcester      52322 MULTIPOLYGON (((-75.66061 3...
+2     Anne Arundel     584064 MULTIPOLYGON (((-76.83849 3...
+3  Prince George's     957767 MULTIPOLYGON (((-77.07995 3...
+4          Harford     259162 MULTIPOLYGON (((-76.0921 39...
+5            Cecil     103370 MULTIPOLYGON (((-76.23326 3...
+6         Caroline      33234 MULTIPOLYGON (((-76.01505 3...
+7          Garrett      28955 MULTIPOLYGON (((-79.48765 3...
+8             Kent      19335 MULTIPOLYGON (((-76.27737 3...
+9           Talbot      37510 MULTIPOLYGON (((-76.34647 3...
+10        Wicomico     103223 MULTIPOLYGON (((-75.92033 3...</code></pre>
 </div>
 </div>
-<p>So this error message is pretty sneaky, because it’s saying that it can’t find a geometry column. But we <em>have</em> a geometry column - it’s called geometry! What’s happening here is that ggplot expects certain details in order to be able to locate the column with geometry in it, and sometimes when we build a new dataframe through joins those details get dropped. Luckily, we can explicitly tell ggplot where to find it:</p>
+<p>Now we can join them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_una_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>una_per_10k, <span class="at">geometry=</span>geometry)) <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>md_voters_per_10k <span class="ot">&lt;-</span> md_county_population <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(voters_by_county)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(County)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>md_voters_per_10k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 24 features and 11 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -79.48765 ymin: 37.91172 xmax: -75.04894 ymax: 39.72304
+Geodetic CRS:  NAD83
+First 10 features:
+            County population    DEM    REP BAR GRN  LIB WCP   OTH   UNA  TOTAL
+1        Worcester      52322  13864  19122   0  56  212  36   454  8372  42116
+2     Anne Arundel     584064 173922 129893   0 632 2257 434  2951 96403 406492
+3  Prince George's     957767 462097  37739   0 789 1313 593 10733 85143 598407
+4          Harford     259162  65127  80005   0 238 1182 202  1628 40778 189160
+5            Cecil     103370  20666  31961   0 111  447 104   678 16360  70327
+6         Caroline      33234   6250  10539   0  34  108  40   160  4454  21585
+7          Garrett      28955   3719  13584   0  24  101  20   157  2791  20396
+8             Kent      19335   5865   5221   0  20   66  22   110  2565  13869
+9           Talbot      37510  10803  11698   0  39  139  20   219  5582  28500
+10        Wicomico     103223  26749  23897   0 105  347 106   667 13406  65277
+                         geometry
+1  MULTIPOLYGON (((-75.66061 3...
+2  MULTIPOLYGON (((-76.83849 3...
+3  MULTIPOLYGON (((-77.07995 3...
+4  MULTIPOLYGON (((-76.0921 39...
+5  MULTIPOLYGON (((-76.23326 3...
+6  MULTIPOLYGON (((-76.01505 3...
+7  MULTIPOLYGON (((-79.48765 3...
+8  MULTIPOLYGON (((-76.27737 3...
+9  MULTIPOLYGON (((-76.34647 3...
+10 MULTIPOLYGON (((-75.92033 3...</code></pre>
+</div>
+</div>
+<p>Hang on - there’s at least one county with NA values - St.&nbsp;Mary’s, which is spelled “Saint Mary’s” in the voter dataframe. And Baltimore County didn’t match, either. Let’s fix that using if_else, which allows us to conditionally mutate:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>md_county_population <span class="ot">&lt;-</span> md_county_population <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">County =</span> <span class="fu">if_else</span>(County <span class="sc">==</span> <span class="st">"St. Mary's"</span>, <span class="st">"Saint Mary's"</span>, County)) <span class="sc">|&gt;</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">County =</span> <span class="fu">if_else</span>(County <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="st">"Baltimore County"</span>, County))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our final step before visualization, let’s calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>md_voters_per_10k <span class="ot">&lt;-</span> md_county_population <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(voters_by_county) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">voters_per_10k =</span> TOTAL<span class="sc">/</span>population<span class="sc">*</span><span class="dv">10000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(voters_per_10k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(County)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>md_voters_per_10k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 24 features and 12 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -79.48765 ymin: 37.91172 xmax: -75.04894 ymax: 39.72304
+Geodetic CRS:  NAD83
+First 10 features:
+         County population   DEM   REP BAR GRN  LIB WCP  OTH   UNA  TOTAL
+1     Worcester      52322 13864 19122   0  56  212  36  454  8372  42116
+2  Queen Anne's      49702 11102 19579   0  44  223  35  295  7916  39194
+3        Talbot      37510 10803 11698   0  39  139  20  219  5582  28500
+4       Carroll     172148 33572 63771   0 191  797 102 1033 28139 127605
+5       Calvert      92515 23779 27912   0  94  410  69  548 15169  67981
+6       Charles     165209 74373 23334   0 129  425 143  864 21819 121087
+7     Frederick     267498 76712 68334   0 318 1147 179 1060 48035 195785
+8       Harford     259162 65127 80005   0 238 1182 202 1628 40778 189160
+9          Kent      19335  5865  5221   0  20   66  22  110  2565  13869
+10      Garrett      28955  3719 13584   0  24  101  20  157  2791  20396
+   voters_per_10k                       geometry
+1        8049.386 MULTIPOLYGON (((-75.66061 3...
+2        7885.799 MULTIPOLYGON (((-76.24918 3...
+3        7597.974 MULTIPOLYGON (((-76.34647 3...
+4        7412.517 MULTIPOLYGON (((-77.31151 3...
+5        7348.106 MULTIPOLYGON (((-76.70121 3...
+6        7329.322 MULTIPOLYGON (((-77.27382 3...
+7        7319.120 MULTIPOLYGON (((-77.67716 3...
+8        7298.910 MULTIPOLYGON (((-76.0921 39...
+9        7173.002 MULTIPOLYGON (((-76.27737 3...
+10       7044.034 MULTIPOLYGON (((-79.48765 3...</code></pre>
+</div>
+</div>
+<p>Let’s take a look at the result of this table. There are some surprising ones at the top, some of Maryland’s smallest counties! Worcester, Queen Anne’s, Talbot may not have that many voters, but they also don’t have a lot of people.</p>
+<p>Okay, now let’s visualize. We’re going to build a choropleth map, with the color of each county – the fill – set according to the number of voters per 10K on a color gradient.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_voters_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>voters_per_10k)) <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>This map is okay, but the color scale makes it hard to draw fine-grained differences. Let’s try applying the magma color scale we learned in the last chapter.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_una_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>una_per_10k, <span class="at">geometry=</span>geometry)) <span class="sc">+</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_voters_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>voters_per_10k)) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>Some interesting regional patterns finally emerge.</p>
-<p>The highest number of unaffiliated voters per capita are clustered close to DC and Baltimore, with the notable exception of Prince George’s County. The further west you go, the lower number of unaffiliated voters per capita there are (and that’s somewhat true for the Eastern Shore, too). You could swap out UNA for Republicans or Democrats, or look at this another way, but what you’re trying to see here are potential patterns for further exploration.</p>
+</div>
+<p>The highest ranking counties stand out nicely in this version, but it’s still hard to make out fine-grained differences between other counties.</p>
+<p>So let’s change the color scale to a “log” scale, which will help us see those differences a bit more clearly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_voters_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>voters_per_10k)) <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>,<span class="at">trans =</span> <span class="st">"log"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s repeat that for Unaffiliated voters:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>md_voters_per_10k <span class="ot">&lt;-</span> md_voters_per_10k <span class="sc">|&gt;</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">una_voters_per_10k =</span> UNA<span class="sc">/</span>population<span class="sc">*</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And then map it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>md_voters_per_10k, <span class="fu">aes</span>(<span class="at">fill=</span>una_voters_per_10k)) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_b</span>(<span class="at">option=</span><span class="st">"magma"</span>,<span class="at">trans =</span> <span class="st">"log"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="geographicanalysis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What regional patterns do you see, especially on the ends of the scale?</p>
 
 
 
@@ -498,7 +796,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
   }
   toggleBodyColorPrimary();  
   const icon = "";
@@ -508,9 +809,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -522,17 +837,51 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -542,55 +891,320 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./geographic-basics.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Geographic data basics</span></span>
+      <a href="./geographic-basics.html" class="pagination-link" aria-label="Geographic data basics">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Geographic data basics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./textanalysis.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">An intro to text analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ai_and_llms.html" class="pagination-link" aria-label="AI and Data Journalism">
+        <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">AI and Data Journalism</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
