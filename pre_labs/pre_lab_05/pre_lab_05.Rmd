@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_05.Rmd"
-author: "Derek Willis"
-date: "2024-08-05"
+author: "derek willis"
+date: "2024-08-01"
 output: html_document
 ---
 
@@ -9,114 +9,140 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Instructor demonstration points to hit
+## Points to hit
 
-1.  Ensure students install refinr package and load it.
-2.  Show students how to download and install Open Refine and confirm install before they leave class.
+1.  Review of third lab questions/problems.
+2.  Demonstration of combining and merging
 
-## Chapter 22
+## Chapter 10
 
-### Task 1: Install refinr package
+### Task 1: Load libraries and settings
 
-**Task** Run the following code in the gray-colored codeblock below to install refinr.
-
-```{r}
-install.packages('refinr')
-```
-
-### Task 2: Load libraries and settings
-
-**Task** Run the following code in the gray-colored codeblock below to load the tidyverse, janitor, and refinr and turn off scientific notation.
+**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library and turn off scientific notation.
 
 ```{r}
 # turn off sci notation
 options(scipen=999)
 library(tidyverse)
 library(lubridate)
-library(refinr)
 ```
 
-### Task 3: Load data
+### Task 2: Load data
 
-**Task** Run the following code to load some campaign expenditure data focused on food-related expenses in Washington, D.C. **Answer**
+Let's say that we have Maryland county voter registration data from five different elections in five different files. They have the same record layout and the same number of counties (plus Baltimore City). We can combine them into a single dataframe.
+
+**Task** Load the five CSV files. Do they have the same column structure? **Answer**
 
 ```{r}
-# Load data
-dc_food <- read_csv("data/dc_food.csv")
-
-# Display it
-dc_food
-
+county_voters_2016 <- read_csv("data/county_voters_2016.csv")
+county_voters_2018 <- read_csv("data/county_voters_2018.csv")
+county_voters_2020 <- read_csv("data/county_voters_2020.csv")
+county_voters_2022 <- read_csv("data/county_voters_2022.csv")
+county_voters_2024 <- read_csv("data/county_voters_2024.csv")
 ```
 
-### Task 4: Group and count to identify problems in city column
+### Task 3: Using bind_rows
 
-**Task** Run the following code to group and count records in the recipient_name column, and filter to examine only recipients that start with W. Name a problem that you see that is preventing proper grouping. **Answer**
+**Task** Combine the three files into a single data frame using the bind_rows function. Add a description of what this code does to your reference notebook.
 
 ```{r}
-# Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "W" or lowercase "w" using the function `str_detect()` with a regular expression.  
-
-# The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W". 
-
-dc_food %>%
-  group_by(recipient_name) %>%
-  summarise(
-    count=n()
-  ) %>%
-  filter(str_detect(recipient_name, '^w|^W')) %>% 
-  arrange(recipient_name)
+# bind_rows with list
+county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018, county_voters_2020, county_voters_2022, county_voters_2024))
+View(county_voters_combined)
 ```
 
-### Task 5: Use refinr to clean the city_clean field.
+## Joining data
 
-**Task** Run the following code to make a copy of the recipient_name field called recipient_clean, then use the `key_collision_merge` function from refinr to attempt to standarize similar values. Store it as a new object called cleaned_dc_food. Click the black arrow on the table to examine the recipient_name and recipient_clean columns. Looking at the results on the first two pages only (first 20 rows), name two changes the refinr package made, by comparing recipient_name to recipient_clean. **Answer**
+### Task 4: Loading population data
+
+**Task** Load the Maryland 2020 county population data **Answer**
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=key_collision_merge(recipient_name)) %>%
-  select(recipient_name, recipient_clean, everything())
-
-cleaned_dc_food
-
+maryland_population <- read_csv('data/maryland_population_2020.csv')
 ```
 
-### Task 6: Filter cleaned_dc_food to examine recipients that start with W
+### Task 5: Join population and voter data
 
-**Task** Run the following code to group by recipient_clean and recipient_name, then filter for cities that start with W. Name three changes the refinr function made in the first 20 results. **Answer**
+**Task** Run the following code to join Maryland population data and the 2020 voter registration data together using the common column county as the key. How many rows are there now? How many *should* there be? **Answer**
 
 ```{r}
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
-  summarise(
-    count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
-  arrange(recipient_clean)
+# with nrow included to show row total
+maryland_population |> left_join(county_voters_2020, by="COUNTY") |> nrow()
 ```
 
-### Task 7: Use a different refinr method to clean the city_clean field.
+### Task 6: Looking at Joined Data
 
-**Task** Run the following code to use the n_gram_merge() function to clean the data, then group by city_clean and city to examine cities that start with A. Look at the differences. Does the changes it made vary substantially from the previous use of key_collision_merge? **Answer**
+**Task** Examine the combined data
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=n_gram_merge(recipient_name)) %>%
-  select(recipient_name, recipient_clean, everything())
-
-cleaned_dc_food
-
-
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
-  summarise(
-    count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
-  arrange(recipient_clean)
-
-
+# without nrow
+maryland_population |> left_join(county_voters_2020, by="COUNTY")
 ```
 
-### Task 8: Follow the directions in the textbook to use Open Refine
+### Task 7: Assign Joined Data to New Dataframe
 
-**Task** Follow the directions in the textbook to upload dc_food.csv to Open Refine (<https://thescoop.org/data_journalism_book/open-refine.html#manually-cleaning-data-with-open-refine>). Follow the instructions to clean as many recipients as the Open Refine clustering tool can identify. In class, I will come around to look at the Open Refine project you created to do this.
+**Task** Create a new dataframe with population and voter data joined together. Add a description of what this code does to your reference notebook.
+
+```{r}
+maryland_population_with_voters <- maryland_population |> left_join(county_voters_2020)
+```
+
+### Task 8: Add the Demographic Data
+
+**Task** Load the Maryland demographic data
+
+```{r}
+maryland_demographics <- read_csv('data/maryland_demographics.csv')
+```
+
+### Task 9: Join demographic data to combined voting/population data
+
+**Task** Join the demographic data to the our combined voting/population data. To do this, we need to specify the join columns since the names aren't the same.
+
+```{r}
+# join on zip - but there's a problem
+maryland_population_with_voters_and_demographics <- maryland_population_with_voters |> left_join(maryland_demographics, by=c("COUNTY"="NAME"))
+```
+
+### Task 10: Asking Demographic Questions
+
+**Task** Using mutate, let's find the county with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county. Put your answers below. **Answer**
+
+```{r}
+maryland_population_with_voters_and_demographics |>
+  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/TOTAL)*100) |> 
+  arrange(desc(pct_black_18_plus)) |> 
+  select(COUNTY, pct_black_18_plus, pct_dems)
+```
+
+### Task 11: Asking Demographic Questions
+
+**Task** Now let's find the county with the highest 18+ Asian population as a percentage of all population 18 and over and also the percentage of Democrats in that county. How do these results compare to the previous task? Put your answers below. **Answer**
+
+```{r}
+maryland_population_with_voters_and_demographics |>
+  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/TOTAL)*100) |> 
+  arrange(desc(pct_asian_18_plus)) |> 
+  select(COUNTY, pct_asian_18_plus, pct_dems)
+```
+
+### Task 11: Fixing Join Problems
+
+Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let's walk through an example of that using some demographic data by zip code.
+
+**Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of ZCTA5N? **Answer**
+
+```{r}
+maryland_zcta <- read_csv('data/maryland_zcta.csv')
+glimpse(maryland_zcta)
+```
+
+The column we're interested in, ZCTA5N, is a <dbl> column - it's a number. We want it to be a <chr> column - text.
+
+**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N? **Answer**
+
+```{r}
+maryland_zcta <- maryland_zcta |> mutate(across(ZCTA5N, as.character))
+```
+
+Now we can join this dataframe to other zip code data where the zip code column is text, not numbers.
