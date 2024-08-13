@@ -93,7 +93,7 @@ We can get this by using mutate and arrange:
 
 ```{r}
 maryland_population_with_voters_and_demographics |>
-  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/Total)*100) |>
+  mutate(pct_black_18_plus = (pop_black/pop_18_over)*100, pct_dems = (DEM/TOTAL)*100) |>
   arrange(desc(pct_black_18_plus)) |>
   select(COUNTY, pct_black_18_plus, pct_dems)
 ```
@@ -104,7 +104,7 @@ Let's change that to look at Asian population:
 
 ```{r}
 maryland_population_with_voters_and_demographics |>
-  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/Total)*100) |>
+  mutate(pct_asian_18_plus = (pop_asian/pop_18_over)*100, pct_dems = (DEM/TOTAL)*100) |>
   arrange(desc(pct_asian_18_plus)) |>
   select(COUNTY, pct_asian_18_plus, pct_dems)
 ```

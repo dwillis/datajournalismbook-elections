@@ -10,7 +10,7 @@ You will need to have a substantial amount of hard drive space to store the file
 
 ## GitHub
 
-GitHub is a platform for managing and storing files, data and code built atop Git, a popular open source version control software. GitHub accounts are free and it's [easy to get started](https://docs.github.com/en/get-started/quickstart). The one prerequisite is that you have [Git installed on your local computer](https://docs.github.com/en/get-started/quickstart/set-up-git). There are installers for Mac, Windows and Linux.
+GitHub is a platform for managing and storing files, data and code built atop Git, a popular open source version control software. GitHub accounts are free and it's [easy to get started](https://docs.github.com/en/get-started/quickstart). The one prerequisite is that you have [Git installed on your local computer](https://docs.github.com/en/get-started/quickstart/set-up-git). There are installers for Mac, Windows and Linux. Install Git first.
 
 ### How GitHub Works
 
@@ -40,7 +40,7 @@ Also, maybe clean up those Download and Desktop folders.
 
 GitHub works on a system of pulling and pushing changes to files between what you have on your computer and what is on your GitHub.com account. Here's how you should work:
 
-When you are working _locally_, before you start you should pull from GitHub.com to make sure you have the latest version of your files. When you finish, you should save and add, commit and push any changes/additions to GitHub.com. You can add/commit/push as often as you like, and there's reason not to do it often.
+When you are working *locally*, before you start you should pull from GitHub.com to make sure you have the latest version of your files. When you finish, you should save and add, commit and push any changes/additions to GitHub.com. You can add/commit/push as often as you like, and there's reason not to do it often.
 
 The nature of Git and GitHub means that you can have a copy of your files on the Web and on your computer. You can work offline and then update your file when you connect to the Internet again. When submitting your assignments, you need to submit the full URL to your assignment's file from GitHub.com.
 
