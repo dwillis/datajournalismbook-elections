@@ -109,3 +109,14 @@ md_voters_zip_gini <- md_voters_zip |>
   ungroup()
 ```
 
+```{r}
+md_senate_expenses <- read_csv("~/code/datajournalismbook-elections/labs/lab_05/data/md_senate_expenses.csv")
+```
+
+
+```{r}
+md_senate_expenses |> 
+  group_by(purpose) |> 
+  summarize(total = sum(amount))
+```
+
