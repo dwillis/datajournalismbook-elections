@@ -24,7 +24,7 @@ Thanks to Florida's public records laws, the Sun Sentinel got records from the t
 
 Given that those places are fixed -- they're toll plazas -- and they had the time it took to go from one toll plaza to another, they had the distance and the time.
 
-[It took high school algebra to find how fast police officers were driving. And the results were shocking.](http://www.sun-sentinel.com/news/local/speeding-cops/fl-speeding-cops-20120211,0,3706919.story)
+[It took high school algebra to find how fast police officers were driving. And the results were shocking.](https://www.sun-sentinel.com/2012/02/12/speeding-cops-a-south-florida-sun-sentinel-investigation/)
 
 Twenty percent of police officers had exceeded 90 miles per hour on toll roads. In a 13-month period, officers drove between 90 and 110 mph more than 5,000 times. And these were just instances found on toll roads. Not all roads have tolls.
 
@@ -74,7 +74,6 @@ There's some things you should know about it:
 
 ## What we'll cover
 
--   Google Sheets
 -   Public records and open data
 -   R Basics
 -   Replication
@@ -98,3 +97,4 @@ There's some things you should know about it:
 -   Text analysis basics
 -   Writing with and about data
 -   Data journalism ethics
+-   AI & Data journalism
