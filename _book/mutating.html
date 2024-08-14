@@ -531,7 +531,7 @@ dbl (2): count, sum
 </div>
 <p>Now that we’ve gotten a look, we can use <code>case_when</code> to give our new category column a value using some standard numeric logic:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred_contributions <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_categories <span class="ot">&lt;-</span> maryland_winred_contributions <span class="sc">|&gt;</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amount_category =</span> <span class="fu">case_when</span>(</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        amount <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="st">"Less than $100"</span>,</span>
