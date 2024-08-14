@@ -107,7 +107,7 @@ head(maryland_winred_contributions)
 Now that we've gotten a look, we can use `case_when` to give our new category column a value using some standard numeric logic:
 
 ```{r}
-maryland_winred_categories <- maryland_winred_contributions %>%
+maryland_winred_categories <- maryland_winred_contributions |>
   mutate(
     amount_category = case_when(
         amount < 100 ~ "Less than $100",

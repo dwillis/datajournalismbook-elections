@@ -49,9 +49,9 @@ You'll need to load one data set, a CSV file of Maryland campaign expenditures l
 
 ```{r}
 # Load the Maryland expenditures data table
-md_expenses <- read_csv('data/md_expenses.csv') %>% clean_names()
+md_expenses <- read_csv('data/md_expenses.csv') |> clean_names()
 
-md_expenses <- md_expenses %>% mutate(expenditure_date = mdy(expenditure_date))
+md_expenses <- md_expenses |> mutate(expenditure_date = mdy(expenditure_date))
 ```
 
 ## Answer questions
@@ -65,7 +65,7 @@ Then, using that `payee_clean` column, write code to find all of the spending wh
 **A1.**  
 
 ```{r}
-media_expenses <- md_expenses %>% filter(expense_category == 'Media') %>% filter(!is.na(payee_name))
+media_expenses <- md_expenses |> filter(expense_category == 'Media') |> filter(!is.na(payee_name))
 
 write_csv(media_expenses, "data/media_expenses.csv")
 
@@ -75,10 +75,10 @@ write_csv(media_expenses, "data/media_expenses.csv")
 media_expenses_cleaned <- read_csv("data/media-expenses-cleaned.csv")
 
 # calculate top Facebook spenders
-media_expenses_cleaned %>% 
-  filter(payee_clean == 'Facebook') %>% 
-  group_by(committee_name) %>% 
-  summarise(total_amount = sum(amount)) %>% 
+media_expenses_cleaned |> 
+  filter(payee_clean == 'Facebook') |> 
+  group_by(committee_name) |> 
+  summarise(total_amount = sum(amount)) |> 
   arrange(desc(total_amount))
 
 ```
@@ -92,10 +92,10 @@ media_expenses_cleaned %>%
 
 ```{r}
 
-media_expenses_cleaned %>% 
-  filter(committee_name == 'Moore  Wes For Maryland' | committee_name == 'Moore Miller For Maryland Slate') %>% 
-  group_by(payee_clean) %>% 
-  summarise(total_amount = sum(amount)) %>% 
+media_expenses_cleaned |> 
+  filter(committee_name == 'Moore  Wes For Maryland' | committee_name == 'Moore Miller For Maryland Slate') |> 
+  group_by(payee_clean) |> 
+  summarise(total_amount = sum(amount)) |> 
   arrange(desc(total_amount))
 
 ```
@@ -105,10 +105,10 @@ media_expenses_cleaned %>%
 **A4.** This list has larger amounts for total online ad spending, and a different list of top committees, including the Republican Governors Association and DGA Action. Ashwani Jain, the top committee on the Facebook spending list, appears to have spent all of its online advertising dollars on Facebook.
 
 ```{r}
-media_expenses_cleaned %>% 
-  filter(expense_purpose == 'Online Advertising') %>% 
-  group_by(committee_name) %>% 
-  summarise(total_amount = sum(amount)) %>% 
+media_expenses_cleaned |> 
+  filter(expense_purpose == 'Online Advertising') |> 
+  group_by(committee_name) |> 
+  summarise(total_amount = sum(amount)) |> 
   arrange(desc(total_amount))
 ```
 

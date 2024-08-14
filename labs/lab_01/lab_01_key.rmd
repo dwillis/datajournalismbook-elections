@@ -58,11 +58,11 @@ glimpse(wv_winred_contribs)
 **A2** Charleston, with 3,226.
 
 ```{r}
-wv_winred_contribs %>%
-  group_by(city) %>%
+wv_winred_contribs |>
+  group_by(city) |>
   summarise(
     total_contribs = n()
-  ) %>%
+  ) |>
   arrange(desc(total_contribs))
 ```
 
@@ -71,11 +71,11 @@ wv_winred_contribs %>%
 **A3** Dozens of them, with 1 contribution.
 
 ```{r}
-wv_winred_contribs %>%
-  group_by(city) %>%
+wv_winred_contribs |>
+  group_by(city) |>
   summarise(
     total_contribs = n()
-  ) %>%
+  ) |>
   arrange(total_contribs)
 ```
 
@@ -88,14 +88,14 @@ wv_winred_contribs %>%
 **A5** Trump National Committee JFC, with \$463,944 from 14,063 contributions. The average was \$32.99.
 
 ```{r}
-wv_winred_contribs %>%
-  group_by(memo_text) %>%
+wv_winred_contribs |>
+  group_by(memo_text) |>
   summarise(
     total_contribs = n(),
     total_amount = sum(amount),
     average_amount = mean(amount
     )
-  ) %>%
+  ) |>
   arrange(desc(total_amount))
 ```
 
@@ -110,7 +110,7 @@ Store it as a variable object called `wv_summary` so that you can examine it wit
 **A7**.
 
 ```{r}
-wv_summary <- wv_winred_contribs %>%
+wv_summary <- wv_winred_contribs |>
    summarise(
     count_contribs = n(),
     total_amount = sum(amount),
@@ -118,6 +118,6 @@ wv_summary <- wv_winred_contribs %>%
     median_amount = median(amount),
     min_amount = min(amount),
     max_amount = max(amount)
-  ) %>%
+  ) |>
   arrange(desc(total_amount))
 ```

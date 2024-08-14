@@ -80,7 +80,7 @@ Things that should be characters -- like county, precinct, candidate -- are char
 There are some minor problems. The election_day column is a good example. It read in as a number (chr), even though there clearly are numbers in it judging from our initial inspection. Here's why: the original file has a single value in that column that is "5+".
 
 ```{r}
-texas_precinct_20 %>% filter(election_day == "5+")
+texas_precinct_20 |> filter(election_day == "5+")
 ```
 
 Because this is just one result that's weird, we can fix it by comparing the other votes Castaneda received in Anderson to the county totals for her. The difference should be what that "5+" value should be. I've done those calculations and it turns out that 49 is the actual likely value.
@@ -89,13 +89,13 @@ We can fix that pretty easily, by changing that value to "49" using `case_when` 
 
 ```{r}
 
-texas_precinct_20 <- texas_precinct_20 %>%
+texas_precinct_20 <- texas_precinct_20 |>
   mutate(election_day = case_when(
     election_day == '5+' ~ '49',
     TRUE ~ election_day
   ))
 
-texas_precinct_20 <- texas_precinct_20 %>% mutate(election_day = as.numeric(election_day))
+texas_precinct_20 <- texas_precinct_20 |> mutate(election_day = as.numeric(election_day))
 
 ```
 
@@ -119,11 +119,11 @@ Let's start with the "mail" column, which represents the number of votes a candi
 
 ```{r}
 
-texas_precinct_20 %>%
-  group_by(mail) %>%
+texas_precinct_20 |>
+  group_by(mail) |>
   summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(desc(count))
 ```
 
@@ -131,11 +131,11 @@ Now let's try the "provisional" column, which represents the number of accepted 
 
 ```{r}
 
-texas_precinct_20 %>%
-  group_by(provisional) %>%
+texas_precinct_20 |>
+  group_by(provisional) |>
   summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(desc(count))
 ```
 
@@ -152,7 +152,7 @@ yadkin_voters <- read_csv("data/yadkin_voters.csv")
 Each row represents a current or previously registered voter in the county, along with information about that person and the political jurisdictions they reside in. When we talk about gaps, often they indicate the administrative boundaries. Here's an example: let's find the most recent `registr_dt` in this dataset:
 
 ```{r}
-yadkin_voters %>% arrange(desc(registr_dt))
+yadkin_voters |> arrange(desc(registr_dt))
 ```
 
 It's July 14, 2022. That means that this dataset doesn't have any records newer than that, so if we were describing it we'd need to include that information.
@@ -160,7 +160,7 @@ It's July 14, 2022. That means that this dataset doesn't have any records newer 
 What about the most recent `birth_year`?
 
 ```{r}
-yadkin_voters %>% arrange(desc(birth_year))
+yadkin_voters |> arrange(desc(birth_year))
 ```
 
 Lots of 2004 records in there, which makes sense, since those folks are just becoming eligible to vote in North Carolina, where the minimum age is 18. In other words, we shouldn't see records in here where the "birth_year" is greater than 2004. If we do, we should ask some questions.
@@ -180,12 +180,12 @@ library(lubridate)
 The `floor_date` function will allow us to group by month, instead of a single day.
 
 ```{r}
-yadkin_voters %>%
-  mutate(registration_month = floor_date(registr_dt, "month")) %>%
-  group_by(registration_month) %>%
+yadkin_voters |>
+  mutate(registration_month = floor_date(registr_dt, "month")) |>
+  group_by(registration_month) |>
    summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(registration_month)
 ```
 

@@ -58,10 +58,10 @@ Then answer these questions:
 ```{r}
 
 # Create a table with WV mining industries only, group by county and calculate total loans and total amount.
-wv_mining <- ppp_wv_loans %>%
-  mutate(two_digit_naics = str_sub(naics_code,start=1L, end=2L)) %>%
-  filter(two_digit_naics == "21") %>%
-  group_by(project_county_name) %>%
+wv_mining <- ppp_wv_loans |>
+  mutate(two_digit_naics = str_sub(naics_code,start=1L, end=2L)) |>
+  filter(two_digit_naics == "21") |>
+  group_by(project_county_name) |>
   summarise(
     total_loans = n(),
     total_amount = sum(amount)
@@ -71,18 +71,18 @@ wv_mining <- ppp_wv_loans %>%
 wv_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
               state = "WV",
-              geometry = TRUE) %>%
-  rename(COUNTY = NAME) %>%
-  mutate(COUNTY = toupper(str_remove_all(COUNTY,", West Virginia|County"))) %>%
-  mutate(COUNTY = str_trim(COUNTY,side="both")) %>%
-  rename(population = estimate) %>%
-  select(COUNTY, population, geometry) %>%
+              geometry = TRUE) |>
+  rename(COUNTY = NAME) |>
+  mutate(COUNTY = toupper(str_remove_all(COUNTY,", West Virginia|County"))) |>
+  mutate(COUNTY = str_trim(COUNTY,side="both")) |>
+  rename(population = estimate) |>
+  select(COUNTY, population, geometry) |>
   clean_names()
 
 # Join mining to population and calculate amount per 100k, also replace any nas with 0s.
-wv_mining_population <- wv_county_population %>%
-  left_join(wv_mining,by=c("county" = "project_county_name")) %>%
-  mutate(amount_per_100k = total_amount/population*100000) %>%
+wv_mining_population <- wv_county_population |>
+  left_join(wv_mining,by=c("county" = "project_county_name")) |>
+  mutate(amount_per_100k = total_amount/population*100000) |>
   mutate(amount_per_100k = replace_na(amount_per_100k,0)) 
 
 
@@ -93,8 +93,8 @@ ggplot() +
   scale_fill_viridis_b(option="magma", trans="log")
 
 # Output a table sorted by amount_per_100k
-wv_mining_population %>%
-  as_tibble() %>%
+wv_mining_population |>
+  as_tibble() |>
   arrange(desc(amount_per_100k))
 
 
@@ -120,12 +120,12 @@ What spatial pattern do you see? How does it compare to the spatial pattern in t
 wv_mine_locations <-st_read("https://tagis.dep.wv.gov/arcgis/rest/services/WVDEP_enterprise/mining_reclamation/MapServer/0/query?where=1%3D1&outFields=*&geometry=&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&f=json")
 
 # Filter for only active mines based on expire date
-wv_active_mine_locations <- wv_mine_locations  %>%
-  mutate(expiredate = ymd(expiredate)) %>%
+wv_active_mine_locations <- wv_mine_locations  |>
+  mutate(expiredate = ymd(expiredate)) |>
   filter(expiredate > "2021-09-01")
 
 # Get a counties table from Tigris
-wv_counties <- counties() %>%
+wv_counties <- counties() |>
   filter(STATEFP == "54")
 
 # Make a map
@@ -158,11 +158,11 @@ Q4. Starting from the original WV ppp dataframe, examine the loans to companies 
 A4. Hall Drilling, Inc. (https://www.halldrilling.com/) got a loan of $6.8 million.  They are "Drilling Oil and Gas Wells" service company.  They help people frack and extract oil and natural gas from the ground. This type of energy extraction has grown over the last decade, even as coal mining in the state has declined. They retained 387 jobs. Why might they have needed a loan? Oil and gas prices fell sharply in 2020 as people drove less and social distanced at home.  Those low prices made it harder for oil and gas companies to justify the cost of extracting it from the ground.  So it makes sense that a service provider like Hall would see less demand for its services. https://www.wvpublic.org/news/2020-03-19/coronavirus-and-slumping-prices-hit-ohio-valleys-oil-gas-sector
 
 ```{r}
-wv_mining_ritchie <- ppp_wv_loans %>%
-  mutate(two_digit_naics = str_sub(naics_code,start=1L, end=2L)) %>%
-  filter(project_county_name == "RITCHIE") %>%
-  filter(two_digit_naics == "21") %>%
-  arrange(desc(amount)) %>%
+wv_mining_ritchie <- ppp_wv_loans |>
+  mutate(two_digit_naics = str_sub(naics_code,start=1L, end=2L)) |>
+  filter(project_county_name == "RITCHIE") |>
+  filter(two_digit_naics == "21") |>
+  arrange(desc(amount)) |>
   head(1)
 
 wv_mining_ritchie

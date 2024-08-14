@@ -64,7 +64,7 @@ arrange(md_median_age, estimate)
 **A2** Talbot and Worcester counties
 
 ```{r}
-md_median_age %>% filter(estimate >= 50)
+md_median_age |> filter(estimate >= 50)
 ```
 
 ## Ticket-Splitting

@@ -33,9 +33,9 @@ To answer the questions below, you'll need to make a dataframe with the number o
 First, let's create the dataframe with totals by each 5-digit Maryland zip code. Hint: if your zip code column contains values longer than 5 digits, you can extract substrings of a specified length.
 
 ```{r}
-md_zip_totals <- md_contribs %>% 
-  mutate(zip5 = str_sub(contributor_zip, start = 1L, end = 5L)) %>% 
-  group_by(zip5) %>% 
+md_zip_totals <- md_contribs |> 
+  mutate(zip5 = str_sub(contributor_zip, start = 1L, end = 5L)) |> 
+  group_by(zip5) |> 
   summarize(total_contribs = n(), total_amount = sum(contribution_receipt_amount), avg = total_amount/total_contribs)
 ```
 
@@ -50,9 +50,9 @@ Next join the two on your 5-digit zip code:
 ```{r}
 # there's a problem - the `zip` column in md_ec is numeric, so we have to convert it to character before we join
 
-md_ec <- md_ec %>% mutate(across(zip, as.character))
+md_ec <- md_ec |> mutate(across(zip, as.character))
 
-md_zip_totals_with_ec <- md_zip_totals %>% left_join(md_ec, by=c('zip5'='zip'))
+md_zip_totals_with_ec <- md_zip_totals |> left_join(md_ec, by=c('zip5'='zip'))
 
 ```
 
@@ -66,7 +66,7 @@ Q2. Organize the dataframe so that you see the zip code with the greatest number
 A2. 20815, with an ec_zip score of 1.43. That's Chevy Chase, Maryland, a wealthy area.
 
 ```{r}
-md_zip_totals_with_ec %>% 
+md_zip_totals_with_ec |> 
   arrange(desc(total_contribs))
 ```
 
@@ -74,8 +74,8 @@ Q3. A lower ec_zip score means less economic connectedness in that zip code. How
 A3. 20783 (Langley Park) had the lowest ec_zip score (0.57) of any zip code that had more than a single contribution. I could filter the original md_contribs dataset for that 5-digit zip code to see if this was the result of a small number of donors or if the money went to a range of candidates.
 
 ```{r}
-md_zip_totals_with_ec %>% 
-  filter(ec_zip < 1.0, total_contribs > 1) %>% 
+md_zip_totals_with_ec |> 
+  filter(ec_zip < 1.0, total_contribs > 1) |> 
   arrange(ec_zip)
 ```
 
@@ -84,22 +84,22 @@ A4: One way to do this is to calculate an average of the average contributions f
 
 ```{r}
 
-md_zip_totals_with_ec %>% 
-  filter(ec_zip < 0.878) %>% 
+md_zip_totals_with_ec |> 
+  filter(ec_zip < 0.878) |> 
   summarize(avg_of_avg = mean(avg))
 
-md_zip_totals_with_ec %>% 
-  filter(ec_zip >= 0.877) %>% 
+md_zip_totals_with_ec |> 
+  filter(ec_zip >= 0.877) |> 
   summarize(avg_of_avg = mean(avg))
 
-md_zip_totals_with_ec %>% 
-  filter(total_contribs > 1) %>% 
-  filter(ec_zip < 0.878) %>% 
+md_zip_totals_with_ec |> 
+  filter(total_contribs > 1) |> 
+  filter(ec_zip < 0.878) |> 
   summarize(avg_of_avg = mean(avg))
 
-md_zip_totals_with_ec %>% 
-  filter(total_contribs > 1) %>% 
-  filter(ec_zip >= 0.877) %>% 
+md_zip_totals_with_ec |> 
+  filter(total_contribs > 1) |> 
+  filter(ec_zip >= 0.877) |> 
   summarize(avg_of_avg = mean(avg))
 
 ```
@@ -113,12 +113,12 @@ A5. There are 39 such zip codes, and Howard County has the most with 8, followed
 ```{r}
 md_counties <- read_csv("data/md_counties.csv")
 
-md_zip_totals_with_ec_and_counties <- md_zip_totals_with_ec %>% inner_join(md_counties, by=c('county'='fips_code'))
+md_zip_totals_with_ec_and_counties <- md_zip_totals_with_ec |> inner_join(md_counties, by=c('county'='fips_code'))
 
-md_zip_totals_with_ec_and_counties %>% 
-  filter(total_contribs >= 5, volunteering_rate_zip >= 0.10) %>% 
-  group_by(county_name) %>% 
-  summarize(count = n()) %>% 
+md_zip_totals_with_ec_and_counties |> 
+  filter(total_contribs >= 5, volunteering_rate_zip >= 0.10) |> 
+  group_by(county_name) |> 
+  summarize(count = n()) |> 
   arrange(desc(count))
 
 ```
@@ -128,8 +128,8 @@ A6. I picked 21057, which is Glen Arm - it had 57 contributions at an average of
 
 
 ```{r}
-md_zip_totals_with_ec_and_counties %>% 
-  filter(total_contribs > 1, is.na(ec_zip)) %>% 
+md_zip_totals_with_ec_and_counties |> 
+  filter(total_contribs > 1, is.na(ec_zip)) |> 
   arrange(desc(total_contribs))
 ```
 

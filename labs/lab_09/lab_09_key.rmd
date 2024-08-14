@@ -38,18 +38,18 @@ Let's explore the election results from last night and make some maps!
 **A1.**  
 
 ```{r}
-md_gov <- read_csv("data/md_gov_county.csv") %>% 
-  clean_names() %>% 
-  mutate(geoid = as.character(geoid)) %>% 
-  mutate(total = cox + moore + lashar + wallace + harding + write_ins) %>% 
+md_gov <- read_csv("data/md_gov_county.csv") |> 
+  clean_names() |> 
+  mutate(geoid = as.character(geoid)) |> 
+  mutate(total = cox + moore + lashar + wallace + harding + write_ins) |> 
   mutate(pct_moore = moore/total * 100, pct_cox = cox/total *100, moore_cox_diff = pct_moore - pct_cox)
 
 counties <- counties()
 
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
-md_gov_geometry <- md_counties %>% 
+md_gov_geometry <- md_counties |> 
   inner_join(md_gov, by=c('GEOID'='geoid'))
 
 ggplot() +
@@ -65,17 +65,17 @@ ggplot() +
 
 ```{r}
 
-md_gov_18 <- read_csv("data/md_gov_county_18.csv") %>% 
-  clean_names() %>% 
-  mutate(geoid = as.character(geoid)) %>% 
-  mutate(total = hogan + jealous + quinn + schlakman + write_ins) %>% 
+md_gov_18 <- read_csv("data/md_gov_county_18.csv") |> 
+  clean_names() |> 
+  mutate(geoid = as.character(geoid)) |> 
+  mutate(total = hogan + jealous + quinn + schlakman + write_ins) |> 
   mutate(pct_hogan = hogan/total * 100, pct_jealous = jealous/total *100, hogan_jealous_diff = pct_hogan - pct_jealous)
 
-combined_gov <- md_gov %>%
+combined_gov <- md_gov |>
   inner_join(md_gov_18, by=c('geoid', 'county'))
 
-md_gov_combined <- md_counties %>% 
-  inner_join(combined_gov, by=c('GEOID'='geoid')) %>% 
+md_gov_combined <- md_counties |> 
+  inner_join(combined_gov, by=c('GEOID'='geoid')) |> 
   mutate(hogan_cox_diff = pct_hogan - pct_cox)
 
 ggplot() +
@@ -90,11 +90,11 @@ ggplot() +
 **A3** 
 
 ```{r}
-mail_remaining <- read_csv("data/mail_remaining.csv") %>% clean_names() %>% 
-  mutate(geoid = as.character(geoid)) %>% 
+mail_remaining <- read_csv("data/mail_remaining.csv") |> clean_names() |> 
+  mutate(geoid = as.character(geoid)) |> 
   mutate(pct_remaining = remaining/total_returned *100)
 
-mail_remaining_with_geo <- md_counties %>% 
+mail_remaining_with_geo <- md_counties |> 
   inner_join(mail_remaining, by=c('GEOID'='geoid'))
   
 ggplot() +

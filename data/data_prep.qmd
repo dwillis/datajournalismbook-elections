@@ -103,9 +103,9 @@ write_csv(frederick_cvr_test, "~/code/datajournalismbook-elections/labs/lab_07/d
 library(ineq)
 library(dplyr)
 
-md_voters_zip_gini <- md_voters_zip %>%
-  rowwise() %>%
-  mutate(gini_coefficient = ineq(c(PCT_DEM, PCT_REP, PCT_UNA), type="Gini")) %>%
+md_voters_zip_gini <- md_voters_zip |>
+  rowwise() |>
+  mutate(gini_coefficient = ineq(c(PCT_DEM, PCT_REP, PCT_UNA), type="Gini")) |>
   ungroup()
 ```
 

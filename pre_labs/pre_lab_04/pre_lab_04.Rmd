@@ -58,12 +58,12 @@ dc_food
 
 # The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W". 
 
-dc_food %>%
-  group_by(recipient_name) %>%
+dc_food |>
+  group_by(recipient_name) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_name, '^w|^W')) %>% 
+  ) |>
+  filter(str_detect(recipient_name, '^w|^W')) |> 
   arrange(recipient_name)
 ```
 
@@ -72,8 +72,8 @@ dc_food %>%
 **Task** Run the following code to make a copy of the recipient_name field called recipient_clean, then use the `key_collision_merge` function from refinr to attempt to standarize similar values. Store it as a new object called cleaned_dc_food. Click the black arrow on the table to examine the recipient_name and recipient_clean columns. Looking at the results on the first two pages only (first 20 rows), name two changes the refinr package made, by comparing recipient_name to recipient_clean. **Answer**
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=key_collision_merge(recipient_name)) %>%
+cleaned_dc_food <- dc_food |>
+  mutate(recipient_clean=key_collision_merge(recipient_name)) |>
   select(recipient_name, recipient_clean, everything())
 
 cleaned_dc_food
@@ -85,12 +85,12 @@ cleaned_dc_food
 **Task** Run the following code to group by recipient_clean and recipient_name, then filter for cities that start with W. Name three changes the refinr function made in the first 20 results. **Answer**
 
 ```{r}
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
+cleaned_dc_food |>
+  group_by(recipient_name, recipient_clean) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
+  ) |>
+  filter(str_detect(recipient_clean, "^w|^W")) |>
   arrange(recipient_clean)
 ```
 
@@ -99,19 +99,19 @@ cleaned_dc_food %>%
 **Task** Run the following code to use the n_gram_merge() function to clean the data, then group by city_clean and city to examine cities that start with A. Look at the differences. Does the changes it made vary substantially from the previous use of key_collision_merge? **Answer**
 
 ```{r}
-cleaned_dc_food <- dc_food %>%
-  mutate(recipient_clean=n_gram_merge(recipient_name)) %>%
+cleaned_dc_food <- dc_food |>
+  mutate(recipient_clean=n_gram_merge(recipient_name)) |>
   select(recipient_name, recipient_clean, everything())
 
 cleaned_dc_food
 
 
-cleaned_dc_food %>%
-  group_by(recipient_name, recipient_clean) %>%
+cleaned_dc_food |>
+  group_by(recipient_name, recipient_clean) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(recipient_clean, "^w|^W")) %>%
+  ) |>
+  filter(str_detect(recipient_clean, "^w|^W")) |>
   arrange(recipient_clean)
 
 

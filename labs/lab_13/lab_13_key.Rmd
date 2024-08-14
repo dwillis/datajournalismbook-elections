@@ -39,15 +39,15 @@ Let's start with the 2022 results. You'll need to locate and scrape the 2022 cou
 ```{r}
 url <- "https://electionresults.utah.gov/elections/countyCount/451556070"
 
-results <- url %>% 
-  read_html() %>% 
+results <- url |> 
+  read_html() |> 
   html_table()
 
-senate_2022 <- results[[1]] %>% 
-  clean_names() %>% 
-  slice(-2) %>% 
-  rename(county = 1, korb = 2, mcmullin = 3, hansen = 4, hamblin = 5, seguin = 6, lee = 7, williams = 8) %>% 
-  slice(-1) %>% 
+senate_2022 <- results[[1]] |> 
+  clean_names() |> 
+  slice(-2) |> 
+  rename(county = 1, korb = 2, mcmullin = 3, hansen = 4, hamblin = 5, seguin = 6, lee = 7, williams = 8) |> 
+  slice(-1) |> 
   mutate(across(c(2:8), as.numeric))
 ```
 
@@ -60,11 +60,11 @@ url_2018 <- "https://elections.utah.gov/Media/Default/2018%20Election/2018%20Gen
 
 download.file(url_2018, "utah_2018.xlsx")
 
-senate_2018 <- read_excel("utah_2018.xlsx", sheet="U.S. Senate") %>% 
-  clean_names() %>% 
-  slice(-1:-2) %>% 
-  slice(-30:-32) %>% 
-  rename(county = 1, aalders = 2, bowden = 3, mccandless = 4, wilson = 5, romney = 6, fitzgerald = 7, reeve = 8, reiksthegn = 9, korb = 10, jackson = 11, judy = 12, jensen = 13) %>% 
+senate_2018 <- read_excel("utah_2018.xlsx", sheet="U.S. Senate") |> 
+  clean_names() |> 
+  slice(-1:-2) |> 
+  slice(-30:-32) |> 
+  rename(county = 1, aalders = 2, bowden = 3, mccandless = 4, wilson = 5, romney = 6, fitzgerald = 7, reeve = 8, reiksthegn = 9, korb = 10, jackson = 11, judy = 12, jensen = 13) |> 
   mutate(across(c(2:13), as.numeric))
 
 ```
@@ -74,7 +74,7 @@ Finally, join the two dataframes together:
 **Task** Join the 2022 and 2018 results into a single dataframe.
 
 ```{r}
-combined_senate <- senate_2022 %>% 
+combined_senate <- senate_2022 |> 
   inner_join(senate_2018, by='county')
 ```
 
@@ -85,11 +85,11 @@ combined_senate <- senate_2022 %>%
 **A1.** McMullin did better than Wilson in all but one county, San Juan, which has fewer than 15,000 people. In particular, McMullin did much better in Utah County, which includes Brigham Young University. McMullin got within 4,000 votes of Joe Biden's total in 2018 here.
 
 ```{r}
-combined_senate <- combined_senate %>% 
+combined_senate <- combined_senate |> 
   mutate(mcmullin_wilson_diff = mcmullin - wilson)
 
-combined_senate %>% 
-  select(county, mcmullin, wilson, mcmullin_wilson_diff ) %>% 
+combined_senate |> 
+  select(county, mcmullin, wilson, mcmullin_wilson_diff ) |> 
   arrange(mcmullin_wilson_diff)
 ```
 
@@ -98,11 +98,11 @@ combined_senate %>%
 **A2** Romney got more votes in 13 of Utah's 29 counties, and in particular Salt Lake and Davis counties. In the counties where Lee outperformed Romney, the margin was a matter of less than a thousand votes in all but one case. Lee's best performance relative to Romney was in Washington County, a reliably conservative county.
 
 ```{r}
-combined_senate <- combined_senate %>% 
+combined_senate <- combined_senate |> 
   mutate(lee_romney_diff = lee - romney)
 
-combined_senate %>% 
-  select(county, lee, romney, lee_romney_diff ) %>% 
+combined_senate |> 
+  select(county, lee, romney, lee_romney_diff ) |> 
   arrange(lee_romney_diff)
 ```
 
@@ -120,28 +120,28 @@ Finally, tell me what questions you could ask of this data. Be creative.
 
 ```{r}
 
-results <- "https://www.cardin.senate.gov/?post_type=press-releases" %>% 
+results <- "https://www.cardin.senate.gov/?post_type=press-releases" |> 
   read_html() 
 
-dates <- results %>% 
-  html_elements("h5") %>% 
-  html_text() %>% 
+dates <- results |> 
+  html_elements("h5") |> 
+  html_text() |> 
   as_tibble()
 
-titles <- results %>% 
-  html_elements("h3 a") %>% 
-  html_text() %>% 
+titles <- results |> 
+  html_elements("h3 a") |> 
+  html_text() |> 
   as_tibble()
 
-urls <- results %>% 
-  html_elements("h3 a") %>% 
-  html_attr('href') %>% 
+urls <- results |> 
+  html_elements("h3 a") |> 
+  html_attr('href') |> 
   as_tibble()
 
 releases <- bind_cols(dates, titles, urls)
 
-releases <- releases %>% 
-  rename(date = 1, title = 2, url = 3) %>% 
+releases <- releases |> 
+  rename(date = 1, title = 2, url = 3) |> 
   mutate(date = mdy(date))
 
 ```

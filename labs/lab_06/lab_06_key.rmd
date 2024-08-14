@@ -44,37 +44,37 @@ You will need to read in and clean up the data so that it can be used for analys
 
 ```{r}
 # Party registrations
-new_registrations_sep24 <- read_csv("data/party_registrations.csv") %>% clean_names()
+new_registrations_sep24 <- read_csv("data/party_registrations.csv") |> clean_names()
 
-new_registrations_sep24 <- new_registrations_sep24 %>% 
+new_registrations_sep24 <- new_registrations_sep24 |> 
   rename(category = x1)
 ```
 
 ```{r}
 # Removals
-removals_sep24 <- read_csv("data/removals.csv") %>% clean_names()
+removals_sep24 <- read_csv("data/removals.csv") |> clean_names()
 
-removals_sep24 <- removals_sep24 %>% 
+removals_sep24 <- removals_sep24 |> 
   rename(category = x1)
 ```
 
 ```{r}
 # Changes
-changes_sep24 <- read_csv("data/changes.csv") %>% clean_names()
+changes_sep24 <- read_csv("data/changes.csv") |> clean_names()
 
-changes_sep24 <- changes_sep24 %>% 
+changes_sep24 <- changes_sep24 |> 
   rename(county = x1)
 
 ```
 
 ```{r}
 # Current registrations
-current_sep24 <- read_csv("data/current.csv") %>%
-  select(-c(2,3,4,5,6,7,8,9,10,11)) %>% 
+current_sep24 <- read_csv("data/current.csv") |>
+  select(-c(2,3,4,5,6,7,8,9,10,11)) |> 
   clean_names()
 
-current_sep24 <- current_sep24 %>% 
-  rename(county = x1) %>% 
+current_sep24 <- current_sep24 |> 
+  rename(county = x1) |> 
   rename(dem24 = dem_12, rep24 = rep_13, nlm23 = nlm_14, lib24 = lib_15, unaf24 = unaf_16, oth24 = oth_17, total24 = total_18)
 ```
 
@@ -86,36 +86,36 @@ To answer the following questions, you'll need to calculate percentages and do o
 
 ```{r}
 # Party registrations
-new_registrations_sep22 <- read_csv("data/party_registrations22.csv") %>% clean_names()
+new_registrations_sep22 <- read_csv("data/party_registrations22.csv") |> clean_names()
 
-new_registrations_sep22 <- new_registrations_sep22 %>% 
+new_registrations_sep22 <- new_registrations_sep22 |> 
   rename(category = x1)
 ```
 
 ```{r}
 # Removals
-removals_sep22 <- read_csv("data/removals22.csv") %>% clean_names()
+removals_sep22 <- read_csv("data/removals22.csv") |> clean_names()
 
-removals_sep22 <- removals_sep22 %>% 
+removals_sep22 <- removals_sep22 |> 
   rename(category = x1)
 ```
 
 ```{r}
 # Changes
-changes_sep22 <- read_csv("data/changes22.csv") %>% clean_names()
+changes_sep22 <- read_csv("data/changes22.csv") |> clean_names()
 
-changes_sep22 <- changes_sep22 %>% 
+changes_sep22 <- changes_sep22 |> 
   rename(county = x1)
 ```
 
 ```{r}
 # Current registrations
-current_sep22 <- read_csv("data/current22.csv") %>%
-  select(-c(2,3,4,5,6,7,8,9,10,11)) %>% 
+current_sep22 <- read_csv("data/current22.csv") |>
+  select(-c(2,3,4,5,6,7,8,9,10,11)) |> 
   clean_names()
 
-current_sep22 <- current_sep22 %>% 
- rename(county = x1) %>% 
+current_sep22 <- current_sep22 |> 
+ rename(county = x1) |> 
  rename(dem = dem_12, rep = rep_13, grn = grn_14, lib = lib_15, wcp = wcp_16, unaf = unaf_17, oth = oth_18, total = total_19)
 ```
 
@@ -126,14 +126,14 @@ Q1. Calculate the percentage of registered Democrats, Republicans and unaffiliat
 A1.
 
 ```{r}
-current_sep24 <- current_sep24 %>% 
+current_sep24 <- current_sep24 |> 
   mutate(pct_dem24 = (dem24/total24)*100, pct_rep24 = (rep24/total24)*100, pct_unaffil24 = (unaf24/total24)*100)
 
-current_sep22 <- current_sep22 %>% 
+current_sep22 <- current_sep22 |> 
   mutate(pct_dem22 = (dem/total)*100, pct_rep22 = (rep/total)*100, pct_unaffil22 = (unaf/total)*100)
 
-current_compare <- current_sep24 %>% 
-  left_join(current_sep22, by='county') %>% 
+current_compare <- current_sep24 |> 
+  left_join(current_sep22, by='county') |> 
   mutate(dem_pct_change = (dem24-dem)/dem*100, rep_pct_change = (rep24-rep)/rep*100, unaffil_pct_change = (unaf24-unaf)/unaf*100)
 ```
 
@@ -144,8 +144,8 @@ A2. Frederick County had the largest percentage increase, 13.2 percent. Republic
 Frederick County's partisan split is much narrower than Prince George's County, which had the second-largest percentage increase in unaffiliated voters. But Frederick is slowly trending Democratic, with 39% of current voters there choosing that party, while Prince George's is actually losing Democratic voters.
 
 ```{r}
-current_compare %>% 
-  filter(total24 > 100000) %>% 
+current_compare |> 
+  filter(total24 > 100000) |> 
   arrange(desc(unaffil_pct_change))
 ```
 
@@ -156,10 +156,10 @@ In other words, did new registrants mirror the overall partisan composition of t
 A3. Overall, in September 2022 and September 2020, the statewide partisan was roughly 54-24-20 D/R/I, and September registrations in both years are somewhat consistent with that, but with much higher figures for unaffiliated voters (25-30%). Republican registrations in September 2022 were 15% of the total, down from 20% in September 2020, suggesting a drop in GOP enthusiasm/effort. A third of new voters who registered at the MVA in September 2022 were unaffiliated, and Democrats who registered this way were 49%. Registration by mail is down among Republicans compared to 2020, which probably is due to COVID's impact on 2020 and general skepticism among conservatives about the method.
 
 ```{r}
-new_registrations_sep24 <- new_registrations_sep24 %>% 
+new_registrations_sep24 <- new_registrations_sep24 |> 
   mutate(pct_dem24 = (dem/total)*100, pct_rep24 = (rep/total)*100, pct_unaffil24 = (unaf/total)*100)
 
-new_registrations_sep22 <- new_registrations_sep22 %>% 
+new_registrations_sep22 <- new_registrations_sep22 |> 
   mutate(pct_dem22 = (dem/total)*100, pct_rep22 = (rep/total)*100, pct_unaffil22 = (unaf/total)*100)
 ```
 

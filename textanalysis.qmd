@@ -35,7 +35,7 @@ head(releases)
 What we want to do is to make the `text` column easier to analyze. Let's say we want to find out the most commonly used words. We'll want to remove URLs from the text of the releases since they aren't actual words. Let's use mutate to make that happen:
 
 ```{r}
-releases <- releases %>%
+releases <- releases |>
   mutate(text = gsub("http.*","", text))
 ```
 
@@ -49,7 +49,7 @@ unique(a_list_of_words)
 Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `text` column:
 
 ```{r}
-unique_words <- releases %>% select(text) %>%
+unique_words <- releases |> select(text) |>
   unnest_tokens(word, text)
 View(unique_words)
 ```
@@ -57,10 +57,10 @@ View(unique_words)
 Now we can look at the top words in this dataset. Let's limit ourselves to making a plot of the top 25 words:
 
 ```{r}
-unique_words %>%
-  count(word, sort = TRUE) %>%
-  top_n(25) %>%
-  mutate(word = reorder(word, n)) %>%
+unique_words |>
+  count(word, sort = TRUE) |>
+  top_n(25) |>
+  mutate(word = reorder(word, n)) |>
   ggplot(aes(x = word, y = n)) +
   geom_col() +
   xlab(NULL) +
@@ -75,18 +75,18 @@ Well, that's a bit underwhelming - a lot of very common (and short) words. This 
 ```{r}
 data("stop_words")
 
-stop_words <- stop_words %>% 
-  add_row(word = "ben") %>% 
-  add_row(word = "cardin") %>% 
-  add_row(word = "senator") %>%
-  add_row(word = "senators") %>%
-  add_row(word = "maryland") %>%
-  add_row(word = 'federal') %>% 
-  add_row(word = 'u.s') %>% 
-  add_row(word = 'md') %>% 
-  add_row(word = 'senate') %>% 
-  add_row(word = "hollen") %>% 
-  add_row(word = "van") %>% 
+stop_words <- stop_words |> 
+  add_row(word = "ben") |> 
+  add_row(word = "cardin") |> 
+  add_row(word = "senator") |>
+  add_row(word = "senators") |>
+  add_row(word = "maryland") |>
+  add_row(word = 'federal') |> 
+  add_row(word = 'u.s') |> 
+  add_row(word = 'md') |> 
+  add_row(word = 'senate') |> 
+  add_row(word = "hollen") |> 
+  add_row(word = "van") |> 
   add_row(word = "chris")
 ```
 
@@ -95,43 +95,43 @@ Then we're going to use a function we haven't used yet called an `anti_join`, wh
 From there, we can get a simple word frequency by just grouping them together and counting them. We can borrow the percent code from above to get a percent of the words our top 10 words represent.
 
 ```{r}
-unique_words %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+unique_words |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
 Those seem like more relevant unique words. Now, here's where we can start to do more interesting and meaningful analysis. Let's create two dataframes of unique words based on time: one for all of 2021 and the other for all of 2022:
 
 ```{r}
-unique_words_2021 <- releases %>%
-  filter(date < '2022-01-01') %>%
-  select(text) %>%
+unique_words_2021 <- releases |>
+  filter(date < '2022-01-01') |>
+  select(text) |>
   unnest_tokens(word, text)
 
-unique_words_2022 <- releases %>%
-  filter(date >= '2022-01-01') %>%
-  select(text) %>%
+unique_words_2022 <- releases |>
+  filter(date >= '2022-01-01') |>
+  select(text) |>
   unnest_tokens(word, text)
 ```
 
 Then we can create top 10 lists for both of them and compare:
 
 ```{r}
-unique_words_2021 %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+unique_words_2021 |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 
-unique_words_2022 %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+unique_words_2022 |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
@@ -154,32 +154,32 @@ So this block is is going to do the following:
 7.  We'll then use top_n to give us the top 10 bigrams.
 
 ```{r}
-releases %>%
-  filter(date < '2022-01-01') %>%
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+releases |>
+  filter(date < '2022-01-01') |>
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
 And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care", "human rights" and "chesapeake bay" are among the top 2-word phrases. What about after 2021?
 
 ```{r}
-releases %>%
-  filter(date >= '2022-01-01') %>%
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+releases |>
+  filter(date >= '2022-01-01') |>
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
@@ -194,12 +194,12 @@ Another popular use of text analysis is to measure the sentiment of a word - whe
 ```{r}
 bing <- get_sentiments("bing")
 
-bing_word_counts_2021 <- unique_words_2021 %>%
-  inner_join(bing) %>%
+bing_word_counts_2021 <- unique_words_2021 |>
+  inner_join(bing) |>
   count(word, sentiment, sort = TRUE)
 
-bing_word_counts_2022 <- unique_words_2022 %>%
-  inner_join(bing) %>%
+bing_word_counts_2022 <- unique_words_2022 |>
+  inner_join(bing) |>
   count(word, sentiment, sort = TRUE)
 
 View(bing_word_counts_2021)

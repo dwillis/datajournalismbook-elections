@@ -85,7 +85,7 @@ But where in Prince George's County are these places? We can simply plot them on
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-pg_precincts %>%
+pg_precincts |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -134,7 +134,7 @@ This county shapefile has all 3233 U.S. counties. We only want the Maryland coun
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
 ```
@@ -146,7 +146,7 @@ To see what this looks like, let's plot it out with ggplot. We can pretty clearl
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_counties %>%
+md_counties |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -164,7 +164,7 @@ We're also going to change things up a bit to put the datasets we want to displa
 
 ```{r}
 ggplot() +
-  geom_sf(data=md_counties %>% filter(COUNTYFP == "033")) +
+  geom_sf(data=md_counties |> filter(COUNTYFP == "033")) +
   geom_sf(data=pg_precincts) +
   theme_minimal()
 ```
@@ -178,10 +178,10 @@ Let's dive back into Prince George's precincts and see what more we can find out
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-primary_24 <- read_csv("data/Official by Party and Precinct.csv") %>% clean_names()
-pg_turnout <- primary_24 %>% 
-  filter(lbe == "Prince George's") %>% 
-  group_by(precinct) %>% 
+primary_24 <- read_csv("data/Official by Party and Precinct.csv") |> clean_names()
+pg_turnout <- primary_24 |> 
+  filter(lbe == "Prince George's") |> 
+  group_by(precinct) |> 
   summarise(total_polls = sum(polls), total_early = sum(early_voing), total_absentee = sum(absentee), total_provisional = sum(provisional), total_eligible = sum(eligible_voters))
 
 View(pg_turnout)
@@ -194,7 +194,7 @@ Now we can join the precincts to the turnout data.
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-pg_precincts_with_turnout <- pg_precincts %>% left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
+pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
 ```
 
 Now we can use color to distinguish precincts from each other. Let's use the total eligible voters to start with:
@@ -241,7 +241,7 @@ We've got voters by county, so let's load that from the data folder and take a l
 ```{r}
 voters_by_county <- read_csv("data/eligible_voters.csv")
 
-voters_by_county %>% arrange(desc(TOTAL))
+voters_by_county |> arrange(desc(TOTAL))
 ```
 
 So, what do we see here? Montgomery County has the most, followed by Prince George's & Baltimore County. Checks out.
@@ -300,11 +300,11 @@ Let's clean the population table. We're going to rename the "NAME" column to "Co
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_county_population <- md_county_population %>%
-  rename(County = NAME) %>%
-  mutate(County = str_to_title(str_remove_all(County,", Maryland|County"))) %>%
-  mutate(County = str_trim(County,side="both")) %>%
-  rename(population = estimate) %>%
+md_county_population <- md_county_population |>
+  rename(County = NAME) |>
+  mutate(County = str_to_title(str_remove_all(County,", Maryland|County"))) |>
+  mutate(County = str_trim(County,side="both")) |>
+  rename(population = estimate) |>
   select(County, population, geometry)
 
 md_county_population
@@ -317,7 +317,7 @@ Now we can join them.
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_voters_per_10k <- md_county_population %>%
+md_voters_per_10k <- md_county_population |>
   left_join(voters_by_county)
 
 md_voters_per_10k
@@ -330,8 +330,8 @@ Hang on - there's at least one county with NA values - St. Mary's, which is spel
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_county_population <- md_county_population %>%
-  mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) %>% 
+md_county_population <- md_county_population |>
+  mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) |> 
   mutate(County = if_else(County == "Baltimore", "Baltimore County", County))
 ```
 
@@ -342,9 +342,9 @@ Our final step before visualization, let's calculate the number of voters per 10
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_voters_per_10k <- md_county_population %>%
-  left_join(voters_by_county) %>%
-  mutate(voters_per_10k = TOTAL/population*10000) %>%
+md_voters_per_10k <- md_county_population |>
+  left_join(voters_by_county) |>
+  mutate(voters_per_10k = TOTAL/population*10000) |>
   arrange(desc(voters_per_10k))
 
 md_voters_per_10k
@@ -399,7 +399,7 @@ Let's repeat that for Unaffiliated voters:
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-md_voters_per_10k <- md_voters_per_10k %>% 
+md_voters_per_10k <- md_voters_per_10k |> 
   mutate(una_voters_per_10k = UNA/population*10000)
 ```
 

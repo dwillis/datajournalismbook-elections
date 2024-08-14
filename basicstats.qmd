@@ -43,7 +43,7 @@ Let's start by plotting them to get a sense of the pattern.
 
 ```{r}
 
-reveal_data %>%
+reveal_data |>
   ggplot() +
   geom_point(aes(x=pct_trump,y=businesses_receiving_ppe_pct)) +
   geom_smooth(aes(x=pct_trump,y=businesses_receiving_ppe_pct), method="lm")
@@ -56,7 +56,7 @@ Let's test another variable, the average amount of money provided by PPP per sma
 
 ```{r}
 
-reveal_data %>%
+reveal_data |>
   ggplot() +
   geom_point(aes(x=pct_trump,y=ppe_amount_per_employee)) +
   geom_smooth(aes(x=pct_trump,y=ppe_amount_per_employee), method="lm")
@@ -78,9 +78,9 @@ All r values will fall somewhere on this scale, and how to interpret them isn't 
 We can calculate r with a function from the corrr package called "correlate()". First, we remove the non-numeric values from our reveal_data (state name and a binary vote_2016 column), then we correlate.
 
 ```{r}
-reveal_data %>%
-  select(-state_name, -vote_2016) %>%
-  correlate() %>%
+reveal_data |>
+  select(-state_name, -vote_2016) |>
+  correlate() |>
   select(term, pct_trump)
 
 
@@ -124,8 +124,8 @@ We can do this because, in our data, we have a column with two possible categori
 We could just calculate the averages like we're used to doing.
 
 ```{r}
-reveal_data %>%
-  group_by(vote_2016) %>%
+reveal_data |>
+  group_by(vote_2016) |>
   summarise(
     mean_ppp_amount_per_employee = mean(ppe_amount_per_employee),
     mean_businesses_receiving_ppe_pct = mean(businesses_receiving_ppe_pct)

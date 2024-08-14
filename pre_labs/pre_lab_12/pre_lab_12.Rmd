@@ -76,19 +76,19 @@ Ok, so the information from the first page is there, but this data needs some wo
 
 ```{r}
 # extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] %>% as_tibble(.name_repair = "unique") %>% clean_names()
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
 
 # remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 %>% slice(-(1:2))
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
 
 # make the new dataframe, renaming the columns and ditching the columns we don't want
-new_registrations <- voter_reg_page_1 %>% 
+new_registrations <- voter_reg_page_1 |> 
   # new registration columns
-  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) %>% 
+  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
   # remove commas and fix the datatypes
-  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total)), dupes = as.numeric(gsub(",","",dupes))) %>% 
+  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total)), dupes = as.numeric(gsub(",","",dupes))) |> 
   # exclude the columns we don't want
-  select(-starts_with("x")) %>% 
+  select(-starts_with("x")) |> 
   # add a month and year column
   mutate(month = 10, year = 2022)
 
@@ -103,15 +103,15 @@ Ok, that's one dataframe down. The good news is that making the second dataframe
 
 ```{r}
 # make the new dataframe, renaming the columns and ditching the columns we don't want
-removals <- voter_reg_page_1 %>% 
+removals <- voter_reg_page_1 |> 
   # removals columns
-  rename(method = x13, DEM = x14, REP = x15, GRN = x16, LIB = x17, WCP = x18, UNA = x19, OTH = x20, total = x21) %>% 
+  rename(method = x13, DEM = x14, REP = x15, GRN = x16, LIB = x17, WCP = x18, UNA = x19, OTH = x20, total = x21) |> 
   # remove commas and fix the datatypes
-  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total))) %>% 
+  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total))) |> 
   # exclude the columns we don't want
-  select(-starts_with("x")) %>% 
+  select(-starts_with("x")) |> 
   # exclude rows with NAs
-  filter(!is.na(DEM)) %>% 
+  filter(!is.na(DEM)) |> 
   # add a month and year column
   mutate(month = 10, year = 2022)
 
@@ -129,7 +129,7 @@ Let's start with the `new_registrations` dataframe and figure out the percentage
 **Answer**
 
 ```{r}
-new_registrations <- new_registrations %>% 
+new_registrations <- new_registrations |> 
   mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
 
 View(new_registrations)
@@ -140,7 +140,7 @@ View(new_registrations)
 **Answer**
 
 ```{r}
-removals <- removals %>% 
+removals <- removals |> 
   mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
 
 View(removals)
@@ -167,22 +167,22 @@ Then we can run the same code we did above, except we'll use the year and month 
 
 ```{r}
 # extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] %>% as_tibble(.name_repair = "unique") %>% clean_names()
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
 
 # remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 %>% slice(-(1:2))
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
 
 # make the new dataframe, renaming the columns and ditching the columns we don't want
-assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 %>% 
+assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
   # new registration columns
-  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) %>% 
+  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
 
   # remove commas and fix the datatypes in all the columns except `method`
-  mutate(across(!method, gsub, pattern=",", replacement = "")) %>% 
-  mutate(across(!method, as.numeric)) %>% 
+  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
+  mutate(across(!method, as.numeric)) |> 
 
   # exclude the columns we don't want
-  select(-starts_with("x")) %>% 
+  select(-starts_with("x")) |> 
   # add a month and year column based on our variables
   mutate(month = month, year = year))
 ```
@@ -194,20 +194,20 @@ To make this even more useful for analysis, we could change the names of the col
 
 ```{r}
 # extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] %>% as_tibble(.name_repair = "unique") %>% clean_names()
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
 
 # remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 %>% slice(-(1:2))
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
 
 # make the new dataframe, renaming the columns and ditching the columns we don't want
-assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 %>% 
+assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
   # new registration columns
-  rename(method = x2, !!paste0("DEM_",month) := x3, !!paste0("REP_",month) := x4, !!paste0("GRN_",month) := x5, !!paste0("LIB_",month) := x6, !!paste0("WCP_",month) := x7, !!paste0("UNA_",month) := x8, !!paste0("OTH_",month) := x9, !!paste0("total_",month) := x10, !!paste0("dupes_",month) := x11) %>% 
+  rename(method = x2, !!paste0("DEM_",month) := x3, !!paste0("REP_",month) := x4, !!paste0("GRN_",month) := x5, !!paste0("LIB_",month) := x6, !!paste0("WCP_",month) := x7, !!paste0("UNA_",month) := x8, !!paste0("OTH_",month) := x9, !!paste0("total_",month) := x10, !!paste0("dupes_",month) := x11) |> 
   # remove commas and fix the datatypes
-  mutate(across(!method, gsub, pattern=",", replacement = "")) %>% 
-  mutate(across(!method, as.numeric)) %>% 
+  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
+  mutate(across(!method, as.numeric)) |> 
   # exclude the columns we don't want
-  select(-starts_with("x")) %>% 
+  select(-starts_with("x")) |> 
   # add a month and year column based on our variables
   mutate(month = month, year = year))
 ```
@@ -219,7 +219,7 @@ Now we can join the October and June new registration dataframes and compare the
 **Answer** 
 
 ```{r}
-new_reg_oct_jun <- new_registrations %>% 
+new_reg_oct_jun <- new_registrations |> 
   inner_join(new_registrations_2022_06, by=c('method', 'year'))
 ```
 
@@ -230,8 +230,8 @@ Looks like we'll need to fix the column referring to absentee ballots. Let's do 
 **Answer** 
 
 ```{r}
-new_reg_oct_jun <- new_registrations %>% 
-  mutate(method = if_else(method == 'MAIL-IN BALLOT (FPCA)', 'ABSENTEE BALLOT (FPCA)', method)) %>% 
+new_reg_oct_jun <- new_registrations |> 
+  mutate(method = if_else(method == 'MAIL-IN BALLOT (FPCA)', 'ABSENTEE BALLOT (FPCA)', method)) |> 
   inner_join(new_registrations_2022_06, by=c('method', 'year'))
 ```
 
@@ -242,9 +242,9 @@ Now let's calculate some percentages and the difference between them.
 **Answer** 
 
 ```{r}
-new_reg_oct_jun <- new_reg_oct_jun %>% 
-  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100) %>% 
-  mutate(pct_dem06 = DEM_06/total_06 *100, pct_rep06 = REP_06/total_06 *100, pct_una06 = UNA_06/total_06 *100) %>%
+new_reg_oct_jun <- new_reg_oct_jun |> 
+  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100) |> 
+  mutate(pct_dem06 = DEM_06/total_06 *100, pct_rep06 = REP_06/total_06 *100, pct_una06 = UNA_06/total_06 *100) |>
   mutate(diff_dem = pct_dem-pct_dem06, diff_rep = pct_rep-pct_rep06, diff_una = pct_una-pct_una06)
 ```
 
@@ -261,8 +261,8 @@ More than numbers, we are going to want to see this data so we can spot potentia
 **Answer**
 
 ```{r fig.width=9}
-new_reg_oct_jun %>% 
-  filter(total > 0, method != 'TOTAL') %>% 
+new_reg_oct_jun |> 
+  filter(total > 0, method != 'TOTAL') |> 
   ggplot() +
   geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
   coord_flip() + 
@@ -283,8 +283,8 @@ Ok, but what about a side-by-side comparison? Can we put the October and June pe
 
 ```{r}
 library(cowplot)
-plot_oct <- new_reg_oct_jun %>% 
-  filter(total > 10, method != 'TOTAL') %>% 
+plot_oct <- new_reg_oct_jun |> 
+  filter(total > 10, method != 'TOTAL') |> 
   ggplot() +
   geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
   coord_flip() + 
@@ -295,8 +295,8 @@ plot_oct <- new_reg_oct_jun %>%
     title = "October"
   )
 
-plot_jun <- new_reg_oct_jun %>% 
-  filter(total_06 > 10, method != 'TOTAL') %>% 
+plot_jun <- new_reg_oct_jun |> 
+  filter(total_06 > 10, method != 'TOTAL') |> 
   ggplot() +
   geom_bar(aes(x=reorder(method, pct_dem06), weight=pct_dem06))+
   coord_flip() + 

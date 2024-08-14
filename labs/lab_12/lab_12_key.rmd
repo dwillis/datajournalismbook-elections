@@ -50,25 +50,25 @@ Put your sentence in the answer below, along with one other question you could a
 
 # Read in a table of WVU crime incidents
 
-wvu_crime <- read_csv("https://raw.githubusercontent.com/dwillis/wvu-projects/master/crime-log/crime_log.csv") %>% clean_names()
+wvu_crime <- read_csv("https://raw.githubusercontent.com/dwillis/wvu-projects/master/crime-log/crime_log.csv") |> clean_names()
 
-wvu_crime <- wvu_crime %>%
-  mutate(datetime = mdy_hm(datetime)) %>%
+wvu_crime <- wvu_crime |>
+  mutate(datetime = mdy_hm(datetime)) |>
   mutate(date = date(datetime), hour = hour(datetime), day_of_week = wday(date))
 
-max_date <- wvu_crime %>%
-  arrange(desc(date)) %>%
+max_date <- wvu_crime |>
+  arrange(desc(date)) |>
   slice(1)
 
-most_recent <- wvu_crime %>%
+most_recent <- wvu_crime |>
   filter(date == max_date$date)
 
-first_title <- most_recent %>% select(title) %>% slice(1)
+first_title <- most_recent |> select(title) |> slice(1)
 
-previous_30 <- wvu_crime %>%
-  arrange(desc(date)) %>%
-  filter(title == first_title$title) %>%
-  filter(date >= most_recent$date - 30) %>% nrow()
+previous_30 <- wvu_crime |>
+  arrange(desc(date)) |>
+  filter(title == first_title$title) |>
+  filter(date >= most_recent$date - 30) |> nrow()
 
 sentence <- paste("The first incident on ", format(max_date$date, format="%B %d"), " was ", first_title$title, " and has occurred ", previous_30, " times in the past 30 days.", sep="")
 
@@ -93,20 +93,20 @@ Google the top 2-3 zip codes from both Maryland and non-Maryland results and des
 **A2.** The top 3 Maryland zip codes are in Montgomery County and specifically in the western part of that county. The top non-Maryland zip codes are from Northwest D.C. just over the border.
 
 ```{r}
-vaccinations_by_zip <- read_csv("https://raw.githubusercontent.com/state-of-maryland/VaccineCSVs/master/Vax_ZIP_CODE_FirstSecondSingle_Totals_Raw.csv") %>%
-  clean_names() %>%
-  filter(!is.na(fully_vaccinated)) %>%
-  filter(zip_code >= 10000) %>%
+vaccinations_by_zip <- read_csv("https://raw.githubusercontent.com/state-of-maryland/VaccineCSVs/master/Vax_ZIP_CODE_FirstSecondSingle_Totals_Raw.csv") |>
+  clean_names() |>
+  filter(!is.na(fully_vaccinated)) |>
+  filter(zip_code >= 10000) |>
   mutate(date=today())
 
-maryland_zips <- vaccinations_by_zip %>%
-  filter(zip_code > 20587 & zip_code < 21931) %>%
-  arrange(desc(fully_vaccinated)) %>%
+maryland_zips <- vaccinations_by_zip |>
+  filter(zip_code > 20587 & zip_code < 21931) |>
+  arrange(desc(fully_vaccinated)) |>
   slice(1:25)
 
-non_maryland_zips <- vaccinations_by_zip %>%
-  filter(zip_code < 20588 | zip_code > 21931) %>%
-  arrange(desc(fully_vaccinated)) %>%
+non_maryland_zips <- vaccinations_by_zip |>
+  filter(zip_code < 20588 | zip_code > 21931) |>
+  arrange(desc(fully_vaccinated)) |>
   slice(1:25)
 
 write_csv(maryland_zips, paste("maryland_zips_",str_replace_all(today(), "-", ""),".csv", sep=""))
@@ -124,7 +124,7 @@ Describe the output of the map below, and say what you think the most interestin
 ```{r}
 
 # Get vaccination data for all MD zip codes
-maryland_zips <- vaccinations_by_zip %>%
+maryland_zips <- vaccinations_by_zip |>
   filter(zip_code > 20587 & zip_code < 21931)
 
 # Get MD ZCTA Census data with geometry
@@ -134,25 +134,25 @@ md_zcta_population <- get_acs(geography = "zcta",
               geometry = TRUE)
 
 # Ensure that zip_code is a character column
-maryland_zips <- maryland_zips %>%
+maryland_zips <- maryland_zips |>
     mutate(zip_code = as.character(zip_code))
 
 # Get the latest date
-latest_date <- maryland_zips %>% summarize(max(date))
+latest_date <- maryland_zips |> summarize(max(date))
 
-maryland_zips_with_geometry <- md_zcta_population %>%
-  inner_join(maryland_zips, by=c('GEOID'='zip_code')) %>%
+maryland_zips_with_geometry <- md_zcta_population |>
+  inner_join(maryland_zips, by=c('GEOID'='zip_code')) |>
   mutate(pct_vaccinated = (fully_vaccinated/estimate)*100)
 
-maryland_zips_below_50pct <- maryland_zips_with_geometry %>%
+maryland_zips_below_50pct <- maryland_zips_with_geometry |>
   filter(pct_vaccinated < 50)
 
 counties <- counties()
 
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
-maryland_zips_below_50pct %>%
+maryland_zips_below_50pct |>
 ggplot() +
   geom_sf(data=md_counties) +
   geom_sf(aes(fill=pct_vaccinated)) +

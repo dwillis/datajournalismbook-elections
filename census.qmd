@@ -70,21 +70,21 @@ p10
 As you can see, we have a GEOID, NAME, then variable and value. Variable and value are going to be the same. Because those are named the same thing, to merge them together, we need to rename them.
 
 ```{r, eval=FALSE}
-p10 %>% select(GEOID, NAME, value) %>% rename(Population2010=value) -> p2010
+p10 |> select(GEOID, NAME, value) |> rename(Population2010=value) -> p2010
 
-p00 %>% select(GEOID, NAME, value) %>% rename(Population2000=value) -> p2000
+p00 |> select(GEOID, NAME, value) |> rename(Population2000=value) -> p2000
 ```
 
 Now we join the data together.
 
 ```{r, eval=FALSE}
-alldata <- p2000 %>% inner_join(p2010)
+alldata <- p2000 |> inner_join(p2010)
 ```
 
 And now we calculate the percent change.
 
 ```{r, eval=FALSE}
-alldata %>% mutate(change = ((Population2010-Population2000)/Population2000)*100) %>% arrange(desc(change))
+alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
 ```
 
 And just like that: Nevada.
@@ -107,7 +107,7 @@ md <- get_acs(geography = "county",
               state = "MD",
               year = 2022)
 
-md <- md %>% arrange(desc(estimate)) %>% top_n(20, estimate)
+md <- md |> arrange(desc(estimate)) |> top_n(20, estimate)
 
 md
 
@@ -116,8 +116,8 @@ md
 Howard, Calvert, Montgomery, Anne Arundel, Charles. What do they all have in common? Lots of suburban flight from DC and Baltimore. But do the margins of error let us say one county is richer than the other. We can find this out visually using error bars. Don't worry much about the code here -- we'll cover that soon enough.
 
 ```{r}
-md %>%
-  mutate(NAME = gsub(" County, Maryland", "", NAME)) %>%
+md |>
+  mutate(NAME = gsub(" County, Maryland", "", NAME)) |>
   ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
   geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
   geom_point(color = "red") +
@@ -152,12 +152,12 @@ md10 <- get_acs(geography = "county",
 What I'm going to do next is a lot, but each step is simple. I'm going to join the data together, so each county has one line of data. Then I'm going to rename some fields that repeat. Then I'm going to calculate the minimium and maximum value of the estimate using the margin of error. That'll help me later. After that, I'm going to calculate a perent change and sort it by that change.
 
 ```{r}
-md10 %>%
-  inner_join(md22, by=c("GEOID", "NAME")) %>%
-  rename(estimate2010=estimate.x, estimate2022=estimate.y) %>%
-  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2020 = estimate2022-moe.y, max2020 = estimate2022+moe.y) %>%
-  select(-variable.x, -variable.y, -moe.x, -moe.y) %>%
-  mutate(change = ((estimate2022-estimate2010)/estimate2010)*100) %>%
+md10 |>
+  inner_join(md22, by=c("GEOID", "NAME")) |>
+  rename(estimate2010=estimate.x, estimate2022=estimate.y) |>
+  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2020 = estimate2022-moe.y, max2020 = estimate2022+moe.y) |>
+  select(-variable.x, -variable.y, -moe.x, -moe.y) |>
+  mutate(change = ((estimate2022-estimate2010)/estimate2010)*100) |>
   arrange(change)
 ```
 

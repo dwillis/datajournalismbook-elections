@@ -585,21 +585,21 @@ To do that by hand, we'd have to take each of the 195,856 individual rows (or ob
 
 `dplyr` has a group by function in it that does just this. A massive amount of data analysis involves grouping like things together and then doing simple things like counting them, or averaging them together. So it's a good place to start.
 
-So to do this, we'll take our dataset and we'll introduce a new operator: `%>%`. The best way to read that operator, in my opinion, is to interpret that as "and then do this."
+So to do this, we'll take our dataset and we'll introduce a new operator: `|>`. The best way to read that operator, in my opinion, is to interpret that as "and then do this."
 
-We're going to establish a pattern that will come up again and again throughout this book: `data %>% function`. In English: take your data set and then do this specific action to it.
+We're going to establish a pattern that will come up again and again throughout this book: `data |> function`. In English: take your data set and then do this specific action to it.
 
 The first step of every analysis starts with the data being used. Then we apply functions to the data.
 
-In our case, the pattern that you'll use many, many times is: `data %>% group_by(COLUMN NAME) %>% summarize(VARIABLE NAME = AGGREGATE FUNCTION(COLUMN NAME))`
+In our case, the pattern that you'll use many, many times is: `data |> group_by(COLUMN NAME) |> summarize(VARIABLE NAME = AGGREGATE FUNCTION(COLUMN NAME))`
 
 In our dataset, the column with county information is called "project_county_name"
 
 Here's the code to count the number of loans in each county:
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name) |>
   summarise(
     count_loans = n()
   )
@@ -615,14 +615,14 @@ Inside the parentheses in summarize, we set up the summaries we want. In this ca
 
 When we run that, we get a list of counties with a count next to them. But it's not in any order.
 
-So we'll add another "and then do this" symbol -- %>% -- and use a new function called `arrange()`. Arrange does what you think it does -- it arranges data in order. By default, it's in ascending order -- smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:
+So we'll add another "and then do this" symbol -- |> -- and use a new function called `arrange()`. Arrange does what you think it does -- it arranges data in order. By default, it's in ascending order -- smallest to largest. But if we want to know the county with the most loans, we need to sort it in descending order. That looks like this:
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name) |>
   summarise(
     count_loans = n()
-  ) %>%
+  ) |>
   arrange(desc(count_loans))
 ```
 Montgomery County has 38,781 loans, more than any other Maryland county.
@@ -641,11 +641,11 @@ The ppp loan data contains a column detailing the race of the business owner: "r
 We can group by "project_county_name" and "race" to see how many loans fell in each category in each county. We'll sort alphabetically by county and then race.
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name,race) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name,race) |>
   summarise(
     count_loans = n()
-  ) %>%
+  ) |>
   arrange(project_county_name,race)
 ```
 
@@ -658,26 +658,26 @@ In the last example, we grouped like records together and counted them, but ther
 Let's say we wanted to know the total dollar amount of loans to each county? For that, we could use the `sum()` function to add up all of the loan values in the column "amount". We put the column we want to total -- "amount" -- inside the sum() function `sum(amount)`. Note that we can simply add a new summarize function here, keeping our count_loans field in our output table.
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name) |>
   summarise(
     count_loans = n(),
     total_loans_amount = sum(amount)
-  ) %>%
+  ) |>
   arrange(desc(total_loans_amount))
 ```
 
 We can also calculate the average size loan in each county -- the mean -- and the loan amount that sits at the midpoint of our data -- the median.  
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name) |>
   summarise(
     count_loans = n(),
     total_loans_amount = sum(amount),
     mean_loan_amount = mean(amount),
     median_loan_amount = median(amount)
-  ) %>%
+  ) |>
   arrange(desc(mean_loan_amount))
 ```
 
@@ -689,8 +689,8 @@ What about the highest and lowest loan values in each county?  For that, we can 
 
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(project_county_name) %>%
+ppp_maryland_loans |>
+  group_by(project_county_name) |>
   summarise(
     count_loans = n(),
     total_loans_amount = sum(amount),
@@ -698,7 +698,7 @@ ppp_maryland_loans %>%
     median_loan_amount = median(amount),
     min_loan_amount = min(amount),
     max_loan_amount = max(amount)
-  ) %>%
+  ) |>
   arrange(desc(max_loan_amount))
 ```
 From this, we can see that the largest loan amounts in Anne Arundel County, Baltimore County, Carroll County, Garrett County and Howard County were $10 million, the maximum loan value authorized under the program.
@@ -706,7 +706,7 @@ From this, we can see that the largest loan amounts in Anne Arundel County, Balt
 It would be interesting to see what these companies are that got the maximum of $10 million.  To do that, we could simply take our original data set and sort it from highest to lowest on the loan amount.
 
 ```{r}
-ppp_maryland_loans %>%
+ppp_maryland_loans |>
   arrange(desc(amount))
 
 ```
@@ -737,8 +737,8 @@ First, let's add a column called `percent_payroll` for the percentage of each lo
 If we look at what we got when we imported the data, you'll see there's `payroll_proceed` as the numerator, and we'll use `amount` as the denominator.
 
 ```{r}
-maryland_ppp %>%
-  select(loan_number, amount, payroll_proceed) %>%
+maryland_ppp |>
+  select(loan_number, amount, payroll_proceed) |>
   mutate(
   percent_payroll = payroll_proceed/amount
 )
@@ -746,8 +746,8 @@ maryland_ppp %>%
 Now we've got our `percent_payroll` column. But what do you see right away? Do those numbers look like we expect them to? No. They're a decimal expressed as a percentage. So let's fix that by multiplying by 100.
 
 ```{r}
-maryland_ppp %>%
-  select(loan_number, amount, payroll_proceed) %>%
+maryland_ppp |>
+  select(loan_number, amount, payroll_proceed) |>
   mutate(
   percent_payroll = (payroll_proceed/amount)*100
 )
@@ -755,21 +755,21 @@ maryland_ppp %>%
 Now, does this ordering do anything for us? No. Let's fix that with arrange.
 
 ```{r}
-maryland_ppp %>%
-  select(loan_number, amount, payroll_proceed) %>%
+maryland_ppp |>
+  select(loan_number, amount, payroll_proceed) |>
   mutate(
   percent_payroll = (payroll_proceed/amount)*100
-)  %>% arrange(desc(percent_payroll))
+)  |> arrange(desc(percent_payroll))
 ```
 
 So now we have loans ordered by `percent_payroll` with the highest percentage first. Most loans are predominantly used for payroll expenses, so let's reverse that `arrange` function to show the lowest percentages first, then with the largest amount first.
 
 ```{r}
-maryland_ppp %>%
-  select(loan_number, amount, payroll_proceed) %>%
+maryland_ppp |>
+  select(loan_number, amount, payroll_proceed) |>
   mutate(
   percent_payroll = (payroll_proceed/amount)*100
-)  %>% arrange(percent_payroll, desc(amount))
+)  |> arrange(percent_payroll, desc(amount))
 ```
 
 There's a loan application for $1.7 million where none of it would be used for payroll, and two six-figure loans with the same percentage. Wonder what those are about?
@@ -787,7 +787,7 @@ You'll notice that there's a mix of styles: "Baltimore" and "BALTIMORE" for exam
 So how can we fix that? Mutate - it's not just for math! And a function called `str_to_upper` that will convert a character column into all uppercase.
 
 ```{r}
-maryland_ppp %>%
+maryland_ppp |>
   mutate(
     upper_city = str_to_upper(city)
 )
@@ -806,7 +806,7 @@ Mutate is even more useful when combined with some additional functions. Let's s
 We can create a new column that accounts for these possibilities and populate it using mutate and `case_when`, which is like an if/else statement but for more than two options.
 
 ```{r}
-maryland_with_in_out <- maryland_ppp %>%
+maryland_with_in_out <- maryland_ppp |>
   mutate(
     in_out = case_when(
         servicing_lender_state == 'NA' ~ "NA",
@@ -821,7 +821,7 @@ We can then use our new `in_out` column in group_by statements to make summarizi
 In this case there are no Maryland loans where `servicing_lender_state` has a value of 'NA', but you should never assume that will be the case for a dataset. If you know that the only options are the lender is in Maryland or is outside it, you can rewrite the previous code as an if/else statement:
 
 ```{r}
-maryland_with_in_out <- maryland_ppp %>%
+maryland_with_in_out <- maryland_ppp |>
   mutate(
     in_out = if_else(
         servicing_lender_state == 'MD', "IN", "OUT"
@@ -856,7 +856,7 @@ head(maryland_ppp)
 Note the date is a factor, not a date. We have to fix that. There's a lot of ways to fix dates. The base R way is to use formatting. The code is ... a little odd ... but it's useful to know if you get a really odd date format. What you are doing is essentially parsing the date into it's component parts then reassembling it into a date using formatting.
 
 ```{r}
-new_maryland_ppp <- maryland_ppp %>% mutate(
+new_maryland_ppp <- maryland_ppp |> mutate(
     CleanDate = as.POSIXct(date_approved, format="%Y-%m-%d %H:%M:%S")
 )
 head(new_maryland_ppp)
@@ -875,7 +875,7 @@ library(lubridate)
 Lubridate can handle this tickets data easier with one of it's many functions. The functions parse dates given a basic pattern. In this case, our data is in a very common pattern of month date year hours minutes seconds. Lubridate has a function called `ymd_hms`.
 
 ```{r}
-lubridate_maryland_ppp <- maryland_ppp %>% mutate(
+lubridate_maryland_ppp <- maryland_ppp |> mutate(
     CleanDate = ymd_hms(date_approved)
 )
 head(lubridate_maryland_ppp)
@@ -904,10 +904,10 @@ How about what month are the most applications approved? We could use formatting
 So to follow along here, we're going to use mutate to create a month field, group by to lump them together, summarize to count them up and arrange to order them. We're just chaining things together.
 
 ```{r}
-maryland_ppp %>%
-  mutate(Month = floor_date(date_approved, "month")) %>%
-  group_by(Month) %>%
-  summarise(total = n()) %>%
+maryland_ppp |>
+  mutate(Month = floor_date(date_approved, "month")) |>
+  group_by(Month) |>
+  summarise(total = n()) |>
   arrange(desc(total))
 ```
 
@@ -938,7 +938,7 @@ The data we want to filter on is in `project_county_name`. So we're going to use
 **Be careful: `=` is not `==` and `=` is not "equal to". `=` is an assignment operator in most languages -- how things get named.**
 
 ```{r}
-prince_georges <- maryland_ppp %>% filter(project_county_name == "PRINCE GEORGES")
+prince_georges <- maryland_ppp |> filter(project_county_name == "PRINCE GEORGES")
 
 head(prince_georges)
 ```
@@ -950,7 +950,7 @@ We also have more data than we might want. For example, we may only want to work
 To simplify our dataset, we can use select.
 
 ```{r}
-selected_prince_georges <- prince_georges %>% select(name, address, city, zip, amount)
+selected_prince_georges <- prince_georges |> select(name, address, city, zip, amount)
 
 head(selected_prince_georges)
 ```
@@ -962,7 +962,7 @@ And now we only have five columns of data for whatever analysis we might want to
 So let's say we wanted to know how many Prince George's applications were from non-profit organizations and applied for more than $150,000. We can do this a number of ways. The first is we can chain together a whole lot of filters.
 
 ```{r}
-large_prince_georges_nonprofit <- maryland_ppp %>% filter(project_county_name == "PRINCE GEORGES") %>% filter(business_type == "Non-Profit Organization") %>% filter(amount > 150000)
+large_prince_georges_nonprofit <- maryland_ppp |> filter(project_county_name == "PRINCE GEORGES") |> filter(business_type == "Non-Profit Organization") |> filter(amount > 150000)
 
 nrow(large_prince_georges_nonprofit)
 ```
@@ -974,14 +974,14 @@ The difference? With AND, all three things must be true to be included. With OR,
 Here's the difference.
 
 ```{r}
-and_prince_georges <- maryland_ppp %>% filter(project_county_name == "PRINCE GEORGES" & business_type == "Non-Profit Organization" & amount > 150000)
+and_prince_georges <- maryland_ppp |> filter(project_county_name == "PRINCE GEORGES" & business_type == "Non-Profit Organization" & amount > 150000)
 
 nrow(and_prince_georges)
 ```
 So AND gives us the same answer we got before. What does OR give us?
 
 ```{r}
-or_prince_georges <- maryland_ppp %>% filter(project_county_name == "PRINCE GEORGES" | business_type == "Non-Profit Organization" | amount > 150000)
+or_prince_georges <- maryland_ppp |> filter(project_county_name == "PRINCE GEORGES" | business_type == "Non-Profit Organization" | amount > 150000)
 
 nrow(or_prince_georges)
 ```
@@ -1078,7 +1078,7 @@ We can fix that pretty easily, by overwriting the column while changing the data
 
 ```{r}
 
-ppp_maryland_loans <- ppp_maryland_loans %>%
+ppp_maryland_loans <- ppp_maryland_loans |>
   mutate(id = as.character(id))
 
 ```
@@ -1103,22 +1103,22 @@ There are 192,959 NA values in this column.  This makes sense. Not every busines
 
 ```{r}
 
-ppp_maryland_loans %>%
-  group_by(franchise_name) %>%
+ppp_maryland_loans |>
+  group_by(franchise_name) |>
   summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(desc(count))
 ```
 Now let's try the "forgiveness_amount" column, which represents the amount of the loan that was forgiven, or not required to be paid back. In this case, there are 135,073 NA values. The rest have different dollar amounts.  
 
 ```{r}
 
-ppp_maryland_loans %>%
-  group_by(forgiveness_amount) %>%
+ppp_maryland_loans |>
+  group_by(forgiveness_amount) |>
   summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(desc(count))
 ```
 Do the 135,073 NAs represent loans that weren't forgiven?
@@ -1131,23 +1131,23 @@ We could check the "forgiveness_date" column, to see how many NAs it has: 135,70
 
 ```{r}
 
-ppp_maryland_loans %>%
-  group_by(forgiveness_date) %>%
+ppp_maryland_loans |>
+  group_by(forgiveness_date) |>
   summarise(
     count=n()
-  ) %>%
-  filter(is.na(forgiveness_date)) %>%
+  ) |>
+  filter(is.na(forgiveness_date)) |>
   arrange(desc(count))
 ```
 We can group by forgiveness_amount and forgiveness_date to determine whether one is NA when the other is NA.  Because this grouping has 135,073 rows, too, we know this to be the case.
 
 ```{r}
-ppp_maryland_loans %>%
-  group_by(forgiveness_amount, forgiveness_date) %>%
+ppp_maryland_loans |>
+  group_by(forgiveness_amount, forgiveness_date) |>
   summarise(
     count=n()
-  ) %>%
-  filter(is.na(forgiveness_date)) %>%
+  ) |>
+  filter(is.na(forgiveness_date)) |>
   arrange(desc(count))
 
 ```
@@ -1165,12 +1165,12 @@ library(lubridate)
 The `floor_date` function will allow us to group by month, instead of a single day.
 
 ```{r}
-ppp_maryland_loans %>%
-  mutate(month_year_approved = floor_date(date_approved, "month")) %>%
-  group_by(month_year_approved) %>%
+ppp_maryland_loans |>
+  mutate(month_year_approved = floor_date(date_approved, "month")) |>
+  group_by(month_year_approved) |>
    summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(month_year_approved)
 ```
 
@@ -1190,7 +1190,7 @@ Let's consider the loan amount column from our Maryland PPP data, and find the l
 
 ```{r}
 
-ppp_maryland_loans %>%
+ppp_maryland_loans |>
   summarise(max_amount = max(amount),
             min_amount= min(amount))
 ```
@@ -1200,15 +1200,15 @@ Let's take a look at the full record set for any loan less than $100.
 
 ```{r}
 
-ppp_maryland_loans %>%
+ppp_maryland_loans |>
  filter(amount < 100)
 ```
 We have two businesses, "GETGFTD LLC" and "LEGACY SPINE AND PAIN LLC" that both got very small loans of \$6 and \$78. Scan through the columns. Let's check for internal consistency.  There are other columns in the data that have related information: initial_approval_amount, current_approval_amount and payroll_proceed. Let's select just those columns
 
 ```{r}
 
-ppp_maryland_loans %>%
- filter(amount < 100) %>%
+ppp_maryland_loans |>
+ filter(amount < 100) |>
   select(name, amount, initial_approval_amount, current_approval_amount, payroll_proceed)
 ```
 Those are all the same value, so at least this number is internally consistent.  But is it correct? Did someone mistype it when entering the data?  
@@ -1276,7 +1276,7 @@ The `janitor` library makes fixing headers trivially simple with the function `c
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
   clean_names()
 
 # display the cleaned dataset
@@ -1291,8 +1291,8 @@ We can use a tidyverse function `rename()` to fix that. Let's just call it `id`
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
   rename(id = x1_id)
 
 # display the cleaned dataset
@@ -1307,7 +1307,7 @@ Right now, the amount column is stored as a character.  Do you see the little `<
 
 ```{r, error=TRUE}
 # cleaning function
-total_arnold_md_loans <- cleaned_arnold_md_loans %>%
+total_arnold_md_loans <- cleaned_arnold_md_loans |>
   summarise(total_amount = sum(amount))
 
 # display the cleaned dataset
@@ -1320,9 +1320,9 @@ We got an "invalid 'type' (character)" error.  So let's fix that using the mutat
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
   mutate(amount = as.numeric(amount))
 
 
@@ -1335,7 +1335,7 @@ Notice that the amount has been converted to a `<dbl>`, which is short for doubl
 
 ```{r}
 # cleaning function
-total_arnold_md_loans <- cleaned_arnold_md_loans %>%
+total_arnold_md_loans <- cleaned_arnold_md_loans |>
   summarise(total_amount = sum(amount))
 
 # display the cleaned dataset
@@ -1352,7 +1352,7 @@ So the question is, do we have any records repeated?
 Here we'll use a function called `get_dupes` from the janitor library to check for fully repeated records in our cleaned data set.   
 
 ```{r}
-cleaned_arnold_md_loans %>%
+cleaned_arnold_md_loans |>
   get_dupes()
 ```
 
@@ -1362,10 +1362,10 @@ We can fix this by adding the function `distinct()` to our cleaning script.  Thi
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
   distinct()
 
 
@@ -1384,11 +1384,11 @@ We're going to write code that tells R to keep the first five digits on the left
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
   mutate(zip = str_sub(zip, start=1L, end=5L))
 
 
@@ -1403,12 +1403,12 @@ We'll use a different set of functions to standardize how we standardize the dif
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
   mutate(city = str_to_title(city))
 
 
@@ -1421,13 +1421,13 @@ That was enough to standardize two values (ARNOLD and arnold).  The only ones th
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     city == "Anold" ~ "Arnold",
     TRUE ~ city
@@ -1447,13 +1447,13 @@ We could fix "Arnld" by adding another line inside that function, that looks ide
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans_ <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_arnold_md_loans_ <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     city == "Anold" ~ "Arnold",
     city == "Arnld" ~ "Arnold",
@@ -1472,13 +1472,13 @@ The second line of our case_when() function below now says, in English: look in 
 
 ```{r}
 # cleaning function
-cleaned_arnold_md_loans <- arnold_md_loans %>%
-  clean_names() %>%
-  rename(id = x1_id) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_arnold_md_loans <- arnold_md_loans |>
+  clean_names() |>
+  rename(id = x1_id) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     city == "Anold" ~ "Arnold",
     str_detect(city,"^Arnl") ~ "Arnold",
@@ -1550,12 +1550,12 @@ Now let's try and group and count the number of loans by city. To make it a bit 
 The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "a" OR (the vertical "|", called a pipe, means OR) an uppercase "A".  
 
 ```{r}
-md_loans %>%
-  group_by(city) %>%
+md_loans |>
+  group_by(city) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(city, "^a|^A")) %>%
+  ) |>
+  filter(str_detect(city, "^a|^A")) |>
   arrange(city)
 ```
 
@@ -1570,8 +1570,8 @@ The key collision merge function takes each string and extracts the key parts of
 One rule you should follow when using this is: **do not overwrite your original fields**. Always work on a copy. If you overwrite your original field, how will you know if it did the right thing? How can you compare it to your original data? To follow this, I'm going to mutate a new field called clean_city and put the results of key collision merge there.
 
 ```{r}
-cleaned_md_loans <- md_loans %>%
-  mutate(city_clean=key_collision_merge(city)) %>%
+cleaned_md_loans <- md_loans |>
+  mutate(city_clean=key_collision_merge(city)) |>
   select(id:city, city_clean, everything())
 
 cleaned_md_loans
@@ -1580,12 +1580,12 @@ cleaned_md_loans
 To examine changes `refinr` made, let's examine the changes it made to cities that start with the letter "A".
 
 ```{r}
-cleaned_md_loans %>%
-  group_by(city_clean, city) %>%
+cleaned_md_loans |>
+  group_by(city_clean, city) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(city, "^a|^A")) %>%
+  ) |>
+  filter(str_detect(city, "^a|^A")) |>
   arrange(city)
 ```
 It got a bunch of things right.  It merged three variations of "Aberdeen" -- "aberdeen","Aberdeen" and "ABERDEEN" -- and it didn't merge it with "Aberdeen Proving Ground", which are  two distinct places. But it wasn't smart enough to convert "Abereen" to "Aberdeen".
@@ -1595,8 +1595,8 @@ It also merged "Annapolis" and "ANNAPOLIS" under "Annapolis", and was smart enou
 There's another merging algorithim that's part of refinr that works a bit differently, called `n_gram_merge()`.  Let's try applying that one.
 
 ```{r}
-cleaned_md_loans <- md_loans %>%
-  mutate(city_clean=n_gram_merge(city)) %>%
+cleaned_md_loans <- md_loans |>
+  mutate(city_clean=n_gram_merge(city)) |>
   select(id:city, city_clean, everything())
 
 cleaned_md_loans
@@ -1606,12 +1606,12 @@ cleaned_md_loans
 To examine changes `refinr` made with this algorithm, let's again look at cities that start with the letter "A". Examining Aberdeen and Annapolis, we see there wasn't a substantial change from the previous method.
 
 ```{r}
-cleaned_md_loans %>%
-  group_by(city_clean, city) %>%
+cleaned_md_loans |>
+  group_by(city_clean, city) |>
   summarise(
     count=n()
-  ) %>%
-  filter(str_detect(city, "^a|^A")) %>%
+  ) |>
+  filter(str_detect(city, "^a|^A")) |>
   arrange(city)
 ```
 That's how you use the Open Refine r package, refinr.  
@@ -1808,7 +1808,7 @@ See the "Net Dollars" column? Thanks to the dollar signs, R doesn't recognize th
 
 ```{r}
 lender_types <- read_csv("data/tabula-PPP_Report_Public_210531-508.csv", skip=1, col_names=c("type", "count", "approved", "net_dollars"))
-lender_types <- lender_types %>% mutate(net_dollars=as.numeric(parse_number(net_dollars)))
+lender_types <- lender_types |> mutate(net_dollars=as.numeric(parse_number(net_dollars)))
 lender_types
 ```
 
@@ -1885,13 +1885,13 @@ In the best-case scenario, the two tables we want to join share a common column.
 We can do this join multiple ways and get a similar result. We can put the Maryland file on the left and the NAICS codes on the right and use a left join to get them all together. And we use `by=` to join by the correct column. And to avoid rendering hundreds of rows of data, I'm going to count the rows at the end. The reason I'm going this is important: **Rule 1 in joining data is having an idea of what you are expecting to get**. So with a left join with applications on the left, I have 195,869 applications, so I expect to get 195,869 rows when I'm done.
 
 ```{r}
-maryland_ppp %>% left_join(naics_codes, by="naics_code") %>% select(name, naics_code, title) %>% nrow()
+maryland_ppp |> left_join(naics_codes, by="naics_code") |> select(name, naics_code, title) |> nrow()
 ```
 
 Remove the nrow and run it again for yourself. By default, `dplyr` will do a "natural" join, where it'll match all the matching columns in both tables. So if we take out the by, it'll use all the common columns between the tables. That may not be right in every instance but let's try it. If it works, we should get 195,869 rows.
 
 ```{r}
-maryland_ppp %>% left_join(naics_codes) %>% select(name, naics_code, title)
+maryland_ppp |> left_join(naics_codes) |> select(name, naics_code, title)
 ```
 
 Since we only have one column in common between the two tables, the join only used that column. And we got the same answer. If we had more columns in common, you could see in your results columns with .X after them - that's a sign of duplicative columns between two tables, and you may decide you don't need both moving forward.
@@ -1899,7 +1899,7 @@ Since we only have one column in common between the two tables, the join only us
 Let's save our joined data to a new dataframe, but this time let's remove the select function so we don't limit the columns to just three.
 
 ```{r}
-maryland_ppp_with_naics <- maryland_ppp %>% left_join(naics_codes)
+maryland_ppp_with_naics <- maryland_ppp |> left_join(naics_codes)
 ```
 
 Now, with our joined data, we can answer questions in a more useful way. But joins can do even more than just provide lookups; they can bring in additional data to enable you to ask more sophisticated questions.
@@ -1917,7 +1917,7 @@ Note that this file describes Zip Code Tabulation Areas, which are very similar 
 Again, we can use a `left_join` to make our demographic data available. This time we'll need to specify the two fields to join because they do not have identical names. We'll use `zip` from our PPP data and `ZCTA5N` from the demographic data:
 
 ```{r, error=TRUE}
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics |> left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
 ```
 
 You probably got an error when running that:
@@ -1932,13 +1932,13 @@ Let's unpack this: R is saying it can't join those two columns because one of th
 We can fix that using our pal `mutate`. Let's change the ZCTA data to be a character, since zip codes aren't really useful as numbers (nobody needs to know the average zip code value).
 
 ```{r}
-maryland_zcta <- maryland_zcta %>% mutate(across(ZCTA5N, as.character))
+maryland_zcta <- maryland_zcta |> mutate(across(ZCTA5N, as.character))
 ```
 
 Now we can re-run the join:
 
 ```{r}
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics |> left_join(maryland_zcta, by=c("zip"="ZCTA5N"))
 
 maryland_ppp_with_naics_and_demographics
 ```
@@ -1946,8 +1946,8 @@ maryland_ppp_with_naics_and_demographics
 Now, if you use the tiny black right arrows to see what's in those demographic columns, you'll see ... a lot of NAs. What's going on there? Are there zip codes in the PPP data that aren't in the ZCTA data? If you go back using the left arrows, you can see that the PPP zip codes often are zip+4, and we're using the ZCTA5N field to join, which is a 5-character field. But not all of the PPP codes are zip+4. So we'll need to use `mutate` once more to give us a PPP zip field that is exactly 5 characters. Let's do this on the original `maryland` dataframe so we can then do the join using our new `zip5` field:
 
 ```{r}
-maryland_ppp_with_naics <- maryland_ppp_with_naics %>% mutate(zip5 = str_sub(zip, 1, 5))
-maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics %>% left_join(maryland_zcta, by=c("zip5"="ZCTA5N"))
+maryland_ppp_with_naics <- maryland_ppp_with_naics |> mutate(zip5 = str_sub(zip, 1, 5))
+maryland_ppp_with_naics_and_demographics <- maryland_ppp_with_naics |> left_join(maryland_zcta, by=c("zip5"="ZCTA5N"))
 ```
 
 Now we've got PPP data and demographic data by zip code. That means we can draw from both datasets in asking our questions. For example, we could see the mean and median loan amount in zip codes with different demographic characteristics. Let's start with zip codes that have more than 50 percent non-Hispanic Black population.
@@ -1955,8 +1955,8 @@ Now we've got PPP data and demographic data by zip code. That means we can draw 
 We get this by using filter followed by summarize. In this case, we want PNHB > 50:
 
 ```{r}
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHB > 50) %>%
+maryland_ppp_with_naics_and_demographics |>
+  filter(PNHB > 50) |>
   summarize(
     count = n(),
     avgamount = mean(amount),
@@ -1968,8 +1968,8 @@ According to our query, there were 44,032 loans approved in zip codes with more 
 Let's change that to zip codes with more than 50 percent non-Hispanic white population:
 
 ```{r}
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHW > 50) %>%
+maryland_ppp_with_naics_and_demographics |>
+  filter(PNHW > 50) |>
   summarize(
     count = n(),
     avgamount = mean(amount),
@@ -1981,9 +1981,9 @@ And we get a greater number of loans with a higher average and median amount. Bu
 Let's break this down one more step. What if we added `rural_urban_indicator` -- if the loan recipient is located in a rural or urban area -- as a group_by. Does that change anything for the previous queries?
 
 ```{r}
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHB > 50) %>%
-  group_by(rural_urban_indicator) %>%
+maryland_ppp_with_naics_and_demographics |>
+  filter(PNHB > 50) |>
+  group_by(rural_urban_indicator) |>
   summarize(
     count = n(),
     avgamount = mean(amount),
@@ -1991,9 +1991,9 @@ maryland_ppp_with_naics_and_demographics %>%
 ```
 
 ```{r}
-maryland_ppp_with_naics_and_demographics %>%
-  filter(PNHW > 50) %>%
-  group_by(rural_urban_indicator) %>%
+maryland_ppp_with_naics_and_demographics |>
+  filter(PNHW > 50) |>
+  group_by(rural_urban_indicator) |>
   summarize(
     count = n(),
     avgamount = mean(amount),
@@ -2089,7 +2089,7 @@ Let's write a bit of code to tell R to go to the URL for the page and ingest all
 
 ```{r}
 # read in the html
-naics_industry <- naics_url %>%
+naics_industry <- naics_url |>
   read_html()
 
 # display the html below
@@ -2123,8 +2123,8 @@ Because it's inside of a table, and not some other kind of element (like a `<div
 
 ```{r}
 # read in the html and extract all the tables
-naics_industry <- naics_url %>%
-  read_html() %>%
+naics_industry <- naics_url |>
+  read_html() |>
   html_table()
 
 # display the tables below
@@ -2163,8 +2163,8 @@ That's more like it! So, all we need to do now is to store that single dataframe
 
 ```{r}
 # Read in all html from table, store all tables on page as nested list of dataframes.
-naics_industry  <- naics_url %>%
-  read_html() %>%
+naics_industry  <- naics_url |>
+  read_html() |>
   html_table()
 
 # Just keep the second dataframe in our list
@@ -2183,14 +2183,14 @@ From here, we can do a little light cleaning. Let's use clean_names() to standar
 
 ```{r}
 # Read in all html from table, store all tables on page as nested list of dataframes.
-naics_industry <- naics_url %>%
-  read_html() %>%
+naics_industry <- naics_url |>
+  read_html() |>
   html_table()
 
 # Just keep the second dataframe in our list, standardize column headers, remove last row
 
-naics_industry <- naics_industry[[2]] %>%
-  clean_names() %>%
+naics_industry <- naics_industry[[2]] |>
+  clean_names() |>
   slice(-21)
 
 # show the dataframe
@@ -2236,14 +2236,14 @@ Now, let's run the code we wrote in the last chapter, to get a tidy list of NAIC
 naics_url <- "https://www.bls.gov/ces/naics/"
 
 # Read in all html from table, store all tables on page as nested list of dataframes.
-naics_industry  <- naics_url %>%
-  read_html() %>%
+naics_industry  <- naics_url |>
+  read_html() |>
   html_table()
 
 # Just keep the second dataframe in our list, standardize column headers, remove last row
 
-naics_industry <- naics_industry[[2]] %>%
-  clean_names() %>%
+naics_industry <- naics_industry[[2]] |>
+  clean_names() |>
   slice(-21)
 
 # show the dataframe
@@ -2297,7 +2297,7 @@ Next, let's read in the html of that page, and store it as an object called empl
 url <- "https://www.bls.gov/iag/tgs/iag22.htm"
 
 # Get employment html
-employment_info <- url %>%
+employment_info <- url |>
   read_html()  
 
 # Display it so we can see what it looks like
@@ -2331,8 +2331,8 @@ But essentially what the html_element function says is "find the html element th
 url <- "https://www.bls.gov/iag/tgs/iag22.htm"
 
 # Get employment html page and select only the table with employment information
-employment_info <- url %>%
-  read_html() %>%
+employment_info <- url |>
+  read_html() |>
   html_element(xpath = '//*[@id="iag22emp1"]')
 
 # Display it so we can see what it looks like
@@ -2349,9 +2349,9 @@ From here, we can use the html_tables() function to transform it from messy html
 url <- "https://www.bls.gov/iag/tgs/iag22.htm"
 
 # Get employment html page and select only the table with employment information, then transform it from html to a table.
-employment_info <- url %>%
-  read_html() %>%
-  html_element(xpath = '//*[@id="iag22emp1"]') %>%
+employment_info <- url |>
+  read_html() |>
+  html_element(xpath = '//*[@id="iag22emp1"]') |>
   html_table()
 
 # Display it so we can see what it looks like
@@ -2370,15 +2370,15 @@ Use clean_names() to standardize the column names, use slice() to keep only the 
 url <- "https://www.bls.gov/iag/tgs/iag21.htm"
 
 # Get employment html page and select only the table with employment information, then transform it from html to a table.
-employment_info <- url %>%
-  read_html() %>%
-  html_element(xpath = '//*[@id="iag21emp1"]') %>%
+employment_info <- url |>
+  read_html() |>
+  html_element(xpath = '//*[@id="iag21emp1"]') |>
   html_table()
 
 # Keep only second row with seasonally adjusted, bind back to each_row_df
-employment_info <- employment_info %>%
-  clean_names() %>%
-  slice(2) %>%
+employment_info <- employment_info |>
+  clean_names() |>
+  slice(2) |>
   select(data_series, jul_2021)
 
 # Display it so we can see what it looks like
@@ -2569,15 +2569,15 @@ First, let's look at the codeblock we wrote earlier to extract the number of emp
 url <- "https://www.bls.gov/iag/tgs/iag21.htm"
 
 # Get employment html page and select only the table with employment information, then transform it from html to a table.
-employment_info <- url %>%
-  read_html() %>%
-  html_element(xpath = '//*[@id="iag21emp1"]') %>%
+employment_info <- url |>
+  read_html() |>
+  html_element(xpath = '//*[@id="iag21emp1"]') |>
   html_table()
 
 # Keep only second row with seasonally adjusted, bind back to each_row_df
-employment_info <- employment_info %>%
-  clean_names() %>%
-  slice(2) %>%
+employment_info <- employment_info |>
+  clean_names() |>
+  slice(2) |>
   select(data_series, jul_2021)
 
 # Display it so we can see what it looks like
@@ -2592,14 +2592,14 @@ First, we need to build a list of URLs to loop through in a "for loop." We can d
 naics_url <- "https://www.bls.gov/ces/naics/"
 
 # Read in all html from table, store all tables on page as nested list of dataframes.
-naics_industry  <- naics_url %>%
-  read_html() %>%
+naics_industry  <- naics_url |>
+  read_html() |>
   html_table()
 
 # Just keep the second dataframe in our list, standardize column headers, remove last row
 
-naics_industry <- naics_industry[[2]] %>%
-  clean_names() %>%
+naics_industry <- naics_industry[[2]] |>
+  clean_names() |>
   slice(-21)
 
 # show the dataframe
@@ -2626,7 +2626,7 @@ We're going to use mutate() and paste0() to concatenate (mash together) the thin
 ```{r}
 
 # Make a column with URL for each sector.
-naics_industry <- naics_industry %>%
+naics_industry <- naics_industry |>
   mutate(sector_url = paste0("https://www.bls.gov/iag/tgs/iag",sector,".htm"))
 
 # Display it
@@ -2644,8 +2644,8 @@ On the Utilities page (sector code 22), the ID for the table we want is "iag22em
 ```{r}
 
 # Make a column with URL and xpath ID for each sector
-naics_industry <- naics_industry %>%
-  mutate(sector_url = paste0("https://www.bls.gov/iag/tgs/iag",sector,".htm")) %>%
+naics_industry <- naics_industry |>
+  mutate(sector_url = paste0("https://www.bls.gov/iag/tgs/iag",sector,".htm")) |>
   mutate(sector_xpath_id =paste0("iag",sector,"emp1"))
 
 # Display it
@@ -2657,9 +2657,9 @@ Lastly, we're going to use filter to remove the "Public Administration" sector, 
 ```{r}
 
 # Make a column with URL and xpath ID for each sector, remove the Public Administration sector
-naics_industry <- naics_industry %>%
-  mutate(sector_url = paste0("https://www.bls.gov/iag/tgs/iag",sector,".htm")) %>%
-  mutate(sector_xpath_id =paste0("iag",sector,"emp1")) %>%
+naics_industry <- naics_industry |>
+  mutate(sector_url = paste0("https://www.bls.gov/iag/tgs/iag",sector,".htm")) |>
+  mutate(sector_xpath_id =paste0("iag",sector,"emp1")) |>
   filter(description != "Public Administration")
 # Display it
 naics_industry
@@ -2680,7 +2680,7 @@ We get 19 dataframes, each with one row, one for each sector.
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # To help us see what's happening as we build this, we're going to print the thing we're creating.  
@@ -2707,7 +2707,7 @@ To see how this is working, we're going to edit our print statement at the end a
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2737,7 +2737,7 @@ So, when you run this code, it will print out 19 dataframes inside of nested lis
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2747,9 +2747,9 @@ for(row_number in 1:nrow(naics_industry)) {
     xpath_employment_table <- paste0('//*[@id="',each_row_df$sector_xpath_id,'"]')
 
     # Get employment table from each page by going to each url defined above, reading in the html with read_html(), extracting the table with the id generated by the xpath code using html_elements), and then turning the html into a proper dataframe using html_table(). The dataframe is in a nested list, which we'll have to extract in the next step.
-    employment_info <- url %>%
-      read_html() %>%
-      html_elements(xpath = xpath_employment_table) %>%
+    employment_info <- url |>
+      read_html() |>
+      html_elements(xpath = xpath_employment_table) |>
       html_table()
 
     # To help us see what's happening as we build this, we're going to print the thing we're creating.  
@@ -2767,7 +2767,7 @@ In this next step, we use employment_info <- employment_info[[1]]  to extract ea
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2777,14 +2777,14 @@ for(row_number in 1:nrow(naics_industry)) {
     xpath_employment_table <- paste0('//*[@id="',each_row_df$sector_xpath_id,'"]')
 
     # Get employment table from each page by going to each url defined above, reading in the html with read_html(), extracting the table with the id generated by the xpath code using html_elements), and then turning the html into a proper dataframe using html_table().  The dataframe is in a nested list, which we'll have to extract in the next step.
-    employment_info <- url %>%
-      read_html() %>%
-      html_elements(xpath = xpath_employment_table) %>%
+    employment_info <- url |>
+      read_html() |>
+      html_elements(xpath = xpath_employment_table) |>
       html_table()
 
     # Grab the dataframe out of the list (it's the first and only element inside the list); clean up the field names with clean_names(); use slice(2) to keep only the second row;
-    employment_info <- employment_info[[1]] %>%
-      clean_names() %>%
+    employment_info <- employment_info[[1]] |>
+      clean_names() |>
       slice(2)
 
     # To help us see what's happening as we build this, we're going to print the thing we're creating.  
@@ -2803,7 +2803,7 @@ We can add that back in by using bind_cols() to reconnect the each_row_df, which
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2813,15 +2813,15 @@ for(row_number in 1:nrow(naics_industry)) {
     xpath_employment_table <- paste0('//*[@id="',each_row_df$sector_xpath_id,'"]')
 
     # Get employment table from each page by going to each url defined above, reading in the html with read_html(), extracting the table with the id generated by the xpath code using html_elements), and then turning the html into a proper dataframe using html_table().  The dataframe is in a nested list, which we'll have to extract in the next step.
-    employment_info <- url %>%
-      read_html() %>%
-      html_elements(xpath = xpath_employment_table) %>%
+    employment_info <- url |>
+      read_html() |>
+      html_elements(xpath = xpath_employment_table) |>
       html_table()
 
     # Grab the dataframe out of the list (it's the first and only element inside the list); clean up the field names with clean_names(); use slice(2) to keep only the second row; use bind_cols() to append the sector code and name to this table.
-    employment_info <- employment_info[[1]] %>%
-      clean_names() %>%
-      slice(2) %>%
+    employment_info <- employment_info[[1]] |>
+      clean_names() |>
+      slice(2) |>
       bind_cols(each_row_df)
 
     # To help us see what's happening as we build this, we're going to print the thing we're creating.  
@@ -2840,7 +2840,7 @@ Let's use parse_number() to remove the comma from the jul_2021 number and conver
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2850,18 +2850,18 @@ for(row_number in 1:nrow(naics_industry)) {
     xpath_employment_table <- paste0('//*[@id="',each_row_df$sector_xpath_id,'"]')
 
     # Get employment table from each page by going to each url defined above, reading in the html with read_html(), extracting the table with the id generated by the xpath code using html_elements), and then turning the html into a proper dataframe using html_table().  The dataframe is in a nested list, which we'll have to extract in the next step.
-    employment_info <- url %>%
-      read_html() %>%
-      html_elements(xpath = xpath_employment_table) %>%
+    employment_info <- url |>
+      read_html() |>
+      html_elements(xpath = xpath_employment_table) |>
       html_table()
 
     # Grab the dataframe out of the list (it's the first and only element inside the list); clean up the field names with clean_names(); use slice(2) to keep only the second row; use bind_cols() to append the sector code and name to this table; turn jul_2021 column into a proper number, and rename it.  Then select only three columns we need.
-    employment_info <- employment_info[[1]] %>%
-      clean_names() %>%
-      slice(2) %>%
-      bind_cols(each_row_df) %>%
-      mutate(jul_2021 = parse_number(jul_2021)) %>%
-      rename(jul_2021_employees = jul_2021) %>%
+    employment_info <- employment_info[[1]] |>
+      clean_names() |>
+      slice(2) |>
+      bind_cols(each_row_df) |>
+      mutate(jul_2021 = parse_number(jul_2021)) |>
+      rename(jul_2021_employees = jul_2021) |>
       select(sector,description,jul_2021_employees)
 
     # To help us see what's happening as we build this, we're going to print the thing we're creating.  
@@ -2892,7 +2892,7 @@ employment_by_sector_all <- tibble()
 for(row_number in 1:nrow(naics_industry)) {
 
     # Keep only the row for a given row number, get rid of every other row
-    each_row_df <- naics_industry %>%
+    each_row_df <- naics_industry |>
       slice(row_number)
 
     # Define url of page to get
@@ -2902,22 +2902,22 @@ for(row_number in 1:nrow(naics_industry)) {
     xpath_employment_table <- paste0('//*[@id="',each_row_df$sector_xpath_id,'"]')
 
     # Get employment table from each page by going to each url defined above, reading in the html with read_html(), extracting the table with the id generated by the xpath code using html_elements), and then turning the html into a proper dataframe using html_table().  The dataframe is in a nested list, which we'll have to extract in the next step.
-    employment_info <- url %>%
-      read_html() %>%
-      html_elements(xpath = xpath_employment_table) %>%
+    employment_info <- url |>
+      read_html() |>
+      html_elements(xpath = xpath_employment_table) |>
       html_table()
 
     # Grab the dataframe out of the list (it's the first and only element inside the list); clean up the field names with clean_names(); use slice(2) to keep only the second row; use bind_cols() to append the sector code and name to this table; turn jul_2021 column into a proper number, and rename it.  Then select only three columns we need.
-    employment_info <- employment_info[[1]] %>%
-      clean_names() %>%
-      slice(2) %>%
-      bind_cols(each_row_df) %>%
-      mutate(jul_2021 = parse_number(jul_2021)) %>%
-      rename(jul_2021_employees = jul_2021) %>%
+    employment_info <- employment_info[[1]] |>
+      clean_names() |>
+      slice(2) |>
+      bind_cols(each_row_df) |>
+      mutate(jul_2021 = parse_number(jul_2021)) |>
+      rename(jul_2021_employees = jul_2021) |>
       select(sector,description,jul_2021_employees)
 
     # Bind each individual employment info table to our employment_by_sector_all dataframe
-    employment_by_sector_all <- employment_by_sector_all %>%
+    employment_by_sector_all <- employment_by_sector_all |>
       bind_rows(employment_info)
 
 }
@@ -2950,7 +2950,7 @@ In the second row of this table, it has the unemployment rate. Nowhere on the pa
 
 ```{r}
 # remove the suspicious value for agriculture.
-employment_by_sector_all <- employment_by_sector_all %>%
+employment_by_sector_all <- employment_by_sector_all |>
   mutate(jul_2021_employees = na_if(jul_2021_employees,7.5))
 
 # display it
@@ -3038,21 +3038,21 @@ p10
 As you can see, we have a GEOID, NAME, then variable and value. Variable and value are going to be the same. Because those are named the same thing, to merge them together, we need to rename them.
 
 ```{r, eval=FALSE}
-p10 %>% select(GEOID, NAME, value) %>% rename(Population2010=value) -> p2010
+p10 |> select(GEOID, NAME, value) |> rename(Population2010=value) -> p2010
 
-p00 %>% select(GEOID, NAME, value) %>% rename(Population2000=value) -> p2000
+p00 |> select(GEOID, NAME, value) |> rename(Population2000=value) -> p2000
 ```
 
 Now we join the data together.
 
 ```{r, eval=FALSE}
-alldata <- p2000 %>% inner_join(p2010)
+alldata <- p2000 |> inner_join(p2010)
 ```
 
 And now we calculate the percent change.
 
 ```{r, eval=FALSE}
-alldata %>% mutate(change = ((Population2010-Population2000)/Population2000)*100) %>% arrange(desc(change))
+alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
 ```
 
 And just like that: Nevada.
@@ -3074,7 +3074,7 @@ md <- get_acs(geography = "county",
               state = "MD",
               year = 2019)
 
-md <- md %>% arrange(desc(estimate)) %>% top_n(20, estimate)
+md <- md |> arrange(desc(estimate)) |> top_n(20, estimate)
 
 md
 
@@ -3083,8 +3083,8 @@ md
 Howard, Calvert, Montgomery, Anne Arundel, Charles. What do they all have in common? Lots of suburban flight from DC and Baltimore. But do the margins of error let us say one county is richer than the other. We can find this out visually using error bars. Don't worry much about the code here --  we'll cover that soon enough.
 
 ```{r}
-md %>%
-  mutate(NAME = gsub(" County, Maryland", "", NAME)) %>%
+md |>
+  mutate(NAME = gsub(" County, Maryland", "", NAME)) |>
   ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
   geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
   geom_point(color = "red") +
@@ -3119,12 +3119,12 @@ md10 <- get_acs(geography = "county",
 What I'm going to do next is a lot, but each step is simple. I'm going to join the data together, so each county has one line of data. Then I'm going to rename some fields that repeat. Then I'm going to calculate the minimium and maximum value of the estimate using the margin of error. That'll help me later. After that, I'm going to calculate a perent change and sort it by that change.
 
 ```{r}
-md10 %>%
-  inner_join(md19, by=c("GEOID", "NAME")) %>%
-  rename(estimate2010=estimate.x, estimate2019=estimate.y) %>%
-  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2019 = estimate2019-moe.y, max2019 = estimate2019+moe.y) %>%
-  select(-variable.x, -variable.y, -moe.x, -moe.y) %>%
-  mutate(change = ((estimate2019-estimate2010)/estimate2010)*100) %>%
+md10 |>
+  inner_join(md19, by=c("GEOID", "NAME")) |>
+  rename(estimate2010=estimate.x, estimate2019=estimate.y) |>
+  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2019 = estimate2019-moe.y, max2019 = estimate2019+moe.y) |>
+  select(-variable.x, -variable.y, -moe.x, -moe.y) |>
+  mutate(change = ((estimate2019-estimate2010)/estimate2010)*100) |>
   arrange(change)
 ```
 
@@ -3196,12 +3196,12 @@ So what does the chart of the top 10 maryland counties with the most total PPP l
 First, we'll create a dataframe of those top 10, called maryland_ppp_top_counties.
 
 ```{r}
-maryland_ppp_top_counties <- ppp_maryland %>%
-  group_by(project_county_name) %>%
+maryland_ppp_top_counties <- ppp_maryland |>
+  group_by(project_county_name) |>
   summarise(
     total_loans = n()
-  ) %>%
-  arrange(desc(total_loans)) %>%
+  ) |>
+  arrange(desc(total_loans)) |>
   head(10)
 
 maryland_ppp_top_counties
@@ -3209,10 +3209,10 @@ maryland_ppp_top_counties
 
 Now let's create a bar chart using ggplot.
 
-With ggplot, the first thing we'll always do is draw a blank canvas that will house our chart. We start with our dataframe name, and then (%>%) we invoke the ggplot() function to make that blank canvas.  All this does is make a gray box, the blank canvas that will hold our chart.
+With ggplot, the first thing we'll always do is draw a blank canvas that will house our chart. We start with our dataframe name, and then (|>) we invoke the ggplot() function to make that blank canvas.  All this does is make a gray box, the blank canvas that will hold our chart.
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot()
 ```
 
@@ -3236,10 +3236,10 @@ We're setting the values on the x axis (horizontal) to be the name of the county
 
 One quirk here with ggplot.  
 
-After we've invoked the ggplot() function, you'll notice we're using a + symbol.  It means the same thing as  %>% -- "and then do this".  It's just a quirk of ggplot() that after you invoke the ggplot() function, you use + instead of %>%.  It makes no sense to me either, just something to live with.
+After we've invoked the ggplot() function, you'll notice we're using a + symbol.  It means the same thing as  |> -- "and then do this".  It's just a quirk of ggplot() that after you invoke the ggplot() function, you use + instead of |>.  It makes no sense to me either, just something to live with.
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=project_county_name, weight=total_loans))
 ```
@@ -3247,7 +3247,7 @@ maryland_ppp_top_counties %>%
 This is a very basic chart.  But it's hard to derive much meaning from this chart, because the counties aren't ordered from highest to lowest by total_loans. We can fix that by using the reorder() function to do just that:
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=reorder(project_county_name,total_loans), weight=total_loans))
 ```
@@ -3255,7 +3255,7 @@ maryland_ppp_top_counties %>%
 This is a little more useful. But the bottom is kind of a mess, with overlapping names.  We can fix that by flipping it from a vertical bar chart (also called a column chart) to a horizontal one. coord_flip() does that for you.
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=reorder(project_county_name,total_loans), weight=total_loans)) +
   coord_flip()
@@ -3270,7 +3270,7 @@ But it's worth mentioning that we can pretty up these charts for publication, if
 It's kind of like applying CSS to html. Here I'm changing the theme slightly to remove the gray background with one of ggplot's built in themes, theme_minimal()
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=reorder(project_county_name,total_loans), weight=total_loans)) +
   coord_flip() +
@@ -3287,7 +3287,7 @@ library(ggthemes)
 
 And now we'll apply the economist theme from that package with theme_economist()
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=reorder(project_county_name,total_loans), weight=total_loans)) +
   coord_flip() +
@@ -3296,7 +3296,7 @@ maryland_ppp_top_counties %>%
 Those axis titles are kind of a mess. Let's change "count" on the x axis to "total loans" and change "reorder(project_county_name,total_loans)" to "county".  And while we're at it, let's add a basic title and a source as a caption. We'll use a new function, labs(), which is short for labels.
 
 ```{r}
-maryland_ppp_top_counties %>%
+maryland_ppp_top_counties |>
   ggplot() +
   geom_bar(aes(x=reorder(project_county_name,total_loans), weight=total_loans)) +
   coord_flip() +
@@ -3320,8 +3320,8 @@ Line charts can show change over time. It works much the same as a bar chart, co
 So, let's create a dataframe with a count of Maryland loans for each date in our dataframe.
 ```{r}
 
-ppp_maryland_loans_by_date <- ppp_maryland %>%
-  group_by(date_approved) %>%
+ppp_maryland_loans_by_date <- ppp_maryland |>
+  group_by(date_approved) |>
   summarise(
     total_loans=n()
   )
@@ -3334,7 +3334,7 @@ And now let's make a line chart to look for patterns in this data.
 We'll put the date on the x axis and total loans on the y axis.
 
 ```{r}
-ppp_maryland_loans_by_date %>%
+ppp_maryland_loans_by_date |>
   ggplot() +
   geom_line(aes(x=date_approved, y=total_loans))
 
@@ -3352,7 +3352,7 @@ We can't really tell.  So let's modify the x axis to have one tick mark and labe
 We'll set the date_breaks to appear for every month; if we wanted every week, we'd say date_breaks = "1 week". We can set the date to appear as month abbreviated name (%b) and four-digit year (%Y).
 
 ```{r}
-ppp_maryland_loans_by_date %>%
+ppp_maryland_loans_by_date |>
   ggplot() +
   geom_line(aes(x=date_approved, y=total_loans)) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b-%Y")
@@ -3363,7 +3363,7 @@ ppp_maryland_loans_by_date %>%
 Those are a little hard to read, so we can turn them 45 degrees to remove the overlap using the theme() function for styling.  With "axis.text.x = element_text(angle = 45,  hjust=1)" we're saying, turn the date labels 45 degrees.
 
 ```{r}
-ppp_maryland_loans_by_date %>%
+ppp_maryland_loans_by_date |>
   ggplot() +
   geom_line(aes(x=date_approved, y=total_loans)) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b-%Y") +
@@ -3457,17 +3457,17 @@ maryland_ppp <- read_rds("data/maryland_ppp.rds")
 First, we'll create a dataframe that has county (jurisdiction) level counts of approved applications. Run the following code to do that. There are some mistakes in the data, so we're going to remove those with a filter after doing the counting.
 
 ```{r}
-md_counties <- maryland_ppp %>%
-    group_by(project_county_name) %>%
+md_counties <- maryland_ppp |>
+    group_by(project_county_name) |>
     summarise(count=n())
 ```
 
 Let's deal with those seemingly extraneous records that don't appear to be MD PPP applications:
 
 ```{r}
-md_counties <- maryland_ppp %>%
-    group_by(project_county_name) %>%
-    summarise(count=n()) %>%
+md_counties <- maryland_ppp |>
+    group_by(project_county_name) |>
+    summarise(count=n()) |>
     filter(count > 6)
 ```
 
@@ -3481,14 +3481,14 @@ library(tigris)
 Once we've done that, we have access to a dataframe containing all fips codes. Let's isolate the Maryland codes:
 
 ```{r}
-all_fips <- fips_codes %>% as_tibble()
-md_fips <- all_fips %>% filter(state == 'MD')
+all_fips <- fips_codes |> as_tibble()
+md_fips <- all_fips |> filter(state == 'MD')
 ```
 
 Looks good, but there are two issues: Datawrapper expects a 5-digit FIPS code (the state code plus the county code, so "24001" for Allegany County) and the county names don't match the `project_county_name` in the PPP data. Let's fix the first issue - adding a full FIPS code based on its components using the function `str_c`, which concatenates multiple strings:
 
 ```{r}
-md_fips <- md_fips %>% mutate(fips_code = str_c(state_code, county_code))
+md_fips <- md_fips |> mutate(fips_code = str_c(state_code, county_code))
 ```
 
 Now we'll deal with the county names in `md_counties`. They are all caps and contain no punctuation, we could:
@@ -3501,16 +3501,16 @@ Let's do the latter. We'll use mutate to create an uppercase version of the name
 Change the county names in `md_fips`
 
 ```{r}
-md_fips <- md_fips %>% mutate(match_county = str_to_upper(county)) %>%
-   mutate(match_county = str_replace(match_county, ' COUNTY', '')) %>%
-   mutate(match_county = str_replace(match_county, "'", "")) %>%
+md_fips <- md_fips |> mutate(match_county = str_to_upper(county)) |>
+   mutate(match_county = str_replace(match_county, ' COUNTY', '')) |>
+   mutate(match_county = str_replace(match_county, "'", "")) |>
    mutate(match_county = str_replace(match_county, "ST. MARY", "SAINT MARY"))
 ```
 
 Now we'll join `md_counties` and `md_fips` together using our new `match_county` column:
 
 ```{r}
-md_counties_with_fips <- md_counties %>%
+md_counties_with_fips <- md_counties |>
   left_join(md_fips, by=c('project_county_name'='match_county'))
 ```
 
@@ -3610,7 +3610,7 @@ This looks like a normal dataframe, and mostly it is.  We have one row per hospi
 Let's look at just Maryland hospitals. Good news -- `sf` plays very nicely with the tidyverse, so we can filter data the way we are accustomed.
 
 ```{r}
-md_hospitals <- hospitals %>%
+md_hospitals <- hospitals |>
   filter(STATE == "MD")
 
 md_hospitals
@@ -3621,19 +3621,19 @@ We have 72 hospitals, according to this data.
 What kind of hospitals do we have?
 
 ```{r}
-md_hospitals %>%
-  group_by(TYPE) %>%
+md_hospitals |>
+  group_by(TYPE) |>
   summarise(
     count=n()
-  ) %>%
+  ) |>
   arrange(desc(count))
 ```
 Let's narrow our data to only look at the 50 "General Acute Care hospitals."
 
 ```{r}
 
-md_hospitals <- hospitals %>%
-  filter(STATE == "MD") %>%
+md_hospitals <- hospitals |>
+  filter(STATE == "MD") |>
   filter(TYPE == "GENERAL ACUTE CARE")
 
 md_hospitals
@@ -3645,7 +3645,7 @@ That gives us 50 hospitals in Maryland. Where are they?
 We can simply plot them on a longitude-latitude grid using ggplot.
 
 ```{r}
-md_hospitals %>%
+md_hospitals |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -3685,7 +3685,7 @@ If you've ever filled in a "connect the dots" picture by drawing lines between p
 This county shapefile has all 3233 U.S. counties.  We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties.  There is no STATE column, but there is a STATEFP column, with each number representing a state.  Maryland's FP number is 24.
 
 ```{r}
-md_counties <- counties %>%
+md_counties <- counties |>
   filter(STATEFP == "24")
 
 ```
@@ -3693,7 +3693,7 @@ md_counties <- counties %>%
 To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
 
 ```{r}
-md_counties %>%
+md_counties |>
   ggplot() +
   geom_sf() +
   theme_minimal()
@@ -3754,8 +3754,8 @@ census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
 And now let's load the dataframe of hospital information from the previous chapter, and filter for the 50 General Acute Care hospitals in Maryland.
 
 ```{r}
-md_hospitals <- st_read("data/Hospitals/Hospitals.shp") %>%
-  filter(STATE == "MD") %>%
+md_hospitals <- st_read("data/Hospitals/Hospitals.shp") |>
+  filter(STATE == "MD") |>
   filter(TYPE == "GENERAL ACUTE CARE")
 
 md_hospitals
@@ -3767,12 +3767,12 @@ Each hospital exists inside of a county, so we're going to first calculate the t
 
 ```{r}
 
-md_beds_by_county <- md_hospitals %>%
-  as_tibble() %>%
-  group_by(COUNTY) %>%
+md_beds_by_county <- md_hospitals |>
+  as_tibble() |>
+  group_by(COUNTY) |>
   summarise(
     total_beds = sum(BEDS)
-  ) %>%
+  ) |>
   arrange(desc(total_beds))
 
 md_beds_by_county
@@ -3820,11 +3820,11 @@ If they're going to join properly, we need to clean one of them up to make it ma
 Let's clean the population table. We're going to rename the "NAME" column to "COUNTY", then convert it to uppercase while also removing ", Maryland" and "County". Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
 
 ```{r}
-md_county_population <- md_county_population %>%
-  rename(COUNTY = NAME) %>%
-  mutate(COUNTY = toupper(str_remove_all(COUNTY,", Maryland|County"))) %>%
-  mutate(COUNTY = str_trim(COUNTY,side="both")) %>%
-  rename(population = estimate) %>%
+md_county_population <- md_county_population |>
+  rename(COUNTY = NAME) |>
+  mutate(COUNTY = toupper(str_remove_all(COUNTY,", Maryland|County"))) |>
+  mutate(COUNTY = str_trim(COUNTY,side="both")) |>
+  rename(population = estimate) |>
   select(COUNTY, population, geometry)
 
 md_county_population
@@ -3834,7 +3834,7 @@ md_county_population
 Now we can join them.  
 
 ```{r}
-md_beds_per_100k <- md_county_population %>%
+md_beds_per_100k <- md_county_population |>
   left_join(md_beds_by_county)
 
 md_beds_per_100k
@@ -3843,8 +3843,8 @@ md_beds_per_100k
 We have two NAs after we join, for Queen Anne's County and Carolina County.  That's not an error.  There are no General Acute Care hospitals in those counties, according to our data (it's why our beds table has 22 rows, not 24).  So let's convert those values to 0 using replace_na().
 
 ```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
+md_beds_per_100k <- md_county_population |>
+  left_join(md_beds_by_county) |>
   mutate(total_beds = replace_na(total_beds,0))
 
 md_beds_per_100k
@@ -3853,10 +3853,10 @@ md_beds_per_100k
 Our final step before visualization, let's calculate the number of beds per 100,000 for each county and sort from highest to lowest to see waht trends we can identify just from the table.
 
 ```{r}
-md_beds_per_100k <- md_county_population %>%
-  left_join(md_beds_by_county) %>%
-  mutate(total_beds = replace_na(total_beds,0)) %>%
-  mutate(beds_per_100k = total_beds/population*100000) %>%
+md_beds_per_100k <- md_county_population |>
+  left_join(md_beds_by_county) |>
+  mutate(total_beds = replace_na(total_beds,0)) |>
+  mutate(beds_per_100k = total_beds/population*100000) |>
   arrange(desc(beds_per_100k))
 
 md_beds_per_100k
@@ -3948,66 +3948,66 @@ What we need to do, in words, is this:
 It's a lot, but not really. Each step is very simple, and is designed to solve one problem. And after we do it with one, we'll do it with the next, and the next, and the next, so on and so forth.
 
 ```{r}
-weeklyclaims20 <- read_excel("weeklyinitialclaims.xlsx", sheet=2, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%  
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims20 <- read_excel("weeklyinitialclaims.xlsx", sheet=2, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>  
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims19 <- read_excel("weeklyinitialclaims.xlsx", sheet=3, skip=1) %>%
-  clean_names() %>% select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims19 <- read_excel("weeklyinitialclaims.xlsx", sheet=3, skip=1) |>
+  clean_names() |> select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims18 <- read_excel("weeklyinitialclaims.xlsx", sheet=4, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims18 <- read_excel("weeklyinitialclaims.xlsx", sheet=4, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims17 <- read_excel("weeklyinitialclaims.xlsx", sheet=5, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims17 <- read_excel("weeklyinitialclaims.xlsx", sheet=5, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims16 <- read_excel("weeklyinitialclaims.xlsx", sheet=6, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims16 <- read_excel("weeklyinitialclaims.xlsx", sheet=6, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims15 <- read_excel("weeklyinitialclaims.xlsx", sheet=7, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims15 <- read_excel("weeklyinitialclaims.xlsx", sheet=7, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims14 <- read_excel("weeklyinitialclaims.xlsx", sheet=8, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims14 <- read_excel("weeklyinitialclaims.xlsx", sheet=8, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims13 <- read_excel("weeklyinitialclaims.xlsx", sheet=9, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims13 <- read_excel("weeklyinitialclaims.xlsx", sheet=9, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 
-weeklyclaims12 <- read_excel("weeklyinitialclaims.xlsx", sheet=10, skip=1) %>%
-  clean_names() %>%
-  select(1:2) %>%
-  filter(!str_detect(initial_claims, "Source")) %>%
-  remove_empty(c("cols", "rows")) %>%
+weeklyclaims12 <- read_excel("weeklyinitialclaims.xlsx", sheet=10, skip=1) |>
+  clean_names() |>
+  select(1:2) |>
+  filter(!str_detect(initial_claims, "Source")) |>
+  remove_empty(c("cols", "rows")) |>
   mutate(initial_claims = as.numeric(initial_claims))
 ```
 
@@ -4029,13 +4029,13 @@ weeklyclaims <- rbind(weeklyclaims, weeklyclaims20)
 Let's take a look at what we have, using datatables. The formatDate business just makes the date look nicer.
 
 ```{r}
-datatable(weeklyclaims) %>% formatDate(1, "toLocaleDateString")
+datatable(weeklyclaims) |> formatDate(1, "toLocaleDateString")
 ```
 
 Let's just look at the most recent week, and that's something that takes on different meaning when we're talking about updating data. We need to make this generic so that every time we pull this up and run it, it's the most recent week at the top. This time, it's very simple.
 
 ```{r}
-weeklyclaims20 %>% arrange(desc(week_ending_date))
+weeklyclaims20 |> arrange(desc(week_ending_date))
 ```
 
 ## Analysis
@@ -4043,9 +4043,9 @@ weeklyclaims20 %>% arrange(desc(week_ending_date))
 Now is when we need to start asking ourselves -- what are the questions that are going to come up week after week. What about how this most current week compares to all weeks going back to 2012? What if we just ranked them? Where does this week rank? For that, we'll create a new column called Rank using mutate and we'll use a function called `min_rank` to rank them. I'm going to save them to a dataframe and use data
 
 ```{r}
-ranked <- weeklyclaims %>% mutate(Rank = min_rank(desc(initial_claims))) %>% arrange(desc(week_ending_date))
+ranked <- weeklyclaims |> mutate(Rank = min_rank(desc(initial_claims))) |> arrange(desc(week_ending_date))
 
-datatable(ranked) %>% formatDate(1, "toLocaleDateString")
+datatable(ranked) |> formatDate(1, "toLocaleDateString")
 ```
 
 Let's think about this a little more. What else could we do with this. What are the recurring questions? How about the percent change between this week and last week?
@@ -4053,7 +4053,7 @@ Let's think about this a little more. What else could we do with this. What are 
 To do that, we need our dates to be next to each other -- side by side. Then we can do new minus old divided by old. To do that, we're going to use a function from `tidyr` called pivot_wider, which will transform our data from one row per week to one row, with the weeks as columns.
 
 ```{r}
-change <- weeklyclaims20 %>% pivot_wider(names_from = week_ending_date, values_from = initial_claims)
+change <- weeklyclaims20 |> pivot_wider(names_from = week_ending_date, values_from = initial_claims)
 
 head(change)
 ```
@@ -4084,7 +4084,7 @@ Let's build up some more layers to highlight trends and the most recent spot.
 First, we'll slice out a dataframe that's just the most recent data.
 
 ```{r}
-latest <- ranked %>% slice(1)
+latest <- ranked |> slice(1)
 ```
 
 Now, in ggplot, we can add multiple layers.
@@ -4177,8 +4177,8 @@ library(lubridate)
 First, read the file you downloaded. You'll need to add the `fill=TRUE` to html_table() to solve a problem with some of the data.
 
 ```{r, error=TRUE}
-claims <- read_html("~/Downloads/r539cy.xls") %>%
-  html_nodes("table") %>%
+claims <- read_html("~/Downloads/r539cy.xls") |>
+  html_nodes("table") |>
   html_table(fill=TRUE)
 ```
 
@@ -4198,17 +4198,17 @@ To do this, we're going to fix this in steps after we create a new dataframe cal
 4. We'll mutate each field to format them correctly. The date columns will use `lubridate`'s `mdy` function. Numbers will use `readr`'s `parse_number` function to solve the comma separator issue.
 
 ```{r, error=TRUE}
-cleanclaims <- claims %>%
-  remove_empty("cols") %>%
-  rename("state" = 1, "filed_week_ended"= 2, "initial_claims"=3, "reflecting_week_ended"=4, "continued_claims"=5, "covered_employment"=6, "insured_unemployment_rate"=7) %>%
-  filter(state != "State") %>%
+cleanclaims <- claims |>
+  remove_empty("cols") |>
+  rename("state" = 1, "filed_week_ended"= 2, "initial_claims"=3, "reflecting_week_ended"=4, "continued_claims"=5, "covered_employment"=6, "insured_unemployment_rate"=7) |>
+  filter(state != "State") |>
   mutate(filed_week_ended = mdy(filed_week_ended), initial_claims=parse_number(initial_claims), reflecting_week_ended=mdy(reflecting_week_ended), continued_claims=parse_number(continued_claims), covered_employment=parse_number(covered_employment), insured_unemployment_rate=parse_number(insured_unemployment_rate))
 ```
 
 If you open `cleanclaims`, you may notice something:
 
 ```{r, error=TRUE}
-cleanclaims %>% arrange(desc(filed_week_ended)) %>% head()
+cleanclaims |> arrange(desc(filed_week_ended)) |> head()
 ```
 
 See it? The latest data isn't in there in my version. [It's in a press release](https://www.dol.gov/sites/dolgov/files/OPA/newsreleases/ui-claims/20200551.pdf).
@@ -4216,7 +4216,7 @@ See it? The latest data isn't in there in my version. [It's in a press release](
 So how do we add it? We use `add_row` from the tidyverse (specifically the `tibble` library).
 
 ```{r, error=TRUE}
-updatedcleanclaims <- cleanclaims %>% add_row(state="Nebraska", filed_week_ended=as.Date("2020-03-28"), initial_claims=24572, reflecting_week_ended=as.Date("2020-03-21"))
+updatedcleanclaims <- cleanclaims |> add_row(state="Nebraska", filed_week_ended=as.Date("2020-03-28"), initial_claims=24572, reflecting_week_ended=as.Date("2020-03-21"))
 ```
 
 Now we can repeat the analysis from above.
@@ -4224,25 +4224,25 @@ Now we can repeat the analysis from above.
 First we rank.
 
 ```{r, error=TRUE}
-fedranked <- updatedcleanclaims %>% mutate(Rank = min_rank(desc(initial_claims))) %>% arrange(desc(filed_week_ended))
+fedranked <- updatedcleanclaims |> mutate(Rank = min_rank(desc(initial_claims))) |> arrange(desc(filed_week_ended))
 ```
 
 We get the latest week.
 
 ```{r, error=TRUE}
-fedlatest <- fedranked %>% slice(1)
+fedlatest <- fedranked |> slice(1)
 ```
 
 The previous week ...
 
 ```{r, error=TRUE}
-fedprevious <- fedranked %>% slice(2)
+fedprevious <- fedranked |> slice(2)
 ```
 
 And for this one, let's grab the pre-crisis number as well as a basis point.
 
 ```{r, error=TRUE}
-pre <- fedranked %>% filter(filed_week_ended==as.Date("2020-03-14"))
+pre <- fedranked |> filter(filed_week_ended==as.Date("2020-03-14"))
 ```
 
 Now we can do some percent change math similar to above. First we calculate the current change.
@@ -4319,7 +4319,7 @@ If you look, we have a county and a date -- how many cases are reported in that 
 Let's filter out Nebraska first.
 
 ```{r}
-nebraska <- covid %>% filter(state == "Nebraska")
+nebraska <- covid |> filter(state == "Nebraska")
 ```
 
 And we can create line chart like this:
@@ -4341,7 +4341,7 @@ ggplot() + geom_line(data=nebraska, aes(x=date, y=cases, group=county, color=cou
 But for a map, we can't have multiple days. We need a single day. Ideally, it would be the most recent date. We can get it using the `max` function.
 
 ```{r}
-current <- nebraska %>% summarize(max(date))
+current <- nebraska |> summarize(max(date))
 ```
 
 That will give us the most recent date in Nebraska in a variable called `current`. And now we can filter the most recent data for Nebraska, regardless of when this runs.
@@ -4349,7 +4349,7 @@ That will give us the most recent date in Nebraska in a variable called `current
 I'm adding one piece to the end to make joining this to a map easier and just renaming fips to GEOID, because they are identical in both datasets and can be used for joining.
 
 ```{r}
-nebraskacurrent <- nebraska %>% filter(date == current[[1]]) %>% rename(GEOID = fips)
+nebraskacurrent <- nebraska |> filter(date == current[[1]]) |> rename(GEOID = fips)
 ```
 
 Now we can read in our counties map layer.
@@ -4361,13 +4361,13 @@ counties <- st_read("data/cb_2018_us_county_5m/cb_2018_us_county_5m.shp")
 And join the two together.
 
 ```{r}
-counties <- counties %>% left_join(nebraskacurrent)
+counties <- counties |> left_join(nebraskacurrent)
 ```
 
 Since we have every county in the United States in our counties map layer, we can filter just Nebraska like this:
 
 ```{r}
-necounties <- counties %>% filter(STATEFP == 31)
+necounties <- counties |> filter(STATEFP == 31)
 ```
 
 So now, we have a geographic dataframe that has both the county shapes and the number of cases in the most recent data update. We just need to see it now:
@@ -4411,7 +4411,7 @@ calls <- read_csv("data/LPD_Dispatch_Records.csv")
 The first issue we need to address is that the dates don't import as dates. So we need to fix RPT_Date to make it a date. Lubridate to the rescue.
 
 ```{r}
-calls <- calls %>% mutate(RPT_Date = ymd(RPT_Date))
+calls <- calls |> mutate(RPT_Date = ymd(RPT_Date))
 ```
 
 For purposes of this work, we can live without the 13 (they don't occur when we're interested in).
@@ -4419,7 +4419,7 @@ For purposes of this work, we can live without the 13 (they don't occur when we'
 First, let's just visualize regular call volumes and see: Does the end of the line drop sharply, indicating people are socially distancing?
 
 ```{r}
-calls %>% group_by(RPT_Date) %>% summarize(total=n()) %>% ggplot() + geom_line(aes(x=RPT_Date, y=total))
+calls |> group_by(RPT_Date) |> summarize(total=n()) |> ggplot() + geom_line(aes(x=RPT_Date, y=total))
 ```
 
 Short answer? No. Longer answer? It's obvious that Lincoln has a seasonality to crime. It generally is low over the dead of winter and rises as it gets warmer, peaking during early football season (no surprise there) and dropping back down as winter sets in. So to make this useful, we should only compare dates in this March to previous March dates. Then we eliminate the seasonality issue.
@@ -4435,10 +4435,10 @@ So we're going to do some filtering here. The following block is broken down lik
 And we'll put it all in a dataframe called `calldays`.
 
 ```{r}
-calldays <- calls %>% filter(month(RPT_Date) == 3) %>% group_by(RPT_Date) %>% summarize(total_calls = n()) %>% mutate(TimePeriod = case_when(
+calldays <- calls |> filter(month(RPT_Date) == 3) |> group_by(RPT_Date) |> summarize(total_calls = n()) |> mutate(TimePeriod = case_when(
   RPT_Date < as.Date("2020-03-16") ~ "Previous",
   RPT_Date >= as.Date("2020-03-16") ~ "Current",
-)) %>% filter(RPT_Date < as.Date("2020-04-01"))
+)) |> filter(RPT_Date < as.Date("2020-04-01"))
 ```
 
 To test if the current period of time is different from previous March days, we're going to use something called a t-test. A t-test simply asks if two sample means are different -- is the average between sample A different from the mean of sample B. It looks at the variability in the data and boils it down to a p-value. The p-value tells us if it's statistically significant or not. Simply put: If our value is below .05, it's statistically significant and the two means are different. If it's above .05, then the differences between the two numbers are not meaningful -- it could just be random chance that they're different.
@@ -4464,7 +4464,7 @@ As they say, the devil is in the details.
 Let's use `janitor`'s `tabyl` function to get a look at what kind of call groups we can look at.
 
 ```{r}
-calls %>% filter(RPT_Date >= as.Date("2020-03-01")) %>% tabyl(CFS_LEGEND)
+calls |> filter(RPT_Date >= as.Date("2020-03-01")) |> tabyl(CFS_LEGEND)
 ```
 
 Let's first look at disturbances, one of the first big call types on that list. Disturbances, for those of you who have always stayed on the right side of the law, are anything where the police get called out to and people are acting the fool. Arguments between neighbors? Disturbance. Terrible racket coming from the back yard down the way? Disturbance. So it's pretty generic and it happens a lot.
@@ -4472,10 +4472,10 @@ Let's first look at disturbances, one of the first big call types on that list. 
 To look specifically at a crime, we're going to take what we did before and add a filter into it, and we'll name the dataframe what we're looking at.
 
 ```{r}
-disturbance <- calls %>% filter(CFS_LEGEND == "DISTURBANCE") %>% filter(month(RPT_Date) == 3) %>% group_by(RPT_Date) %>% summarize(total_calls = n()) %>% mutate(TimePeriod = case_when(
+disturbance <- calls |> filter(CFS_LEGEND == "DISTURBANCE") |> filter(month(RPT_Date) == 3) |> group_by(RPT_Date) |> summarize(total_calls = n()) |> mutate(TimePeriod = case_when(
   RPT_Date < as.Date("2020-03-16") ~ "Previous",
   RPT_Date >= as.Date("2020-03-16") ~ "Current",
-)) %>% filter(RPT_Date < as.Date("2020-04-01"))
+)) |> filter(RPT_Date < as.Date("2020-04-01"))
 ```
 
 Then we can do our t-test.
@@ -4489,10 +4489,10 @@ So what does this say? Typically, you'd see 48.85 disturbances a day on average 
 What about traffic calls?
 
 ```{r}
-traffic <- calls %>% filter(CFS_LEGEND == "TRAFFIC") %>% filter(month(RPT_Date) == 3) %>% group_by(RPT_Date) %>% summarize(total_calls = n()) %>% mutate(TimePeriod = case_when(
+traffic <- calls |> filter(CFS_LEGEND == "TRAFFIC") |> filter(month(RPT_Date) == 3) |> group_by(RPT_Date) |> summarize(total_calls = n()) |> mutate(TimePeriod = case_when(
   RPT_Date < as.Date("2020-03-16") ~ "Previous",
   RPT_Date >= as.Date("2020-03-16") ~ "Current",
-)) %>% filter(RPT_Date < as.Date("2020-04-01"))
+)) |> filter(RPT_Date < as.Date("2020-04-01"))
 ```
 
 ```{r}
@@ -4504,10 +4504,10 @@ Typically get about 32 calls a day, now 23. That's a big difference, and a stati
 How about car accidents?
 
 ```{r}
-accident <- calls %>% filter(CFS_LEGEND == "ACCIDENT") %>% filter(month(RPT_Date) == 3) %>% group_by(RPT_Date) %>% summarize(total_calls = n()) %>% mutate(TimePeriod = case_when(
+accident <- calls |> filter(CFS_LEGEND == "ACCIDENT") |> filter(month(RPT_Date) == 3) |> group_by(RPT_Date) |> summarize(total_calls = n()) |> mutate(TimePeriod = case_when(
   RPT_Date < as.Date("2020-03-16") ~ "Previous",
   RPT_Date >= as.Date("2020-03-16") ~ "Current",
-)) %>% filter(RPT_Date < as.Date("2020-04-01"))
+)) |> filter(RPT_Date < as.Date("2020-04-01"))
 ```
 
 ```{r}
@@ -4521,11 +4521,11 @@ Typically get a little more than 25 accident calls a day. Now, it's 14.4. Insura
 With a little magic using `tidyr` to transform the data ([learn more about that here](http://mattwaite.github.io/sports/transforming-data.html)), we can get a peek at other call groups worth exploring.
 
 ```{r}
-calls %>% filter(month(RPT_Date) == 3) %>% group_by(RPT_Date, CFS_LEGEND) %>% summarize(total_calls = n()) %>% mutate(TimePeriod = case_when(
+calls |> filter(month(RPT_Date) == 3) |> group_by(RPT_Date, CFS_LEGEND) |> summarize(total_calls = n()) |> mutate(TimePeriod = case_when(
   RPT_Date < as.Date("2020-03-16") ~ "Previous",
   RPT_Date >= as.Date("2020-03-16") ~ "Current",
-)) %>% filter(RPT_Date < as.Date("2020-04-01")) %>%
-  group_by(TimePeriod, CFS_LEGEND) %>% summarize(avg_calls = mean(total_calls)) %>% pivot_wider(names_from = "TimePeriod", values_from = "avg_calls") %>% na.omit()
+)) |> filter(RPT_Date < as.Date("2020-04-01")) |>
+  group_by(TimePeriod, CFS_LEGEND) |> summarize(avg_calls = mean(total_calls)) |> pivot_wider(names_from = "TimePeriod", values_from = "avg_calls") |> na.omit()
 ```
 
 Other interesting stories here? DUI is almost half of what it normally is. Thefts from vehicles are up way up. Also: trespassing? What's that about?
@@ -4566,8 +4566,8 @@ The following block is going to ...
 5. Use `gsub` to drop the newline character -- a newline is `\n` and the extra slash tells gsub to ignore the next character, meaning don't read this as a newline, read it as backslash n.
 
 ```{r}
-unl <- read_csv("data/unlcrime_covid.csv") %>%
-  clean_names() %>%
+unl <- read_csv("data/unlcrime_covid.csv") |>
+  clean_names() |>
   mutate(
     reported = mdy_hm(reported),
     start_occurred = mdy_hm(start_occurred),
@@ -4585,32 +4585,32 @@ head(unl)
 To look at a before and after picture, let's create two different dataframes -- one from January 1 to March 13, the day the University told everyone to go home. Campus that day was pretty empty -- few classes actually went on as scheduled, and most students didn't go to the ones that did.
 
 ```{r}
-pre2020 <- unl %>% filter(reported < "2020-03-13" & reported >= "2020-01-01")
+pre2020 <- unl |> filter(reported < "2020-03-13" & reported >= "2020-01-01")
 ```
 
 And now we'll take that March 13 and everything after it.
 
 ```{r}
-post2020 <- unl %>% filter(reported >= "2020-03-13")
+post2020 <- unl |> filter(reported >= "2020-03-13")
 ```
 
 To answer this question, on the surface, we don't need to use text analysis to answer this question. We could simply ask what was the most common incident at UNLPD before classes were cancelled and then moved online? Let's just group it by incident_code, count them up and then get a top ten list. To go a step further, we'll calculate a percent that the crime represented by dividing the count by the sum of the counts and we'll use top_n to give us the top 10 incidents.
 
 ```{r}
-pre2020 %>%
-  group_by(incident_code) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+pre2020 |>
+  group_by(incident_code) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
 So disturbances at the top with 32 of them reported between January 1 and the end. What about after the calamity?
 
 ```{r}
-post2020 %>%
-  group_by(incident_code) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+post2020 |>
+  group_by(incident_code) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
@@ -4619,10 +4619,10 @@ Trespassing. That right there is a story -- the most common thing UNLPD has resp
 Which begs the question: How many trespassing complaints did university police respond to before coronavirus?
 
 ```{r}
-pre2020 %>%
-  group_by(incident_code) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+pre2020 |>
+  group_by(incident_code) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   filter(incident_code == "TRESPASSING")
 ```
 
@@ -4645,24 +4645,24 @@ Then we're going to use a dplyr function we haven't used yet called an `anti_joi
 From there, we can get a simple word frequency by just grouping them together and counting them. We can borrow the percent code from above to get a percent of the words our top 10 words represent.
 
 ```{r}
-pre2020 %>%
-  unnest_tokens(word, summary) %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+pre2020 |>
+  unnest_tokens(word, summary) |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
 Before the calamity, student, reported and university were your top three by a long ways. What about after?
 
 ```{r}
-post2020 %>%
-  unnest_tokens(word, summary) %>%
-  anti_join(stop_words) %>%
-  group_by(word) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+post2020 |>
+  unnest_tokens(word, summary) |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
@@ -4686,30 +4686,30 @@ So this block is is going to do the following:
 
 
 ```{r}
-pre2020 %>%
-  unnest_tokens(bigram, summary, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+pre2020 |>
+  unnest_tokens(bigram, summary, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
 And we already have a different, more nuanced result. Student and reported were our top two single words. Why? Because they appear together a lot. In pre-calamity reports, student reported was the top bigram. What about after?
 
 ```{r}
-post2020 %>%
-  unnest_tokens(bigram, summary, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  group_by(bigram) %>%
-  tally(sort=TRUE) %>%
-  mutate(percent = (n/sum(n))*100) %>%
+post2020 |>
+  unnest_tokens(bigram, summary, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
 
@@ -4718,28 +4718,28 @@ Look at that -- you can remove 90 percent of the students from campus, and they'
 So what are the students left on campus reporting to UNLPD?
 
 ```{r}
-post2020 %>%
-  unnest_tokens(bigram, summary, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  filter(bigram == "student reported") %>%
-  group_by(incident_code) %>%
+post2020 |>
+  unnest_tokens(bigram, summary, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  filter(bigram == "student reported") |>
+  group_by(incident_code) |>
   tally(sort=TRUE)
 ```
 
 What about before?
 
 ```{r}
-pre2020 %>%
-  unnest_tokens(bigram, summary, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  mutate(bigram = paste(word1, word2, sep=" ")) %>%
-  filter(bigram == "student reported") %>%
-  group_by(incident_code) %>%
+pre2020 |>
+  unnest_tokens(bigram, summary, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  filter(bigram == "student reported") |>
+  group_by(incident_code) |>
   tally(sort=TRUE)
 ```
 

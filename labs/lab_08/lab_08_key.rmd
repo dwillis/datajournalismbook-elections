@@ -36,7 +36,7 @@ You may want to clean up the column names and standardize the names of counties 
 
 ```{r}
 md_active_voters <- read_csv("data/md_active_voters.csv")
-md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names()
+md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") |> clean_names()
 ```
 
 ## Questions 
@@ -51,13 +51,13 @@ md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv") %>% clean_names(
 
 ```{r}
 # Calculate the percentage
-md_absentee_ballots <- md_absentee_ballots %>%
-  mutate(pct_returned = total_received/total_sent*100) %>% 
+md_absentee_ballots <- md_absentee_ballots |>
+  mutate(pct_returned = total_received/total_sent*100) |> 
   arrange(desc(pct_returned))
 
 # Plot the data.  Use geom_line to draw the line, geom_point to add points, geom_text to add labels.  Use scale_x_date to set breaks at 1 day. 
-md_absentee_ballots %>%
-  head(10) %>% 
+md_absentee_ballots |>
+  head(10) |> 
   ggplot() + 
   geom_bar(aes(x=reorder(county_name,pct_returned), weight=pct_returned)) + 
   coord_flip() +
@@ -79,12 +79,12 @@ md_absentee_ballots %>%
 
 **A2.** 
 ```{r}
-md_absentee_ballots <- md_absentee_ballots %>%
-  mutate(pct_returned_dem = dem_received/dem_sent*100, pct_returned_rep = rep_received/rep_sent*100, pct_returned_oth = oth_received/oth_sent*100, dem_rep_diff = pct_returned_dem-pct_returned_rep) %>% 
+md_absentee_ballots <- md_absentee_ballots |>
+  mutate(pct_returned_dem = dem_received/dem_sent*100, pct_returned_rep = rep_received/rep_sent*100, pct_returned_oth = oth_received/oth_sent*100, dem_rep_diff = pct_returned_dem-pct_returned_rep) |> 
   arrange(pct_returned_dem)
 
-md_absentee_ballots %>% 
-  head(10) %>% 
+md_absentee_ballots |> 
+  head(10) |> 
   ggplot() + 
   geom_bar(aes(x=reorder(county_name,-pct_returned_dem), weight=pct_returned_dem)) + 
   coord_flip() +
@@ -122,26 +122,26 @@ To answer those questions, do the following:
 **A3.**  
 
 ```{r}
-md_early_voting <- read_csv("https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv") %>% filter(AgeGroup == '18-24')
+md_early_voting <- read_csv("https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv") |> filter(AgeGroup == '18-24')
 
-md_early_voting <- md_early_voting %>% mutate(fips_code = case_when(
+md_early_voting <- md_early_voting |> mutate(fips_code = case_when(
   COUNTY_CODE < 10 ~ paste0("2400",COUNTY_CODE),
   COUNTY_CODE >= 10 ~ paste0("240",COUNTY_CODE))
-) %>% 
-  mutate(across(where(is.numeric), ~ replace_na(., 0))) %>% 
+) |> 
+  mutate(across(where(is.numeric), ~ replace_na(., 0))) |> 
   select(-Day7, -Day8)
 
-md_early_voting_county_gender <- md_early_voting %>% 
-  group_by(fips_code, COUNTY_NAME, GENDER_CODE) %>% 
-  summarize(total = sum(c_across(starts_with('Day')))) %>% 
-  pivot_wider(names_from = GENDER_CODE, values_from = total) %>% 
-  rename(UNK = `NA`) %>% 
-  mutate(across(where(is.numeric), ~ replace_na(., 0))) %>% 
-  mutate(total = M + F + UNK) %>% 
+md_early_voting_county_gender <- md_early_voting |> 
+  group_by(fips_code, COUNTY_NAME, GENDER_CODE) |> 
+  summarize(total = sum(c_across(starts_with('Day')))) |> 
+  pivot_wider(names_from = GENDER_CODE, values_from = total) |> 
+  rename(UNK = `NA`) |> 
+  mutate(across(where(is.numeric), ~ replace_na(., 0))) |> 
+  mutate(total = M + F + UNK) |> 
   mutate(pct_male = M/total *100, pct_female = F/total * 100)
 
 # Plot it using geom_point.
-md_early_voting_county_gender %>%
+md_early_voting_county_gender |>
   ggplot() +
   geom_point(aes(x=pct_male,y=pct_female)) +
   geom_text_repel(aes(x=pct_male,y=pct_female, label=COUNTY_NAME), position=position_jitter(width=1,height=1)) +

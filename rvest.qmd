@@ -72,7 +72,7 @@ Let's write a bit of code to tell R to go to the URL for the page and ingest all
 
 ```{r}
 # read in the html
-results <- ag_url %>%
+results <- ag_url |>
   read_html()
 
 # display the html below
@@ -106,8 +106,8 @@ Because it's inside of a table, and not some other kind of element (like a `<div
 
 ```{r}
 # read in the html and extract all the tables
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # show the dataframe
@@ -123,8 +123,8 @@ So, all we need to do now is to store that single dataframe as an object. We can
 
 ```{r}
 # Read in all html from table, store all tables on page as nested list of dataframes.
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # Just keep the first dataframe in our list
@@ -144,18 +144,18 @@ Then let's use slice() to remove the last row -- row number 25 -- which contains
 
 ```{r}
 # Read in all html from table, get the HTML table.
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # Standardize column headers, remove last row
 
-results <- results[[1]] %>%
-  clean_names() %>%
-  rename(peroutka = 2, brown = 3, write_ins = 4) %>%
-  slice(-25) %>%
-  mutate(peroutka = as.numeric(gsub(",","", peroutka))) %>%
-  mutate(brown = as.numeric(gsub(",","", brown))) %>%
+results <- results[[1]] |>
+  clean_names() |>
+  rename(peroutka = 2, brown = 3, write_ins = 4) |>
+  slice(-25) |>
+  mutate(peroutka = as.numeric(gsub(",","", peroutka))) |>
+  mutate(brown = as.numeric(gsub(",","", brown))) |>
   mutate(write_ins = as.numeric(gsub(",","", write_ins)))
 
 # show the dataframe

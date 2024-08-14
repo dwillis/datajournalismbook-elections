@@ -57,7 +57,7 @@ The `janitor` library makes fixing headers trivially simple with the function `c
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
+cleaned_conowingo <- conowingo |>
   clean_names()
 
 # display the cleaned dataset
@@ -72,8 +72,8 @@ We can use a tidyverse function `rename()` to fix that. Let's just call it `line
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
   rename(linenumber = x1_linenumber)
 
 # display the cleaned dataset
@@ -86,7 +86,7 @@ Right now, the amount column is stored as a character. Do you see the little `<c
 
 ```{r, error=TRUE}
 # cleaning function
-total_conowingo <- cleaned_conowingo %>%
+total_conowingo <- cleaned_conowingo |>
   summarise(total_amount = sum(amount))
 
 # display the cleaned dataset
@@ -99,9 +99,9 @@ We got an "invalid 'type' (character)" error. So let's fix that using the mutate
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
   mutate(amount = as.numeric(amount))
 
 
@@ -114,7 +114,7 @@ Notice that the amount has been converted to a `<dbl>`, which is short for doubl
 
 ```{r}
 # cleaning function
-total_conowingo <- cleaned_conowingo %>%
+total_conowingo <- cleaned_conowingo |>
   summarise(total_amount = sum(amount))
 
 # display the cleaned dataset
@@ -132,7 +132,7 @@ So the question is, do we have any records repeated?
 Here we'll use a function called `get_dupes` from the janitor library to check for fully repeated records in our cleaned data set.
 
 ```{r}
-cleaned_conowingo %>%
+cleaned_conowingo |>
   get_dupes()
 ```
 
@@ -142,10 +142,10 @@ We can fix this by adding the function `distinct()` to our cleaning script. This
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
   distinct()
 
 
@@ -164,11 +164,11 @@ We're going to write code that tells R to keep the first five digits on the left
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
   mutate(zip = str_sub(zip, start=1L, end=5L))
 
 
@@ -183,12 +183,12 @@ We'll use a different set of functions to standardize how we standardize the dif
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
   mutate(city = str_to_title(city))
 
 
@@ -201,13 +201,13 @@ That was enough to standardize two values (CONOWINGO and conowingo). The only on
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     city == "Conowing" ~ "Conowingo",
     TRUE ~ city
@@ -226,13 +226,13 @@ We could fix "Conowingoo" by adding another line inside that function, that look
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     city == "Conowing" ~ "Conowingo",
     city == "Conowingoo" ~ "Conowingo",
@@ -251,13 +251,13 @@ The second line of our case_when() function below now says, in English: look in 
 
 ```{r}
 # cleaning function
-cleaned_conowingo <- conowingo %>%
-  clean_names() %>%
-  rename(linenumber = x1_linenumber) %>%
-  mutate(amount = as.numeric(amount)) %>%
-  distinct() %>%
-  mutate(zip = str_sub(zip, start=1L, end=5L)) %>%
-  mutate(city = str_to_title(city)) %>%
+cleaned_conowingo <- conowingo |>
+  clean_names() |>
+  rename(linenumber = x1_linenumber) |>
+  mutate(amount = as.numeric(amount)) |>
+  distinct() |>
+  mutate(zip = str_sub(zip, start=1L, end=5L)) |>
+  mutate(city = str_to_title(city)) |>
   mutate(city = case_when(
     str_detect(city,"^Conowing") ~ "Conowingo",
     TRUE ~ city

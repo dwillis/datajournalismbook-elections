@@ -86,7 +86,7 @@ Let's write a bit of code to tell R to go to the URL for the page and ingest all
 
 ```{r}
 # read in the html
-results <- ag_url %>%
+results <- ag_url |>
   read_html()
 
 # display the html below
@@ -123,8 +123,8 @@ Because it's inside of a table, and not some other kind of element (like a `<div
 
 ```{r}
 # read in the html and extract all the tables
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # show the dataframe
@@ -144,8 +144,8 @@ So, all we need to do now is to store that single dataframe as an object.  We ca
 
 ```{r}
 # Read in all html from table, store all tables on page as nested list of dataframes.
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # Just keep the first dataframe in our list
@@ -168,18 +168,18 @@ Then let's use slice() to remove the last row -- row number 25 -- which contains
 
 ```{r}
 # Read in all html from table, get the HTML table.
-results <- ag_url %>%
-  read_html() %>%
+results <- ag_url |>
+  read_html() |>
   html_table()
 
 # Standardize column headers, remove last row
 
-results <- results[[1]] %>%
-  clean_names() %>%
-  rename(peroutka = 2, brown = 3, write_ins = 4) %>%
-  slice(-25) %>%
-  mutate(peroutka = as.numeric(gsub(",","", peroutka))) %>%
-  mutate(brown = as.numeric(gsub(",","", brown))) %>%
+results <- results[[1]] |>
+  clean_names() |>
+  rename(peroutka = 2, brown = 3, write_ins = 4) |>
+  slice(-25) |>
+  mutate(peroutka = as.numeric(gsub(",","", peroutka))) |>
+  mutate(brown = as.numeric(gsub(",","", brown))) |>
   mutate(write_ins = as.numeric(gsub(",","", write_ins)))
 
 # show the dataframe
@@ -210,7 +210,7 @@ One reason that we use HTML elements like ul and li is to help organize the code
 **Task** Run the following code in the gray-colored codeblock below to save the HTML as a variable
 
 ```{r}
-cmte_results <- cmtes_url %>%
+cmte_results <- cmtes_url |>
   read_html()
 
 # show the result
@@ -224,7 +224,7 @@ Once again we get a list of two as our result. In this case, we don't want to is
 **Answer** 
 
 ```{r}
-cmte_results %>% html_elements('li')
+cmte_results |> html_elements('li')
 ```
 
 Good news and bad news here: we have all of the <li> tags, but we have lots of them, and it's hard to see any of the committees. Let's see what we're dealing with and just look at the text *inside* the <li> tags. To do that, we add `html_text()` to the end of the last code block:
@@ -234,7 +234,7 @@ Good news and bad news here: we have all of the <li> tags, but we have lots of t
 **Answer** 
 
 ```{r}
-cmte_results %>% html_elements('li') %>% html_text()
+cmte_results |> html_elements('li') |> html_text()
 ```
 
 Ok, so now we can see the committee names. But they are surrounded by a bunch of things we don't want, and this *still* isn't a dataframe. Let's solve the second problem first with the `as_tibble()` function:
@@ -244,7 +244,7 @@ Ok, so now we can see the committee names. But they are surrounded by a bunch of
 **Answer** 
 
 ```{r}
-committees <- cmte_results %>% html_elements('li') %>% html_text() %>% as_tibble()
+committees <- cmte_results |> html_elements('li') |> html_text() |> as_tibble()
 ```
 
 Now we're getting closer. The rows in this dataframe we don't want begin with a newline character `\n`. Let's get rid of those using `filter()` and rename our single column:
@@ -253,9 +253,9 @@ Now we're getting closer. The rows in this dataframe we don't want begin with a 
 **Task** Run the following code in the gray-colored codeblock below to remove the unwanted rows from our dataframe:
 
 ```{r}
-committees <- committees %>% 
+committees <- committees |> 
   # filter out rows that begin with a newline character
-  filter(!str_detect(value, "^\n")) %>% 
+  filter(!str_detect(value, "^\n")) |> 
   rename(name = value)
 ```
 
