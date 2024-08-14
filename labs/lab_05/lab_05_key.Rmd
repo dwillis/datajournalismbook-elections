@@ -37,72 +37,62 @@ library(lubridate)
 
 ```
 
-For this lab, we want to investigate spending by Maryland state and local candidates during the current election. For example, we could ask how much money have candidates and committees spent on advertising on Facebook? Which vendors received the most money for media expenses? We have the data, but it's messy - names of payees are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
+For this lab, we want to investigate spending by the two leading Senate candidates in Maryland during this election, Angela Alsobrooks and Larry Hogan. Our goal is to try and standardize the purpose of the expenditures so that we can compare the two campaigns. We have the data, but it's messy - purpose descriptions are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
 
 The basic process here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
 
 ## Load Data
 
-You'll need to load one data set, a CSV file of Maryland campaign expenditures located in the data folder called "md_expenses.csv"
+You'll need to load one data set, a CSV file of campaign expenditures located in the data folder called "md_senate_expenses.csv"
 
-**Task** Create a codeblock below, then read the data in and assign it to an appropriate variable name. You'll want to clean up the column names and make sure that any date columns are actually date datatypes.
+**Task** Create a codeblock below, then read the data in and assign it to an appropriate variable name. You'll want to make sure that any date columns are actually date datatypes.
 
 ```{r}
 # Load the Maryland expenditures data table
-md_expenses <- read_csv('data/md_expenses.csv') |> clean_names()
+md_senate_expenses <- read_csv('data/md_senate_expenses.csv')
 
-md_expenses <- md_expenses |> mutate(expenditure_date = mdy(expenditure_date))
 ```
 
 ## Answer questions
 
-**Q1.** You've been assigned to write about Maryland political committees' use of Facebook advertising. There's a category column in the data that has values for different kinds of spending. One of them is "Media". Write code to isolate Media expenses where the name of the payee is not NA. Then, using `write_csv`, make a CSV file in your data folder. Using OpenRefine, create a project using that CSV file, create a copy of the `payee_name` column called `payee_clean` and then standardize it, focusing on the payees that appear most often. Pay particular attention to variations of Facebook, bearing in mind that it changed its name last year: https://about.fb.com/news/2021/10/facebook-company-is-now-meta/), but also clean up variations of the most common payees.
+**Q1.** You've been assigned to compare the spending priorities of the two campaigns, but they describe their spending differently using the `purpose` column. Using OpenRefine, create a project using the original CSV file, make a copy of the `purpose` column called `purpose_clean` and then standardize it, focusing on the purposes that appear most often or have the largest total amounts. You can transform the data as you want - making all records the same case, for example, to help. 
 
-Then, when you are done standardizing `payee_clean`, export it as a new CSV file to your data folder, *giving it a different name* and read it back into RStudio as a new dataframe.
+Then, when you are done standardizing `purpose_clean`, export it as a new CSV file to your data folder, *giving it a different name* and read it back into RStudio as a new dataframe.
 
-Then, using that `payee_clean` column, write code to find all of the spending where Facebook is the payee and calculate the total amount of spending for each committee and present the results showing the committee that spent the most first.
+Then, using that `purpose_clean` column, write code to find the largest amounts of spending on categories by both campaigns.
 
 **A1.**  
 
 ```{r}
-media_expenses <- md_expenses |> filter(expense_category == 'Media') |> filter(!is.na(payee_name))
-
-write_csv(media_expenses, "data/media_expenses.csv")
-
 # Clean up work in OpenRefine
 
 # read the cleaned CSV 
-media_expenses_cleaned <- read_csv("data/media-expenses-cleaned.csv")
+md_senate_expenses_cleaned <- read_csv("data/md-senate-expenses-cleaned.csv")
 
 # calculate top Facebook spenders
-media_expenses_cleaned |> 
-  filter(payee_clean == 'Facebook') |> 
-  group_by(committee_name) |> 
+md_senate_expenses_cleaned |> 
+  group_by(candidate, purpose) |> 
   summarise(total_amount = sum(amount)) |> 
   arrange(desc(total_amount))
 
 ```
-**Q2.** Let's do some research on the top committees from question 1. Look up the top 10 spenders: if they are candidate committees, what offices were they running for? If they were not candidates, what issues do they seem to care about? Write some sentences answering those questions, then go the Facebook ad library (https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&media_type=all) and look for ads from the top spender. What do you notice about those ads?
+**Q2.** Let's do some research on the top purposes from A1. Feel free to search the Web to understand those terms better, and then write a description comparing and contrasting the two campaigns' largest categories of spending. 
 
-**A2.** The top ten are mostly, but not entirely, candidates for governor in the 2022 primary election. Billy Boniface is a candidate for Harford County executive, and there are several PACs, including CASA in Action, which supports immigrant communities. The top spender is the campaign of Ashwani Jain, a Democratic gubernatorial candidate who lost in the primary. His Facebook ads were taken down by the platform because they did not comply with disclaimer rules (who paid for this ad).
+**A2.** 
 
-**Q3.** Given the list of top spenders in A1 and the primary results for governor (https://elections.maryland.gov/elections/2022/primary_results/gen_results_2022_1.html), who is missing from that Q1 list? Did those campaigns run Facebook ads? Who are the biggest recipients of media expenses by the Democratic primary winner for governor (HINT: that person has two committees)?
+**Q3.** Pick one of the top categories for each campaign and write code that shows how that spending has changed over time, if at all. Write a couple of sentences describing that pattern.
 
-**A3.** Both Wes Moore & Dan Cox's campaigns are missing from the list of top Facebook spenders. Moore definitely has run Facebook ads, but Cox appears not to have, which seems unusual. Moore's campaign (both primary and general committees) has paid more than $3.6 million to SKDK, a Democratic consulting firm that handles all kinds of campaign activities, including advertising. We don't see direct payments to Facebook because it's likely that SKDK is making those buys rather than the campaign itself.
+**A3.** 
+
 
 ```{r}
 
-media_expenses_cleaned |> 
-  filter(committee_name == 'Moore  Wes For Maryland' | committee_name == 'Moore Miller For Maryland Slate') |> 
-  group_by(payee_clean) |> 
-  summarise(total_amount = sum(amount)) |> 
-  arrange(desc(total_amount))
 
 ```
 
-**Q4.** The media expense data you cleaned also has a standardized purpose column. Write code to generate a list of the committees with the total amount of spending on online advertising. How does this list compare to the one from Q1 about top Facebook spenders? Of the top 5 committees who spent the most on Facebook ads from Q1, are there any that appear to have spent *all* of their online advertising dollars on Facebook?
+**Q4.** Which committee has the larger payroll or salary spending so far?
 
-**A4.** This list has larger amounts for total online ad spending, and a different list of top committees, including the Republican Governors Association and DGA Action. Ashwani Jain, the top committee on the Facebook spending list, appears to have spent all of its online advertising dollars on Facebook.
+**A4.** 
 
 ```{r}
 media_expenses_cleaned |> 
@@ -112,6 +102,6 @@ media_expenses_cleaned |>
   arrange(desc(total_amount))
 ```
 
-**Q5** You've been asked to summarize your findings about spending on Facebook by Maryland political candidates. How much do we know and what don't we know? What's the best story idea you've found here?
+**Q5** What's the best story idea you've found in this data?
 
 **A5** 

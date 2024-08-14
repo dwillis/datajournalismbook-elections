@@ -120,3 +120,13 @@ md_senate_expenses |>
   summarize(total = sum(amount))
 ```
 
+```{r}
+md_senate_expenses <- md_senate_expenses |> 
+  mutate(candidate = case_when(
+    fec_committee_id == 'C00840017' ~ 'Alsobrooks',
+    fec_committee_id == 'C00869016' ~ 'Hogan'
+  ))
+
+write_csv(md_senate_expenses, "~/code/datajournalismbook-elections/labs/lab_05/data/md_senate_expenses.csv")
+```
+
