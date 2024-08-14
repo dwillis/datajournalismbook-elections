@@ -11,8 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* A Datawrapper account
-* Election data in CSV files in the `data` folder
+-   A Datawrapper account
+-   Election data in CSV files in the `data` folder
 
 ## Load libraries and establish settings
 
@@ -26,17 +26,9 @@ library(tidyverse)
 
 **Q1.** In the previous lab, you made a map showing the difference between the electoral performances of Dan Cox in 2022 and Larry Hogan in 2018. Except a map is probably not the best way to show that. Let's make a chart instead, and the type is up to you, but the goal is to clearly show the differences between the two.
 
-You MUST do the following things when answering this question:
-* Load the md_county_gov.csv and md_county_gov_18.csv files in the data folder
-* Join those dataframes, specifying the join column. You should add columns to generate percentages for Cox and Hogan.
-* Export that joined dataframe to a CSV file using `write_csv`.
-* Using that exported CSV, make a chart with Datawrapper. What kind of chart is up to you, so experiment with a few kinds of charts to see what answers the question above in the clearest way. Your chart MUST:
-  * Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
-  * Easily readable labels and values
-* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this)
-* Put the answer below along with the URL of your chart.
+You MUST do the following things when answering this question: \* Load the md_county_gov.csv and md_county_gov_18.csv files in the data folder \* Join those dataframes, specifying the join column. You should add columns to generate percentages for Cox and Hogan. \* Export that joined dataframe to a CSV file using `write_csv`. \* Using that exported CSV, make a chart with Datawrapper. What kind of chart is up to you, so experiment with a few kinds of charts to see what answers the question above in the clearest way. Your chart MUST: \* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect. \* Easily readable labels and values \* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this) \* Put the answer below along with the URL of your chart.
 
-**A1.** 
+**A1.**
 
 ```{r}
 ```
@@ -47,7 +39,7 @@ HINT: In Datawrapper's "Check and Describe" tab, you can click on a column to ge
 
 What do you think the story here is? Put the answer below along with the URL of your chart.
 
-**A2.** 
+**A2.**
 
 ```{r}
 md_votes_by_type <- read_csv("data/md_votes_by_type.csv") |> 
@@ -57,17 +49,16 @@ md_votes_by_type <- read_csv("data/md_votes_by_type.csv") |>
 write_csv(md_votes_by_type, "data/md_votes_by_type.csv")
 ```
 
-
 **Q3.** You want to know the geography of ActBlue donors who live in Maryland, so load in the `md_actblue_zip.csv` file in the data folder and calculate a grand total of the totals for each zip code in the dataframe. Using that total, calculate a percentage of the total for each zip code (you can hard code that number). The export the dataframe using `write_csv` and make a choropleth map in Datawrapper. You will need to:
 
-* Search for Maryland zip codes (use the 2020 data) as the base map
-* Upload the CSV file
-* Change the tooltip to show both the amount and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
-* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+-   Search for Maryland zip codes (use the 2020 data) as the base map
+-   Upload the CSV file
+-   Change the tooltip to show both the amount and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
+-   Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
 
 What do you think the story here is, and what would you want to know more about? Put the answer below along with the URL of your chart.
 
-**A3.** 
+**A3.**
 
 ```{r}
 
