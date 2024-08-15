@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_10.Rmd"
-author: "derek willis"
-date: "11/11/2022"
+author: "Derek Willis"
+date: "2024-08-06"
 output: html_document
 ---
 
@@ -9,146 +9,409 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-We'll continue our chart-making adventure today with Datawrapper, a free tool that many newsrooms use to create graphics, maps and tables. You should have your Datawrapper account setup. Let's start with a simple bar chart using data from the 2024 Democratic primary in Prince George's County. We have a CSV file of the percentage of votes cast by voting method (early, election day and mail) for three candidates in the Democratic primary in Prince George's County: Joe Biden (President) and Angela Alsobrooks and David Trone (U.S. Senate).
+## Chapter 29
 
-Alsobrooks was the winner in the Senate race, but that wasn't a clear-cut outcome a few weeks before the election. Trone had a well-financed early turnout operation, so looking at how votes were cast (before election day or on it) should shed some light on how Alsobrooks won. 
+Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like per capita rates, or looked at how data changes over time.
 
-### Task 1: Load libraries and settings
+Another way we can look at the data is geographically. Is there a spatial pattern to our data? Can we learn anything by using distance as a metric? What if we merge non-geographic data into geographic data?
 
-**Task** Run the following code in the gray-colored codeblock below to load the tidyverse library
+The bad news is that there isn't a One Library To Rule Them All when it comes to geo queries in R. But there's one emerging, called Simple Features, that is very good.
+
+Go to the console and install it with `install.packages("sf")`
+
+To understand geographic queries, you have to get a few things in your head first:
+
+1.  Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
+2.  Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
+3.  Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
+4.  See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/geolayers.jpg")
+```
+
+## Importing and viewing data
+
+Let's start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.
+
+### Task 1: Load packages
+
+**Task** Run the following code to load packages.
 
 ```{r}
 library(tidyverse)
+library(sf)
 library(janitor)
 ```
 
-### Task 2: Get 2024 Democratic primary data
+First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ERSI, which created the most widely used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
 
-First, let's get some data and work with it. Let's load and look at it.
+So more often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified.
 
-**Task** Load the CSV file
+You also might be working with a GeoDatabase, or a .gdb file. That's a slightly different, more compact version of a Shapefile.
 
-```{r}
-dem_cands <- read_csv("data/md_dem_cands.csv")
-```
+The data we're going to be working with is a GeoDatabase from the [Prince George's County Department of Planning](https://gisdata.pgplanning.org/opendata/) that contains information about the county's election precincts.
 
-### Task 3: Log into Datawrapper
+### Task: Load the Prince George's County election precinct data.
 
-**Task** Log into [datawrapper.de](https://www.datawrapper.de/). Once logged in, you'll click on New Chart.
+Simlar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our precinct data. And then glimpse it to look at the columns.
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper1.png")
-```
+### Task: Load data
 
-### Task 4: Upload the CSV File
-
-The first thing we'll do is upload the pg_cands.csv file that's in the pre_lab_10/data folder.
-
-**Task** Click on XLS/CSV and upload the pg_cands.csv file.
-
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper2.png")
-```
-
-### Task 5: Inspect the Data
-
-Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly.
-
-**Task** Look at the uploaded data, then click on the "Proceed" button.
-
-```{r, echo=FALSE}
-knitr::include_graphics(rep("images/datawrapper3.png"))
-```
-
-### Task 6: Make a Chart
-
-Now we make a chart. Datawrapper will try to pick a chart type, but you should have an idea of what you want that's based on the data. In this case, we have three categories for each candidate, so we could choose Stacked Bars or Split Bars. Let's go with the latter.
-
-**Task** Click on Refine. Let's make sure that the percentages are actually formatted as percentages:
-
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper4.png")
-```
-
-### Task 7: Annotate the Chart
-
-Now we need to annotate our chart. Every chart needs a title, a source line and a credit line. Most need chatter (called `description` here).
-
-**Task** Click on the "Annotate" tab to get add the title and description. Really think about the title and description: the title is like a headline and the description is provides some additional context. Another way to think about it: the title is the most important lesson from the graphic, and the description could be the next most important lesson or could provide more context to the title.
-
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper5.png")
-```
-
-You also need to add "alt-text", or the alternative description for screen reader software that assists those with vision difficulties. Alt text should describe the chart.
-
-### Task 7: Publish the Chart
-
-**Task** Datawrapper offers several ways for you to get your chart in front of readers. The first is to publish it, which gives you access to a unique URL and embed codes that should work with content management systems such as WordPress. Click the "Publish & Embed" tab and then click the "Publish" button, and you'll see something like this:
-
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper6.png")
-```
-
-Some publication systems allow for the embedding of HTML into a post or a story. Some don't. The only way to know is to ask someone at your publication. Every publication system on the planet, though, can publish an image. So there's always a way to export your chart as a PNG file, which you can upload like any photo.
-
-To do that, click on the "PNG" icon. Finally, click the "Download image" button.
-
-**Answer** Copy the url of the graphic you published here. It will begin with <https://datawrapper.dwcdn.net/>. Don't copy the browser's current url.
-
-### Task 8: Make a Choropleth Map
-
-Let's create a choropleth map - one that shows variations between the percentage of votes received by Wes Moore across Maryland counties in 2022. We'll read that in from the data folder.
-
-**Task** Run the following code to load the Maryland election results data.
+**Task** Run the following code to load data. Describe what you see in the answer space below. What columns exist in this data? **Answer**
 
 ```{r}
-md_gov_county <- read_csv("data/md_gov_county.csv")
+pg_precincts <- st_read("data/Election_Precinct_2022_Py.gdb")
+
+glimpse(pg_precincts)
 ```
 
-In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a [FIPS Code](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our md_gov_county dataframe has a FIPS code for each county, but if you ever need one for a county, this is a solved problem thanks to the Tigris library that we used in pre_lab 9.
+This looks like a normal dataframe, and mostly it is. We have one row per precinct, and each column is some feature of that precinct: the ID, name and more. What sets this data apart from other dataframes we've used is the last column, "Shape", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
 
-**Task** Write code to add columns showing the total number of votes for each county and the percentage of votes received by Wes Moore in each county (you did this in Lab 9!), then replace the CSV file in the data folder with it.
+Let's look at these precincts. We have 356 of them, according to this data.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below: what kind of information does it contain? **Answer**
+
+```{r}
+View(pg_precincts)
+```
+
+But where in Prince George's County are these places? We can simply plot them on a longitude-latitude grid using ggplot and geom_sf.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+pg_precincts |>
+  ggplot() +
+  geom_sf() +
+  theme_minimal()
+```
+
+Each shape is a precinct, with the boundaries plotted according to its degrees of longitude and latitude.
+
+If you know anything about Prince George's, you can kinda pick out the geographic context here. To the west is the District of Columbia, for example. College Park is near the top. But this map is not exactly ideal. It would help to have a state and county map layered underneath of it, to help make sense of the spatial nature of this data.
+
+This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland county outlines.
+
+Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census. The package is called `tigris` and it's developed by the same person who made `tidycensus`.
+
+In the console, install tigris with `install.packages('tigris')`
+
+Then load it:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+# install.packages('tigris')
+library(tigris)
+```
+
+Now, let's use the counties() function from tigris to pull down a shapefile of all U.S. counties.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
 
-# calculate the total number of votes and Moore's percentage, saving it back to the md_gov_county dataframe
+counties <- counties()
 
-write_csv(md_gov_county, "data/md_gov_county.csv")
+glimpse(counties)
 ```
 
-**Task** Go back to Datawrapper and click on "New Map". Click on "Choropleth map" and then choose "USA \>\> Counties (2022)" for the map base and click the Proceed button.
+This looks pretty similar to our places shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column (this time called `geometry`, which is pretty common).
 
-**Task** Now we can upload the `md_gov_county.csv` file from our data folder using the Upload File button. It should look like the following image:
+This county shapefile has all 3233 U.S. counties. We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties. There is no STATE column, but there is a STATEFP column, with each number representing a state. Maryland's FP number is 24.
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper7.png")
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_counties <- counties |>
+  filter(STATEFP == "24")
+
 ```
 
-We'll need to make sure that Datawrapper understands what the data is and where the FIPS code is.
+To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
 
-**Task** Click on the "Match" tab and make sure that yours looks like the image below (your column for Moore's percentage may have a different name):
+### Task: Run code
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper8.png")
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_counties |>
+  ggplot() +
+  geom_sf() +
+  theme_minimal()
 ```
 
-**Task** Click the "Proceed" button (you should have to click it twice, since the first time it will tell you that there's no data for 3,197 counties - the rest of the U.S.). That will take you to the Visualize tab.
+With this county map, we can layer our places data. We'll narrow it down to just Prince George's County to get an outline.
 
-You'll see that the map currently is of the whole nation, and we only have Maryland data. Let's fix that.
+Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
 
-**Task** Look for "Hide regions without data" under Appearance, and click the slider icon to enable that feature. You should see a map zoomed into Maryland with some counties in various colors. **Answer** Describe the changes from the previous map
+We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe. We have two to plot now, so it's easier this way.
 
-But it's a little rough visually, so let's clean that up.
+### Task: Run code
 
-**Task** Look for the "Show color legend" label and add a caption for the legend, which is the horizontal bar under the title. It represents the extent of the data from smallest number of loans to largest. Then click on the "Annotate" tab to add a title, description, data source and byline. The title should represent the headline, while the description should be a longer phrase that tells people what they are looking at.
+**Task** Run the following code. Describe the output in the space below. **Answer**
 
-That's better, but check out the tooltip by hovering over a county. It's not super helpful. Let's change the tooltip behavior to show the county name and a better-formatted number.
+```{r}
+ggplot() +
+  geom_sf(data=md_counties |> filter(COUNTYFP == "033")) +
+  geom_sf(data=pg_precincts) +
+  theme_minimal()
+```
 
-**Task** Click the "Customize tooltips" button so it expands down. Change {{ fips_code }} to {{ county }} and {{ pctmoore }} to {{ FORMAT(pctmoore, "00.0%")}} **Answer** Describe the changes from the previous map
+Notice the subtle differences at the boundaries?
 
-**Task** Add a note that says that this data represents votes counted through Nov. 10 and an alternative description for screen readers. This should be a simple description of what your map shows. Experiment with the "Show labels" button, choosing the "by column" option for Type to display some or all of the county names.
+Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](<https://elections.maryland.gov/press_room/2024_stats/Official%20by%20Party%20and%20Precinct.csv> to determine this.
 
-Ok, that looks better. Let's publish!
+### Task: Run code to load the turnout data from the May 2024 Primary election
 
-**Task** Click the "Proceed" button until you get to the "Publish & Embed" tab, then click "Publish Now". Copy the published URL (like you did for the chart above) and paste it below. **Answer** Put the URL of your map here.
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+primary_24 <- read_csv("data/Official by Party and Precinct.csv") |> clean_names()
+pg_turnout <- primary_24 |> 
+  filter(lbe == "Prince George's") |> 
+  group_by(precinct) |> 
+  summarise(total_polls = sum(polls), total_early = sum(early_voing), total_absentee = sum(absentee), total_provisional = sum(provisional), total_eligible = sum(eligible_voters))
+
+View(pg_turnout)
+```
+
+Now we can join the precincts to the turnout data.
+
+### Task: Run code to join the precinct shapes with the voter turnout data
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
+```
+
+Now we can use color to distinguish precincts from each other. Let's use the total eligible voters to start with:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=pg_precincts_with_turnout, aes(fill=total_eligible)) +
+  scale_colour_viridis_b(option="magma") +
+  theme_minimal()
+```
+
+With these changes, what else can we make out here? First, you can pretty easily spot our "ghost precincts" - they are the ones in white, where there are no eligible voters. But you also can see that there's some pretty big variation among the number of eligible voters per precinct across the county, with some very large ones in the middle.
+
+## Chapter 21
+
+In the previous chapter, we looked at election precincts in Prince George's County to show a bit of a pattern regarding concentration of the precincts with the most and 0 eligible voters. Let's go little further and look at voters statewide.
+
+First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
+
+### Task: Load libraries
+
+**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key. **Answer**
+
+```{r}
+library(tidyverse)
+library(sf)
+library(janitor)
+library(tidycensus)
+census_api_key("549950d36c22ff16455fe196bbbd01d63cfbe6cf")
+```
+
+For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in voter registration by county in Maryland. Our question: by examining the number of Democrats/Republicans/Unaffiliated voters per 10,000 people in each county, what regional geographic patterns can we identify?
+
+We've got voters by county, so let's load that from the data folder and take a look:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+voters_by_county <- read_csv("data/eligible_voters.csv")
+
+voters_by_county |> arrange(desc(TOTAL))
+```
+
+So, what do we see here? Montgomery County has the most, followed by Prince George's & Baltimore County. Checks out.
+
+Next, we'll go out and get population data for each county from tidycensus. The variable for total population is B01001_001.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_county_population <- get_acs(geography = "county",
+              variables = c(population = "B01001_001"),
+              state = "MD")
+
+md_county_population
+```
+
+Ultimately, we're going to join this county population table with our voters by county table, and then calculate a voters per 10,000 people statistic. But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile. Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_county_population <- get_acs(geography = "county",
+              variables = c(population = "B01001_001"),
+              state = "MD",
+              geometry = TRUE)
+
+md_county_population
+```
+
+We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
+
+The next step will be to join our population data to our voter data on the county column.
+
+But there's a problem. The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it. The voter data just has the name of the county. For example, the population data has "Anne Arundel County, Maryland" and the voter data has "Anne Arundel".
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_county_population
+
+voters_by_county
+```
+
+If they're going to join properly, we need to clean one of them up to make it match the other.
+
+Let's clean the population table. We're going to rename the "NAME" column to "County", then remove ", Maryland" and "County" and make the county titlecase. Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_county_population <- md_county_population |>
+  rename(County = NAME) |>
+  mutate(County = str_to_title(str_remove_all(County,", Maryland|County"))) |>
+  mutate(County = str_trim(County,side="both")) |>
+  rename(population = estimate) |>
+  select(County, population, geometry)
+
+md_county_population
+```
+
+Now we can join them.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_voters_per_10k <- md_county_population |>
+  left_join(voters_by_county)
+
+md_voters_per_10k
+```
+
+Hang on - there's at least one county with NA values - St. Mary's, which is spelled "Saint Mary's" in the voter dataframe. And Baltimore County didn't match, either. Let's fix that using if_else, which allows us to conditionally mutate:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_county_population <- md_county_population |>
+  mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) |> 
+  mutate(County = if_else(County == "Baltimore", "Baltimore County", County))
+```
+
+Our final step before visualization, let's calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_voters_per_10k <- md_county_population |>
+  left_join(voters_by_county) |>
+  mutate(voters_per_10k = TOTAL/population*10000) |>
+  arrange(desc(voters_per_10k))
+
+md_voters_per_10k
+```
+
+Let's take a look at the result of this table. There are some surprising ones at the top: not the state's most-populated counties, but some of its growing ones like Frederick, Charles and Calvert.
+
+Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of voters per 10K on a color gradient.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
+  theme_minimal()
+```
+
+This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
+  theme_minimal() +
+  scale_fill_viridis_b(option="magma")
+```
+
+The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between other counties.
+
+So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=voters_per_10k)) +
+  theme_minimal() +
+  scale_fill_viridis_b(option="magma",trans = "log")
+```
+
+Let's repeat that for Unaffiliated voters:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. **Answer**
+
+```{r}
+md_voters_per_10k <- md_voters_per_10k |> 
+  mutate(una_voters_per_10k = UNA/population*10000)
+```
+
+And then map it:
+
+### Task: Run code
+
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale? **Answer**
+
+```{r}
+ggplot() +
+  geom_sf(data=md_voters_per_10k, aes(fill=una_voters_per_10k)) +
+  theme_minimal() +
+  scale_fill_viridis_b(option="magma",trans = "log")
+```

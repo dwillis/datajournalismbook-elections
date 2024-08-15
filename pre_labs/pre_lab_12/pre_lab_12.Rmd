@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_12.Rmd"
 author: "derek willis"
-date: "11/18/2022"
+date: "2024-08-14"
 output: html_document
 ---
 
@@ -9,305 +9,123 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Automating analysis
+# AI and Data Journalism
 
-Many of the data analyses that you do will be largely one-off efforts -- you're going to do the analysis and write the story and be done. Maybe you'll come back to it in a couple of months or years, but really you're just doing it once.
+The first thing to know about the large language models that have attracted so much attention, money and coverage is this: they are not fact machines.
 
-But what happens when you have a long-running story, where you're going to update it every week, or every month? What changes when you're writing that code?
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/llms.jpg"))
+```
 
-1. How will this run again without changing anything?
-2. What questions do you have that have to be answered each time?
-3. What changes when you have to repeat questions to changing data?
-
-Voter registration is a key component of elections, and it's updated regularly in most states. So it is an ideal candidate for repeating analysis -- scripting the questions we want to answer every month and doing so in a way that we can just load it without having to change anything.
-
-Here's a real-world example: you are covering politics in Maryland and you want to see how voter registration is changing over time. You could grab the monthly PDFs, load them into Tabula and manually extract the information, load it into R and then do some calculations, but there's a better way. Instead, let's build a system that goes out each month to retrieve the data, parse it and make it easier to analyze.
-
-Let's get some other libraries to our typical tidyverse import. We'll start with janitor to help wrangle the data, and we're also going to add a library called `tabulizer`, which does in code what you do manually using Tabula.
-
-You install it in a slightly different way than usual: `remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"))`.
+But they are - mostly - very useful for people who write code and for those trying to work through complex problems. That's you. At its core, what a large language model does is predict the next word in a phrase or sentence. They are probabilistic prediction machines based on a huge set of training data. This chapter goes through some tasks and examples using LLMs.
 
 ### Task 1: Load libraries and settings
+
 **Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use
 
-```{r}
-#remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"))
-library(tidyverse)
-library(janitor)
-library(tabulizer)
-library(glue)
-```
-
-## Automating downloads and imports
-
-Now, where to find the data?
-
-Maryland [publishes monthly voter registration data on the state Board of Elections website](https://elections.maryland.gov/voter_registration/stats.html).
-
-Unfortunately, those monthly reports are in PDF format, as we learned in Chapter 22. Tabula makes it possible for us to handle them individually, but what if we wanted to put in place a repeatable system for parsing the data that we could just run every month?
-
-We can!
-
-First we'll see how it's done on a single PDF that we specify.
-
-### Task 1: Download a PDF file via code
-**Task** Run the following code to download the most recent PDF (https://elections.maryland.gov/pdf/vrar/2022_10.pdf). Check to see that it's in your pre_lab_12 directory.
+We'll be using a service called Groq for the examples here. You should [sign up for a free account](https://www.groq.com) and [create an API key](https://console.groq.com/docs/quickstart). Make sure you copy that key. We'll also need to install an R package to handle the responses:
 
 ```{r}
-download.file("https://elections.maryland.gov/pdf/vrar/2022_10.pdf", "2022_10.pdf")
+install.packages("devtools")
+devtools::install_github("heurekalabsco/axolotr")
 ```
 
-Having grabbed the file, we're going to try extracting the both pages from that PDF and focus on the first one, with new party registrations and removals. That's what the `tabulizer` library does using the function `extract_tables`:
-
-### Task 2: Read the PDF using Tabulizer
-**Task** Run the following code and describe the output.
-**Answer**
+Then we can load that library and, using your API key, setup your credentials:
 
 ```{r}
-tables <- extract_tables("2022_10.pdf")
-View(tables[[1]])
+library(axolotr)
+
+create_credentials(GROQ_API_KEY = "YOUR API KEY HERE")
 ```
 
-Ok, so the information from the first page is there, but this data needs some work to make it usable. In fact, we probably want to make two dataframes here: one for the new registrations and one for the removals. First: make it a dataframe using `as_tibble()`, then cleaning up the columns and giving them proper names and datatypes. Finally, we'll save the result as its own dataframe, `new_registrations`.
+See that "Please restart your R session for changes to take effect."? Go ahead and do that; you'll need to rerun the `library()` function above.
 
-### Task 3: Make the new_registrations dataframe
-**Task** Run the following code and describe the result.
-**Answer** 
+### Task 2: Testing out Groq
+
+**Task** Run the following code in the gray-colored codeblock below
+
+Let's make sure that worked. We'll be using the [Llama 3.1 model released by Meta](https://ai.meta.com/blog/meta-llama-3-1/).
 
 ```{r}
-# extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
+groq_response <- axolotr::ask(
+  prompt = "Give me five names for a pet lemur",
+  model = "llama-3.1-8b-instant"
+)
 
-# remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
-
-# make the new dataframe, renaming the columns and ditching the columns we don't want
-new_registrations <- voter_reg_page_1 |> 
-  # new registration columns
-  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
-  # remove commas and fix the datatypes
-  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total)), dupes = as.numeric(gsub(",","",dupes))) |> 
-  # exclude the columns we don't want
-  select(-starts_with("x")) |> 
-  # add a month and year column
-  mutate(month = 10, year = 2022)
-
-View(new_registrations)
+groq_response
 ```
 
-Ok, that's one dataframe down. The good news is that making the second dataframe involves similar code, and we can start with our `voter_reg_page_1` dataframe that we made in the previous task:
+I guess you're getting a lemur?
 
-### Task 4: Make the removals dataframe
-**Task** Run the following code and describe the result.
-**Answer** 
+## Three Uses of AI in Data Journalism
+
+There are at least three good uses of AI in data journalism:
+
+-   turning unstructured information into data
+-   helping with code debugging and explanation
+-   brainstorming about strategies for data analysis and visualization
+
+If you've tried to use a large language model to actually do data analysis, it *can* work, but often the results can be frustrating. Think of AI as a potentially useful assistant for the work you're doing. If you have a clear idea of the question you want to ask or the direction you want to go, they can help. If you don't have a clear idea or question, they probably will be less helpful. Let's go over a quick example of each use.
+
+### Turning Unstructured Information into Data
+
+News organizations are sitting on a trove of valuable raw materials - the words, images, audio and video that they produce every day. We can (hopefully) search it, but search doesn’t always deliver meaning, let alone elevate patterns. For that, often it helps to turn that information into structured data. Let's look at an example involving my friend Tyson Evans, who recently celebrated his 10th wedding anniversary. You can read about [his wedding in The New York Times](https://www.nytimes.com/2014/06/22/fashion/weddings/gabriela-herman-tyson-evans.html?unlocked_article_code=1.1E0.POK5.J1hIzAwr-D6N&smid=url-share).
+
+This announcement is a story, but it's also data - or it should be.
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/evans_wedding.png"))
+```
+
+What if we could extract those highlighted portions of the text into, say, a CSV file? That's something that LLMs are pretty good at. Let's give it a shot using the full text of that announcement.
+
+### Task 3: Extracting data from text
+
+**Task** Run the following code that uses Llama to extract elements from the wedding announcement into a CSV file.
 
 ```{r}
-# make the new dataframe, renaming the columns and ditching the columns we don't want
-removals <- voter_reg_page_1 |> 
-  # removals columns
-  rename(method = x13, DEM = x14, REP = x15, GRN = x16, LIB = x17, WCP = x18, UNA = x19, OTH = x20, total = x21) |> 
-  # remove commas and fix the datatypes
-  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total))) |> 
-  # exclude the columns we don't want
-  select(-starts_with("x")) |> 
-  # exclude rows with NAs
-  filter(!is.na(DEM)) |> 
-  # add a month and year column
-  mutate(month = 10, year = 2022)
+text = "Gabriela Nunes Herman and Tyson Charles Evans were married Saturday at the home of their friends Marcy Gringlas and Joel Greenberg in Chilmark, Mass. Rachel Been, a friend of the couple who received a one-day solemnization certificate from Massachusetts, officiated. The bride, 33, will continue to use her name professionally. She is a Brooklyn-based freelance photographer for magazines and newspapers. She graduated from Wesleyan University in Middletown, Conn. She is a daughter of Dr. Talia N. Herman of Brookline, Mass., and Jeffrey N. Herman of Cambridge, Mass. The bride’s father is a lawyer and the executive vice president of DecisionQuest, a national trial consulting firm in Boston. Her mother is a senior primary care internist at Harvard Vanguard Medical Associates, a practice in Boston. The groom, 31, is a deputy editor of interactive news at The New York Times and an adjunct professor at the Columbia University Graduate School of Journalism. He graduated from the University of California, Los Angeles. He is the son of Carmen K. Evans of Climax Springs, Mo., and Frank J. Evans of St. Joseph, Mo. The groom’s father retired as the president of UPCO, a national retailer of pet supplies in St. Joseph."
 
-View(removals)
+evans_response <- axolotr::ask(
+  prompt = paste("Given the following text, extract information into a CSV file with the following structure with no yapping: celebrant1,celebrant2,location,officiant,celebrant1_age,celebrant2_age,celebrant1_parent1,celebrant1_parent2,celebrant2_parent1,celebrant2_parent2", text),
+  model = "llama-3.1-8b-instant"
+)
+
+evans_response
 ```
 
-Now we can start to interview this data. Let's do a little exploration using percentages.
+A brief word about that "no yapping" bit; it's a way to tell your friendly LLM to cut down on the chattiness in its response. What we care about is the data, not the narrative. And look at the results: without even providing an example or saying that the text described a wedding, the LLM did a solid job. Now imagine if you could do this with hundreds or thousands of similar announcements. You've just built a database.
 
-## Explore the data
+### Helping with Code Debugging and Explanation
 
-Let's start with the `new_registrations` dataframe and figure out the percentage of the new registrations for Democrats, Republicans and unaffiliated voters.
-
-### Task 5: Calculate percentages for new registrations
-**Task** Run the following code and describe what you think are the most interesting percentages in the dataframe.
-**Answer**
+When you're writing code and run into error messages, you should read them. But if they do not make sense to you, you can ask an LLM to do some translation, which is another great use case for AI. As with any debugging exercise, you should provide some context, things like "Using R and the tidyverse ... " and describing what you're trying to do, but you also can ask LLMs to explain an error message in a different way. Here's an example:
 
 ```{r}
-new_registrations <- new_registrations |> 
-  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
+debug_response <- axolotr::ask(
+  prompt = "Explain the following R error message using brief, simple language and suggest a single fix. I am using the tidyverse library: could not find function '|>'",
+  model = "llama-3.1-8b-instant"
+)
 
-View(new_registrations)
+debug_response
 ```
 
-### Task 6: Calculate percentages for removals
-**Task** Run the following code and describe what you think are the most interesting percentages in the dataframe.
-**Answer**
+The trouble is that if you run that several times, it will give you slightly different answers. Not fact machines. But you should be able to try some of the suggested solutions and see if any of them work. An even better use could be to pass in working code that you're not fully understanding and ask the LLM to explain it to you.
+
+### Brainstorming about Strategies for Data Analysis and Visualization
+
+Let's say that you have some data that you want to interview, but aren't sure how to proceed. LLMs can provide some direction, but you may not want to follow their directions exactly. You shouldn't accept their judgments uncritically; you'll still need to think for yourself. Here's an example of how that might go.
+
+### Task 4: Debugging Help
+
+**Task** Run the following code.
 
 ```{r}
-removals <- removals |> 
-  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
+idea_response <- axolotr::ask(
+  prompt = "I have a CSV file of daily data on campus police incidents, including the type of incident, building location and time. Using R and the tidyverse, suggest some ways that I could find patterns in the data. Use the new-style pipe operator (|>) in any code examples",
+  model = "llama-3.1-8b-instant"
+)
 
-View(removals)
+idea_response
 ```
 
-So we have a process for automatically extracting tables from this most recent PDF. What if we wanted to parse a specific PDF based on the year and month, for comparison's sake? There are a couple of ways we can do that. First, we could set those as variables in code and use them to grab the correct file. We'll use a function called `paste0` to build the URL from its parts:
-
-### Task 7: Download a PDF file based on month and day variables
-**Task** Run the following code to download the voter registration PDF from June by building the URL for it programatically (https://elections.maryland.gov/pdf/vrar/2022_06.pdf). Check to see that it's in your pre_lab_12 directory.
-
-```{r}
-year = 2022
-month = "06"
-url <- paste0("https://elections.maryland.gov/pdf/vrar/",year,"_",month,".pdf")
-file_name <- paste0(year,"_",month,".pdf")
-download.file(url, file_name)
-tables <- extract_tables(file_name)
-```
-
-Then we can run the same code we did above, except we'll use the year and month variables to provide useful names and values. We'll use `paste0` to build the custom variable name based on the month and year, and the `assign` function to make it into an actual variable.
-
-### Task 8: Parse the June 2022 voter registration data
-**Task** Run the following code. What's the name of the new dataframe?
-
-```{r}
-# extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
-
-# remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
-
-# make the new dataframe, renaming the columns and ditching the columns we don't want
-assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
-  # new registration columns
-  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
-
-  # remove commas and fix the datatypes in all the columns except `method`
-  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
-  mutate(across(!method, as.numeric)) |> 
-
-  # exclude the columns we don't want
-  select(-starts_with("x")) |> 
-  # add a month and year column based on our variables
-  mutate(month = month, year = year))
-```
-
-To make this even more useful for analysis, we could change the names of the columns to include the month and year, so that we could join the dataframe to other months and calculate the difference between them - find out, for example, if new registrations of unaffiliated voters were up in October compared to June. Let's do that using the above code as a template:
-
-### Task 9: Parse the June 2022 voter registration data as use dynamically generated column names
-**Task** Look at the following code, especially the assign and paste functions, then run it and look at the resulting dataframe.
-
-```{r}
-# extract the first page and turn it into a dataframe, cleaning the column names
-voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
-
-# remove the first two rows
-voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
-
-# make the new dataframe, renaming the columns and ditching the columns we don't want
-assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
-  # new registration columns
-  rename(method = x2, !!paste0("DEM_",month) := x3, !!paste0("REP_",month) := x4, !!paste0("GRN_",month) := x5, !!paste0("LIB_",month) := x6, !!paste0("WCP_",month) := x7, !!paste0("UNA_",month) := x8, !!paste0("OTH_",month) := x9, !!paste0("total_",month) := x10, !!paste0("dupes_",month) := x11) |> 
-  # remove commas and fix the datatypes
-  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
-  mutate(across(!method, as.numeric)) |> 
-  # exclude the columns we don't want
-  select(-starts_with("x")) |> 
-  # add a month and year column based on our variables
-  mutate(month = month, year = year))
-```
-
-Now we can join the October and June new registration dataframes and compare them:
-
-### Task 10: Join the October and June new registration dataframes
-**Task** Run the following code. How many rows do you have compared to either the October or June dataframes?
-**Answer** 
-
-```{r}
-new_reg_oct_jun <- new_registrations |> 
-  inner_join(new_registrations_2022_06, by=c('method', 'year'))
-```
-
-Looks like we'll need to fix the column referring to absentee ballots. Let's do that and then join:
-
-### Task 11: Join the October and June new registration dataframes
-**Task** Run the following code. How many rows do you have compared to either the October or June dataframes?
-**Answer** 
-
-```{r}
-new_reg_oct_jun <- new_registrations |> 
-  mutate(method = if_else(method == 'MAIL-IN BALLOT (FPCA)', 'ABSENTEE BALLOT (FPCA)', method)) |> 
-  inner_join(new_registrations_2022_06, by=c('method', 'year'))
-```
-
-Now let's calculate some percentages and the difference between them.
-
-### Task 10: Calculate percentages and differences
-**Task** Run the following code. What stands out to you about the differences columns?
-**Answer** 
-
-```{r}
-new_reg_oct_jun <- new_reg_oct_jun |> 
-  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100) |> 
-  mutate(pct_dem06 = DEM_06/total_06 *100, pct_rep06 = REP_06/total_06 *100, pct_una06 = UNA_06/total_06 *100) |>
-  mutate(diff_dem = pct_dem-pct_dem06, diff_rep = pct_rep-pct_rep06, diff_una = pct_una-pct_una06)
-```
-
-## Analysis
-
-We now have the makings of a repeatable process that we could use to make the reporting process easier. We could even add graphics to this process.
-
-## Making updating graphics
-
-More than numbers, we are going to want to see this data so we can spot potential stories. First, let's just make a big bar chart.
-
-### Task 9: Make a simple bar chart
-**Task** Run the following code and describe what the chart is showing. What is the trend in the data?
-**Answer**
-
-```{r fig.width=9}
-new_reg_oct_jun |> 
-  filter(total > 0, method != 'TOTAL') |> 
-  ggplot() +
-  geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
-  coord_flip() + 
-  theme_minimal() +
-  labs(
-    title = "ERIC, Mail registrations mostly Democratic",
-    y = "Democratic Registration %",
-    x = "Method"
-  )
-```
-
-Ok, but what about a side-by-side comparison? Can we put the October and June percentages together? We can, thanks to a library called `cowplot`:
-
-
-### Task 10: Produce a side-by-side chart with two plots
-**Task** Run the following code to make a better bar chart. What are the main differences between them?
-**Answer** 
-
-```{r}
-library(cowplot)
-plot_oct <- new_reg_oct_jun |> 
-  filter(total > 10, method != 'TOTAL') |> 
-  ggplot() +
-  geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
-  coord_flip() + 
-  theme_minimal() +
-  labs(
-    y = "Democratic Registration %",
-    x = "Method",
-    title = "October"
-  )
-
-plot_jun <- new_reg_oct_jun |> 
-  filter(total_06 > 10, method != 'TOTAL') |> 
-  ggplot() +
-  geom_bar(aes(x=reorder(method, pct_dem06), weight=pct_dem06))+
-  coord_flip() + 
-  theme_minimal() +
-  labs(
-    y = "Democratic Registration %",
-    x = "Method",
-    title = "June"
-  )
-
-plot_grid(plot_oct, plot_jun) 
-```
-
-We could use similar code to produce multiple plots for comparing other columns, and there are other steps we could take to make this process almost totally automated: we could, for example, derive the date progeammatically based on today's date and load and process data based on time intervals that we define (1-month, 3-month, etc.). The point here is not to reduce the amount of work you do the first time, but to virtually eliminate it every other time you run the code.
+Note that the column names may not match your data; the LLM is making predictions about your data, so you could provide the column names. As [this story from The Pudding](https://pudding.cool/2024/07/ai/) makes clear, the potential for using LLMs to not just assist with but perform data analysis is real. What will make the difference is how much context you can provide and how clear your ideas and questions are. You still have to do the work.

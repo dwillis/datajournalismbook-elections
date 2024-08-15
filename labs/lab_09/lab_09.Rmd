@@ -1,7 +1,7 @@
 ---
-title: "lab_09"
-author: "Derek Willis"
-date: "11/09/2022"
+title: "lab_10.Rmd"
+author: "derek willis"
+date: "11/10/2022"
 output: html_document
 ---
 
@@ -11,51 +11,58 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* the tidyverse, janitor and tigris libraries
-* you might choose to use the tidycensus library for Q3
+* A Datawrapper account
+* Election data in CSV files in the `data` folder
 
 ## Load libraries and establish settings
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab.
 
 ```{r}
-# Turn off scientific notation
-options(scipen=999)
-
-# Load libraries
-
+# load libraries here
 ```
 
-Let's explore the election results from last night and make some maps! 
+## Questions
 
-## Questions 
+**Q1.** In the previous lab, you made a map showing the difference between the electoral performances of Dan Cox in 2022 and Larry Hogan in 2018. Except a map is probably not the best way to show that. Let's make a chart instead, and the type is up to you, but the goal is to clearly show the differences between the two.
 
-**Q1.** Make a county-level map of Maryland's results for governor using `md_gov_county.csv` in the data folder, calculating the difference between Wes Moore's percentage of the total votes and Dan Cox's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
+You MUST do the following things when answering this question:
+* Load the `md_county_gov.csv` and `md_county_gov_18.csv` files in the data folder
+* Join those dataframes, specifying the join column. You should add columns to generate percentages for Cox and Hogan.
+* Export that joined dataframe to a CSV file using `write_csv`.
+* Using that exported CSV, make a chart with Datawrapper. What kind of chart is up to you, so experiment with a few kinds of charts to see what answers the question above in the clearest way. Your chart MUST:
+  * Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+  * Easily readable labels and values
+* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this)
+* Put the answer below along with the URL of your chart.
 
-**A1.**  
+**A1.** 
 
 ```{r}
 ```
 
-**Q2.** Make another map showing the difference between Dan Cox's county-level performance in 2022 and Larry Hogan's in 2018, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2018 governor results in the data folder and join them to it before proceeding. Are there any counties where Cox got a higher percentage than Hogan? How would you describe the map showing the Hogan-Cox difference?
+**Q2.** You're interested in seeing how the methods of voting have changed in Maryland since 2018. Using the `md_votes_by_type.csv` that has data from the top of the ticket (governor in 2018 and 2022, president in 2020), make a chart showing the percentage of votes cast in each category - early voting, election day and mail - over the three years. You'll need to make those percentages in R and then export the CSV using `write_csv`, then make the chart in Datawrapper. Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
 
-Also answer this: is a map the best way to present this data? What else could you make that might convey more information?
+HINT: In Datawrapper's "Check and Describe" tab, you can click on a column to get the option of "hiding" it in any visualization.
+
+What do you think the story here is? Put the answer below along with the URL of your chart.
 
 **A2.** 
 
 ```{r}
 ```
 
-**Q3** Which county has the highest percentage of mail ballots remaining to be counted? Using the `mail_remaining.csv` file in the data folder, calculate the percentage of mail ballots remaining, then map a county map of those percentages. Looking at both the map and the data, are there counties where the candidate currently leading the governor's race could, in theory, change?
 
-**A3** 
+**Q3.** You want to know the geography of ActBlue donors who live in Maryland, so load in the `md_actblue_zip.csv` file in the data folder and calculate a grand total of the totals for each zip code in the dataframe. Using that total, calculate a percentage of the total for each zip code (you can hard code that number). The export the dataframe using `write_csv` and make a choropleth map in Datawrapper. You will need to:
 
+* Search for Maryland zip codes (use the 2020 data) as the base map
+* Upload the CSV file
+* Change the tooltip to show both the amount and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
+* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
 
-**Q4.** Choose your own map adventure! In the data folder I've included county-level results for several other 2022 contests, including the Comptroller, Attorney General and the marijuana legalization amendment. I've also added the 2020 presidential results by county. Using one of the 2022 races that we haven't already used and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
+What do you think the story here is, and what would you want to know more about? Put the answer below along with the URL of your chart.
 
-**A4.**  
+**A3.** 
 
 ```{r}
-
 ```
--30-

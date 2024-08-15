@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_11.Rmd"
-author: "Derek Willis"
-date: "2024-08-08"
+author: "derek willis"
+date: "2024-08-14"
 output: html_document
 ---
 
@@ -9,399 +9,296 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Chapter 29
+# Scraping data with Rvest
 
-Up to now, we've been looking at patterns in data for what is more than this, or what's the middle look like. We've calculated metrics like per capita rates, or looked at how data changes over time.
+Sometimes, governments put data online on a page or in a searchable database. And when you ask them for a copy of the data underneath the website, they say no.
 
-Another way we can look at the data is geographically. Is there a spatial pattern to our data? Can we learn anything by using distance as a metric? What if we merge non-geographic data into geographic data?
+Why? Because they have a website. That's it. That's their reason. They say they don't have to give you the data because they've already given you the data, never mind that they haven't given to you in a form you can actually load into R with ease.
 
-The bad news is that there isn't a One Library To Rule Them All when it comes to geo queries in R. But there's one emerging, called Simple Features, that is very good.
+Lucky for us, there's a way for us to write code to get data even when an agency hasn't made it easy: webscraping.
 
-Go to the console and install it with `install.packages("sf")`
+One of the most powerful tools you can learn as a data journalist is how to scrape data from the web. Scraping is the process of programming a computer to act like a human that opens a web browser, goes to a website, ingests the HTML from that website into R and turns it into data.
 
-To understand geographic queries, you have to get a few things in your head first:
+The degree of difficulty here goes from "Easy" to "So Hard You Want To Throw Your Laptop Out A Window." And the curve between the two can be steep. You can learn how to scrape "Easy" in a day. The hard ones take a little more time, but it's often well worth the effort because it lets you get stories you couldn't get without it.
 
-1.  Your query is using planar space. Usually that's some kind of projection of the world. If you're lucky, your data is projected, and the software will handle projection differences under the hood without you knowing anything about it.
-2.  Projections are cartographers making opinionated decisions about what the world should look like when you take a spheroid -- the earth isn't perfectly round -- and flatten it. Believe it or not, every state in the US has their own geographic projection. There's dozens upon dozens of them.
-3.  Geographic queries work in layers. In most geographic applications, you'll have multiple layers. You'll have a boundary file, and a river file, and a road file, and a flood file and combined together they make the map. But you have to think in layers.
-4.  See 1. With layers, they're all joined together by the planar space. So you don't need to join one to the other like we did earlier -- the space has done that. So you can query how many X are within the boundaries on layer Y. And it's the plane that holds them together.
+In this chapter, we'll show you an easy one.
+
+We're going to use a library called `rvest`, which you can install it the same way we've done all installs: go to the console and `install.packages("rvest")`.
+
+Like so many R package names, rvest is a bad pun. You're supposed to read it to sound like "harvest", as in "harvesting" information from a website the same way you'd harvest crops in a field.
+
+### Task 1: Load libraries and settings
+
+**Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use
+
+```{r}
+#| output: false
+library(rvest)
+library(tidyverse)
+library(janitor)
+```
+
+For this example, we're going to work on loading a simple table of data from the Maryland State Board of Elections. This is a table of unofficial county-level election results for the Attorney General's race from the November general election.
+
+Let's suppose we can't find a table like that for download, but we do see a version on the SBOE website at this URL: <https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html>.
 
 ```{r, echo=FALSE}
-knitr::include_graphics("images/geolayers.jpg")
+knitr::include_graphics(rep("images/rvest1.png"))
 ```
 
-## Importing and viewing data
+We could get this table into R with the following manual steps: highlighting the text, copying it into Excel, saving it as a csv, and reading it into R. Or, we could write a few lines of webscraping code to have R do that for us!
 
-Let's start with the absolute basics of geographic data: loading and viewing. Load libraries as usual.
+In this simple example, it's probably faster to do it manually than have R do it for us. But during the time when ballots are being counted, this table is likely to change, and we don't want to keep doing manual repetitive tasks.
 
-### Task 1: Load packages
+Why would we ever write code to grab a single table? There's several reasons:
 
-**Task** Run the following code to load packages.
+1.  Our methods are transparent. If a colleague wants to run our code from scratch to factcheck our work, they don't need to repeat the manual steps, which are harder to document than writing code.
+2.  Let's suppose we wanted to grab the same table every day, to monitor for changes. Writing a script once, and pressing a single button every day is going to be much more efficient than doing this manually every day.
+3.  If we're doing it manually, we're more likely to make a mistake, like maybe failing to copy every row from the whole table.
+4.  It's good practice to prepare us to do more complex scraping jobs. As we'll see in the next chapter, if we ever want to grab the same table from hundreds of pages, writing code is much faster and easier than going to a hundred different pages ourselves and downloading data.
+
+So, to scrape, the first thing we need to do is start with the URL. Let's store it as an object called ag_url.
+
+### Task 2: Save the URL as a variable
+
+**Task** Run the following code in the gray-colored codeblock below to save the URL
 
 ```{r}
-library(tidyverse)
-library(sf)
-library(janitor)
+ag_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html"
 ```
 
-First: an aside on geographic data. There are many formats for geographic data, but data type you'll see the most is called the shapefile. It comes from a company named ERSI, which created the most widely used GIS software in the world. For years, they were the only game in town, really, and the shapefile became ubiquitous, especially so in government and utilities.
+When we go to the web page, we can see a nicely-designed page that contains our information.
 
-More often than not, you'll be dealing with a shapefile. But a shapefile isn't just a single file -- it's a collection of files that combined make up all the data that allow you to use it. There's a .shp file -- that's the main file that pulls it all together -- but it's important to note if your shapefiles has a .prj file, which indicates that the projection is specified. You also might be working with a GeoDatabase, or a .gdb file. That's a slightly different, more compact version of a Shapefile.
+But what we really care about, for our purposes, is the html code that creates that page.
 
-The data we're going to be working with is a Shapefile of Maryland zip codes from the [state's GIS data catalog](https://data.imap.maryland.gov/datasets/38f3f8bc61bb4261b59d71b3642e3cd6_3/explore?location=38.810313%2C-77.268250%2C8.83).
+In our web browser, if we right-click anywhere on the page and select "view source" from the popup menu, we can see the source code. Or you can just copy this into Google Chrome: <view-source:https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html>.
 
-### Task: Load the Maryland zip code map data.
+Here's a picture of what some of the source code looks like.
 
-Simlar to `readr`, the `sf` library has functions to read geographic data. In this case, we're going to use `st_read` to read in our zip code data. And then glimpse it to look at the columns.
+```{r, echo=FALSE}
+knitr::include_graphics("images/rvest2.png")
+```
 
-### Task: Load data
+We'll use those HTML tags -- things like `<table>` and `<tr>` -- to grab the info we need.
 
-**Task** Run the following code to load data. Describe what you see in the answer space below. What columns exist in this data? **Answer**
+Okay, step 1.
+
+Let's write a bit of code to tell R to go to the URL for the page and ingest all of that HTML code. In the code below, we're starting with our URL and using the read_html() function from rvest to ingest all of the page html, storing it as an object called results.
+
+### Task 3: Ingest the HTML from the URL
+
+**Task** Run the following code in the gray-colored codeblock below to save the HTML from that URL as a variable
 
 ```{r}
-md_zips <- st_read("data/md_zips/BNDY_ZIPCodes11Digit_MDP.shp")
+# read in the html
+results <- ag_url |>
+  read_html()
 
-glimpse(md_zips)
+# display the html below
+results
+
 ```
 
-This looks like a normal dataframe, and mostly it is. We have one row per zipcode, and each column is some feature of that zip code: the fipscode, name and more. What sets this data apart from other dataframes we've used is the last column, "geometry", which is of a new data type. It's not a character or a number, it's a "Multipolygon", which is composed of multiple longitude and latitude values. When we plot these on a grid of latitude and longitude, it will draw those shapes on a map.
+If you're running this code in R Studio, in our environment window at right, you'll see results as a "list of 2".
 
-Let's look at these zip codes We have 526 of them, according to this data.
+This is not a dataframe, it's a different type of data structure a "nested list."
 
-### Task: Run code
+If we click on the name "results" in our environment window, we can see that it's pulled in the html and shown us the general page structure. Nested within the `<html>` tag is the `<head>` and `<body>`, the two fundamental sections of most web pages. We're going to pull information out of the `<body>` tag in a bit.
 
-**Task** Run the following code. Describe the output in the space below: what kind of information does it contain? **Answer**
+```{r, echo=FALSE}
+knitr::include_graphics("images/rvest3.png")
+```
+
+Now, our task is to just pull out the section of the html that contains the information we need.
+
+But which part do we need from that mess of html code? To figure that out, we can go back to the page in a web browser like chrome, and use built in developer tools to "inspect" the html code underlying the page.
+
+On the page, find the data we want to grab -- "Vote for 1" - and right click on the word "Jurisdiction" in the column header of the table. That will bring up a dropdown menu. Select "Inspect", which will pop up a window called the "element inspector" that shows us where different elements on the page are located, what html tags created those elements, and other info.
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/rvest4.png")
+```
+
+The entire table that we want of results is actually contained inside an html `<table>`. It has a `<tbody>` that contains one row `<tr>` per county.
+
+Because it's inside of a table, and not some other kind of element (like a `<div>`), rvest has a special function for easily extracting and converting html tables, called html_table(). This function extracts all the html tables on the page, but this page only has one so we're good.
+
+### Task 4: Extract tables from the HTML source
+
+**Task** Run the following code in the gray-colored codeblock below to extract all tables in the HTML as a variable
 
 ```{r}
-View(md_zips)
+# read in the html and extract all the tables
+results <- ag_url |>
+  read_html() |>
+  html_table()
+
+# show the dataframe
+
+results
 ```
 
-But where in Maryland are these places? We can simply plot them on a longitude-latitude grid using ggplot and geom_sf.
+In the environment window at right, look at results Note that it's now a "list of 1".
 
-### Task: Run code
+This gets a little complicated, but what you're seeing here is a nested list that contains one data frame -- also called tibbles -- one for each table that exists on the web page we scraped.
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+So, all we need to do now is to store that single dataframe as an object. We can do that with this code, which says "keep only the first dataframe from our nested list."
+
+### Task 5: Save one table from the HTML source
+
+**Task** Run the following code in the gray-colored codeblock below to extract all tables in the HTML and save it as a dataframe. What do you notice about the columns? **Answer**
 
 ```{r}
-md_zips |>
-  ggplot() +
-  geom_sf() +
-  theme_minimal()
+# Read in all html from table, store all tables on page as nested list of dataframes.
+results <- ag_url |>
+  read_html() |>
+  html_table()
+
+# Just keep the first dataframe in our list
+
+results <- results[[1]]
+
+# show the dataframe
+
+results
 ```
 
-Each shape is a zip code, with the boundaries plotted according to its degrees of longitude and latitude.
+We now have a proper dataframe, albeit with some lengthy column headers.
 
-If you know anything about Maryland, you can pick out the geographic context here. You can basically see where Baltimore is and where the borders of the District of Columbia touch Maryland. But this map is not exactly ideal. It would help to have a county map layered underneath of it, to help make sense of the spatial nature of this data.
+From here, we can do a little cleaning. First we'll use clean_names() to lower the column names. Then use rename() to replace the candidate column names with simpler versions. We can just use the column positions instead of writing out the full names, which is nice.
 
-This is where layering becomes more clear. First, we want to go out and get another shapefile, this one showing Maryland county outlines.
+Then let's use slice() to remove the last row -- row number 25 -- which contains totals and percentages that we don't need. Finally, we'll make sure the vote tallies are numbers using mutate and `gsub()`, which we use to replace all the commas with nothing.
 
-Instead of loading it from our local machine, like we did above, we're going to use a package to directly download it from the U.S. Census. The package is called `tigris` and it's developed by the same person who made `tidycensus`.
+### Task 6: Clean up the data
 
-In the console, install tigris with `install.packages('tigris')`
-
-Then load it:
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code to extract the table we want, clean up the names and remove the total row. Look at the rename() function - what do you think the numbers 2, 3 and 4 are referring to? **Answer**
 
 ```{r}
-# install.packages('tigris')
-library(tigris)
+# Read in all html from table, get the HTML table.
+results <- ag_url |>
+  read_html() |>
+  html_table()
+
+# Standardize column headers, remove last row
+
+results <- results[[1]] |>
+  clean_names() |>
+  rename(peroutka = 2, brown = 3, write_ins = 4) |>
+  slice(-25) |>
+  mutate(peroutka = as.numeric(gsub(",","", peroutka))) |>
+  mutate(brown = as.numeric(gsub(",","", brown))) |>
+  mutate(write_ins = as.numeric(gsub(",","", write_ins)))
+
+# show the dataframe
+results
+
 ```
 
-Now, let's use the counties() function from tigris to pull down a shapefile of all U.S. counties.
+And there we go. We now have a nice tidy dataframe of Maryland attorney general election results that we could ask some questions of.
 
-### Task: Run code
+What about HTML that doesn't have a table? Well, that's where things get a bit more complicated, and rely on your ability to read HTML and identify particular elements of it.
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+Let's consider the list of U.S. House Committees on house.gov: <https://www.house.gov/committees>. Let's save that URL as a variable as we did above:
+
+### Task 7: Save the URL as a variable
+
+**Task** Run the following code in the gray-colored codeblock below to save the URL
 
 ```{r}
-
-counties <- counties()
-
-glimpse(counties)
+cmtes_url <- "https://www.house.gov/committees"
 ```
 
-This looks pretty similar to our places shapefile, in that it looked mostly like a normal dataframe with the exception of the new geometry column (this time called `geometry`, which is pretty common).
+The next step is similar to before, too, except this time we're not going to call `html_table()` because there are no tables here that we want. In order to find what we want, we'll need to right-click on the first red dot next to "Agriculture" and choose "Inspect":
 
-This county shapefile has all 3233 U.S. counties. We only want the Maryland counties, so we're going to filter the data to only keep Maryland counties. There is no STATE column, but there is a STATEFP column, with each number representing a state. Maryland's FP number is 24.
+### Task 8: Inspect the HTML elements
 
-### Task: Run code
+**Task** Right-click on the first red dot next to "Agriculture" and choose "Inspect". You should see multiple
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+<li>
+
+tags inside a
+
+<ul>
+
+tag.
+
+One reason that we use HTML elements like ul and li is to help organize the code and make it easier to maintain. But it also helps with scraping, because we can zero in on the elements we want. Let's start by reading it in:
+
+### Task 9: Read the HTML source
+
+**Task** Run the following code in the gray-colored codeblock below to save the HTML as a variable
 
 ```{r}
-md_counties <- counties |>
-  filter(STATEFP == "24")
+cmte_results <- cmtes_url |>
+  read_html()
 
+# show the result
+cmte_results
 ```
 
-To see what this looks like, let's plot it out with ggplot. We can pretty clearly see the shapes of Maryland counties.
+Once again we get a list of two as our result. In this case, we don't want to isolate the first item in our list. Instead, we want to try to locate all of the `li` tags inside this HTML. Since the `li` tag is an HTML element, we use the function `html_elements()` to get them. If we only wanted a single element, we'd use `html_element()`:
 
-### Task: Run code
+### Task 10: Isolate the list of `li` tags inside the HTML using `html_elements`
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code in the gray-colored codeblock below to find the
+
+<li>
+
+tags. What does the output suggest about how many
+
+<ul>
+
+tags there are in the HTML source? **Answer**
 
 ```{r}
-md_counties |>
-  ggplot() +
-  geom_sf() +
-  theme_minimal()
+cmte_results |> html_elements('li')
 ```
 
-With this county map, we can layer our places data.
+Good news and bad news here: we have all of the
 
-Something to note: The layers are rendered in the order they appear. So the first geom_sf is rendered first. The second geom_sf is rendered ON TOP OF the first one.
+<li>
 
-We're also going to change things up a bit to put the datasets we want to display INSIDE of the geom_sf() function, instead of starting with a dataframe. We have two to plot now, so it's easier this way.
+tags, but we have lots of them, and it's hard to see any of the committees. Let's see what we're dealing with and just look at the text *inside* the
 
-### Task: Run code
+<li>
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+tags. To do that, we add `html_text()` to the end of the last code block:
+
+### Task 10: Isolate the text of `li` tags inside the HTML using `html_text`
+
+**Task** Run the following code in the gray-colored codeblock below to find the text inside
+
+<li>
+
+tags. Describe the output: **Answer**
 
 ```{r}
-ggplot() +
-  geom_sf(data=md_counties) +
-  geom_sf(data=md_zips) +
-  theme_minimal()
+cmte_results |> html_elements('li') |> html_text()
 ```
 
-Notice the subtle differences at the boundaries?
+Ok, so now we can see the committee names. But they are surrounded by a bunch of things we don't want, and this *still* isn't a dataframe. Let's solve the second problem first with the `as_tibble()` function:
 
-Let's dive back into zip codes and this time bring along August 2024 data on Maryland registered voters' party affiliation by zip code. Let's load it.
+\### Task 11: Turn the contents of the
 
-### Task: Run code to load the voter data.
+<li>
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+tags into a dataframe **Task** Run the following code in the gray-colored codeblock below to make a dataframe. Describe the output: **Answer**
 
 ```{r}
-md_voters_zip <- read_csv("data/md_voters_zip.csv") |> 
-  mutate(RESIDENTIALZIP5 = as.character(RESIDENTIALZIP5))
-
-View(md_voters_zip)
+committees <- cmte_results |> html_elements('li') |> html_text() |> as_tibble()
 ```
 
-Now we can join the zip codes to the voter data.
+Now we're getting closer. The rows in this dataframe we don't want begin with a newline character `\n`. Let's get rid of those using `filter()` and rename our single column:
 
-### Task: Run code to join the zip code shapes with the foreclosure notice data
+### Task 12: Remove the rows we don't need from our dataframe
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code in the gray-colored codeblock below to remove the unwanted rows from our dataframe:
 
 ```{r}
-zip_codes_with_voters <- md_zips |> left_join(md_voters_zip, join_by(ZIPCODE1==RESIDENTIALZIP5))
+committees <- committees |> 
+  # filter out rows that begin with a newline character
+  filter(!str_detect(value, "^\n")) |> 
+  rename(name = value)
 ```
 
-Now we can use color to distinguish zip codes from each other. Let's use the percentage of Democrats to start with:
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-ggplot() +
-  geom_sf(data=zip_codes_with_voters, aes(fill=PCT_DEM)) +
-  scale_colour_viridis_b(option="magma") +
-  theme_minimal()
-```
-
-With these changes, what can we make out here? First, you can pretty easily spot zip codes with a high percentage of Democratic voters - in Prince George's County in particular, along with zip codes around Baltimore.
-
-What if we wanted to find the zip codes that were closely divided between Democrats, Republicans and unaffiliated (independent) voters? For that, we can use a measure called the Gini Coefficient. Usually it's used to gauge inequality, but it also can be used to show how alike, or equal, things are. We'll need to install a package to use it:
-
-### Task: Install ineq library
-
-**Task** Run the following code
-
-```{r}
-install.packages("ineq")
-library(ineq)
-```
-
-Then we'll use the following code to calculate the zip codes with the most equal and unequal distribution of percentages for the three categories (PCT_DEM, PCT_REP and PCT_UNA). The `rowwise()` function allows us to calculate the coefficient on each row, and `ungroup()` returns the dataframe to its original state after we do the calculation. Then we sort by the smallest coefficient to find the zip codes with the most similar distributions of voters:
-
-**Task** Run the following code
-
-```{r}
-md_voters_zip_gini <- zip_codes_with_voters |> 
-  rowwise() |> 
-  mutate(gini_coefficient = ineq(c(PCT_DEM, PCT_REP, PCT_UNA), type="Gini")) |> 
-  ungroup() |> 
-  arrange(gini_coefficient) |> 
-  select(ZIPCODE1, DEM, REP, UNA, TOTAL, PCT_DEM, PCT_REP, PCT_UNA, gini_coefficient, geometry)
-
-```
-
-Finally, let's put that on a map, using `scale_fill_viridis_b()` to make the distinctions between the values clearer. Remember, a darker color means more similarity.
-
-**Task** Run the following code and describe the results below. Where are the more similar zip codes?
-
-**Answer**
-
-```{r}
-ggplot() +
-  geom_sf(data=md_voters_zip_gini, aes(fill=gini_coefficient)) +
-  scale_fill_viridis_b(option="magma") +
-  theme_minimal()
-```
-
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns among unaffiliated voters in Maryland. What geographic patterns can we identify?
-
-### Task: Load libraries
-
-**Task** Run the following code. Describe the output in the space below. Be sure to input your census api key if you haven't already. **Answer**
-
-```{r}
-library(tidyverse)
-library(sf)
-library(janitor)
-library(tidycensus)
-```
-
-First, we'll go out and get the county voter data and population data for each county using tidycensus. The variable for total population is B01001_001
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_una_voters <- read_csv("data/md_una_voters.csv") 
-
-md_county_population <- get_acs(geography = "county",
-              variables = c(population = "B01001_001"),
-              year = 2022,
-              state = "MD")
-```
-
-Ultimately, we're going to join this county table with population with data on unaffiliated voters by county, and then calculate the gender differences. But remember, we then want to visualize this data by drawing a county map that helps us pick out trends. Thinking ahead, we know we'll need a county map shapefile. Fortunately, we can pull this geometry information right from tidycensus at the same time that we pull in the population data by adding "geometry = TRUE" to our get_acs function.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_county_population <- get_acs(geography = "county",
-              variables = c(population = "B01001_001"),
-              year = 2022,
-              state = "MD",
-              geometry = TRUE)
-
-md_county_population
-```
-
-We now have a new column, geometry, that contains the "MULTIPOLYGON" data that will draw an outline of each county when we go to draw a map.
-
-The next step will be to join our population data to our voter data on the county column.
-
-But there's a problem. The column in our population data that has county names is called "NAME", and it has the full name of the county spelled out in title case -- first word capitalized and has "County" and "Maryland" in it. The voter data just has the name of the county. For example, the population data has "Anne Arundel County, Maryland" and the voter data has "Anne Arundel".
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_county_population
-
-md_una_voters
-```
-
-If they're going to join properly, we need to clean one of them up to make it match the other.
-
-Let's clean the population table. We're going to rename the "NAME" column to "county", then remove ", Maryland" and make the county titlecase. Next we'll remove any white spaces after that first cleaning step that, if left in, would prevent a proper join. We're also going to rename the column that contains the population information from "estimate" to "population" and select only the county name and the population columns, along with the geometry. That leaves us with this tidy table.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_county_population <- md_county_population |>
-  rename(county = NAME) |>
-  mutate(county = str_to_title(str_remove_all(county,"County, Maryland"))) |>
-  mutate(county = str_trim(county,side="both")) |>
-  rename(population = estimate) |>
-  select(county, population, geometry) |> 
-  mutate(county = case_when(
-    county == 'Baltimore' ~ 'Baltimore County',
-    county == 'Baltimore City, Maryland' ~ 'Baltimore City',
-    county == "St. Mary's" ~ "Saint Mary's",
-    .default = county
-  ))
-
-md_county_population
-```
-
-Now we can join them!
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_pop_with_una <- md_county_population |>
-  left_join(md_una_voters, join_by(county==COUNTY))
-
-md_pop_with_una
-```
-
-Our final step before visualization, let's calculate the number of unaffiliated per 1000 population and sort from highest to lowest to see what trends we can identify just from the table.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-md_pop_with_una <- md_county_population |>
-  left_join(md_una_voters, join_by(county==COUNTY)) |> 
-  mutate(rate = TOTAL/population*1000) |>
-  arrange(desc(rate))
-
-md_pop_with_una
-```
-
-Let's take a look at the result of this table. The variances in the rates aren't huge, but there are some clear differences: Frederick is the clear leader, followed by Howard and Anne Arundel. Prince George's has the second-smallest rate of unaffiliated voters in the state.
-
-Okay, now let's visualize. We're going to build a choropleth map, with the color of each county -- the fill -- set according to the number of unaffiliated voters per 1K population on a color gradient.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-
-county_centroids <- st_centroid(md_counties)
-county_centroids_df <- as.data.frame(st_coordinates(county_centroids))
-county_centroids_df$NAME <- county_centroids$NAME
-
-ggplot() +
-  geom_sf(data=md_pop_with_una, aes(fill=rate)) +
-  geom_text(aes(x = X, y = Y, label = NAME), data = county_centroids_df, size = 3, check_overlap = TRUE) +
-  theme_minimal()
-```
-
-This map is okay, but the color scale makes it hard to draw fine-grained differences. Let's try applying the magma color scale we learned in the last chapter.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. **Answer**
-
-```{r}
-ggplot() +
-  geom_sf(data=md_pop_with_una, aes(fill=rate)) +
-  theme_minimal() +
-  scale_fill_viridis_b(option="magma")
-```
-
-The highest ranking counties stand out nicely in this version, but it's still hard to make out fine-grained differences between other counties.
-
-So let's change the color scale to a "log" scale, which will help us see those differences a bit more clearly.
-
-### Task: Run code
-
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer**
-
-```{r}
-ggplot() +
-  geom_sf(data=md_pop_with_una, aes(fill=rate)) +
-  theme_minimal() +
-  scale_fill_viridis_b(option="magma",trans = "log")
-```
+And now you have the data.

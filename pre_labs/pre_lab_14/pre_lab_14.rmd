@@ -1,7 +1,7 @@
 ---
-title: "pre_lab_14.Rmd"
+title: "pre_lab_12.Rmd"
 author: "derek willis"
-date: "12/02/2022"
+date: "11/18/2022"
 output: html_document
 ---
 
@@ -9,283 +9,305 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# An intro to text analysis
+# Automating analysis
 
-Throughout this course, we've been focused on finding information in structured data. We've learned a lot of techniques to do that, and we've learned how the creative mixing and matching of those skills can find new insights.
+Many of the data analyses that you do will be largely one-off efforts -- you're going to do the analysis and write the story and be done. Maybe you'll come back to it in a couple of months or years, but really you're just doing it once.
 
-What happens when the insights are in unstructured data? Like a block of text?
+But what happens when you have a long-running story, where you're going to update it every week, or every month? What changes when you're writing that code?
 
-Turning unstructured text into data to analyze is a whole course in and of itself -- and one worth taking if you've got the credit hours -- but some simple stuff is in the grasp of basic data analysis.
+1. How will this run again without changing anything?
+2. What questions do you have that have to be answered each time?
+3. What changes when you have to repeat questions to changing data?
 
-To do this, we'll need a new library -- [tidytext](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html), which you can guess by the name plays very nicely with the tidyverse. So install it in the console with `install.packages("tidytext")` and we'll get rolling.
+Voter registration is a key component of elections, and it's updated regularly in most states. So it is an ideal candidate for repeating analysis -- scripting the questions we want to answer every month and doing so in a way that we can just load it without having to change anything.
+
+Here's a real-world example: you are covering politics in Maryland and you want to see how voter registration is changing over time. You could grab the monthly PDFs, load them into Tabula and manually extract the information, load it into R and then do some calculations, but there's a better way. Instead, let's build a system that goes out each month to retrieve the data, parse it and make it easier to analyze.
+
+Let's get some other libraries to our typical tidyverse import. We'll start with janitor to help wrangle the data, and we're also going to add a library called `tabulizer`, which does in code what you do manually using Tabula.
+
+You install it in a slightly different way than usual: `remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"))`.
 
 ### Task 1: Load libraries and settings
-**Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use.
+**Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use
 
 ```{r}
-#install.packages("tidytext")
+#remotes::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"))
 library(tidyverse)
-library(tidytext)
 library(janitor)
-library(lubridate)
+library(tabulizer)
+library(glue)
 ```
 
-Remember the end of the previous lab, where you scraped all of those press release links from Maryland Sen. Ben Cardin's website? We're going to take that one step further and analyze the actual text of those releases using tidytext. Our starting question: what words or phrases appear most in Cardin's press releases?
+## Automating downloads and imports
 
-To answer this question, we'll use the text of those releases. For the scraping lab we gathered the URLs of 999 of Cardin's press releases, and for this exercise we'll be working with the text of them. 
+Now, where to find the data?
 
-Let's read in this data and examine it:
+Maryland [publishes monthly voter registration data on the state Board of Elections website](https://elections.maryland.gov/voter_registration/stats.html).
 
-### Task 2: Read in data
-**Task** Run the following code and describe the dataframe it outputs.
+Unfortunately, those monthly reports are in PDF format, as we learned in Chapter 22. Tabula makes it possible for us to handle them individually, but what if we wanted to put in place a repeatable system for parsing the data that we could just run every month?
+
+We can!
+
+First we'll see how it's done on a single PDF that we specify.
+
+### Task 1: Download a PDF file via code
+**Task** Run the following code to download the most recent PDF (https://elections.maryland.gov/pdf/vrar/2022_10.pdf). Check to see that it's in your pre_lab_12 directory.
+
+```{r}
+download.file("https://elections.maryland.gov/pdf/vrar/2022_10.pdf", "2022_10.pdf")
+```
+
+Having grabbed the file, we're going to try extracting the both pages from that PDF and focus on the first one, with new party registrations and removals. That's what the `tabulizer` library does using the function `extract_tables`:
+
+### Task 2: Read the PDF using Tabulizer
+**Task** Run the following code and describe the output.
 **Answer**
 
 ```{r}
-releases <- read_rds("data/cardin_releases.rds")
+tables <- extract_tables("2022_10.pdf")
+View(tables[[1]])
 ```
 
-As an aside, below is an example of how you would scrape the text from the first 10 press releases. We already have the text in the dataframe, but this lets you know how it was collected.
+Ok, so the information from the first page is there, but this data needs some work to make it usable. In fact, we probably want to make two dataframes here: one for the new registrations and one for the removals. First: make it a dataframe using `as_tibble()`, then cleaning up the columns and giving them proper names and datatypes. Finally, we'll save the result as its own dataframe, `new_registrations`.
 
-### Task 3: Example of gathering text
-**Task** Run the following code to gather the text for the first 10 press releases.
+### Task 3: Make the new_registrations dataframe
+**Task** Run the following code and describe the result.
+**Answer** 
 
 ```{r}
+# extract the first page and turn it into a dataframe, cleaning the column names
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
 
-urls <- releases |> top_n(10) |> pull(url)
+# remove the first two rows
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
 
-release_text <- tibble(url = character(), text = character())
+# make the new dataframe, renaming the columns and ditching the columns we don't want
+new_registrations <- voter_reg_page_1 |> 
+  # new registration columns
+  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
+  # remove commas and fix the datatypes
+  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total)), dupes = as.numeric(gsub(",","",dupes))) |> 
+  # exclude the columns we don't want
+  select(-starts_with("x")) |> 
+  # add a month and year column
+  mutate(month = 10, year = 2022)
 
-# loop over each url in the list of urls
-for (u in urls){
-  # wait a fraction of a second so we don't hammer the server
-  Sys.sleep(0.2)
-  # read in the html from the url
-  html <- u |> read_html()
-  # use the xpath of the text of the release to grab it and call html_text() on it
-  text <- html |> 
-    html_element(xpath="/html/body/div/div/div/div/div/div/div[2]/div[1]/div/div[4]") |> 
-    html_text()
-  
-  release_text <- release_text |> add_row(url = u, text = str_squish(text))
-}
-
-release_text
+View(new_registrations)
 ```
 
-What we want to do is to make the `text` column easier to analyze. Let's say we want to find out the most commonly used words. We'll want to remove URLs from the text of the releases since they aren't actual words. Let's use mutate to make that happen:
+Ok, that's one dataframe down. The good news is that making the second dataframe involves similar code, and we can start with our `voter_reg_page_1` dataframe that we made in the previous task:
 
-### Task 4: Remove URLs from content
-**Task** Run the following code.
+### Task 4: Make the removals dataframe
+**Task** Run the following code and describe the result.
+**Answer** 
 
 ```{r}
-releases <- releases |>
-  mutate(text = gsub("http.*","", text))
+# make the new dataframe, renaming the columns and ditching the columns we don't want
+removals <- voter_reg_page_1 |> 
+  # removals columns
+  rename(method = x13, DEM = x14, REP = x15, GRN = x16, LIB = x17, WCP = x18, UNA = x19, OTH = x20, total = x21) |> 
+  # remove commas and fix the datatypes
+  mutate(DEM = as.numeric(gsub(",","",DEM)), REP = as.numeric(gsub(",","",REP)), GRN = as.numeric(gsub(",","",GRN)), LIB = as.numeric(gsub(",","",LIB)), WCP = as.numeric(gsub(",","",WCP)), UNA = as.numeric(gsub(",","",UNA)), OTH = as.numeric(gsub(",","",OTH)), total = as.numeric(gsub(",","",total))) |> 
+  # exclude the columns we don't want
+  select(-starts_with("x")) |> 
+  # exclude rows with NAs
+  filter(!is.na(DEM)) |> 
+  # add a month and year column
+  mutate(month = 10, year = 2022)
+
+View(removals)
 ```
 
-If you are trying to create a list of unique words, R will treat differences in capitalization as unique and also will include punctuation by default, even using its `unique` function:
+Now we can start to interview this data. Let's do a little exploration using percentages.
 
-### Task 5: Trying out unique
-**Task** Run the following code and describe what the `unique` function does to the original list of words.
+## Explore the data
+
+Let's start with the `new_registrations` dataframe and figure out the percentage of the new registrations for Democrats, Republicans and unaffiliated voters.
+
+### Task 5: Calculate percentages for new registrations
+**Task** Run the following code and describe what you think are the most interesting percentages in the dataframe.
 **Answer**
 
 ```{r}
-a_list_of_words <- c("Dog", "dog", "dog", "cat", "cat", ",")
-unique(a_list_of_words)
+new_registrations <- new_registrations |> 
+  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
+
+View(new_registrations)
 ```
 
-Fortunately, this is a solved problem with tidytext, which has a function called `unnest_tokens` that will convert the text to lowercase and remove all punctuation. The way that `unnest_tokens` works is that we tell it what we want to call the field we're creating with this breaking apart, then we tell it what we're breaking apart -- what field has all the text in it. For us, that's the `text` column:
-
-### Task 6: Trying out unnest_tokens
-**Task** Run the following code and describe the output of using the `unnest_tokens` function.
+### Task 6: Calculate percentages for removals
+**Task** Run the following code and describe what you think are the most interesting percentages in the dataframe.
 **Answer**
 
 ```{r}
-unique_words <- releases |> select(text) |>
-  unnest_tokens(word, text)
-View(unique_words)
+removals <- removals |> 
+  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100)
+
+View(removals)
 ```
 
-### Task 7: Make a column chart
-**Task** Run the following code and describe what the resulting graphic shows. Is it interesting?
+So we have a process for automatically extracting tables from this most recent PDF. What if we wanted to parse a specific PDF based on the year and month, for comparison's sake? There are a couple of ways we can do that. First, we could set those as variables in code and use them to grab the correct file. We'll use a function called `paste0` to build the URL from its parts:
+
+### Task 7: Download a PDF file based on month and day variables
+**Task** Run the following code to download the voter registration PDF from June by building the URL for it programatically (https://elections.maryland.gov/pdf/vrar/2022_06.pdf). Check to see that it's in your pre_lab_12 directory.
+
+```{r}
+year = 2022
+month = "06"
+url <- paste0("https://elections.maryland.gov/pdf/vrar/",year,"_",month,".pdf")
+file_name <- paste0(year,"_",month,".pdf")
+download.file(url, file_name)
+tables <- extract_tables(file_name)
+```
+
+Then we can run the same code we did above, except we'll use the year and month variables to provide useful names and values. We'll use `paste0` to build the custom variable name based on the month and year, and the `assign` function to make it into an actual variable.
+
+### Task 8: Parse the June 2022 voter registration data
+**Task** Run the following code. What's the name of the new dataframe?
+
+```{r}
+# extract the first page and turn it into a dataframe, cleaning the column names
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
+
+# remove the first two rows
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
+
+# make the new dataframe, renaming the columns and ditching the columns we don't want
+assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
+  # new registration columns
+  rename(method = x2, DEM = x3, REP = x4, GRN = x5, LIB = x6, WCP = x7, UNA = x8, OTH = x9, total = x10, dupes = x11) |> 
+
+  # remove commas and fix the datatypes in all the columns except `method`
+  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
+  mutate(across(!method, as.numeric)) |> 
+
+  # exclude the columns we don't want
+  select(-starts_with("x")) |> 
+  # add a month and year column based on our variables
+  mutate(month = month, year = year))
+```
+
+To make this even more useful for analysis, we could change the names of the columns to include the month and year, so that we could join the dataframe to other months and calculate the difference between them - find out, for example, if new registrations of unaffiliated voters were up in October compared to June. Let's do that using the above code as a template:
+
+### Task 9: Parse the June 2022 voter registration data as use dynamically generated column names
+**Task** Look at the following code, especially the assign and paste functions, then run it and look at the resulting dataframe.
+
+```{r}
+# extract the first page and turn it into a dataframe, cleaning the column names
+voter_reg_page_1 <- tables[[1]] |> as_tibble(.name_repair = "unique") |> clean_names()
+
+# remove the first two rows
+voter_reg_page_1 <- voter_reg_page_1 |> slice(-(1:2))
+
+# make the new dataframe, renaming the columns and ditching the columns we don't want
+assign(paste0("new_registrations_",year,"_",month), voter_reg_page_1 |> 
+  # new registration columns
+  rename(method = x2, !!paste0("DEM_",month) := x3, !!paste0("REP_",month) := x4, !!paste0("GRN_",month) := x5, !!paste0("LIB_",month) := x6, !!paste0("WCP_",month) := x7, !!paste0("UNA_",month) := x8, !!paste0("OTH_",month) := x9, !!paste0("total_",month) := x10, !!paste0("dupes_",month) := x11) |> 
+  # remove commas and fix the datatypes
+  mutate(across(!method, gsub, pattern=",", replacement = "")) |> 
+  mutate(across(!method, as.numeric)) |> 
+  # exclude the columns we don't want
+  select(-starts_with("x")) |> 
+  # add a month and year column based on our variables
+  mutate(month = month, year = year))
+```
+
+Now we can join the October and June new registration dataframes and compare them:
+
+### Task 10: Join the October and June new registration dataframes
+**Task** Run the following code. How many rows do you have compared to either the October or June dataframes?
+**Answer** 
+
+```{r}
+new_reg_oct_jun <- new_registrations |> 
+  inner_join(new_registrations_2022_06, by=c('method', 'year'))
+```
+
+Looks like we'll need to fix the column referring to absentee ballots. Let's do that and then join:
+
+### Task 11: Join the October and June new registration dataframes
+**Task** Run the following code. How many rows do you have compared to either the October or June dataframes?
+**Answer** 
+
+```{r}
+new_reg_oct_jun <- new_registrations |> 
+  mutate(method = if_else(method == 'MAIL-IN BALLOT (FPCA)', 'ABSENTEE BALLOT (FPCA)', method)) |> 
+  inner_join(new_registrations_2022_06, by=c('method', 'year'))
+```
+
+Now let's calculate some percentages and the difference between them.
+
+### Task 10: Calculate percentages and differences
+**Task** Run the following code. What stands out to you about the differences columns?
+**Answer** 
+
+```{r}
+new_reg_oct_jun <- new_reg_oct_jun |> 
+  mutate(pct_dem = DEM/total *100, pct_rep = REP/total *100, pct_una = UNA/total *100) |> 
+  mutate(pct_dem06 = DEM_06/total_06 *100, pct_rep06 = REP_06/total_06 *100, pct_una06 = UNA_06/total_06 *100) |>
+  mutate(diff_dem = pct_dem-pct_dem06, diff_rep = pct_rep-pct_rep06, diff_una = pct_una-pct_una06)
+```
+
+## Analysis
+
+We now have the makings of a repeatable process that we could use to make the reporting process easier. We could even add graphics to this process.
+
+## Making updating graphics
+
+More than numbers, we are going to want to see this data so we can spot potential stories. First, let's just make a big bar chart.
+
+### Task 9: Make a simple bar chart
+**Task** Run the following code and describe what the chart is showing. What is the trend in the data?
 **Answer**
 
-Now we can look at the top words in this dataset. Let's limit ourselves to making a plot of the top 25 words, and we'll use the function `count` to do the counting:
-
-```{r}
-unique_words |>
-  count(word, sort = TRUE) |>
-  top_n(25) |>
-  mutate(word = reorder(word, n)) |>
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-      labs(x = "Count",
-      y = "Unique words",
-      title = "Count of unique words found in Cardin releases")
+```{r fig.width=9}
+new_reg_oct_jun |> 
+  filter(total > 0, method != 'TOTAL') |> 
+  ggplot() +
+  geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
+  coord_flip() + 
+  theme_minimal() +
+  labs(
+    title = "ERIC, Mail registrations mostly Democratic",
+    y = "Democratic Registration %",
+    x = "Method"
+  )
 ```
 
-Well, that's a bit underwhelming - a lot of very common (and short) words. This also is a solved problem in working with text data, and words like "a" and "the" are known as "stop words". In most cases you'll want to remove them from your analysis since they are so common. Tidytext provides a dataframe of them that we'll load, and then we'll add some of our own.
+Ok, but what about a side-by-side comparison? Can we put the October and June percentages together? We can, thanks to a library called `cowplot`:
 
-### Task 8: Load the stop words
-**Task** Run the following code
 
-```{r}
-data("stop_words")
-
-stop_words <- stop_words |> 
-  add_row(word = "ben") |> 
-  add_row(word = "cardin") |> 
-  add_row(word = "senator") |>
-  add_row(word = "senators") |>
-  add_row(word = "maryland") |>
-  add_row(word = 'federal') |> 
-  add_row(word = 'u.s') |> 
-  add_row(word = 'md') |> 
-  add_row(word = 'senate') |> 
-  add_row(word = "hollen") |> 
-  add_row(word = "van") |> 
-  add_row(word = "chris")
-
-```
-
-Then we're going to use a function we haven't used yet called an `anti_join`, which filters out any matches. So we'll `anti_join` the stop words and get a list of words that aren't stop words.
-
-From there, we can get a simple word frequency by just grouping them together and counting them. We can borrow the percent code from above to get a percent of the words our top 10 words represent.
-
-### Task 9: Using anti_join
-**Task** Run the following code and describe the results. Is it more interesting than before?
-**Answer**
+### Task 10: Produce a side-by-side chart with two plots
+**Task** Run the following code to make a better bar chart. What are the main differences between them?
+**Answer** 
 
 ```{r}
-unique_words |>
-  anti_join(stop_words) |>
-  group_by(word) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
+library(cowplot)
+plot_oct <- new_reg_oct_jun |> 
+  filter(total > 10, method != 'TOTAL') |> 
+  ggplot() +
+  geom_bar(aes(x=reorder(method, pct_dem), weight=pct_dem))+
+  coord_flip() + 
+  theme_minimal() +
+  labs(
+    y = "Democratic Registration %",
+    x = "Method",
+    title = "October"
+  )
+
+plot_jun <- new_reg_oct_jun |> 
+  filter(total_06 > 10, method != 'TOTAL') |> 
+  ggplot() +
+  geom_bar(aes(x=reorder(method, pct_dem06), weight=pct_dem06))+
+  coord_flip() + 
+  theme_minimal() +
+  labs(
+    y = "Democratic Registration %",
+    x = "Method",
+    title = "June"
+  )
+
+plot_grid(plot_oct, plot_jun) 
 ```
 
-Those seem like more relevant unique words. Now, here's where we can start to do more interesting and meaningful analysis. Let's create two dataframes of unique words based on time: one for all of 2021 and the other for all of 2022:
-
-### Task 10: Create dataframes for 2021 and 2022
-**Task** Run the following code
-
-```{r}
-unique_words_2021 <- releases |>
-  filter(date < '2022-01-01') |>
-  select(text) |>
-  unnest_tokens(word, text)
-
-unique_words_2022 <- releases |>
-  filter(date >= '2022-01-01') |>
-  select(text) |>
-  unnest_tokens(word, text)
-```
-
-Then we can create top 10 lists for both of them and compare:
-
-### Task 11: Create dataframes with the top 10 words in each year
-**Task** Run the following code and describe the results.
-**Answer**
-
-```{r}
-unique_words_2021 |>
-  anti_join(stop_words) |>
-  group_by(word) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
-
-unique_words_2022 |>
-  anti_join(stop_words) |>
-  group_by(word) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
-```
-
-In the 2021 top 10 list, "covid" and "pandemic" appear, which makes sense, while the 2022 doesn't reference the same topic aside from the more generic "health".
-
-## Going beyond a single word
-
-The next step in text analysis is using `ngrams`. An `ngram` is any combination of words that you specify. Two word ngrams are called bigrams (bi-grams). Three would be trigrams. And so forth.
-
-The code to make ngrams is similar to what we did above, but involves some more twists.
-
-So this block is is going to do the following:
-
-1. Use the releases data we created above, and filter for pre-2022 releases.
-2. Unnest the tokens again, but instead we're going to create a field called bigram, break apart summary, but we're going to specify the tokens in this case are ngrams of 2.
-3. We're going to make things easier to read and split bigrams into word1 and word2.
-4. We're going to filter out stopwords again, but this time we're going to do it in both word1 and word2 using a slightly different filtering method.
-5. Because of some weirdness in calculating the percentage, we're going to put bigram back together again, now that the stop words are gone.
-6. We'll then group by, count and create a percent just like we did above.
-7. We'll then use top_n to give us the top 10 bigrams.
-
-### Task 12: Create a dataframe with the top 10 two-word phrases for 2021
-**Task** Run the following code and describe the results.
-**Answer**
-
-```{r}
-releases |>
-  filter(date < '2022-01-01') |>
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
-  separate(bigram, c("word1", "word2"), sep = " ") |>
-  filter(!word1 %in% stop_words$word) |>
-  filter(!word2 %in% stop_words$word) |>
-  mutate(bigram = paste(word1, word2, sep=" ")) |>
-  group_by(bigram) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
-```
-
-And we already have a different, more nuanced result. Health was among the top single words, and we can see that "health care", "human rights" and "chesapeake bay" are among the top 2-word phrases. What about after 2021?
-
-### Task 13: Create a dataframe with the top 10 two-word phrases for 2022
-**Task** Run the following code and describe the results.
-**Answer**
-
-```{r}
-releases |>
-  filter(date >= '2022-01-01') |>
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
-  separate(bigram, c("word1", "word2"), sep = " ") |>
-  filter(!word1 %in% stop_words$word) |>
-  filter(!word2 %in% stop_words$word) |>
-  mutate(bigram = paste(word1, word2, sep=" ")) |>
-  group_by(bigram) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
-```
-
-While "covid 19" is still a top phrase, it's not _the_ leading phrase any longer. "Mental health" makes an appearance, too. You'll notice that the percentages are very small; that's not irrelevant but in some cases it's the differences in patterns that's more important.
-
-There are some potential challenges to doing an analysis. For one, there are variations of words that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.
-
-## Sentiment Analysis
-
-Another popular use of text analysis is to measure the sentiment of a word - whether it expresses a positive or negative idea - and tidytext has built-in tools to make that possible. We use word counts like we've already calculated and bring in a dataframe of words (called a lexicon) along with their sentiments using a function called `get_sentiments`. The most common dataframe is called "bing" which has nothing to do with the Microsoft search engine. Let's load it:
-
-### Task 14: Load the bing lexicon and produce sentiments for our 2021 and 2022 unique words
-**Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive?
-**Answer**
-
-```{r}
-bing <- get_sentiments("bing")
-
-bing_word_counts_2021 <- unique_words_2021 |>
-  inner_join(bing) |>
-  count(word, sentiment, sort = TRUE)
-
-bing_word_counts_2022 <- unique_words_2022 |>
-  inner_join(bing) |>
-  count(word, sentiment, sort = TRUE)
-
-View(bing_word_counts_2021)
-View(bing_word_counts_2022)
-```
-
-Gauging the sentiment of a word can be heavily dependent on the context, and as with other types of text analysis sometimes larger patterns are more meaningful than individual results. But the potential with text analysis is vast: knowing what words and phrases that public officials employ can be a way to evaluate their priorities, cohesiveness and tactics for persuading voters and their colleagues. And those words and phrases are data.
+We could use similar code to produce multiple plots for comparing other columns, and there are other steps we could take to make this process almost totally automated: we could, for example, derive the date progeammatically based on today's date and load and process data based on time intervals that we define (1-month, 3-month, etc.). The point here is not to reduce the amount of work you do the first time, but to virtually eliminate it every other time you run the code.
