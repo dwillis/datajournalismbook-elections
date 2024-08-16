@@ -1,5 +1,6 @@
 ```{r}
 library(tidyverse)
+library(lubridate)
 library(janitor)
 library(arrow)
 library(ineq)
@@ -128,5 +129,19 @@ md_senate_expenses <- md_senate_expenses |>
   ))
 
 write_csv(md_senate_expenses, "~/code/datajournalismbook-elections/labs/lab_05/data/md_senate_expenses.csv")
+```
+
+
+Lab 02
+
+```{r}
+reg_voters <- read_delim("~/Downloads/PhilipMerillCollegeofJournalismWillisDerek/RegisteredVoterList/RegisteredVoters.txt", delim = '\t') |> 
+  mutate(STATE_REGISTRATION_DATE = mdy(STATE_REGISTRATION_DATE), COUNTY_REGISTRATION_DATE = mdy(COUNTY_REGISTRATION_DATE))
+
+
+voters_2024 <- reg_voters |> filter(STATE_REGISTRATION_DATE > '2023-12-31') |> select(-`...41`)
+
+write_rds(voters_2024, "~/code/datajournalismbook-elections/labs/lab_02/data/lab_02.rds")
+
 ```
 
