@@ -103,4 +103,8 @@ idea_response <- axolotr::ask(
 idea_response
 ```
 
-Note that the column names may not match your data; the LLM is making predictions about your data, so you could provide the column names. As [this story from The Pudding](https://pudding.cool/2024/07/ai/) makes clear, the potential for using LLMs to not just assist with but perform data analysis is real. What will make the difference is how much context you can provide and how clear your ideas and questions are. You still have to do the work.
+Note that the column names may not match your data; the LLM is making predictions about your data, so you could provide the column names.
+
+### Can't I just ask it to do data analysis for me?
+
+Well, you can try, but I'm not confident you'll like the results. As [this story from The Pudding](https://pudding.cool/2024/07/ai/) makes clear, the potential for using LLMs to not just assist with but perform data analysis is real. What will make the difference is how much context you can provide and how clear your ideas and questions are. You still have to do the work.
