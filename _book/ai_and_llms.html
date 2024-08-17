@@ -366,18 +366,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="25.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">25.1</span> Setup</h2>
 <p>We’ll be using a service called Groq for the examples here. You should <a href="https://www.groq.com">sign up for a free account</a> and <a href="https://console.groq.com/docs/quickstart">create an API key</a>. Make sure you copy that key. We’ll also need to install an R package to handle the responses:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("devtools")</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"heurekalabsco/axolotr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Skipping install of 'axolotr' from a github remote, the SHA1 (0a78e158) has not changed since last install.
-  Use `force = TRUE` to force installation</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"> install.packages("devtools")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">devtools::install_github("heurekalabsco/axolotr")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we can load that library and, using your API key, setup your credentials:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(axolotr)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">create_credentials</span>(<span class="at">GROQ_API_KEY =</span> <span class="st">"YOUR API KEY HERE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(axolotr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">create_credentials</span>(<span class="at">GROQ_API_KEY =</span> <span class="st">"YOUR API KEY HERE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Credentials updated successfully. Please restart your R session for changes to take effect.</code></pre>
 </div>
@@ -385,16 +381,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>See that “Please restart your R session for changes to take effect.”? Go ahead and do that; you’ll need to rerun the <code>library()</code> function above.</p>
 <p>Let’s make sure that worked. We’ll be using the <a href="https://ai.meta.com/blog/meta-llama-3-1/">Llama 3.1 model released by Meta</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>groq_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"Give me five names for a pet lemur"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Error in Groq API call: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>groq_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>groq_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"Give me five names for a pet lemur"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>groq_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code>[1] "Here are five name suggestions for a pet lemur:\n\n1. **Loki**: a playful and mischievous name fitting for a curious and energetic lemur.\n2. **Fiji**: a nod to the lemur's tropical origins, evoking the islands of the Pacific.\n3. **Zuzu**: a whimsical and charming name that suits a lively and affectionate lemur.\n4. **Mango**: a sweet and fruity name that matches the lemur's bright and cheerful personality.\n5. **Jinx**: a fun and quirky name that captures the lemur's playful and unpredictable nature.\n\nI hope these suggestions inspire you!"</code></pre>
 </div>
 </div>
 <p>I guess you’re getting a lemur?</p>
@@ -423,18 +417,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>What if we could extract those highlighted portions of the text into, say, a CSV file? That’s something that LLMs are pretty good at. Let’s give it a shot using the full text of that announcement:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">=</span> <span class="st">"Gabriela Nunes Herman and Tyson Charles Evans were married Saturday at the home of their friends Marcy Gringlas and Joel Greenberg in Chilmark, Mass. Rachel Been, a friend of the couple who received a one-day solemnization certificate from Massachusetts, officiated. The bride, 33, will continue to use her name professionally. She is a Brooklyn-based freelance photographer for magazines and newspapers. She graduated from Wesleyan University in Middletown, Conn. She is a daughter of Dr. Talia N. Herman of Brookline, Mass., and Jeffrey N. Herman of Cambridge, Mass. The bride’s father is a lawyer and the executive vice president of DecisionQuest, a national trial consulting firm in Boston. Her mother is a senior primary care internist at Harvard Vanguard Medical Associates, a practice in Boston. The groom, 31, is a deputy editor of interactive news at The New York Times and an adjunct professor at the Columbia University Graduate School of Journalism. He graduated from the University of California, Los Angeles. He is the son of Carmen K. Evans of Climax Springs, Mo., and Frank J. Evans of St. Joseph, Mo. The groom’s father retired as the president of UPCO, a national retailer of pet supplies in St. Joseph."</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>evans_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="fu">paste</span>(<span class="st">"Given the following text, extract information into a CSV file with the following structure with no yapping: celebrant1,celebrant2,location,officiant,celebrant1_age,celebrant2_age,celebrant1_parent1,celebrant1_parent2,celebrant2_parent1,celebrant2_parent2"</span>, text),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Error in Groq API call: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>evans_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">=</span> <span class="st">"Gabriela Nunes Herman and Tyson Charles Evans were married Saturday at the home of their friends Marcy Gringlas and Joel Greenberg in Chilmark, Mass. Rachel Been, a friend of the couple who received a one-day solemnization certificate from Massachusetts, officiated. The bride, 33, will continue to use her name professionally. She is a Brooklyn-based freelance photographer for magazines and newspapers. She graduated from Wesleyan University in Middletown, Conn. She is a daughter of Dr. Talia N. Herman of Brookline, Mass., and Jeffrey N. Herman of Cambridge, Mass. The bride’s father is a lawyer and the executive vice president of DecisionQuest, a national trial consulting firm in Boston. Her mother is a senior primary care internist at Harvard Vanguard Medical Associates, a practice in Boston. The groom, 31, is a deputy editor of interactive news at The New York Times and an adjunct professor at the Columbia University Graduate School of Journalism. He graduated from the University of California, Los Angeles. He is the son of Carmen K. Evans of Climax Springs, Mo., and Frank J. Evans of St. Joseph, Mo. The groom’s father retired as the president of UPCO, a national retailer of pet supplies in St. Joseph."</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>evans_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="fu">paste</span>(<span class="st">"Given the following text, extract information into a CSV file with the following structure with no yapping: celebrant1,celebrant2,location,officiant,celebrant1_age,celebrant2_age,celebrant1_parent1,celebrant1_parent2,celebrant2_parent1,celebrant2_parent2"</span>, text),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>evans_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code>[1] "Here is the extracted information in a CSV file:\n\nGabriela Nunes Herman,Tyson Charles Evans,Chilmark, Mass.,Rachel Been,33,31,Dr. Talia N. Herman,Jeffrey N. Herman,Carmen K. Evans,Frank J. Evans"</code></pre>
 </div>
 </div>
 <p>A brief word about that “no yapping” bit; it’s a way to tell your friendly LLM to cut down on the chattiness in its response. What we care about is the data, not the narrative. And look at the results: without even providing an example or saying that the text described a wedding, the LLM did a solid job. Now imagine if you could do this with hundreds or thousands of similar announcements. You’ve just built a database.</p>
@@ -443,16 +435,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="25.2.2" class="anchored" data-anchor-id="helping-with-code-debugging-and-explanation"><span class="header-section-number">25.2.2</span> Helping with Code Debugging and Explanation</h3>
 <p>When you’re writing code and run into error messages, you should read them. But if they do not make sense to you, you can ask an LLM to do some translation, which is another great use case for AI. As with any debugging exercise, you should provide some context, things like “Using R and the tidyverse …” and describing what you’re trying to do, but you also can ask LLMs to explain an error message in a different way. Here’s an example:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>debug_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"Explain the following R error message using brief, simple language and suggest a single fix. I am using the tidyverse library: could not find function '|&gt;'"</span>,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Error in Groq API call: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>debug_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>debug_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"Explain the following R error message using brief, simple language and suggest a single fix. I am using the tidyverse library: could not find function '|&gt;'"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>debug_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code>[1] "**Error Message:** \"could not find function '|&gt;'\"\n\n**Explanation:** The error message indicates that R is unable to find the pipe operator (`|&gt;`) function, which is a part of the magrittr package. This package is included in the tidyverse library, but it seems that it's not loaded or attached in your current R session.\n\n**Fix:** Load the magrittr package by adding the following line of code at the beginning of your script:\n```r\nlibrary(magrittr)\n```\nAlternatively, you can also load the tidyverse library, which includes magrittr, and then use the pipe operator:\n```r\nlibrary(tidyverse)\n```\nThis should resolve the issue and allow you to use the pipe operator (`|&gt;`) in your code."</code></pre>
 </div>
 </div>
 <p>The trouble is that if you run that several times, it will give you slightly different answers. Not fact machines. But you should be able to try some of the suggested solutions and see if any of them work. An even better use could be to pass in working code that you’re not fully understanding and ask the LLM to explain it to you.</p>
@@ -461,16 +451,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="25.2.3" class="anchored" data-anchor-id="brainstorming-about-strategies-for-data-analysis-and-visualization"><span class="header-section-number">25.2.3</span> Brainstorming about Strategies for Data Analysis and Visualization</h3>
 <p>Let’s say that you have some data that you want to interview, but aren’t sure how to proceed. LLMs can provide some direction, but you may not want to follow their directions exactly. You shouldn’t accept their judgments uncritically; you’ll still need to think for yourself. Here’s an example of how that might go:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>idea_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"I have a CSV file of daily data on campus police incidents, including the type of incident, building location and time. Using R and the tidyverse, suggest some ways that I could find patterns in the data. Use the new-style pipe operator (|&gt;) in any code examples"</span>,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Error in Groq API call: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>idea_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>idea_response <span class="ot">&lt;-</span> axolotr<span class="sc">::</span><span class="fu">ask</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">prompt =</span> <span class="st">"I have a CSV file of daily data on campus police incidents, including the type of incident, building location and time. Using R and the tidyverse, suggest some ways that I could find patterns in the data. Use the new-style pipe operator (|&gt;) in any code examples"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="st">"llama-3.1-8b-instant"</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>idea_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code>[1] "Here are some ways you could find patterns in your campus police incident data using R and the tidyverse:\n\n**1. Explore the distribution of incidents by type**\n\n```r\nlibrary(readr)\nlibrary(tidyverse)\n\nincidents &lt;- read_csv(\"incidents.csv\")\n\nincidents |&gt;\n  group_by(type) |&gt;\n  summarise(count = n()) |&gt;\n  arrange(desc(count))\n```\n\nThis code will show you the most common types of incidents on campus.\n\n**2. Identify the most incident-prone buildings**\n\n```r\nincidents |&gt;\n  group_by(building) |&gt;\n  summarise(count = n()) |&gt;\n  arrange(desc(count))\n```\n\nThis code will show you which buildings have the most incidents.\n\n**3. Visualize the distribution of incidents by time of day**\n\n```r\nincidents |&gt;\n  ggplot(aes(x = hour)) +\n  geom_bar() +\n  labs(x = \"Time of Day\", y = \"Number of Incidents\")\n```\n\nThis code will create a bar chart showing the number of incidents by hour of the day.\n\n**4. Identify patterns in incident frequency by day of the week**\n\n```r\nincidents |&gt;\n  mutate(day_of_week = factor(wday, labels = c(\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"))) |&gt;\n  group_by(day_of_week) |&gt;\n  summarise(count = n()) |&gt;\n  arrange(desc(count))\n```\n\nThis code will show you which days of the week have the most incidents.\n\n**5. Explore the relationship between incident type and building location**\n\n```r\nincidents |&gt;\n  ggplot(aes(x = building, y = type, color = type)) +\n  geom_point() +\n  labs(x = \"Building\", y = \"Incident Type\", color = \"Incident Type\")\n```\n\nThis code will create a scatterplot showing the relationship between building location and incident type.\n\n**6. Identify clusters of incidents in space and time**\n\n```r\nincidents |&gt;\n  ggplot(aes(x = building, y = hour)) +\n  geom_point() +\n  labs(x = \"Building\", y = \"Time of Day\")\n```\n\nThis code will create a scatterplot showing the location of incidents in space and time. You can use this plot to identify clusters of incidents.\n\nThese are just a few examples of the types of patterns you could find in your data. The key is to use the tidyverse to manipulate and visualize your data in a way that helps you understand the underlying patterns."</code></pre>
 </div>
 </div>
 <p>Note that the column names may not match your data; the LLM is making predictions about your data, so you could provide the column names.</p>
