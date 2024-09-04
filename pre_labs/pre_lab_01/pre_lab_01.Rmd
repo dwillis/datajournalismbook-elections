@@ -98,7 +98,7 @@ Once it loads, look at the environment window at right in RStudio for maryland_w
 glimpse(maryland_winred_contributions)
 ```
 
-In the space below, write the data type for the "name" column and the "amount" column (it's in light gray, offset by \< \>). Also offer your best guess as to what the "name" column and the "amount" column represent. **Answer**
+In the space below, write the data type for the "last_name" column and the "amount" columns (it's in light gray, offset by \< \>). Also offer your best guess as to what the "last_name" column and the "amount" column represent. **Answer**
 
 ### Task 4: Examine data "head"
 
@@ -108,7 +108,7 @@ In the space below, write the data type for the "name" column and the "amount" c
 head(maryland_winred_contributions)
 ```
 
-In the space below, write the name of the business from the first row of the "name" column. **Answer**
+In the space below, write the first and last name from the _second_ row of the data. **Answer**
 
 ### Task 5: Explore data with interactive dataframe
 
@@ -126,7 +126,7 @@ maryland_winred_contributions |>
   )
 ```
 
-Describe what you think this code is doing below. What does the answer represent?
+Describe what you think this code is doing below. What does the answer represent, compared to the results from `head()`?
 
 **Answer**
 
@@ -143,9 +143,9 @@ maryland_winred_contributions |>
   arrange(desc(count_contribs))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? *
+Compared to the previous codeblock, what has changed and how did that affect the result?
 
-*Answer**
+**Answer**
 
 ### Task 8: Multiple grouping
 
@@ -160,7 +160,7 @@ maryland_winred_contributions |>
   arrange(desc(count_contribs))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? 
+Compared to the previous codeblock, what has changed and how did that affect the result?
 
 **Answer**
 
@@ -178,7 +178,9 @@ maryland_winred_contributions |>
   arrange(desc(total_amount))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? 
+
+**Answer**
 
 ### Task 10: More descriptive statistics
 
@@ -196,7 +198,7 @@ maryland_winred_contributions |>
   arrange(desc(count_contribs))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? Glancing at the names, are any of the top results from Maryland? 
+Compared to the previous codeblock, what has changed and how did that affect the result? Glancing at the names, which of the top results from Maryland?
 
 **Answer**
 
@@ -218,5 +220,4 @@ maryland_winred_contributions |>
   arrange(desc(total_amount))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? 
-**Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? **Answer**
