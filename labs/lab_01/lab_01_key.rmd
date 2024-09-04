@@ -39,9 +39,9 @@ wv_winred_contribs <- read_rds("lab_01.rds")
 
 ## Examine Data
 
-**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data. 
+**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
 
-**Q1** How many rows and columns does this dataframe have? 
+**Q1** How many rows and columns does this dataframe have?
 
 **A1** 40,441 rows and 24 columns
 
@@ -53,7 +53,7 @@ glimpse(wv_winred_contribs)
 
 ## Answer questions
 
-**Q2** Which West Virginia city provided the largest number of contributions? How many? 
+**Q2** Which West Virginia city provided the largest number of contributions? How many?
 
 **A2** Charleston, with 3,226.
 
@@ -66,7 +66,7 @@ wv_winred_contribs |>
   arrange(desc(total_contribs))
 ```
 
-**Q3** Which West Virginia cities accounted for the fewest contributions? How many? 
+**Q3** Which West Virginia cities accounted for the fewest contributions? How many of them, roughly?
 
 **A3** Dozens of them, with 1 contribution.
 
@@ -83,7 +83,7 @@ wv_winred_contribs |>
 
 **A4** Population, mostly, and Charleston is the capital. At the other end of the spectrum you have tiny towns spread across the state.
 
-**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation? 
+**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation?
 
 **A5** Trump National Committee JFC, with \$463,944 from 14,063 contributions. The average was \$32.99.
 
@@ -103,7 +103,7 @@ wv_winred_contribs |>
 
 **A6** Trump National Committee JFC is the main fundraising organization for former President Donald Trump. It splits money between his campaign and other organizations. Trump won 68% of the vote in West Virginia in 2020.
 
-**Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city): \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
+**Q7**. Using the answer from A5 as a starting point, produce a summary table that has the following information for each recipient: \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
 
 Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
 
@@ -111,6 +111,7 @@ Store it as a variable object called `wv_summary` so that you can examine it wit
 
 ```{r}
 wv_summary <- wv_winred_contribs |>
+  group_by(memo_text) |>
    summarise(
     count_contribs = n(),
     total_amount = sum(amount),
