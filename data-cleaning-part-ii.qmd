@@ -36,11 +36,11 @@ conowingo
 
 There are a number of issues with this data set that might get in the way of asking questions and receiving accurate answers. They are:
 
--   The column headers are inconsistently styled (note: I've purposely dirtied these up, which is why they look different than previous versions of this data we've loaded). The first column "1_linenumber" starts with a number. The "NAME" column is all caps, while the rest are lowercase. And "address one" has a space in it. Those problems will make them hard to analyze, to refer to in functions we write.
--   The amount column is stored as a character, not a number. If we try to do math to it -- say, calculate the average loan size -- it won't work.
--   There's a fully duplicated row -- a common problem in data sets. The first row is exactly the same as the second.
--   The city field has five different forms -- including misspellings -- of Arnold. If we wanted to group and count the number of loans in Arnold, this inconsistency would not let us do that correctly.
--   The zip field mixes five digit ZIP codes and nine digit ZIP codes. If we wanted to group and count the number of loans in a given ZIP code, this inconsistency would not let us do that correctly.
+-   The column headers are inconsistently styled (note: I've purposely dirtied these up, which is why they look different than previous versions of this data we've loaded). Those problems will make them hard to analyze, to refer to in functions we write.
+-   The amount column is stored as a character, not a number. If we try to do math to it -- say, calculate the average contribution size -- it won't work.
+-   There's a fully duplicated row -- a common problem in data sets. The 14th row is exactly the same as the seventh.
+-   The city field has five different forms -- including misspellings -- of Conowingo. If we wanted to group and count the number of contributions in Conowingo, this inconsistency would not let us do that correctly.
+-   The zip field mixes five digit ZIP codes and nine digit ZIP codes. If we wanted to group and count the number of contributions in a given ZIP code, this inconsistency would not let us do that correctly.
 -   The street address field is inconsistent. It has multiple variations of Merry Knoll Lane.
 
 Let's get cleaning. Our goal will be to build up one block of code that does all the necessary cleaning in order to answer this question: what is the total amount of contributions from Conowingo, MD in ZIP code 21918?
