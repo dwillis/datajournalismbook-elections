@@ -375,20 +375,20 @@ dbl (6): early_voting, election_day, absentee, provisional, second_absentee,...
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 895 × 8
-   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
-   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 U.S. Congress 06              Adrian Pet… DEM   Allega…      10    12   0.833
- 2 U.S. Congress 06              Altimont M… DEM   Allega…       9    13   0.692
- 3 U.S. Congress 06              April McCl… DEM   Allega…     544  1428   0.381
- 4 U.S. Congress 06              Ashwani Ja… DEM   Allega…     125   228   0.548
- 5 U.S. Congress 06              Brenda J. … REP   Allega…      53   120   0.442
- 6 U.S. Congress 06              Chris Hyser REP   Allega…      99   190   0.521
- 7 U.S. Congress 06              Dan Cox     REP   Allega…    1505  2130   0.707
- 8 U.S. Congress 06              Destiny Dr… DEM   Allega…      23    46   0.5  
- 9 U.S. Congress 06              Geoffrey G… DEM   Allega…      12    37   0.324
-10 U.S. Congress 06              George Glu… DEM   Allega…      26    42   0.619
-# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
-#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
+   office_name   office_district candidate_name   party county_name election_day
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;
+ 1 U.S. Congress 06              Adrian Petrus    DEM   Allegany C…           10
+ 2 U.S. Congress 06              Altimont Mark W… DEM   Allegany C…            9
+ 3 U.S. Congress 06              April McClain D… DEM   Allegany C…          544
+ 4 U.S. Congress 06              Ashwani Jain     DEM   Allegany C…          125
+ 5 U.S. Congress 06              Brenda J. Thiam  REP   Allegany C…           53
+ 6 U.S. Congress 06              Chris Hyser      REP   Allegany C…           99
+ 7 U.S. Congress 06              Dan Cox          REP   Allegany C…         1505
+ 8 U.S. Congress 06              Destiny Drake W… DEM   Allegany C…           23
+ 9 U.S. Congress 06              Geoffrey Grammer DEM   Allegany C…           12
+10 U.S. Congress 06              George Gluck     DEM   Allegany C…           26
+# ℹ 885 more rows
+# ℹ 2 more variables: votes &lt;dbl&gt;, percent_election_day &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Now we’ve got our <code>percent_election_day</code> column. But what do you see right away? Do those numbers look like we expect them to? No.&nbsp;They’re a decimal expressed as a percentage. So let’s fix that by multiplying by 100.</p>
@@ -400,20 +400,20 @@ dbl (6): early_voting, election_day, absentee, provisional, second_absentee,...
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 895 × 8
-   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
-   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 U.S. Congress 06              Adrian Pet… DEM   Allega…      10    12    83.3
- 2 U.S. Congress 06              Altimont M… DEM   Allega…       9    13    69.2
- 3 U.S. Congress 06              April McCl… DEM   Allega…     544  1428    38.1
- 4 U.S. Congress 06              Ashwani Ja… DEM   Allega…     125   228    54.8
- 5 U.S. Congress 06              Brenda J. … REP   Allega…      53   120    44.2
- 6 U.S. Congress 06              Chris Hyser REP   Allega…      99   190    52.1
- 7 U.S. Congress 06              Dan Cox     REP   Allega…    1505  2130    70.7
- 8 U.S. Congress 06              Destiny Dr… DEM   Allega…      23    46    50  
- 9 U.S. Congress 06              Geoffrey G… DEM   Allega…      12    37    32.4
-10 U.S. Congress 06              George Glu… DEM   Allega…      26    42    61.9
-# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
-#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
+   office_name   office_district candidate_name   party county_name election_day
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;
+ 1 U.S. Congress 06              Adrian Petrus    DEM   Allegany C…           10
+ 2 U.S. Congress 06              Altimont Mark W… DEM   Allegany C…            9
+ 3 U.S. Congress 06              April McClain D… DEM   Allegany C…          544
+ 4 U.S. Congress 06              Ashwani Jain     DEM   Allegany C…          125
+ 5 U.S. Congress 06              Brenda J. Thiam  REP   Allegany C…           53
+ 6 U.S. Congress 06              Chris Hyser      REP   Allegany C…           99
+ 7 U.S. Congress 06              Dan Cox          REP   Allegany C…         1505
+ 8 U.S. Congress 06              Destiny Drake W… DEM   Allegany C…           23
+ 9 U.S. Congress 06              Geoffrey Grammer DEM   Allegany C…           12
+10 U.S. Congress 06              George Gluck     DEM   Allegany C…           26
+# ℹ 885 more rows
+# ℹ 2 more variables: votes &lt;dbl&gt;, percent_election_day &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Now, does this ordering do anything for us? No.&nbsp;Let’s fix that with arrange.</p>
@@ -426,20 +426,20 @@ dbl (6): early_voting, election_day, absentee, provisional, second_absentee,...
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percent_election_day))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 895 × 8
-   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
-   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 U.S. Senator  &lt;NA&gt;            "Laban Y. … REP   Dorche…       5     5   100  
- 2 U.S. Senator  &lt;NA&gt;            "Laban Y. … REP   Kent C…       6     6   100  
- 3 U.S. Senator  &lt;NA&gt;            "John A. M… REP   Somers…      33    39    84.6
- 4 U.S. Congress 06              "Adrian Pe… DEM   Allega…      10    12    83.3
- 5 U.S. Senator  &lt;NA&gt;            "Moe H. Ba… REP   Garret…      36    44    81.8
- 6 U.S. Senator  &lt;NA&gt;            "Moe H. Ba… REP   Allega…      33    41    80.5
- 7 U.S. Congress 03              "Ray Bly"   REP   Carrol…      97   122    79.5
- 8 U.S. Congress 06              "Kiambo \"… DEM   Garret…      10    13    76.9
- 9 U.S. Congress 03              "Robert J.… REP   Carrol…     313   410    76.3
-10 U.S. Congress 03              "Aisha Kha… DEM   Carrol…      19    25    76  
-# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
-#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
+   office_name   office_district candidate_name   party county_name election_day
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;
+ 1 U.S. Senator  &lt;NA&gt;            "Laban Y. Seyou… REP   Dorchester…            5
+ 2 U.S. Senator  &lt;NA&gt;            "Laban Y. Seyou… REP   Kent County            6
+ 3 U.S. Senator  &lt;NA&gt;            "John A. Myrick" REP   Somerset C…           33
+ 4 U.S. Congress 06              "Adrian Petrus"  DEM   Allegany C…           10
+ 5 U.S. Senator  &lt;NA&gt;            "Moe H. Barakat" REP   Garrett Co…           36
+ 6 U.S. Senator  &lt;NA&gt;            "Moe H. Barakat" REP   Allegany C…           33
+ 7 U.S. Congress 03              "Ray Bly"        REP   Carroll Co…           97
+ 8 U.S. Congress 06              "Kiambo \"Bo\" … DEM   Garrett Co…           10
+ 9 U.S. Congress 03              "Robert J. Stei… REP   Carroll Co…          313
+10 U.S. Congress 03              "Aisha Khan"     DEM   Carroll Co…           19
+# ℹ 885 more rows
+# ℹ 2 more variables: votes &lt;dbl&gt;, percent_election_day &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>So now we have results ordered by <code>percent_election_day</code> with the highest percentage first. To see the lowest percentage first, we can reverse that <code>arrange</code> function.</p>
@@ -452,20 +452,20 @@ dbl (6): early_voting, election_day, absentee, provisional, second_absentee,...
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(percent_election_day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 895 × 8
-   office_name   office_district candidate…¹ party count…² elect…³ votes perce…⁴
-   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 U.S. Congress 06              Mohammad S… DEM   Garret…       0     2     0  
- 2 U.S. Congress 08              Jamie Rask… DEM   Prince…       0     2     0  
- 3 U.S. Senator  &lt;NA&gt;            Steven Hen… DEM   Talbot…       0     3     0  
- 4 U.S. Congress 06              Laurie-Ann… DEM   Garret…       2    18    11.1
- 5 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Dorche…       2    17    11.8
- 6 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Talbot…       2    15    13.3
- 7 U.S. Senator  &lt;NA&gt;            Marcellus … DEM   Talbot…       2    15    13.3
- 8 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Garret…       1     7    14.3
- 9 U.S. Senator  &lt;NA&gt;            Joseph Per… DEM   Somers…       2    12    16.7
-10 U.S. Senator  &lt;NA&gt;            Brian E. F… DEM   Worces…       5    29    17.2
-# … with 885 more rows, and abbreviated variable names ¹​candidate_name,
-#   ²​county_name, ³​election_day, ⁴​percent_election_day</code></pre>
+   office_name   office_district candidate_name   party county_name election_day
+   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;
+ 1 U.S. Congress 06              Mohammad S. Moz… DEM   Garrett Co…            0
+ 2 U.S. Congress 08              Jamie Raskin     DEM   Prince Geo…            0
+ 3 U.S. Senator  &lt;NA&gt;            Steven Henry Se… DEM   Talbot Cou…            0
+ 4 U.S. Congress 06              Laurie-Anne Say… DEM   Garrett Co…            2
+ 5 U.S. Senator  &lt;NA&gt;            Brian E. Fryden… DEM   Dorchester…            2
+ 6 U.S. Senator  &lt;NA&gt;            Brian E. Fryden… DEM   Talbot Cou…            2
+ 7 U.S. Senator  &lt;NA&gt;            Marcellus Crews  DEM   Talbot Cou…            2
+ 8 U.S. Senator  &lt;NA&gt;            Brian E. Fryden… DEM   Garrett Co…            1
+ 9 U.S. Senator  &lt;NA&gt;            Joseph Perez     DEM   Somerset C…            2
+10 U.S. Senator  &lt;NA&gt;            Brian E. Fryden… DEM   Worcester …            5
+# ℹ 885 more rows
+# ℹ 2 more variables: votes &lt;dbl&gt;, percent_election_day &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Mutating can help us make different amounts easier to compare. We also can use filter to limit the data to meet certain conditions. For example, we could only look at the election day percentages of candidates who received at least 100 votes in a jurisdiction.</p>
@@ -513,20 +513,19 @@ dbl (2): count, sum
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 24
-  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
-  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
-1 SA11AI   C00694… A000BA… IND     &lt;NA&gt;    Curro   Peter   NA      NA     NA    
-2 SA11AI   C00694… A00110… IND     &lt;NA&gt;    Mukai   Peggy   NA      NA     NA    
-3 SA11AI   C00694… A0011E… IND     &lt;NA&gt;    Smith   Alan    NA      NA     NA    
-4 SA11AI   C00694… A001C3… IND     &lt;NA&gt;    Saylor… Jean    NA      NA     NA    
-5 SA11AI   C00694… A00219… IND     &lt;NA&gt;    Gillis… Troy    NA      NA     NA    
-6 SA11AI   C00694… A002A2… IND     &lt;NA&gt;    Lally   Bryan   NA      NA     NA    
-# … with 14 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
-#   state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
-#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
-#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and abbreviated variable names ¹​linenumber,
-#   ²​fec_committee_id, ³​flag_orgind, ⁴​org_name, ⁵​last_name, ⁶​first_name,
-#   ⁷​middle_name</code></pre>
+  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
+  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     
+1 SA11AI     C00694323        A000BA0… IND         &lt;NA&gt;     Curro     Peter     
+2 SA11AI     C00694323        A001106… IND         &lt;NA&gt;     Mukai     Peggy     
+3 SA11AI     C00694323        A0011E5… IND         &lt;NA&gt;     Smith     Alan      
+4 SA11AI     C00694323        A001C3D… IND         &lt;NA&gt;     SaylorJo… Jean      
+5 SA11AI     C00694323        A00219C… IND         &lt;NA&gt;     Gillissen Troy      
+6 SA11AI     C00694323        A002A2E… IND         &lt;NA&gt;     Lally     Bryan     
+# ℹ 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
+#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
+#   cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Now that we’ve gotten a look, we can use <code>case_when</code> to give our new category column a value using some standard numeric logic:</p>
@@ -544,20 +543,19 @@ dbl (2): count, sum
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_categories)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 25
-  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
-  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
-1 SA11AI   C00694… A000BA… IND     &lt;NA&gt;    Curro   Peter   NA      NA     NA    
-2 SA11AI   C00694… A00110… IND     &lt;NA&gt;    Mukai   Peggy   NA      NA     NA    
-3 SA11AI   C00694… A0011E… IND     &lt;NA&gt;    Smith   Alan    NA      NA     NA    
-4 SA11AI   C00694… A001C3… IND     &lt;NA&gt;    Saylor… Jean    NA      NA     NA    
-5 SA11AI   C00694… A00219… IND     &lt;NA&gt;    Gillis… Troy    NA      NA     NA    
-6 SA11AI   C00694… A002A2… IND     &lt;NA&gt;    Lally   Bryan   NA      NA     NA    
-# … with 15 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
-#   state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
-#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
-#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, amount_category &lt;chr&gt;, and abbreviated
-#   variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind, ⁴​org_name,
-#   ⁵​last_name, ⁶​first_name, ⁷​middle_name</code></pre>
+  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
+  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     
+1 SA11AI     C00694323        A000BA0… IND         &lt;NA&gt;     Curro     Peter     
+2 SA11AI     C00694323        A001106… IND         &lt;NA&gt;     Mukai     Peggy     
+3 SA11AI     C00694323        A0011E5… IND         &lt;NA&gt;     Smith     Alan      
+4 SA11AI     C00694323        A001C3D… IND         &lt;NA&gt;     SaylorJo… Jean      
+5 SA11AI     C00694323        A00219C… IND         &lt;NA&gt;     Gillissen Troy      
+6 SA11AI     C00694323        A002A2E… IND         &lt;NA&gt;     Lally     Bryan     
+# ℹ 18 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
+#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
+#   cycle &lt;dbl&gt;, amount_category &lt;chr&gt;</code></pre>
 </div>
 </div>
 <p>We can then use our new <code>amount_category</code> column in group_by statements to make summarizing easier:</p>

@@ -400,9 +400,9 @@ Attaching package: 'dplyr'</code></pre>
 <p>We’ll make use of a lot of pre-written functions from the tidyverse and other packages, and even write some of our own. Back to this line of code:</p>
 <p><code>maryland_winred_contributions &lt;- read_rds("maryland_winred.rds")</code></p>
 <p>Inside of the <strong>read_rds()</strong> function, we’ve put the name of the file we want to load. Things we put inside of function, to customize what the function does, are called <strong>arguments</strong>.</p>
-<p>The easiest thing to do, if you are confused about how to find your data, is to put your data in the same folder as as your notebook (you’ll have to save that notebook first). If you do that, then you just need to put the name of the file in there (maryland_winred.rds). If you put your data in a folder called “data” that sits next to your data notebook, your function would instead look like this:</p>
+<p>The easiest thing to do, if you are confused about how to find your data, is to put your data in the same folder as as your notebook (you’ll have to save that notebook first). If you do that, then you just need to put the name of the file in there (maryland_winred.rds). If you’re loading that file from the Internet, your function would instead look like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/maryland_winred.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>maryland_winred_contributions <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"https://thescoop.org/files/maryland_winred.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In this data set, each row represents an individual contribution to a federal political committee, typically a candidate’s campaign account.</p>
 <p>After loading the data, it’s a good idea to get a sense of its shape. What does it look like? There are several ways we can examine it.</p>
@@ -445,20 +445,19 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maryland_winred_contributions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 24
-  linenu…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
-  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
-1 SA11AI   C00694… A000BA… IND     &lt;NA&gt;    Curro   Peter   NA      NA     NA    
-2 SA11AI   C00694… A00110… IND     &lt;NA&gt;    Mukai   Peggy   NA      NA     NA    
-3 SA11AI   C00694… A0011E… IND     &lt;NA&gt;    Smith   Alan    NA      NA     NA    
-4 SA11AI   C00694… A001C3… IND     &lt;NA&gt;    Saylor… Jean    NA      NA     NA    
-5 SA11AI   C00694… A00219… IND     &lt;NA&gt;    Gillis… Troy    NA      NA     NA    
-6 SA11AI   C00694… A002A2… IND     &lt;NA&gt;    Lally   Bryan   NA      NA     NA    
-# … with 14 more variables: address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;,
-#   state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;,
-#   aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;,
-#   memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and abbreviated variable names ¹​linenumber,
-#   ²​fec_committee_id, ³​flag_orgind, ⁴​org_name, ⁵​last_name, ⁶​first_name,
-#   ⁷​middle_name</code></pre>
+  linenumber fec_committee_id tran_id  flag_orgind org_name last_name first_name
+  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     
+1 SA11AI     C00694323        A000BA0… IND         &lt;NA&gt;     Curro     Peter     
+2 SA11AI     C00694323        A001106… IND         &lt;NA&gt;     Mukai     Peggy     
+3 SA11AI     C00694323        A0011E5… IND         &lt;NA&gt;     Smith     Alan      
+4 SA11AI     C00694323        A001C3D… IND         &lt;NA&gt;     SaylorJo… Jean      
+5 SA11AI     C00694323        A00219C… IND         &lt;NA&gt;     Gillissen Troy      
+6 SA11AI     C00694323        A002A2E… IND         &lt;NA&gt;     Lally     Bryan     
+# ℹ 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
+#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
+#   cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>We can also click on the data name in the R Studio environment window to explore it interactively.</p>
@@ -494,7 +493,7 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
  8 Earmarked for ALASKANS FOR DAN SULLIVAN (C00570994)               3
  9 Earmarked for ALASKANS FOR NICK BEGICH (C00792341)                8
 10 Earmarked for ALEX FOR NORTH DAKOTA (C00873927)                   2
-# … with 471 more rows</code></pre>
+# ℹ 471 more rows</code></pre>
 </div>
 </div>
 <p>So let’s walk through that.</p>
@@ -512,10 +511,10 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 481 × 2
-   memo_text                                                             count…¹
+   memo_text                                                      count_contribs
    &lt;chr&gt;                                                                   &lt;int&gt;
  1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893)            41835
- 2 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C00770…   10812
+ 2 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING COMMITTEE …          10812
  3 Earmarked for NRSC (C00027466)                                           9063
  4 Earmarked for HOGAN FOR MARYLAND INC. (C00869016)                        5754
  5 Earmarked for NRCC (C00075820)                                           4416
@@ -524,7 +523,7 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
  8 Earmarked for TRUMP NATIONAL COMMITTEE JFC (C00873893)                   3042
  9 Earmarked for MIKE JOHNSON FOR LOUISIANA (C00608695)                     2811
 10 Earmarked for TEAM ELISE (C00830679)                                     2389
-# … with 471 more rows, and abbreviated variable name ¹​count_contribs</code></pre>
+# ℹ 471 more rows</code></pre>
 </div>
 </div>
 <p>The Trump National Committee JFC Inc.&nbsp;has 41,835 contributions, more than any other recipient.</p>
@@ -545,19 +544,19 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12,935 × 3
 # Groups:   memo_text [481]
-   memo_text                                                  date       count…¹
-   &lt;chr&gt;                                                      &lt;date&gt;       &lt;int&gt;
- 1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-05-31    5629
- 2 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-05-30    4845
- 3 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-06-01    1681
- 4 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-06-27    1228
- 5 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-06-02    1178
- 6 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-06-03     939
- 7 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING COMMIT… 2024-05-31     863
- 8 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-06-30     832
- 9 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING COMMIT… 2024-05-30     830
-10 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C008738… 2024-04-15     710
-# … with 12,925 more rows, and abbreviated variable name ¹​count_contribs</code></pre>
+   memo_text                                           date       count_contribs
+   &lt;chr&gt;                                               &lt;date&gt;              &lt;int&gt;
+ 1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-05-31           5629
+ 2 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-05-30           4845
+ 3 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-06-01           1681
+ 4 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-06-27           1228
+ 5 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-06-02           1178
+ 6 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-06-03            939
+ 7 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING… 2024-05-31            863
+ 8 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-06-30            832
+ 9 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING… 2024-05-30            830
+10 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (… 2024-04-15            710
+# ℹ 12,925 more rows</code></pre>
 </div>
 </div>
 <p>Ok, now go and find out why contributions to Trump would be exponentially higher at the end of May.</p>
@@ -576,20 +575,19 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 481 × 3
-   memo_text                                                     count…¹ total…²
-   &lt;chr&gt;                                                           &lt;int&gt;   &lt;dbl&gt;
- 1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893)    41835  1.74e6
- 2 Earmarked for HOGAN FOR MARYLAND INC. (C00869016)                5754  4.79e5
- 3 Earmarked for NRSC (C00027466)                                   9063  2.46e5
- 4 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISING COMMITTEE…   10812  1.97e5
- 5 Earmarked for NRCC (C00075820)                                   4416  1.17e5
- 6 Earmarked for PARROTT FOR CONGRESS (C00691931)                    504  1.15e5
- 7 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00003418)          3063  8.90e4
- 8 Earmarked for TRUMP NATIONAL COMMITTEE JFC (C00873893)           3042  7.11e4
- 9 Earmarked for TEAM SCALISE (C00750521)                           3184  6.15e4
-10 Earmarked for TED CRUZ FOR SENATE (C00492785)                    2187  3.33e4
-# … with 471 more rows, and abbreviated variable names ¹​count_contribs,
-#   ²​total_amount</code></pre>
+   memo_text                                         count_contribs total_amount
+   &lt;chr&gt;                                                      &lt;int&gt;        &lt;dbl&gt;
+ 1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC.…          41835     1735741.
+ 2 Earmarked for HOGAN FOR MARYLAND INC. (C00869016)           5754      479170.
+ 3 Earmarked for NRSC (C00027466)                              9063      245778.
+ 4 Earmarked for TRUMP SAVE AMERICA JOINT FUNDRAISI…          10812      197486.
+ 5 Earmarked for NRCC (C00075820)                              4416      117003.
+ 6 Earmarked for PARROTT FOR CONGRESS (C00691931)               504      115467.
+ 7 Earmarked for REPUBLICAN NATIONAL COMMITTEE (C00…           3063       89033.
+ 8 Earmarked for TRUMP NATIONAL COMMITTEE JFC (C008…           3042       71084.
+ 9 Earmarked for TEAM SCALISE (C00750521)                      3184       61450.
+10 Earmarked for TED CRUZ FOR SENATE (C00492785)               2187       33310.
+# ℹ 471 more rows</code></pre>
 </div>
 </div>
 <p>We can also calculate the average amount for each recipient – the mean – and the amount that sits at the midpoint of our data – the median.</p>
@@ -605,20 +603,19 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count_contribs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 481 × 5
-   memo_text                                     count…¹ total…² mean_…³ media…⁴
-   &lt;chr&gt;                                           &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 Earmarked for TRUMP NATIONAL COMMITTEE JFC, …   41835  1.74e6   41.5    20.2 
- 2 Earmarked for TRUMP SAVE AMERICA JOINT FUNDR…   10812  1.97e5   18.3     5   
- 3 Earmarked for NRSC (C00027466)                   9063  2.46e5   27.1    10   
- 4 Earmarked for HOGAN FOR MARYLAND INC. (C0086…    5754  4.79e5   83.3    26.0 
- 5 Earmarked for NRCC (C00075820)                   4416  1.17e5   26.5    15   
- 6 Earmarked for TEAM SCALISE (C00750521)           3184  6.15e4   19.3    10   
- 7 Earmarked for REPUBLICAN NATIONAL COMMITTEE …    3063  8.90e4   29.1    10   
- 8 Earmarked for TRUMP NATIONAL COMMITTEE JFC (…    3042  7.11e4   23.4     7.88
- 9 Earmarked for MIKE JOHNSON FOR LOUISIANA (C0…    2811  2.53e4    9.01    2   
-10 Earmarked for TEAM ELISE (C00830679)             2389  3.13e4   13.1     4.75
-# … with 471 more rows, and abbreviated variable names ¹​count_contribs,
-#   ²​total_amount, ³​mean_amount, ⁴​median_amount</code></pre>
+   memo_text               count_contribs total_amount mean_amount median_amount
+   &lt;chr&gt;                            &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;
+ 1 Earmarked for TRUMP NA…          41835     1735741.       41.5          20.2 
+ 2 Earmarked for TRUMP SA…          10812      197486.       18.3           5   
+ 3 Earmarked for NRSC (C0…           9063      245778.       27.1          10   
+ 4 Earmarked for HOGAN FO…           5754      479170.       83.3          26.0 
+ 5 Earmarked for NRCC (C0…           4416      117003.       26.5          15   
+ 6 Earmarked for TEAM SCA…           3184       61450.       19.3          10   
+ 7 Earmarked for REPUBLIC…           3063       89033.       29.1          10   
+ 8 Earmarked for TRUMP NA…           3042       71084.       23.4           7.88
+ 9 Earmarked for MIKE JOH…           2811       25322.        9.01          2   
+10 Earmarked for TEAM ELI…           2389       31282.       13.1           4.75
+# ℹ 471 more rows</code></pre>
 </div>
 </div>
 <p>We see something interesting here. The mean contribution amount is higher than the median amount in most cases, but the difference isn’t huge. In some cases the mean gets skewed by larger amounts. Examining both the median – which is less sensitive to extreme values – and the mean – which is more sensitive to extreme values – gives you a clearer picture of the composition of the data.</p>
@@ -637,20 +634,20 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(max_amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 481 × 7
-   memo_text                     count…¹ total…² mean_…³ media…⁴ min_a…⁵ max_a…⁶
-   &lt;chr&gt;                           &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 Earmarked for TRUMP 47 COMMI…       8  2.82e4  3520.   799.    200     10331.
- 2 Earmarked for TRUMP NATIONAL…   41835  1.74e6    41.5   20.2     0.01   9702.
- 3 Earmarked for HOGAN FOR MARY…    5754  4.79e5    83.3   26.0     1      6600 
- 4 Earmarked for HOVDE FOR WISC…     145  1.17e4    80.9    5.21    0.05   6600 
- 5 Earmarked for JOHN KENNEDY F…    1189  2.32e4    19.5    5       0.01   6600 
- 6 Earmarked for ROUNDS FOR SEN…       2  6.62e3  3312.  3312.     25      6600 
- 7 Earmarked for TIM SCOTT FOR …     446  1.30e4    29.1    5       0.01   6500 
- 8 Earmarked for CAPITO FOR WES…       3  5.05e3  1683.    25      25      5000 
- 9 Earmarked for GUTHRIE VICTOR…       3  5.55e3  1851.   500      52.0    5000 
-10 Earmarked for MAX MILLER FOR…       3  6   e3  2000    500     500      5000 
-# … with 471 more rows, and abbreviated variable names ¹​count_contribs,
-#   ²​total_amount, ³​mean_amount, ⁴​median_amount, ⁵​min_amount, ⁶​max_amount</code></pre>
+   memo_text    count_contribs total_amount mean_amount median_amount min_amount
+   &lt;chr&gt;                 &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Earmarked f…              8       28162.      3520.         799.       200   
+ 2 Earmarked f…          41835     1735741.        41.5         20.2        0.01
+ 3 Earmarked f…           5754      479170.        83.3         26.0        1   
+ 4 Earmarked f…            145       11723.        80.9          5.21       0.05
+ 5 Earmarked f…           1189       23238.        19.5          5          0.01
+ 6 Earmarked f…              2        6625       3312.        3312.        25   
+ 7 Earmarked f…            446       12958.        29.1          5          0.01
+ 8 Earmarked f…              3        5050       1683.          25         25   
+ 9 Earmarked f…              3        5552.      1851.         500         52.0 
+10 Earmarked f…              3        6000       2000          500        500   
+# ℹ 471 more rows
+# ℹ 1 more variable: max_amount &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>From this, we can see that some committees focus on small-dollar donors while others ask for (and get) larger amounts. This pattern isn’t random: campaigns make choices about how they will raise money.</p>
@@ -660,24 +657,24 @@ $ cycle            &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(amount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 131,395 × 24
-   linen…¹ fec_c…² tran_id flag_…³ org_n…⁴ last_…⁵ first…⁶ middl…⁷ prefix suffix
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt; 
- 1 SA11AI  C00694… AEB164… IND     &lt;NA&gt;    Boland  John    NA      NA     NA    
- 2 SA11AI  C00694… AED8E1… IND     &lt;NA&gt;    Scully  Finbar  NA      NA     NA    
- 3 SA11AI  C00694… A598DB… IND     &lt;NA&gt;    Morgan  Kenneth NA      NA     NA    
- 4 SA11AI  C00694… ABDDBD… IND     &lt;NA&gt;    Jacobs… Mark    NA      NA     NA    
- 5 SA11AI  C00694… A6AE2F… IND     &lt;NA&gt;    Jacobs… Mark    NA      NA     NA    
- 6 SA11AI  C00694… AA7420… IND     &lt;NA&gt;    Jacobs… Mark    NA      NA     NA    
- 7 SA11AI  C00694… A05F19… IND     &lt;NA&gt;    DETERM… MARK    NA      NA     NA    
- 8 SA11AI  C00694… AFB4D6… IND     &lt;NA&gt;    Wheeler Rex     NA      NA     NA    
- 9 SA11AI  C00694… A0490D… IND     &lt;NA&gt;    Gallag… Daniel  NA      NA     NA    
-10 SA11AI  C00694… A2EF52… IND     &lt;NA&gt;    Chaney  Bryan   NA      NA     NA    
-# … with 131,385 more rows, 14 more variables: address_one &lt;chr&gt;,
-#   address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;, prigen &lt;lgl&gt;,
-#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
-#   occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​org_name, ⁵​last_name, ⁶​first_name, ⁷​middle_name</code></pre>
+   linenumber fec_committee_id tran_id flag_orgind org_name last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AEB164… IND         &lt;NA&gt;     Boland    John      
+ 2 SA11AI     C00694323        AED8E1… IND         &lt;NA&gt;     Scully    Finbar    
+ 3 SA11AI     C00694323        A598DB… IND         &lt;NA&gt;     Morgan    Kenneth   
+ 4 SA11AI     C00694323        ABDDBD… IND         &lt;NA&gt;     Jacobsen  Mark      
+ 5 SA11AI     C00694323        A6AE2F… IND         &lt;NA&gt;     Jacobsen  Mark      
+ 6 SA11AI     C00694323        AA7420… IND         &lt;NA&gt;     Jacobsen  Mark      
+ 7 SA11AI     C00694323        A05F19… IND         &lt;NA&gt;     DETERMAN  MARK      
+ 8 SA11AI     C00694323        AFB4D6… IND         &lt;NA&gt;     Wheeler   Rex       
+ 9 SA11AI     C00694323        A0490D… IND         &lt;NA&gt;     Gallagher Daniel    
+10 SA11AI     C00694323        A2EF52… IND         &lt;NA&gt;     Chaney    Bryan     
+# ℹ 131,385 more rows
+# ℹ 17 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   prigen &lt;lgl&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
+#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_code &lt;lgl&gt;, memo_text &lt;chr&gt;,
+#   cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Only two contributions of $10,000 or more. That’s because the maximum contribution an individual can give for both a primary and a general election in this cycle is $3,300, but campaigns have to report whatever they are given, no matter how large (they likely will refund the difference).</p>

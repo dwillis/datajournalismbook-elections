@@ -420,7 +420,7 @@ lgl (2): provisional, limited
  8 28466    13 1/0/T/F/TRUE/FALSE 3      ""   
  9 28472    12 1/0/T/F/TRUE/FALSE 22     ""   
 10 28472    13 1/0/T/F/TRUE/FALSE 17     ""   
-# … with 1,630 more rows</code></pre>
+# ℹ 1,630 more rows</code></pre>
 </div>
 </div>
 <p>It produces a table of all the parsing problems. It has 1,640 rows, which means we have that many problems. In almost every case here, the <code>readr</code> library has guessed that a given column was of a “logical” data type – True or False. It did it based on very limited information – only 1,000 rows. So, when it hit a value that looked like a date, or a character string, it didn’t know what to do. So it just didn’t read in that value correctly.</p>
@@ -466,12 +466,11 @@ $ limited      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>texas_precinct_20 <span class="sc">|&gt;</span> <span class="fu">filter</span>(election_day <span class="sc">==</span> <span class="st">"5+"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 13
-  county   precinct office   distr…¹ candi…² party votes absen…³ elect…⁴ early…⁵
-  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
-1 Anderson 11       Railroa…      NA Chryst… DEM     141      NA 5+          136
-# … with 3 more variables: mail &lt;dbl&gt;, provisional &lt;dbl&gt;, limited &lt;dbl&gt;, and
-#   abbreviated variable names ¹​district, ²​candidate, ³​absentee, ⁴​election_day,
-#   ⁵​early_voting</code></pre>
+  county   precinct office  district candidate party votes absentee election_day
+  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       
+1 Anderson 11       Railro…       NA Chrysta … DEM     141       NA 5+          
+# ℹ 4 more variables: early_voting &lt;dbl&gt;, mail &lt;dbl&gt;, provisional &lt;dbl&gt;,
+#   limited &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Because this is just one result that’s weird, we can fix it by comparing the other votes Castaneda received in Anderson to the county totals for her. The difference should be what that “5+” value should be. I’ve done those calculations and it turns out that 49 is the actual likely value.</p>
@@ -534,7 +533,7 @@ $ limited      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
  8     6     35
  9     7     21
 10     8     21
-# … with 20 more rows</code></pre>
+# ℹ 20 more rows</code></pre>
 </div>
 </div>
 <p>Now let’s try the “provisional” column, which represents the number of accepted provisional votes cast. In this case, there are 135,073 NA values. The rest have different dollar amounts.</p>
@@ -559,7 +558,7 @@ $ limited      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
  8           6     44
  9          10     29
 10           7     27
-# … with 17 more rows</code></pre>
+# ℹ 17 more rows</code></pre>
 </div>
 </div>
 <p>The number of NA values - 473,381 - is even higher, which should give us confidence that most Texas counties did not report provisional votes at the precinct level. Like with mail votes, this helps define the constraints we have to work under with this data.</p>
@@ -593,25 +592,25 @@ date  (1): registr_dt
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>yadkin_voters <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(registr_dt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 28,456 × 67
-   count…¹ count…² voter…³ ncid  last_…⁴ first…⁵ middl…⁶ name_…⁷ statu…⁸ voter…⁹
-     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
- 1      99 YADKIN  000000… ER48… FINCAN… JOY     LYNN    &lt;NA&gt;    A       ACTIVE 
- 2      99 YADKIN  000000… ER48… LUCK    ERIN    EILEEN  &lt;NA&gt;    A       ACTIVE 
- 3      99 YADKIN  000000… ER37… OSBORNE EMILY   DANIEL… &lt;NA&gt;    A       ACTIVE 
- 4      99 YADKIN  000000… AC80… TEMPLE  BRENDA  PUGH    &lt;NA&gt;    A       ACTIVE 
- 5      99 YADKIN  000000… EN44… EDWARDS ROCKY   ALLEN   &lt;NA&gt;    A       ACTIVE 
- 6      99 YADKIN  000000… BN36… HAWKINS COREY   ALAN    &lt;NA&gt;    A       ACTIVE 
- 7      99 YADKIN  000000… BN27… LING    ANDREW  STUART  &lt;NA&gt;    A       ACTIVE 
- 8      99 YADKIN  000000… ER48… SPICER  CHARLES STANLEY JR      A       ACTIVE 
- 9      99 YADKIN  000000… CG17… WHITAK… SABRINA JOLEIG… &lt;NA&gt;    A       ACTIVE 
-10      99 YADKIN  000000… ER48… GLEI    SALLY   COWIN   &lt;NA&gt;    A       ACTIVE 
-# … with 28,446 more rows, 57 more variables: reason_cd &lt;chr&gt;,
-#   voter_status_reason_desc &lt;chr&gt;, res_street_address &lt;chr&gt;,
-#   res_city_desc &lt;chr&gt;, state_cd &lt;chr&gt;, zip_code &lt;dbl&gt;, mail_addr1 &lt;chr&gt;,
-#   mail_addr2 &lt;chr&gt;, mail_addr3 &lt;lgl&gt;, mail_addr4 &lt;lgl&gt;, mail_city &lt;chr&gt;,
-#   mail_state &lt;chr&gt;, mail_zipcode &lt;chr&gt;, full_phone_number &lt;dbl&gt;,
-#   confidential_ind &lt;chr&gt;, registr_dt &lt;date&gt;, race_code &lt;chr&gt;,
-#   ethnic_code &lt;chr&gt;, party_cd &lt;chr&gt;, gender_code &lt;chr&gt;, birth_year &lt;dbl&gt;, …</code></pre>
+   county_id county_desc voter_reg_num ncid     last_name first_name middle_name
+       &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;      
+ 1        99 YADKIN      000000086882  ER48215  FINCANNON JOY        LYNN       
+ 2        99 YADKIN      000000086881  ER48214  LUCK      ERIN       EILEEN     
+ 3        99 YADKIN      000000086883  ER37698  OSBORNE   EMILY      DANIELLE   
+ 4        99 YADKIN      000000086880  AC8089   TEMPLE    BRENDA     PUGH       
+ 5        99 YADKIN      000000086879  EN44870  EDWARDS   ROCKY      ALLEN      
+ 6        99 YADKIN      000000086875  BN367045 HAWKINS   COREY      ALAN       
+ 7        99 YADKIN      000000086877  BN273260 LING      ANDREW     STUART     
+ 8        99 YADKIN      000000086878  ER48213  SPICER    CHARLES    STANLEY    
+ 9        99 YADKIN      000000086876  CG173637 WHITAKER  SABRINA    JOLEIGH RAY
+10        99 YADKIN      000000086874  ER48212  GLEI      SALLY      COWIN      
+# ℹ 28,446 more rows
+# ℹ 60 more variables: name_suffix_lbl &lt;chr&gt;, status_cd &lt;chr&gt;,
+#   voter_status_desc &lt;chr&gt;, reason_cd &lt;chr&gt;, voter_status_reason_desc &lt;chr&gt;,
+#   res_street_address &lt;chr&gt;, res_city_desc &lt;chr&gt;, state_cd &lt;chr&gt;,
+#   zip_code &lt;dbl&gt;, mail_addr1 &lt;chr&gt;, mail_addr2 &lt;chr&gt;, mail_addr3 &lt;lgl&gt;,
+#   mail_addr4 &lt;lgl&gt;, mail_city &lt;chr&gt;, mail_state &lt;chr&gt;, mail_zipcode &lt;chr&gt;,
+#   full_phone_number &lt;dbl&gt;, confidential_ind &lt;chr&gt;, registr_dt &lt;date&gt;, …</code></pre>
 </div>
 </div>
 <p>It’s July 14, 2022. That means that this dataset doesn’t have any records newer than that, so if we were describing it we’d need to include that information.</p>
@@ -620,25 +619,25 @@ date  (1): registr_dt
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>yadkin_voters <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(birth_year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 28,456 × 67
-   count…¹ count…² voter…³ ncid  last_…⁴ first…⁵ middl…⁶ name_…⁷ statu…⁸ voter…⁹
-     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
- 1      99 YADKIN  000000… ER47… ADAMS   BLAIN   NOAH    &lt;NA&gt;    A       ACTIVE 
- 2      99 YADKIN  000000… ER47… ALEXAN… PERRY   NATHAN… &lt;NA&gt;    A       ACTIVE 
- 3      99 YADKIN  000000… ER48… ALVARE… KAREN   ESMERA… &lt;NA&gt;    A       ACTIVE 
- 4      99 YADKIN  000000… ER48… ALVARE… PABLO   &lt;NA&gt;    &lt;NA&gt;    A       ACTIVE 
- 5      99 YADKIN  000000… ER47… ARCADI… JAZMIN  &lt;NA&gt;    &lt;NA&gt;    A       ACTIVE 
- 6      99 YADKIN  000000… ER47… ARELLA… ALEX    &lt;NA&gt;    &lt;NA&gt;    A       ACTIVE 
- 7      99 YADKIN  000000… ER47… ARZATE… ELIDETH &lt;NA&gt;    &lt;NA&gt;    A       ACTIVE 
- 8      99 YADKIN  000000… ER47… ARZATE… JESSICA &lt;NA&gt;    &lt;NA&gt;    A       ACTIVE 
- 9      99 YADKIN  000000… ER47… BALL    ALEXIS  NYKOL   &lt;NA&gt;    A       ACTIVE 
-10      99 YADKIN  000000… ER47… BAUTIS… ALEXAN… ROSE    &lt;NA&gt;    A       ACTIVE 
-# … with 28,446 more rows, 57 more variables: reason_cd &lt;chr&gt;,
-#   voter_status_reason_desc &lt;chr&gt;, res_street_address &lt;chr&gt;,
-#   res_city_desc &lt;chr&gt;, state_cd &lt;chr&gt;, zip_code &lt;dbl&gt;, mail_addr1 &lt;chr&gt;,
-#   mail_addr2 &lt;chr&gt;, mail_addr3 &lt;lgl&gt;, mail_addr4 &lt;lgl&gt;, mail_city &lt;chr&gt;,
-#   mail_state &lt;chr&gt;, mail_zipcode &lt;chr&gt;, full_phone_number &lt;dbl&gt;,
-#   confidential_ind &lt;chr&gt;, registr_dt &lt;date&gt;, race_code &lt;chr&gt;,
-#   ethnic_code &lt;chr&gt;, party_cd &lt;chr&gt;, gender_code &lt;chr&gt;, birth_year &lt;dbl&gt;, …</code></pre>
+   county_id county_desc voter_reg_num ncid    last_name  first_name middle_name
+       &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      
+ 1        99 YADKIN      000000086335  ER47897 ADAMS      BLAIN      NOAH       
+ 2        99 YADKIN      000000086376  ER47937 ALEXANDER  PERRY      NATHANIEL  
+ 3        99 YADKIN      000000086569  ER48064 ALVARENGA… KAREN      ESMERALDA  
+ 4        99 YADKIN      000000086849  ER48202 ALVAREZ-A… PABLO      &lt;NA&gt;       
+ 5        99 YADKIN      000000086392  ER47953 ARCADIO-P… JAZMIN     &lt;NA&gt;       
+ 6        99 YADKIN      000000086060  ER47741 ARELLANO-… ALEX       &lt;NA&gt;       
+ 7        99 YADKIN      000000086414  ER47975 ARZATE-HE… ELIDETH    &lt;NA&gt;       
+ 8        99 YADKIN      000000086336  ER47898 ARZATE-VE… JESSICA    &lt;NA&gt;       
+ 9        99 YADKIN      000000086371  ER47932 BALL       ALEXIS     NYKOL      
+10        99 YADKIN      000000086147  ER47790 BAUTISTA   ALEXANDRIA ROSE       
+# ℹ 28,446 more rows
+# ℹ 60 more variables: name_suffix_lbl &lt;chr&gt;, status_cd &lt;chr&gt;,
+#   voter_status_desc &lt;chr&gt;, reason_cd &lt;chr&gt;, voter_status_reason_desc &lt;chr&gt;,
+#   res_street_address &lt;chr&gt;, res_city_desc &lt;chr&gt;, state_cd &lt;chr&gt;,
+#   zip_code &lt;dbl&gt;, mail_addr1 &lt;chr&gt;, mail_addr2 &lt;chr&gt;, mail_addr3 &lt;lgl&gt;,
+#   mail_addr4 &lt;lgl&gt;, mail_city &lt;chr&gt;, mail_state &lt;chr&gt;, mail_zipcode &lt;chr&gt;,
+#   full_phone_number &lt;dbl&gt;, confidential_ind &lt;chr&gt;, registr_dt &lt;date&gt;, …</code></pre>
 </div>
 </div>
 <p>Lots of 2004 records in there, which makes sense, since those folks are just becoming eligible to vote in North Carolina, where the minimum age is 18. In other words, we shouldn’t see records in here where the “birth_year” is greater than 2004. If we do, we should ask some questions.</p>
@@ -674,7 +673,7 @@ date  (1): registr_dt
  8 1956-05-01             1
  9 1956-10-01             1
 10 1960-04-01             1
-# … with 624 more rows</code></pre>
+# ℹ 624 more rows</code></pre>
 </div>
 </div>
 <p>So, uh, if this data is accurate, then we have 13 registered voters who are more than 120 years old in Yadkin County. What’s the most likely explanation for this? Some data systems have placeholder values when certain information isn’t known or available. The next oldest registration month is from 1933, which seems plausible.</p>

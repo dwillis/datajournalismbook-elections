@@ -380,7 +380,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8 H003001 Total                                OCCUPANCY STATUS
  9 H003002 Total!!Occupied                      OCCUPANCY STATUS
 10 H003003 Total!!Vacant                        OCCUPANCY STATUS
-# … with 8,949 more rows</code></pre>
+# ℹ 8,949 more rows</code></pre>
 </div>
 </div>
 <p>Note: There are thousands of variables in SF1. That’s not a typo. Open it in your environment by double clicking. As you scroll down, you’ll get an idea of what you’ve got to choose from.</p>
@@ -403,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8 H005001 Total                                       URBAN AND RURAL [7]      
  9 H005002 Total!!Urban                                URBAN AND RURAL [7]      
 10 H005003 Total!!Urban!!Inside urbanized areas        URBAN AND RURAL [7]      
-# … with 16,510 more rows</code></pre>
+# ℹ 16,510 more rows</code></pre>
 </div>
 </div>
 <p>Yes. That’s more than 16,000 variables to choose from. I told you. Astonishing.</p>
@@ -531,20 +531,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(change)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 9
-   GEOID NAME             estim…¹ estim…² min2010 max2010 min2020 max2020 change
-   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
- 1 24011 Caroline County…   58799   65326   56740   60858   61407   69245   11.1
- 2 24039 Somerset County…   42443   52149   39092   45794   45533   58765   22.9
- 3 24019 Dorchester Coun…   45151   57490   43470   46832   54445   60535   27.3
- 4 24041 Talbot County, …   63017   81667   60081   65953   77376   85958   29.6
- 5 24017 Charles County,…   88825  116882   87268   90382  115005  118759   31.6
- 6 24035 Queen Anne's Co…   81096  108332   78068   84124  103346  113318   33.6
- 7 24015 Cecil County, M…   64886   86869   63014   66758   83335   90403   33.9
- 8 24031 Montgomery Coun…   93373  125583   92535   94211  123826  127340   34.5
- 9 24027 Howard County, …  103273  140971  101654  104892  138849  143093   36.5
-10 24045 Wicomico County…   50752   69421   49313   52191   66714   72128   36.8
-# … with 14 more rows, and abbreviated variable names ¹​estimate2010,
-#   ²​estimate2022</code></pre>
+   GEOID NAME   estimate2010 estimate2022 min2010 max2010 min2020 max2020 change
+   &lt;chr&gt; &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+ 1 24011 Carol…        58799        65326   56740   60858   61407   69245   11.1
+ 2 24039 Somer…        42443        52149   39092   45794   45533   58765   22.9
+ 3 24019 Dorch…        45151        57490   43470   46832   54445   60535   27.3
+ 4 24041 Talbo…        63017        81667   60081   65953   77376   85958   29.6
+ 5 24017 Charl…        88825       116882   87268   90382  115005  118759   31.6
+ 6 24035 Queen…        81096       108332   78068   84124  103346  113318   33.6
+ 7 24015 Cecil…        64886        86869   63014   66758   83335   90403   33.9
+ 8 24031 Montg…        93373       125583   92535   94211  123826  127340   34.5
+ 9 24027 Howar…       103273       140971  101654  104892  138849  143093   36.5
+10 24045 Wicom…        50752        69421   49313   52191   66714   72128   36.8
+# ℹ 14 more rows</code></pre>
 </div>
 </div>
 <p>So according to this, Caroline County had the smallest change between 2010 and 2022, while all other jurisdictions saw percentage increases of at least 20 percent.</p>
@@ -586,7 +585,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8 24013 Carroll County, Maryland      medincome   111672  3322
  9 24035 Queen Anne's County, Maryland medincome   108332  4986
 10 24025 Harford County, Maryland      medincome   106417  2845
-# … with 14 more rows</code></pre>
+# ℹ 14 more rows</code></pre>
 </div>
 </div>
 <p>In this case we don’t save the sorted results to a variable, we can just see the output in the console.</p>

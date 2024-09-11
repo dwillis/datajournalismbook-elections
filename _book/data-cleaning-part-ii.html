@@ -394,36 +394,35 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 21
-   1_lin…¹ fec_c…² tran_id flag_…³ LAST_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-14 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​`1_linenumber`, ²​fec_committee_id,
-#   ³​flag_orgind, ⁴​LAST_NAME, ⁵​first_name, ⁶​middle_name, ⁷​`address one`</code></pre>
+   `1_linenumber` fec_committee_id tran_id      flag_orgind LAST_NAME first_name
+   &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI         C00694323        AC8C7155172… IND         Pabis     Sherry    
+ 2 SA11AI         C00694323        A61211F59EB… IND         Garvey    Brian     
+ 3 SA11AI         C00694323        A9C895B091C… IND         Huddlest… Deborah   
+ 4 SA11AI         C00694323        ABAA82A5E70… IND         Huddlest… Deborah   
+ 5 SA11AI         C00694323        A45519E3246… IND         Buonaugu… Wm        
+ 6 SA11AI         C00694323        A33987D736E… IND         Huddlest… Deborah   
+ 7 SA11AI         C00694323        AE7C6D0C074… IND         Hamilton  Derrick   
+ 8 SA11AI         C00694323        A07D7A1ECE3… IND         Buonaugu… Wm        
+ 9 SA11AI         C00694323        A290335F896… IND         Buonaugu… Wm        
+10 SA11AI         C00694323        AD6C11068B7… IND         Buonaugu… Wm        
+11 SA11AI         C00694323        A99BBCB87D5… IND         Buonaugu… Wm        
+12 SA11AI         C00694323        A142B275F78… IND         Buonaugu… Wm        
+13 SA11AI         C00694323        AF8E4C98168… IND         Buonaugu… Wm        
+14 SA11AI         C00694323        AE7C6D0C074… IND         Hamilton  Derrick   
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   `address one` &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>There are a number of issues with this data set that might get in the way of asking questions and receiving accurate answers. They are:</p>
 <ul>
-<li>The column headers are inconsistently styled (note: I’ve purposely dirtied these up, which is why they look different than previous versions of this data we’ve loaded). The first column “1_linenumber” starts with a number. The “NAME” column is all caps, while the rest are lowercase. And “address one” has a space in it. Those problems will make them hard to analyze, to refer to in functions we write.</li>
-<li>The amount column is stored as a character, not a number. If we try to do math to it – say, calculate the average loan size – it won’t work.</li>
-<li>There’s a fully duplicated row – a common problem in data sets. The first row is exactly the same as the second.</li>
-<li>The city field has five different forms – including misspellings – of Arnold. If we wanted to group and count the number of loans in Arnold, this inconsistency would not let us do that correctly.</li>
-<li>The zip field mixes five digit ZIP codes and nine digit ZIP codes. If we wanted to group and count the number of loans in a given ZIP code, this inconsistency would not let us do that correctly.</li>
+<li>The column headers are inconsistently styled (note: I’ve purposely dirtied these up, which is why they look different than previous versions of this data we’ve loaded). Those problems will make them hard to analyze, to refer to in functions we write.</li>
+<li>The amount column is stored as a character, not a number. If we try to do math to it – say, calculate the average contribution size – it won’t work.</li>
+<li>There’s a fully duplicated row – a common problem in data sets. The 14th row is exactly the same as the seventh.</li>
+<li>The city field has five different forms – including misspellings – of Conowingo. If we wanted to group and count the number of contributions in Conowingo, this inconsistency would not let us do that correctly.</li>
+<li>The zip field mixes five digit ZIP codes and nine digit ZIP codes. If we wanted to group and count the number of contributions in a given ZIP code, this inconsistency would not let us do that correctly.</li>
 <li>The street address field is inconsistent. It has multiple variations of Merry Knoll Lane.</li>
 </ul>
 <p>Let’s get cleaning. Our goal will be to build up one block of code that does all the necessary cleaning in order to answer this question: what is the total amount of contributions from Conowingo, MD in ZIP code 21918?</p>
@@ -442,27 +441,26 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 21
-   x1_li…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-14 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​x1_linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   x1_linenumber fec_committee_id tran_id       flag_orgind last_name first_name
+   &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI        C00694323        AC8C71551726… IND         Pabis     Sherry    
+ 2 SA11AI        C00694323        A61211F59EBD… IND         Garvey    Brian     
+ 3 SA11AI        C00694323        A9C895B091C8… IND         Huddlest… Deborah   
+ 4 SA11AI        C00694323        ABAA82A5E70D… IND         Huddlest… Deborah   
+ 5 SA11AI        C00694323        A45519E3246C… IND         Buonaugu… Wm        
+ 6 SA11AI        C00694323        A33987D736EC… IND         Huddlest… Deborah   
+ 7 SA11AI        C00694323        AE7C6D0C0742… IND         Hamilton  Derrick   
+ 8 SA11AI        C00694323        A07D7A1ECE3C… IND         Buonaugu… Wm        
+ 9 SA11AI        C00694323        A290335F896E… IND         Buonaugu… Wm        
+10 SA11AI        C00694323        AD6C11068B72… IND         Buonaugu… Wm        
+11 SA11AI        C00694323        A99BBCB87D53… IND         Buonaugu… Wm        
+12 SA11AI        C00694323        A142B275F787… IND         Buonaugu… Wm        
+13 SA11AI        C00694323        AF8E4C981687… IND         Buonaugu… Wm        
+14 SA11AI        C00694323        AE7C6D0C0742… IND         Hamilton  Derrick   
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>This function changed <code>LAST_NAME</code> to <code>last_name</code>. It put an underscore in <code>address_one</code> to get rid of the space. And it changed <code>1_linenumber</code> to <code>x1_linenumber</code>. That last one was an improvement – it no longer starts with a number – but it’s still kind of clunky.</p>
@@ -477,27 +475,26 @@ $ cycle            &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-14 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+14 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;chr&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -533,27 +530,26 @@ Caused by error in `sum()`:
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-14 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+14 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Notice that the amount has been converted to a <code>&lt;dbl&gt;</code>, which is short for double, a number format. When we attempt to add up all of the amounts to create a total, this time it works fine.</p>
@@ -585,16 +581,14 @@ Caused by error in `sum()`:
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 22
-  linenu…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-  &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
-1 SA11AI   C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-2 SA11AI   C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
-# … with 12 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;,
-#   dupe_count &lt;int&gt;, and abbreviated variable names ¹​linenumber,
-#   ²​fec_committee_id, ³​flag_orgind, ⁴​last_name, ⁵​first_name, ⁶​middle_name,
-#   ⁷​address_one</code></pre>
+  linenumber fec_committee_id tran_id           flag_orgind last_name first_name
+  &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;             &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+1 SA11AI     C00694323        AE7C6D0C074234DC… IND         Hamilton  Derrick   
+2 SA11AI     C00694323        AE7C6D0C074234DC… IND         Hamilton  Derrick   
+# ℹ 16 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, dupe_count &lt;int&gt;</code></pre>
 </div>
 </div>
 <p>In this case, a contribution by Derrick Hamilton in our table is fully duplicated. Every field is identical in each.</p>
@@ -612,26 +606,25 @@ Caused by error in `sum()`:
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -654,26 +647,25 @@ Caused by error in `sum()`:
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Let’s break down this line of code. It says: take the value in each zip column and extract the first character on the left (1L) through the fifth character on the left (5L), and then use that five-digit zip to overwrite the zip column.</p>
@@ -693,26 +685,25 @@ Caused by error in `sum()`:
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>That was enough to standardize two values (CONOWINGO and conowingo). The only ones that remain are the two clear misspellings (Conowing and Conowingoo). To fix those, we’re going to do some manual editing. And for that, we’re going to use <code>case_when()</code>, a function that let’s us say if a value meets a certain condition, then change it, and if it doesn’t, don’t change it.</p>
@@ -734,26 +725,25 @@ Caused by error in `sum()`:
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>This is a little complex, so let’s break it down.</p>
@@ -779,26 +769,25 @@ Caused by error in `sum()`:
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Instead of specifying the exact value, we can also solve the problem by using something more generalizable, using a function called str_detect(), which allows us to search parts of words.</p>
@@ -822,26 +811,25 @@ Caused by error in `sum()`:
 <span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>cleaned_conowingo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 21
-   linen…¹ fec_c…² tran_id flag_…³ last_…⁴ first…⁵ middl…⁶ prefix suffix addre…⁷
-   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;   &lt;lgl&gt;  &lt;lgl&gt;  &lt;chr&gt;  
- 1 SA11AI  C00694… AC8C71… IND     Pabis   Sherry  NA      NA     NA     144 Bi…
- 2 SA11AI  C00694… A61211… IND     Garvey  Brian   NA      NA     NA     116 Fi…
- 3 SA11AI  C00694… A9C895… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 4 SA11AI  C00694… ABAA82… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 5 SA11AI  C00694… A45519… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 6 SA11AI  C00694… A33987… IND     Huddle… Deborah NA      NA     NA     118 Me…
- 7 SA11AI  C00694… AE7C6D… IND     Hamilt… Derrick NA      NA     NA     553 Be…
- 8 SA11AI  C00694… A07D7A… IND     Buonau… Wm      NA      NA     NA     84 Cle…
- 9 SA11AI  C00694… A29033… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-10 SA11AI  C00694… AD6C11… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-11 SA11AI  C00694… A99BBC… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-12 SA11AI  C00694… A142B2… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-13 SA11AI  C00694… AF8E4C… IND     Buonau… Wm      NA      NA     NA     84 Cle…
-# … with 11 more variables: address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;,
-#   zip &lt;chr&gt;, date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;,
-#   employer &lt;chr&gt;, occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;, and
-#   abbreviated variable names ¹​linenumber, ²​fec_committee_id, ³​flag_orgind,
-#   ⁴​last_name, ⁵​first_name, ⁶​middle_name, ⁷​address_one</code></pre>
+   linenumber fec_committee_id tran_id          flag_orgind last_name first_name
+   &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     
+ 1 SA11AI     C00694323        AC8C7155172624C… IND         Pabis     Sherry    
+ 2 SA11AI     C00694323        A61211F59EBD845… IND         Garvey    Brian     
+ 3 SA11AI     C00694323        A9C895B091C8A4A… IND         Huddlest… Deborah   
+ 4 SA11AI     C00694323        ABAA82A5E70D445… IND         Huddlest… Deborah   
+ 5 SA11AI     C00694323        A45519E3246C947… IND         Buonaugu… Wm        
+ 6 SA11AI     C00694323        A33987D736EC447… IND         Huddlest… Deborah   
+ 7 SA11AI     C00694323        AE7C6D0C074234D… IND         Hamilton  Derrick   
+ 8 SA11AI     C00694323        A07D7A1ECE3C44B… IND         Buonaugu… Wm        
+ 9 SA11AI     C00694323        A290335F896EC41… IND         Buonaugu… Wm        
+10 SA11AI     C00694323        AD6C11068B72B40… IND         Buonaugu… Wm        
+11 SA11AI     C00694323        A99BBCB87D53C45… IND         Buonaugu… Wm        
+12 SA11AI     C00694323        A142B275F787E48… IND         Buonaugu… Wm        
+13 SA11AI     C00694323        AF8E4C981687E4D… IND         Buonaugu… Wm        
+# ℹ 15 more variables: middle_name &lt;lgl&gt;, prefix &lt;lgl&gt;, suffix &lt;lgl&gt;,
+#   address_one &lt;chr&gt;, address_two &lt;lgl&gt;, city &lt;chr&gt;, state &lt;chr&gt;, zip &lt;chr&gt;,
+#   date &lt;date&gt;, amount &lt;dbl&gt;, aggregate_amount &lt;dbl&gt;, employer &lt;chr&gt;,
+#   occupation &lt;chr&gt;, memo_text &lt;chr&gt;, cycle &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>By using str_detect(city,“^Conowing”), we pick up any values that start with “Conowing”, so it would change all four of these. If we used city == “Conowing”, it would only pick up one.</p>

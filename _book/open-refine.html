@@ -387,7 +387,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  8 WALTERS                 1
  9 WALTERS SPORT           1
 10 WALTERS SPORTS          1
-# … with 40 more rows</code></pre>
+# ℹ 40 more rows</code></pre>
 </div>
 </div>
 <p>There are several problems in this data that will prevent proper grouping and summarizing. We’ve learned several functions to do this manually.</p>
@@ -404,25 +404,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13,108 × 50
-   recipient_n…¹ recip…² commi…³ commi…⁴ repor…⁵ repor…⁶ image…⁷ line_…⁸ trans…⁹
-   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
- 1 &amp;PIZZA        &amp;PIZZA  C00003… REPUBL…    2022 M4      2.02e17 21B     SB21B-…
- 2 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2021 M3      2.02e17 21B     SB21B-…
- 3 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2021 M6      2.02e17 21B     SB21B-…
- 4 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2021 M12     2.02e17 21B     SB21B-…
- 5 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2022 M3      2.02e17 21B     SB21B-…
- 6 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2022 M3      2.02e17 21B     SB21B-…
- 7 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2021 M10     2.02e17 21B     SB21B-…
- 8 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2022 M4      2.02e17 21B     SB21B-…
- 9 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2022 M5      2.02e17 21B     SB21B-…
-10 1 WEST DUPONT 1 WEST… C00003… REPUBL…    2022 M5      2.02e17 21B     SB21B-…
-# … with 13,098 more rows, 41 more variables: file_number &lt;dbl&gt;,
+   recipient_name recipient_clean committee_id committee_name        report_year
+   &lt;chr&gt;          &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                       &lt;dbl&gt;
+ 1 &amp;PIZZA         &amp;PIZZA          C00003418    REPUBLICAN NATIONAL …        2022
+ 2 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2021
+ 3 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2021
+ 4 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2021
+ 5 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2022
+ 6 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2022
+ 7 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2021
+ 8 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2022
+ 9 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2022
+10 1 WEST DUPONT  1 WEST DUPONT   C00003418    REPUBLICAN NATIONAL …        2022
+# ℹ 13,098 more rows
+# ℹ 45 more variables: report_type &lt;chr&gt;, image_number &lt;dbl&gt;,
+#   line_number &lt;chr&gt;, transaction_id &lt;chr&gt;, file_number &lt;dbl&gt;,
 #   entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
 #   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
 #   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
-#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
-#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;,
-#   memo_code &lt;chr&gt;, memo_code_full &lt;lgl&gt;, disbursement_date &lt;chr&gt;, …</code></pre>
+#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;, …</code></pre>
 </div>
 </div>
 <p>To examine changes <code>refinr</code> made, let’s examine the changes it made to cities that start with the letter “W”.</p>
@@ -453,7 +453,7 @@ the `.groups` argument.</code></pre>
  8 WALTERS SPORT       WALTERS SPORT           1
  9 WALTERS SPORTS      WALTERS SPORTS          1
 10 WALTER'S SPORTS BAR WALTERS SPORTS BAR      1
-# … with 42 more rows</code></pre>
+# ℹ 42 more rows</code></pre>
 </div>
 </div>
 <p>You can see several changes on the second page of results, including that refinr made “PIZZA, WE THE” into “WE THE PIZZA” which is pretty smart. Other potential changes, grouping together “WASHINGTON NATIONALS” and “WASHINGTON NATIONALS BASEBALL CLUB”, didn’t happen. Key collision will do well with different cases, but all of our records are upper case.</p>
@@ -466,25 +466,25 @@ the `.groups` argument.</code></pre>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cleaned_dc_food</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13,108 × 50
-   recipient_n…¹ recip…² commi…³ commi…⁴ repor…⁵ repor…⁶ image…⁷ line_…⁸ trans…⁹
-   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
- 1 ST. REGIS HO… ST. RE… C00658… MARK G…    2021 YE      2.02e17 17      SB17.I…
- 2 HARKER, GRAY  HARKER… C00536… JOBS, …    2021 YE      2.02e17 21B     SB21B.…
- 3 REPUBLICAN N… REPUBL… C00055… NY REP…    2021 M2      2.02e17 21B     B35A42…
- 4 JOE'S SEAFOO… JOE'S … C00551… OORAH!…    2021 M4      2.02e17 21B     SB21B.…
- 5 NATIONAL DEM… NATION… C00391… JIM CO…    2021 Q1      2.02e17 17      BA7DD5…
- 6 NATIONAL DEM… NATION… C00454… MARCIA…    2021 Q1      2.02e17 17      SB17.2…
- 7 CAFE MILANO   CAFE M… C00391… JIM CO…    2021 Q1      2.02e17 17      B68639…
- 8 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      BA078C…
- 9 CAPITOL HILL… CAPITO… C00725… CLIFF …    2021 Q1      2.02e17 17      17883  
-10 CAPITOL HILL… CAPITO… C00383… CONAWA…    2021 Q1      2.02e17 17      B51CE8…
-# … with 13,098 more rows, 41 more variables: file_number &lt;dbl&gt;,
+   recipient_name        recipient_clean committee_id committee_name report_year
+   &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;
+ 1 ST. REGIS HOTEL       ST. REGIS HOTEL C00658385    MARK GREEN FO…        2021
+ 2 HARKER, GRAY          HARKER, GRAY    C00536540    JOBS, FREEDOM…        2021
+ 3 REPUBLICAN NATIONAL … REPUBLICAN NAT… C00055582    NY REPUBLICAN…        2021
+ 4 JOE'S SEAFOOD PRIME … JOE'S SEAFOOD,… C00551853    OORAH! POLITI…        2021
+ 5 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00391029    JIM COSTA FOR…        2021
+ 6 NATIONAL DEMOCRATIC … NATIONAL DEMOC… C00454694    MARCIA FUDGE …        2021
+ 7 CAFE MILANO           CAFE MILANO     C00391029    JIM COSTA FOR…        2021
+ 8 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+ 9 CAPITOL HILL CLUB     CAPITOL HILL C… C00725465    CLIFF BENTZ F…        2021
+10 CAPITOL HILL CLUB     CAPITOL HILL C… C00383828    CONAWAY FOR C…        2021
+# ℹ 13,098 more rows
+# ℹ 45 more variables: report_type &lt;chr&gt;, image_number &lt;dbl&gt;,
+#   line_number &lt;chr&gt;, transaction_id &lt;chr&gt;, file_number &lt;dbl&gt;,
 #   entity_type &lt;chr&gt;, entity_type_desc &lt;chr&gt;,
 #   unused_recipient_committee_id &lt;chr&gt;, recipient_committee_id &lt;chr&gt;,
 #   recipient_state &lt;chr&gt;, beneficiary_committee_name &lt;chr&gt;,
-#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;,
-#   disbursement_type_description &lt;lgl&gt;, disbursement_description &lt;chr&gt;,
-#   memo_code &lt;chr&gt;, memo_code_full &lt;lgl&gt;, disbursement_date &lt;chr&gt;, …</code></pre>
+#   national_committee_nonfederal_account &lt;lgl&gt;, disbursement_type &lt;lgl&gt;, …</code></pre>
 </div>
 </div>
 <p>To examine changes <code>refinr</code> made with this algorithm, let’s again look at recipients starting with W. We see there wasn’t a substantial change from the previous method.</p>
@@ -515,7 +515,7 @@ the `.groups` argument.</code></pre>
  8 WALTERS SPORT       WALTERS SPORT           1
  9 WALTERS SPORTS      WALTERS SPORT           1
 10 WALTER'S SPORTS BAR WALTERS SPORTS BAR      1
-# … with 41 more rows</code></pre>
+# ℹ 41 more rows</code></pre>
 </div>
 </div>
 <p>This method also made some good changes, but not in every case. No single method will be perfect and often a combination is necessary.</p>
