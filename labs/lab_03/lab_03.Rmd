@@ -29,6 +29,15 @@ library(janitor)
 md_contribs <- read_rds("data/lab_03.rds")
 ```
 
+## Fix header issues
+
+You'll need to fix one issue with the column names using janitor. Write a code block to do that, making sure that you save the results to the same dataframe.
+
+```{r}
+
+```
+
+
 ## Answer questions
 
 Q1: Which seven cities in Maryland had the largest *number* of contributions from donors? How many did each have? To answer this question, you'll have to clean the messy "contributor_city" field.
@@ -45,7 +54,7 @@ Q2: Find the 5-digit ZIP code in Maryland that had the highest total amount of c
 
 Where is that zip code and what kind of area is it, demographically? Which committee is the largest recipient of money from that zip code? How many of the top five recipients are Maryland candidates?
 
-A2: 
+A2:
 
 ```{r}
 
@@ -53,7 +62,7 @@ A2:
 
 Q3: Let's look at top individual donors. Write code to generate a list of top donors using name and city, adding up the total amount of contributions. What does the original data say about the top two donors - who are they and what do they do? Do you see anything in the list of top 10 donors that would make you uncertain about the accuracy of these results?
 
-A3: 
+A3:
 
 ```{r}
 

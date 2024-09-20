@@ -79,13 +79,13 @@ We can fix that pretty easily, by changing that value to "49" using `case_when` 
 
 ### Task 6: Fix that "election_day" value and change the "election_day" field data type
 
-**Task** Run the following codeblock to change the data type of the "election_day" field from a character (chr) to a number, and then glimpse the data, to see the change. Add a description of what the mutate code does to your reference notebook.
+**Task** Run the following codeblock to update that single row's election day votes to 49 (".default = election_day leaves all the others unchanged), change the data type of the "election_day" field from a character (chr) to a number, and then glimpse the data, to see the change. Add a description of what the mutate code does to your reference notebook.
 
 ```{r}
 texas_precinct_20 <- texas_precinct_20 |>
   mutate(election_day = case_when(
     election_day == '5+' ~ '49',
-    TRUE ~ election_day
+    .default = election_day
   ))
 
 texas_precinct_20 <- texas_precinct_20 |> mutate(election_day = as.numeric(election_day))
@@ -113,7 +113,7 @@ texas_precinct_20 |>
 
 ```{r}
 # skip this if you already have it installed.
-install.packages('lubridate')
+# install.packages('lubridate')
 ```
 
 ### Task 9: Load lubridate
@@ -178,7 +178,7 @@ library(janitor)
 
 ### Task 3: Load Arnold, Maryland demonstration data
 
-**Task** Run the following codeblock to load a demonstration slice of the WinRed contribution data from Conowingo, Maryland. How many rows are in this demonstration data set? 
+**Task** Run the following codeblock to load a demonstration slice of the WinRed contribution data from Conowingo, Maryland. How many rows are in this demonstration data set?
 
 **Answer**
 
@@ -198,7 +198,7 @@ And let's examine the full data set.
 
 ### Task 5: Examine the data table
 
-**Task** Run the following codeblock to examine the data. Name three problems the book chapter says exist in this data set that could prevent us from answering questions? 
+**Task** Run the following codeblock to examine the data. Name three problems the book chapter says exist in this data set that could prevent us from answering questions?
 
 **Answer**
 
