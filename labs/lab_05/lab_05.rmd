@@ -38,7 +38,6 @@ Next join the Harris donations to the voter data. Remember, people's names are c
 ```{r}
 # join the combined Harris file to the new voters
 # you will need to determine what columns to use
-
 ```
 
 ## Answer questions
@@ -65,7 +64,3 @@ A3.
 Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
 
 A4:
-
-```{r}
-
-```

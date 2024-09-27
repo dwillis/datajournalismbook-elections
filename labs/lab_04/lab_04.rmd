@@ -1,7 +1,7 @@
 ---
 title: "lab_04"
-author: "derek willis"
-date: "2024-08-05"
+author: "Derek Willis"
+date: "2024-09-19"
 output: html_document
 ---
 
@@ -9,73 +9,82 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## About this lab
+
+To complete this lab, you need to: \* run existing code as directed (look for **Task**). \* modify existing code as directed (look for **Task**). \* write code in empty codeblocks provided to answer questions included (look for **Q**). \* write out the answer in the form of a complete sentence in the space given (look for **A**).
+
+When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
 ## Load libraries and establish settings
+
+You'll need to load three packages for this: the tidyverse, lubridate and janitor.
+
+**Task** load these three packages.
 
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
 
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
 library(tidyverse)
 library(janitor)
-```
-
-## Getting Started
-
-This week we'll be combining and joining data to make it more useful and to ask some questions about it. We'll use Maryland 2024 primary election results to do this, and our main question will be this: Which precincts had the most votes cast at them statewide, counting both the Republican and Democratic primaries? To answer this question, we'll need to first combine the two parties' primary precinct results into a single dataframe and then join it to data that has more information about each voting location.
-
-First, load the two precinct results CSV files in the `data` folder, one each for the Democratic and Republican primaries, and then combine them into a single dataframe. You'll need to clean up the column names to make the data easier to work with - make sure you have loaded the library to do that.
-
-```{r}
+library(lubridate)
 
 ```
 
-Next, let's read in the precinct voting location data and make sure you clean up the column names in the same way you did before:
+For this lab, we want to investigate spending by the two leading Senate candidates in Maryland during this election, Angela Alsobrooks and Larry Hogan. Our goal is to try and standardize the purpose of the expenditures so that we can compare the two campaigns. We have the data, but it's messy - purpose descriptions are spelled differently and capitalized differently - and we need to clean it up. We'll use a combination of RStudio and OpenRefine to do that.
+
+The basic process here is to start in RStudio, export data so that we can use OpenRefine to clean it up, and then bring it back into RStudio to finish our analysis.
+
+## Load Data
+
+You'll need to load one data set, a CSV file of campaign expenditures located in the data folder called "md_senate_expenses.csv"
+
+**Task** Create a codeblock below, then read the data in and assign it to an appropriate variable name. You'll want to make sure that any date columns are actually date datatypes.
 
 ```{r}
-
-```
-
-Next join the two on the unique combination of precinct and county (you have county names and codes). You'll need to figure out which columns to use from both dataframes and you will need to fix one of those columns using `mutate()` in order to make the join work.
-
-```{r}
+# Load the Maryland expenditures data table
 
 ```
 
 ## Answer questions
 
-Q1. Using the newly-created dataframe and isolating just the results for Angela Alsobrooks, write code that calculates how many voting locations each county has, showing the county with the most voting locations first. Does the county with the most voting locations have the largest population in the state (ask yourself: where have you seen county population figures recently)?
+**Q1.** You've been assigned to compare the spending priorities of the two campaigns, but they describe their spending differently using the `purpose` column. Using OpenRefine, create a project using the original CSV file, make a copy of the `purpose` column called `purpose_clean` and then standardize it, focusing on the purposes that appear most often or have the largest total amounts. You can transform the data as you want - making all records the same case, for example, to help. The goal is to be able to group together as many similar purpose values, so you can choose to call all transportation-related expenses the same thing.
 
-A1. 
+How do you know when you're done? It's a judgment call, but you should be close to 100 unique values for `purpose_clean`, and maybe even below that number.
 
-```{r}
+Then, when you are done standardizing `purpose_clean`, export it as a new CSV file to your data folder, *giving it a different name* and read it back into RStudio as a new dataframe.
 
-```
+Then, using that `purpose_clean` column, write code to find the largest amounts of spending on categories by both campaigns.
 
-Q2. Write code to produce a `votes` column which is the result of adding together `early_votes`, `election_night_votes`, `provisional_votes` and the mail-in votes, overwriting your dataframe so that it now has that `total_votes` column permanently. Next, separately write code to show each county and precinct and calculate the total votes in the Presidential race - bearing in mind that each precinct will have multiple rows in the dataframe, but you only want to see one row for each precinct. What is the name and voting location of the precinct that saw the most votes in the presidential race?
-
-A2. 
-
-```{r}
-
-
-```
-
-Q3. Let's look at the average number of votes in each party's primary race for U.S. Senate. Take the code you wrote for the last part of Q2, save the results to a new variable and then find the precincts with 0 total votes for senator. How many precincts are there, and which county has the most? What else would you need to know about these precincts to know whether this might be worth a story?
-
-Finally, write code to calculate the average and median number of total votes across all precincts statewide (so you want to see just two numbers - the average and median). To do this, you will need to use the `ungroup()` function on your new dataframe *before* you do the math - <https://www.rdocumentation.org/packages/multiplyr/versions/0.1.1/topics/ungroup>. There's no state column here, so you aren't grouping by anything, but can still use summarize to do the math.
-
-Take a look at the the Annotated Code of Maryland's election laws (<https://mgaleg.maryland.gov/2023RS/Statute_Web/gel/gel.pdf>) - can you find a limit on the number of voters assigned to a precinct? How might your answer impact wait times to vote?
-
-A3. 
+**A1.**
 
 ```{r}
 
 ```
 
-Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve candidates, or counties or types of voting, but it cannot be a variation of a previous question (so, for example, you can't ask, "What's the average number of votes per precinct in the presidential primary?"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help. 
+**Q2.** Let's do some research on the top purposes from A1. Feel free to search the Web to understand those terms better if need be, and then write a description comparing and contrasting the two campaigns' largest categories of spending.
 
-A4:
+**A2.**
+
+**Q3.** Pick one of the top categories for each campaign and write code that shows how that spending has changed over time, if at all. You'll need to use lubridate for this. Write a couple of sentences describing that pattern.
+
+**A3.**
+
+```{r}
+
+
+```
+
+**Q4.** Which committee has the larger payroll or salary spending so far? How many unique recipients of payroll/staff spending are there for each candidate?
+
+**A4.**
 
 ```{r}
 
 ```
+
+**Q5** What's the most interesting story idea you've found in this data?
+
+**A5**

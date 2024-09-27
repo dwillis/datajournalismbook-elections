@@ -1,4 +1,4 @@
-"linenumber","fec_committee_id","committee_name","tran_id","flag_orgind","recipient_name","address_one","address_two","city","state","zip","date","amount","purpose","memo_code","memo_text"
+"linenumber","fec_committee_id","clean_name","tran_id","flag_orgind","recipient","address_one","address_two","city","state","zip","date","amount","purpose","memo_code","memo_text"
 "SB17","C00815373","Laurel Lee For Congress, Inc.","SB17.10233","ORG","CAPITOL HILL CLUB","300 FIRST ST SE",,"WASHINGTON","DC","20003","2024-04-16","111.85","MEETING EXPENSE: FOOD AND/OR BEVERAGES",,
 "SB21B","C00632133","Swing Left","500290221","ORG","Rue Cafe","3906 14Th St NW",,"Washington","DC","200115406","2024-08-09","18.54","Meals","X","*"
 "SB21B","C00632133","Swing Left","500290400","ORG","Taqueria Habanero","3710 14Th St NW",,"Washington","DC","200101321","2024-08-20","52.8","Meals","X","*"
@@ -26,6 +26,7 @@
 "SB17","C00576041","Salud Carbajal For Congress","501169846","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-05-01","250.83","Meal","X","*"
 "SB21B","C00821058","Alabama First Pac","B95D722A545DD4FBFA5E","ORG","UNION PUB","201 MASSACHUSETTS AVE NE",,"WASHINGTON","DC","200024957","2024-06-06","541.83","FOOD/BEVERAGE",,
 "SB21B","C00821058","Alabama First Pac","BA42BD1ECC98042B7B58","ORG","LAPLAZA","629 PENNSYLVANIA AVE SE","# 4303","WASHINGTON","DC","200034303","2024-06-11","163.06","FOOD/BEVERAGE",,
+"SB21B","C00821058","Alabama First Pac","B3076F24FE2CB4E3891B","ORG","WASHINGTON NATIONALS","1500 S CAPITOL ST SE",,"WASHINGTON","DC","200033599","2024-06-13","27.5","FOOD/BEVERAGE",,
 "SB17","C00506832","Marc Veasey Congressional Campaign Committee","500353467","ORG","Osteria Morini","301 Water St SE",,"Washington","DC","200033734","2024-05-28","146.52","Food and Meals","X","*"
 "SB17","C00506832","Marc Veasey Congressional Campaign Committee","500351697","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-04-19","517.54","Dues and Meals",,
 "SB17","C00349506","Friends Of Maria","500377681","ORG","Senate Restaurants","1ST St NE","# C","Washington","DC","205100001","2024-04-11","27.6","Meals",,
@@ -43,12 +44,15 @@
 "SB17","C00764381","Shontel Brown For Congress","500472433","ORG","Corner Bakery Cafe","1828 L St NW","Ste 101","Washington","DC","200365104","2023-04-25","411.06","Fundraising Luncheon Food","X","*"
 "SB21B","C00193433","Emil Ys List","SB21B-418997-300000","ORG","HILTON WASHINGTON CAPITAL","525 NEW JERSEY AVE NW",,"WASHINGTON","DC","20001","2024-08-16","556.35","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21b","C00250399","Automotive Free International Trade Pac","B197F81FD3DB24ED79CF","ORG","Capitol Hill Club","300 1st St SE",,"Washington","DC","200031801","2024-08-16","199.05","mtg.exp. - food, dues",,
+"SB21B","C00193433","Emil Ys List","SB21B-418997-240000","ORG","AMTRAK TICKET COUNTER","1 MASSACHUSETTS AVE., NW",,"WASHINGTON","DC","20001","2024-08-16","91","Travel/Accommodation /Meals","X","Memo Entry"
+"SB21B","C00193433","Emil Ys List","SB21B-418997-230000","ORG","AMTRAK.COM","1 MASSACHUSETTS AVE., NW",,"WASHINGTON","DC","20001","2024-08-16","60","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-418997-70000","ORG","CHIC FIL A 801","50 MASSACHUSETTS AVE NE",,"WASHINGTON","DC","20002","2024-08-16","12.31","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419026-160000","ORG","MOXY WASHINGTON DC DOWNTO","1011 K STREET NW",,"WASHINGTON","DC","20001","2024-08-16","519.46","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419026-130000","ORG","CENTROLINA","974 PALMER ALLEY",,"WASHINGTON","DC","20001","2024-08-16","279.3","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419026-120000","ORG","HOMEWOOD SUITES BY HILTON","50 M ST SE",,"WASHINGTON","DC","20003","2024-08-16","268.12","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419020-40000","ORG","TATTE #630026 CITY CENTER","1090 I STREET NW",,"WASHINGTON","DC","20268","2024-08-16","22.44","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-418994-10000","ORG","ONE BAD BABE","201 UPSHUR STREET NW",,"WASHINGTON","DC","20011","2024-08-16","81.83","Travel/Accommodation /Meals","X","Memo Entry"
+"SB21B","C00193433","Emil Ys List","SB21B-419018-20000","ORG","WA METRO SMART BENEFITS","600 5TH ST NW",,"WASHINGTON","DC","200012610","2024-08-16","574.74","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419017-30000","ORG","DC SWEET POTATO CAKE","925 17TH ST NW",,"WASHINGTON","DC","20006","2024-08-16","62.72","Travel/Accommodation /Meals","X","Memo Entry"
 "SB21B","C00193433","Emil Ys List","SB21B-419005-10000","ORG","COURTYRD WASHNGTN DC DUPO","1733 N STREET NW",,"WASHINGTON","DC","20036","2024-08-16","240.94","Travel/Accommodation /Meals","X","Memo Entry"
 "H4","C00193433","Emil Ys List","H4-419012-60000","ORG","PRET A MANGER 0079","1800 M ST NW",,"WASHINGTON","DC","20036","2024-08-16","27.45","Travel/Accommodation /Meals","X","Memo Entry"
@@ -180,6 +184,12 @@
 "SB17","C00801241","Mike Flood For Congress","B61158C990A2249CEAE2","ORG","CAPITAL HILL CLUB","300 1ST ST SE",,"WASHINGTON","DC","200031801","2023-12-12","558.25","TRAVEL FOOD AND BEVERAGE",,
 "SB17","C00801241","Mike Flood For Congress","BDA73348A094B4484B53","ORG","CAPITAL HILL CLUB","300 1ST ST SE",,"WASHINGTON","DC","200031801","2023-11-06","122.53","SUB-VENDOR - EVENT FOOD AND BEVERAGE","X",
 "SB17","C00763649","Troy Carter For Congress","500507842","ORG","Tune Inn Inc.","331 1/2 Pennsylvania Ave SE",,"Washington","DC","200031148","2024-04-01","49.6","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507974","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","13.19","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507975","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","56.89","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507976","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","96.7","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507977","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","115.97","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507978","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","85.97","Food and Meals","X","*"
+"SB17","C00763649","Troy Carter For Congress","500507979","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2024-06-26","42.99","Food and Meals","X","*"
 "SB17","C00763649","Troy Carter For Congress","500507863","ORG","Tune Inn Inc.","331 1/2 Pennsylvania Ave SE",,"Washington","DC","200031148","2024-05-06","32.4","Food and Meals","X","*"
 "SB17","C00843391","Lisa Blunt Rochester For Senate","500419448","ORG","Whole Foods Market","1440 P St NW",,"Washington","DC","200051908","2024-07-05","48.19","Meals","X","*"
 "SB17","C00843391","Lisa Blunt Rochester For Senate","500419450","ORG","Whole Foods Market","1440 P St NW",,"Washington","DC","200051908","2024-07-05","30.49","Meals","X","*"
@@ -1206,6 +1216,7 @@
 "SB17","C00502294","Swalwell For Congress","500082115","ORG","Bistro Du Jour","99 District Sq SW",,"Washington","DC","200242490","2024-06-07","159.63","Food & Beverages for Event",,
 "SB17","C00502294","Swalwell For Congress","500082363","ORG","Marcellino Pane & Vino","300 Morse St NE",,"Washington","DC","200027000","2024-06-13","84.9","Food & Beverages",,
 "SB17","C00502294","Swalwell For Congress","500081727","ORG","We, The Pizza","305 Pennsylvania Ave SE",,"Washington","DC","200031148","2024-05-20","211.65","Food & Beverages for Event",,
+"SB17","C00502294","Swalwell For Congress","500081978","ORG","Washington Mystics","601 F St NW",,"Washington","DC","200041605","2024-06-03","5806","Fundraising Event Venue Rental, Food & Beverages","X","*"
 "SB17","C00502294","Swalwell For Congress","500081036","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-04-04","486.82","Dues, Food & Beverage - Candidate Meetings",,
 "SB17","C00502294","Swalwell For Congress","500081508","ORG","Paraiso","1101 Pennsylvania Ave SE",,"Washington","DC","200032277","2024-05-13","158.4","Food & Beverages for Event",,
 "SB17","C00502294","Swalwell For Congress","500081719","ORG","Paraiso","1101 Pennsylvania Ave SE",,"Washington","DC","200032277","2024-05-17","801.9","Food & Beverages for Event",,
@@ -1625,6 +1636,7 @@
 "SB17","C00354688","Mccollum For Congress","500168323","ORG","The Monocle On Capitol Hill","107 D St NE",,"Washington","DC","200025657","2024-04-12","362.9","Food and Beverages","X","*"
 "SB17","C00354688","Mccollum For Congress","500168949","ORG","The Monocle On Capitol Hill","107 D St NE",,"Washington","DC","200025657","2024-06-12","164.65","Food and Beverages",,
 "SB17","C00354688","Mccollum For Congress","500168963","ORG","The Monocle On Capitol Hill","107 D St NE",,"Washington","DC","200025657","2024-06-27","620.79","Food and Beverages",,
+"SB17","C00354688","Mccollum For Congress","500168347","ORG","Washington Nationals Ticket Services","1500 S Capitol St SE",,"Washington","DC","200033599","2024-05-26","10401.52","Food and Beverage, Event Tickets","X","*"
 "SB17","C00354688","Mccollum For Congress","500168328","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-04-20","193.91","Membership Dues, Food and Beverage",,
 "SB17","C00354688","Mccollum For Congress","500168339","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-05-25","228.33","Membership Dues, Food and Beverage",,
 "SB17","C00354688","Mccollum For Congress","500169512","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2024-06-22","22.56","Membership Dues, Food and Beverage",,
@@ -9122,6 +9134,7 @@
 "SB17","C00588657","Texans For Jodey Arrington","B90340C160CE949BAAA8","ORG","YOUNG CHOW RESTAURANT","312 PENNSYLVANIA AVENUE SOUTHEAST",,"WASHINGTON","DC","200031147","2023-09-01","129.9","MEETINGS/MEALS","X",
 "SB17","C00588657","Texans For Jodey Arrington","B8E5B55E05BE74F43BAE","ORG","CHICK-FIL-A","3100 14TH ST NW",,"WASHINGTON","DC","20010","2023-08-01","13.08","MEETINGS/MEALS","X",
 "SB17","C00588657","Texans For Jodey Arrington","B094E90391D344CA2B44","ORG","SONOMA RESTAURANT","223 PENNSYLVANIA AVE. SE",,"WASHINGTON","DC","200031107","2023-08-01","203.2","MEETINGS/MEALS","X",
+"SB17","C00588657","Texans For Jodey Arrington","BC3AABB1E3B0241CBAF7","ORG","WASHINGTON NATIONALS","1500 S. CAPITOL ST. SE",,"WASHINGTON","DC","200033599","2023-08-01","153.9","MEETINGS/MEALS","X",
 "SB17","C00588657","Texans For Jodey Arrington","B1CC692A613F44350BF8","ORG","CIRCA","99 M ST SE","#100","WASHINGTON","DC","200033957","2023-08-01","189.98","MEETINGS/MEALS","X",
 "SB17","C00588657","Texans For Jodey Arrington","B93F206CB2D3D4FC98C1","ORG","SANTA ROSA TAQUERIA","301 PENNSYLVANIA AVE. SE",,"WASHINGTON","DC","200031148","2023-07-01","225.03","MEETINGS/MEALS","X",
 "SB17","C00575167","Don Bacon For Congress","B1047D9B06DED484FB71","ORG","CAPITOL HILL CLUB","300 FIRST ST SE",,"WASHINGTON","DC","200031801","2023-07-31","4640.74","MEETINGS/MEALS/DUES","X",
@@ -10721,6 +10734,7 @@
 "SB17","C00313247","Robert Aderholt For Congress","B1AACBF75FE004924844","ORG","CAPITOL HILL CLUB","300 1ST ST SE",,"WASHINGTON","DC","200031801","2023-05-02","48.75","FOOD / BEVERAGE",,
 "SB17","C00385773","Debbie Wasserman Schultz For Congress","VVAF7ARVYV0","ORG","Young Chow","312 Pennsylvania Ave SE",,"Washington","DC","200031147","2023-05-23","123.75","MEAL",,
 "SB17","C00385773","Debbie Wasserman Schultz For Congress","VVAF7ARWGS3","ORG","We the Pizza","305 Pennsylvania Ave SE",,"Washington","DC","200031148","2023-06-22","56.7","MEAL",,
+"SB17","C00385773","Debbie Wasserman Schultz For Congress","VVAF7ARWGV9","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2023-06-22","40.46","MEAL",,
 "SB17","C00653816","Committee To Elect Jared Golden","500132185","ORG","L'Ardente","200 Massachusetts Ave NW",,"Washington","DC","200011429","2023-04-05","284.85","Meals","X","*"
 "SB17","C00653816","Committee To Elect Jared Golden","500132992","ORG","Barrel","613 Pennsylvania Ave SE",,"Washington","DC","200034330","2023-05-01","318.5","Meals",,
 "SB17","C00752584","Nikema For Congress, Inc","500257764","ORG","National Democratic Club","30 Ivy St SE",,"Washington","DC","200034006","2023-05-02","120","Meal",,
@@ -11304,9 +11318,11 @@
 "SB17","C00647339","John Curtis For Utah","B-151443","ORG","Capitol Hill Club","300 First Street SE",,"Washington","DC","20003","2023-03-16","402.9","Meal Expense",,
 "SB17","C00647339","John Curtis For Utah","B-151299","ORG","Capitol Hill Club","300 First Street SE",,"Washington","DC","20003","2023-02-17","90.2","Meal Expense",,
 "SB17","C00647339","John Curtis For Utah","B-151434","ORG","Birch And Barley","1337 14th Street Northwest",,"Washington","DC","20005","2023-02-03","497.95","Meal Expense",,
+"SB17","C00795211","Don Davis For Nc","500250742","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2023-06-16","40.25","Meal",,
 "SB17","C00732826","Strickland For Washington","500664552","ORG","Longworth Cafe","200 -298 S CAPITOL St SW",,"Washington","DC","20003","2023-04-20","4.8","Meals",,
 "SB17","C00450049","Paul Tonko For Congress","500872913","ORG","Other Half Brewing DC","1401 Okie Street NE",,"Washington","DC","200021866","2023-06-21","541.2","Meal Expense",,
 "SB17","C00450049","Paul Tonko For Congress","500866358","ORG","Other Half Brewing DC","1401 Okie Street NE",,"Washington","DC","200021866","2023-04-27","811.8","Meal Expense",,
+"SB17","C00795211","Don Davis For Nc","500250741","ORG","Washington Nationals","1500 S Capitol St SE",,"Washington","DC","200033599","2023-06-16","14.75","Meal",,
 "SB17","C00655332","Cloud For Congress","BE5A7AC8DB4B64E5BB76","ORG","Capitol Hill Club","300 1st St SE",,"Washington","DC","20003","2023-05-17","573.58","Meal Expense","X",
 "SB17","C00655332","Cloud For Congress","B232D7C2DD8CB4913920","ORG","Capitol Hill Club","300 1st St SE",,"Washington","DC","20003","2023-03-15","173.6","Meal Expense","X",
 "SB17","C00655332","Cloud For Congress","B33259E5D42BB4DC3AA9","ORG","Capitol Hill Club","300 1st St SE",,"Washington","DC","20003","2023-04-17","39","Meal Expense","X",
@@ -11777,6 +11793,7 @@
 "SB17","C00500843","Warren For Senate, Inc.","500125202","ORG","Centrolina","974 Palmer Aly NW",,"Washington","DC","200014508","2023-05-01","403.4","Meals","X","*"
 "SB17","C00829812","Mcclellan For Congress","500243159","ORG","Corner Bakery","1828 L St NW","Ste 101","Washington","DC","200365104","2023-03-09","528","Food",,
 "SB21","C00500843","Warren For Senate, Inc.","500125198","ORG","Democratic Conference Luncheon Fund","S309 The Capitol",,"Washington","DC","205100001","2023-05-16","1426.52","Officially Connected - Meals",,
+"SB21B","C00639229","American Revival Pac","SB21B.5101","ORG","WASHINGTON NATIONALS","1500 SOUTH CAPITOL STREET, SE",,"WASHINGTON","DC","20003","2023-05-10","1546.5","FUNDRAISING COST - FOOD/BEVERAGE",,
 "SB21B","C00187450","Republican Party Of Louisiana","B51390BA9FD29453585F","ORG","HILTON WASHINGTON DC","1919 CONNECTICUT AVE NW",,"WASHINGTON","DC","20009","2023-01-29","8.51","FOOD/BEVERAGE","X",
 "SB17","C00796433","Chuck Edwards For Congress","SB17-EX3589","ORG","H2 Capital Consulting LLC","5072 Sherier Place",,"Washington","DC","20016","2023-04-03","1889.93","Food for fundraiser event",,"Food for fundraiser event"
 "SB21B","C00546663","Nrsc/Nrcc Victory Committee","SB21B.5481.0","ORG","Trader Joe's","750 Pennsylvania Avenue SE",,"Washington","DC","20002","2023-05-04","765.41","jfc food/beverage","X",
