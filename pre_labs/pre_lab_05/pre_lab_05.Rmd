@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_05.Rmd"
 author: "derek willis"
-date: "2024-08-01"
+date: "2024-09-30"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Points to hit
 
-1.  Review of third lab questions/problems.
+1.  Review of fourth lab questions/problems.
 2.  Demonstration of combining and merging
 
 ## Chapter 10
@@ -27,6 +27,12 @@ library(tidyverse)
 library(lubridate)
 ```
 
+Often, as data journalists, we’re looking at data across time or at data stored in multiple tables. And to do that, we need to often need to merge that data together.
+
+Depending on what we have, we may just need to stack data on top of each other to make new data. If we have 2019 data and 2018 data and we want that to be one file, we stack them. If we have a dataset of cows in counties and a dataset of populations in county, we’re going to join those two together on the county – the common element.
+
+Let’s explore.
+
 ### Task 2: Load data
 
 Let's say that we have Maryland county voter registration data from five different elections in five different files. They have the same record layout and the same number of counties (plus Baltimore City). We can combine them into a single dataframe.
@@ -41,9 +47,13 @@ county_voters_2022 <- read_csv("data/county_voters_2022.csv")
 county_voters_2024 <- read_csv("data/county_voters_2024.csv")
 ```
 
+All of these datasets have the same number of columns, all with the same names, so if we want to merge them together to compare them over time, we need to stack them together. The verb here, in R, is bind_rows. You tell the function what you want to combine and it does it, assuming that you’ve got column names in common containing identically formatted data.
+
+Since we have five dataframes, we’re going to need to pass them as a list, meaning they’ll be enclosed inside the list function.
+
 ### Task 3: Using bind_rows
 
-**Task** Combine the three files into a single data frame using the bind_rows function. Add a description of what this code does to your reference notebook.
+**Task** Combine the three files into a single data frame using the bind_rows() function, along with list(). Add a description of what this code does to your reference notebook.
 
 ```{r}
 # bind_rows with list
@@ -51,7 +61,13 @@ county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018,
 View(county_voters_combined)
 ```
 
+There are plenty of uses for bind_rows: any regularly updated data that comes in the same format like crime reports or award recipients or player game statistics. Or election results.
+
 ## Joining data
+
+More complicated is when you have two separate tables that are connected by a common element or elements. But there’s a verb for that, too: join.
+
+Let’s start by reading in some Maryland 2020 county population data:
 
 ### Task 4: Loading population data
 
@@ -61,14 +77,24 @@ View(county_voters_combined)
 maryland_population <- read_csv('data/maryland_population_2020.csv')
 ```
 
+One of the columns we have is called county, which is what we have in our county_voters_2020 dataframe.
+
+To put the Maryland population data and voter registration data together, we need to use something called a join. There are different kinds of joins. It’s better if you think of two tables sitting next to each other. A left_join takes all the records from the left table and only the records that match in the right one. A right_join does the same thing. An inner_join takes only the records where they are equal. There’s one other join – a full_join which returns all rows of both, regardless of if there’s a match – but I’ve never once had a use for a full join.
+
+In the best-case scenario, the two tables we want to join share a common column. In this case, both of our tables have a column called county that has the same characteristics: values in both look identical, including how they distinguish Baltimore City from Baltimore County. This is important, because joins work on exact matches.
+
+We can do this join multiple ways and get a similar result. We can put the population file on the left and the registration data on the right and use a left join to get them all together. And we use join_by() to join by the correct columns. I’m going to count the rows at the end. The reason I’m doing this is important: Rule 1 in joining data is having an idea of what you are expecting to get. So with a left join with population on the left, I have 24 rows, so I expect to get 24 rows when I’m done.
+
 ### Task 5: Join population and voter data
 
 **Task** Run the following code to join Maryland population data and the 2020 voter registration data together using the common column county as the key. How many rows are there now? How many *should* there be? **Answer**
 
 ```{r}
 # with nrow included to show row total
-maryland_population |> left_join(county_voters_2020, by="COUNTY") |> nrow()
+maryland_population |> left_join(county_voters_2020, join_by(COUNTY)) |> nrow()
 ```
+
+Remove the nrow and run it again for yourself. By default, dplyr will do a “natural” join, where it’ll match all the matching columns in both tables. So if we take out the by, it’ll use all the common columns between the tables. That may not be right in every instance but let’s try it. If it works, we should get 24 rows.
 
 ### Task 6: Looking at Joined Data
 
@@ -76,16 +102,22 @@ maryland_population |> left_join(county_voters_2020, by="COUNTY") |> nrow()
 
 ```{r}
 # without nrow
-maryland_population |> left_join(county_voters_2020, by="COUNTY")
+maryland_population |> left_join(county_voters_2020, join_by(COUNTY))
 ```
+
+When the join column is obvious - it's the same name in both dataframes - R will make that connection automatically and tell you. Below we're assigning the result of the previous code to a new dataframe, but we've removed the explicit join_by() function. R still tells us what column(s) it used for the join.
 
 ### Task 7: Assign Joined Data to New Dataframe
 
-**Task** Create a new dataframe with population and voter data joined together. Add a description of what this code does to your reference notebook.
+**Task** Create a new dataframe with population and voter data joined together. What does the output message below say about the join? **Answer**
 
 ```{r}
 maryland_population_with_voters <- maryland_population |> left_join(county_voters_2020)
 ```
+
+Now, with our joined data, we can answer questions in a more useful way. But joins can do even more than just bring data together; they can include additional data to enable you to ask more sophisticated questions. Right now we have registered voters and total population. But we can do more.
+
+Let’s try adding more Maryland demographic data to the mix. Using a file describing the 18-and-over population (from which eligible voters come) from the state’s data catalog, we can read it into R:
 
 ### Task 8: Add the Demographic Data
 
@@ -95,14 +127,19 @@ maryland_population_with_voters <- maryland_population |> left_join(county_voter
 maryland_demographics <- read_csv('data/maryland_demographics.csv')
 ```
 
+Again, we can use a left_join to make our demographic data available. This time we’ll need to specify the two fields to join because they do not have identical names. We’ll use COUNTY from our population data and NAME from the demographic data, and the order matters - the first column is from the dataframe you name first.
+
 ### Task 9: Join demographic data to combined voting/population data
 
 **Task** Join the demographic data to the our combined voting/population data. To do this, we need to specify the join columns since the names aren't the same.
 
 ```{r}
-# join on zip - but there's a problem
-maryland_population_with_voters_and_demographics <- maryland_population_with_voters |> left_join(maryland_demographics, by=c("COUNTY"="NAME"))
+maryland_population_with_voters_and_demographics <- maryland_population_with_voters |> left_join(maryland_demographics, join_by(COUNTY==NAME))
 ```
+
+Now we’ve got population data and demographic data by county. That means we can draw from both datasets in asking our questions. For example, we could see the counties with the highest 18+ Black population as a percentage of all population 18 and over and also the percentage of Democrats in that county.
+
+We can get this by using mutate and arrange:
 
 ### Task 10: Asking Demographic Questions
 
@@ -114,6 +151,10 @@ maryland_population_with_voters_and_demographics |>
   arrange(desc(pct_black_18_plus)) |> 
   select(COUNTY, pct_black_18_plus, pct_dems)
 ```
+
+If you know Maryland political demographics, this result isn’t too surprising, but Somerset County - the state’s 2nd smallest in terms of population - stands out for its Black population, which is a greater percentage than Baltimore County and Montgomery County.
+
+Let’s change that to look at Asian population:
 
 ### Task 11: Asking Demographic Questions
 
@@ -130,16 +171,16 @@ maryland_population_with_voters_and_demographics |>
 
 Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let's walk through an example of that using some demographic data by zip code.
 
-**Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of ZCTA5N? **Answer**
+**Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of the ZCTA5N? column? **Answer**
 
 ```{r}
 maryland_zcta <- read_csv('data/maryland_zcta.csv')
 glimpse(maryland_zcta)
 ```
 
-The column we're interested in, ZCTA5N, is a <dbl> column - it's a number. We want it to be a <chr> column - text.
+The column we're interested in, ZCTA5N, is a <dbl> column - it's a number. We want it to be a <chr> column - text - so we can use it in joins.
 
-**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N? **Answer**
+**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N now? **Answer**
 
 ```{r}
 maryland_zcta <- maryland_zcta |> mutate(across(ZCTA5N, as.character))
