@@ -59,10 +59,10 @@ Boom - we're good to go: a nice, tidy dataframe.
 
 ## When it looks good, but needs a little fixing
 
-Here's a slightly more involved PDF: precinct-level election results from [Camden County, Missouri's 2022 primary election](https://drive.google.com/file/d/1PcsvFpkulCZUM6bnEM74cttf3W0WWC0U/view?usp=sharing).
+Here's a slightly more involved PDF: precinct-level election results from [Benzie County, Michigan's 2024 primary election](https://drive.google.com/file/d/1RqqFInF-5Mb_STYPowPQJSEh9qXh-fpZ/view?usp=drive_link).
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/camden_1.png"))
+knitr::include_graphics(rep("images/benzie_1.png"))
 ```
 
 ### Task 3: Get it into Tabula
@@ -71,10 +71,10 @@ knitr::include_graphics(rep("images/camden_1.png"))
 
 Looks like a spreadsheet, right? Save that PDF file to your computer in a place where you'll remember it (like a Downloads folder).
 
-Now let's repeat the steps we did to import the PDF into Tabula and autodetect the tables. It should look like this:
+Now let's repeat the steps we did to import the PDF into Tabula, but don't autodetect the tables. It should look like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/camden_2.png"))
+knitr::include_graphics(rep("images/benzie_2.png"))
 ```
 
 ### Task 4: Draw a Box
@@ -84,30 +84,32 @@ knitr::include_graphics(rep("images/camden_2.png"))
 This is pretty good, but we want to capture the second line of the headers - `Voters`, `Cast` and `Turnout` - and for our purposes we only want the first page of the PDF for now. So hit "Clear All Selections" button at the top and let's draw a box around what we want. Using your cursor, click and drag a box across the first page so it looks like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/camden_3.png"))
+knitr::include_graphics(rep("images/benzie_3.png"))
 ```
 
 Now you can hit the green "Preview & Export Extracted Data" button on the top right. Using the "Stream" method, you should see something very like this:
 
 ```{r, echo=FALSE}
-knitr::include_graphics(rep("images/camden_4.png"))
+knitr::include_graphics(rep("images/benzie_4.png"))
 ```
 
-You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and clean up the column names and some other things:
+You can now export that extracted table to a CSV file using the "Export" button. And then we can read it into R and add column names and some other things:
 
 ### Task 5: Export the CSV file
 
 **Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer**
 
 ```{r}
-camden_2022 <- read_csv("tabula-camden_county_election_results.csv") |> clean_names()
+benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv")
 
-camden_2022
+benzie_2024
 ```
 
 ## Cleaning up the data in R
 
-The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
+The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. 
+
+Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
 
 ### Task 6: Cleaning up
 
