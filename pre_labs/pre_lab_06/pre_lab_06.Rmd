@@ -107,42 +107,45 @@ benzie_2024
 
 ## Cleaning up the data in R
 
-The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. 
+The good news is that we have data we don't have to retype. The bad news is, it's hardly in importable shape. We have a few things to fix. The first one is that there's no header row, so we should add at least a place-holder. We can do that by importing it again, but with a twist.
 
-Some of the datatypes are wrong, we've got a column to rename and two rows with NAs, plus a precinct name that wraps over to the next line. Let's start by re-importing it and calling `mutate` to fix the column & datatype issues, plus that precinct name:
+Then we've got rows with NAs, plus office names mixed up with candidate names. Let's start by re-importing it with a header row and ditching rows where the second column is NA, then renaming the first column to `candidate`:
 
-### Task 6: Cleaning up
+### Task 6: Cleaning up & getting rid of rows we don't need
 
-**Task** Clean up the columns, datatypes & precinct names by running the codeblock below. What problems remain? **Answer**
-
-```{r}
-camden_2022 <- read_csv("data/tabula-camden_county_election_results.csv") |> clean_names()
-
-camden_2022 <- camden_2022 |>
-  rename(precinct = x1) |>
-  mutate(voters = as.numeric(voters),
-         turnout = as.numeric(str_replace(turnout, '%',''))
-         ) |>
-  mutate(precinct = case_when(
-    precinct == 'SUNRISE BEACH 2 & 3 AND WILSON' ~ 'SUNRISE BEACH 2 & 3 AND WILSON BEND',
-    TRUE ~ precinct
-  )
-)
-camden_2022
-```
-
-Ok, now we have numbers. Next we'll get rid of the rows where `cast` is NA (why not `voters`?). To do that, we'll use the inverse of the `is.na` function by placing an exclamation point before it (you can read that filter as "where cast is NOT NA").
-
-### Task 7: Get rid of rows we don't need
-
-**Task** Run the codeblock below. How many rows does the dataframe have now compared to Task 6? **Answer**
+**Task** Get rid of rows we don't need by running the codeblock below. What problems remain? **Answer**
 
 ```{r}
-camden_2022 <- camden_2022 |> filter(!is.na(cast))
+benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv", col_names = FALSE)
 
-camden_2022
+benzie_2024 <- benzie_2024 |>
+  filter(!is.na(X2)) |> 
+  rename(candidate = X1)
+
+benzie_2024
 ```
 
-All things considered, that was pretty easy. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
+Ok, now we have numbers and candidates, but we still need better headers and a way to split the candidate column to extract the party value. Let's split the party values out and add some headers with precinct and vote type information, plus a few office names based on the candidate.
+
+### Task 7: Making a party column, changing headers and adding an office column.
+
+**Task** Run the codeblock below. What changed, and what issues or problems remain? **Answer**
+
+```{r}
+benzie_2024 <- benzie_2024 |>
+  separate(candidate, c("candidate", "party"), sep=' - ') |> 
+  rename(`Almira ED` = X2, `Almira EV` = X3, `Almira AVCB` = X4, `Benzonia ED` = X5, `Benzonia EV` = X6, `Benzonia AVCB` = X7) |> 
+  mutate(office = case_when(
+    candidate == "Poll Book Totals" ~ "Ballots Cast",
+    candidate %in% c("Hill Harper", "Elissa Slotkin", "Justin Amash", "Sherry O'Donnell", "Sandy Pensier", "Mike Rogers") ~ "U.S. Senate",
+    candidate %in% c("Callie Barr", "Bob Lorinser", "Jack Bergman") ~ "U.S. House"
+  )) |> 
+  select(office, everything())
+
+benzie_2024
+```
+If we wanted to finish the job, the rest is pretty similar, and then we'd make a single row for each precinct.
+
+All things considered, that was pretty easy. But take a look at the second page of results, and you'll see more issues. Many - most? - electronic PDFs aren't so easy to parse. Sometimes you'll need to open the exported CSV file and clean things up before importing into R. Other times you'll be able to do that cleaning in R itself.
 
 Here's the sad truth: THIS IS PRETTY GOOD. It sure beats typing it out. And since many government processes don't change all that much, you can save the code to process subsequent versions of PDFs.
