@@ -33,7 +33,7 @@ To use the API, you need to [an API key from the Census Bureau](https://api.cens
 **Task** Replace YOUR KEY HERE in the codeblock below with your Census API Key (leave the quotemarks).
 
 ```{r echo=FALSE}
-census_api_key("YOUR KEY HERE", install=TRUE)
+#census_api_key("YOUR KEY HERE", install=TRUE)
 ```
 
 The `install=TRUE` part saves your key for future use.
@@ -187,7 +187,7 @@ What we're going to do next is a lot, but each step is simple. We're going to jo
 ```{r}
 md10 |>
   # join md10 to md20 using the shared GEOID and NAME columns
-  inner_join(md22, by=c("GEOID", "NAME")) |>
+  inner_join(md22, join_by(GEOID, NAME)) |>
   # rename the first estimate to clarify that it's from 2010 and the second estimate to clarify that it's from 2020
   rename(estimate2010=estimate.x, estimate2022=estimate.y) |>
   mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2022 = estimate2022-moe.y, max2022 = estimate2022+moe.y) |>
@@ -222,13 +222,13 @@ top_zips <- md_contribs |>
 
 Note that the year is 2019, which is the latest year that we have data from every zip code in the state. As you drill down into smaller geographic units, you sacrifice more recent data.
 
-Of the 20 zip codes with the largest amounts, which ones have estimated median household incomes of less than \$50,000? 
+Of the 20 zip codes with the largest amounts, which ones have estimated median household incomes of less than \$50,000?
 
 **Answer**
 
 ```{r}
 md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
-md_zips_with_acs <- top_zips |> left_join(md_zipcodes, by=c('zip5'='GEOID'))
+md_zips_with_acs <- top_zips |> left_join(md_zipcodes, join_by(zip5==GEOID))
 md_zips_with_acs <- md_zips_with_acs |> mutate(min=(estimate-moe), max=(estimate+moe))
 ```
 
