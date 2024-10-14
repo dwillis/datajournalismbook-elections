@@ -32,7 +32,7 @@ library(tidycensus)
 
 You'll need your Census API Key:
 
-**Task** set your API Key _only_ if you haven't already
+**Task** set your API Key *only* if you haven't already
 
 ```{r echo=FALSE}
 census_api_key("YOUR API KEY", overwrite=TRUE)
@@ -49,16 +49,16 @@ You'll also need to load the list of American Community Survey variables from th
 
 ## Answer questions
 
-**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2022 5-year estimates? You will need to find the variable for median age first. 
+**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2022 5-year estimates? You will need to find the variable for median age first.
 
-**A1** 
+**A1**
 
 ```{r}
 ```
 
-**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. 
+**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50.
 
-**A2** 
+**A2**
 
 ```{r}
 ```
@@ -77,25 +77,23 @@ Load the two CSV files in the `data` folder: one containing the ballot choices o
 
 **Q3** Let's answer some basic questions about ticket-splitting: how many voters voted for different parties in the governor and comptroller's race? How many voted for the same party in both races? What percentage of all voters split their tickets in those races? In how many cases did voters choose the same party in all five contests? What percentage of all voters does that represent?
 
-**A3** 
+**A3**
 
 ```{r}
 
 ```
 
-**Q4** Now let's look for the zip codes where voters preferred Republicans in every race _except_ the governor's race, where Dan Cox lost to Wes Moore by a wide margin. Write code to generate a dataframe of zip codes with the number of those voters for each of those zip codes, ordering the dataframe so that the zip code with the most ticket-splitters appears first.
+**Q4** Now let's look for the zip codes where voters preferred Republicans in every race *except* the governor's race, where Dan Cox lost to Wes Moore by a wide margin. Write code to generate a dataframe of zip codes with the number of those voters for each of those zip codes, ordering the dataframe so that the zip code with the most ticket-splitters appears first.
 
-**A4** 
+**A4**
 
 ```{r}
 
 ```
-
 
 **Q5** Let's find out more about those zip codes from A4. Using tidycensus, get a dataframe of Maryland zip codes and their median ages, then join it to the dataframe you produced in A4. NOTE: you'll need to ensure that the two columns you use for the join are the same datatype. Summarize your findings; how would you describe the zip codes with more non-Cox Republicans compared to those with fewer? Where are those leading zip codes located?
 
-**A5** 
+**A5**
 
 ```{r}
 ```
-
