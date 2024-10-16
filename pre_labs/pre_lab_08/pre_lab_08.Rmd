@@ -1,7 +1,7 @@
 ---
-title: "pre_lab_09.Rmd"
-author: "sean mussenden"
-date: "8/24/2021"
+title: "pre_lab_08.Rmd"
+author: "Derek Willis"
+date: "2024-10-16"
 output: html_document
 ---
 
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Chapter 17
+## Chapter 21
 
 Visualizing data is becoming a much greater part of journalism. Large news organizations are creating graphics desks that create complex visuals with data to inform the public about important events.
 
