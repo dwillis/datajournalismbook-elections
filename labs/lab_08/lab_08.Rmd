@@ -1,7 +1,7 @@
 ---
 title: "lab_09"
 author: "derek willis"
-date: "10/26/2022"
+date: "2024-10-21"
 output: html_document
 ---
 
@@ -24,60 +24,62 @@ options(scipen=999)
 
 **Task** Create a codeblock and load the following data from the data folder:
 
-* Maryland active registered voters - `md_active_voters.csv`
-* Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
+-   Maryland active registered voters - `md_active_voters.csv`
+-   Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
 
 You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
 
 ```{r}
 ```
 
-## Questions 
+## Questions
 
 **Q1.** Which county has the highest percentage of total absentee ballots returned of total ballots sent? Make a bar chart of the top 10 counties. Your bar chart must have:
 
-* A clear title that states the main idea/finding
-* Good labels for the x & y axis and a caption for the source, which is the Maryland State Board of Elections
-* Readable bars - the values shouldn't be overlapping
+-   A clear title that states the main idea/finding
+-   Good labels for the x & y axis and a caption for the source, which is the Maryland State Board of Elections
+-   Readable bars - the values shouldn't be overlapping
 
-**A1.** 
+**A1.**
 
 ```{r}
 ```
 
 **Q2.** What are the top 10 counties with the lowest percentage of ballots returned by Democratic voters, and what is the difference between the percentage returned for Democrats and Republicans in those counties? You MUST do the following things when answering this question:
 
-* Make a codeblock below to write your code in.
-* Calculate the percentage of ballots returned by both Democrats and Republicans.
-* Arrange the dataframe to show the counties with the smallest percentage of returned ballots from Democrats first.
-* Use ggplot to make a horizontal bar chart that shows just the first 10 counties, with the length of the bar determined by the county's percentage of ballots returned by Democrats. Give it an appropriate title, source, and x and y axis titles. 
+-   Make a codeblock below to write your code in.
+-   Calculate the percentage of ballots returned by both Democrats and Republicans.
+-   Arrange the dataframe to show the counties with the smallest percentage of returned ballots from Democrats first.
+-   Use ggplot to make a horizontal bar chart that shows just the first 10 counties, with the length of the bar determined by the county's percentage of ballots returned by Democrats. Give it an appropriate title, source, and x and y axis titles.
 
-**A2.** 
+**A2.**
+
 ```{r}
 ```
 
-**Q3.**  A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis.  For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid. 
+**Q3.** A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis. For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid.
 
-Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable.  A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html). The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
+Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable. A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html). The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
 
 ```{r}
 knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
 ```
 
-We're going to use a scatterplot a little differently, to get a visual sense of two key variables: 
+We're going to use a scatterplot a little differently, to get a visual sense of two key variables:
 
 Our questions include: Does the percentage of returned ballots by younger voters vary depending on the percentage of younger residents? Are there differences in party and gender? Do certain counties have a higher number of younger voters casting ballots early?
 
 To answer those questions, do the following:
 
-1. Load in the early voting data here: https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv and isolate the 18-24 age group.
-2. Create a dataframe adding up the total number of early votes cast, grouping by GEOID, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
-3. Replace that dataframe with a version that uses `pivot_wider` to turn the gender values into columns (https://tidyr.tidyverse.org/reference/pivot_wider.html#ref-examples), rename the NA column to "UNK" and then replace any NAs in the gender columns with 0s using the same approach you used in step 2. Finally, calculate the total number of votes cast and the percentage of male and female early voters for each county.
-4. Make a scatterplot showing the percentage of early votes cast by gender in each county, with male and female on separate axes. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
-4. Give it an appropriate title, source, and x and y axis titles.
-5. Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible - 
-6. In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
+1.  Load in the early voting data here: <https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv> and isolate the 18-24 age group.
+2.  Create a dataframe adding up the total number of early votes cast, grouping by GEOID, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
+3.  Replace that dataframe with a version that uses `pivot_wider` to turn the gender values into columns (<https://tidyr.tidyverse.org/reference/pivot_wider.html#ref-examples>), rename the NA column to "UNK" and then replace any NAs in the gender columns with 0s using the same approach you used in step 2. Finally, calculate the total number of votes cast and the percentage of male and female early voters for each county.
+4.  Make a scatterplot showing the percentage of early votes cast by gender in each county, with male and female on separate axes. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
+5.  Give it an appropriate title, source, and x and y axis titles.
+6.  Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible -
+7.  In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
 **A3.**
+
 ```{r}
 ```
