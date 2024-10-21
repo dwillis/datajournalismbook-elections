@@ -34,7 +34,7 @@ The dataset we'll use is voter registration data by county in Maryland from 2020
 **Task** Run the following code to load the data. In the space below, indicate how many rows and columns it has. **Answer**
 
 ```{r}
-md_voters <- read_csv("data/maryland_voters_2020_2022.csv")
+md_voters <- read_csv("data/maryland_voters_2024_2022.csv")
 ```
 
 ## Bar charts
@@ -45,18 +45,23 @@ It's a chart designed to show differences between things -- the magnitude of one
 
 So if we have thing, like a county, or a state, or a group name, and then a count of that group, we can make a bar chart.
 
-So what does the chart of the top 10 maryland counties with the biggest change in registered voters from 2020 to 2022 look like?
+So what does the chart of the top 10 maryland counties with the biggest change in unaffiliated voters from 2024 to 2022 look like?
 
 First, we'll create a dataframe of those top 10, called maryland_top_counties.
 
-### Task 3: Create a dataframe of top 10 counties for registered voter change in Maryland
+### Task 3: Create a dataframe of top 10 counties for unaffiliated voter change in Maryland
 
-**Task** Run the following code to create a dataframe of top 10 counties with the biggest change in registered voters in Maryland. In the space below, explain what each step of the code below is doing in English. **Answer**
+**Task** Complete and run the following code to create a dataframe of top 10 counties with the biggest change in unaffiliated voters in Maryland. In the space below, explain what each step of the code below is doing in English. 
+**Answer**
 
 ```{r}
+
+md_voters <- md_voters |> 
+  mutate(UNAF_DIFF = ? - ?)
+
 maryland_top_counties <- md_voters |>
-  arrange(desc(TOTAL_DIFF)) |>
-  select(County, TOTAL_DIFF) |> 
+  arrange(desc(UNAF_DIFF)) |>
+  select(County, UNAF_DIFF) |> 
   head(10)
 
 maryland_top_counties
@@ -104,7 +109,7 @@ After we've invoked the ggplot() function, you'll notice we're using a + symbol.
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=County, weight=TOTAL_DIFF))
+  geom_bar(aes(x=County, weight=UNAF_DIFF))
 ```
 
 This is a very basic chart. But it's hard to derive much meaning from this chart, because the counties aren't ordered from highest to lowest by total_loans. We can fix that by using the reorder() function to do just that:
@@ -116,7 +121,7 @@ This is a very basic chart. But it's hard to derive much meaning from this chart
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF))
+  geom_bar(aes(x=reorder(County,UNAF_DIFF), weight=UNAF_DIFF))
 ```
 
 This is a little more useful. But the bottom is kind of a mess, with overlapping names. We can fix that by flipping it from a vertical bar chart (also called a column chart) to a horizontal one. coord_flip() does that for you.
@@ -128,7 +133,7 @@ This is a little more useful. But the bottom is kind of a mess, with overlapping
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF)) +
+  geom_bar(aes(x=reorder(County,UNAF_DIFF), weight=UNAF_DIFF)) +
   coord_flip()
 ```
 
@@ -147,7 +152,7 @@ It's kind of like applying CSS to html. Here I'm changing the theme slightly to 
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF)) +
+  geom_bar(aes(x=reorder(County,UNAF_DIFF), weight=UNAF_DIFF)) +
   coord_flip() + 
   theme_minimal()
 ```
@@ -174,7 +179,7 @@ And now we'll apply the economist theme from that package with theme_economist()
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF)) +
+  geom_bar(aes(x=reorder(County,UNAF_DIFF), weight=UNAF_DIFF)) +
   coord_flip() + 
   theme_economist()
 ```
@@ -188,11 +193,11 @@ Those axis titles are kind of a mess. Let's change "count" on the x axis to "net
 ```{r}
 maryland_top_counties |>
   ggplot() +
-  geom_bar(aes(x=reorder(County,TOTAL_DIFF), weight=TOTAL_DIFF)) +
+  geom_bar(aes(x=reorder(County,UNAF_DIFF), weight=UNAF_DIFF)) +
   coord_flip() + 
   theme_economist() +
   labs(
-    title="Maryland Counties with Biggest Increases in Voters",
+    title="Counties with Biggest Jumps in Unaffiliated Voters",
     x = "net change",
     y = "county",
     caption = "source: Maryland State Board of Elections"
