@@ -1,5 +1,5 @@
 ---
-title: "lab_09"
+title: "lab_08"
 author: "derek willis"
 date: "2024-10-21"
 output: html_document
@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+In this lab we'll be looking at Maryland absentee ballot requests in the 2024 election and making several charts based on that data. The state of Maryland reports the number of ballots sent to voters by counties and the number received by counties from voters. We'll use both types of information.
 
 ## Load libraries and establish settings
 
@@ -24,12 +26,14 @@ options(scipen=999)
 
 **Task** Create a codeblock and load the following data from the data folder:
 
--   Maryland active registered voters - `md_active_voters.csv`
 -   Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
+-   Maryland absentee ballots sent and returned by date - `md_absentee_ballots_date.csv`
 
-You may want to clean up the column names and standardize the names of counties so that they appear identical in the two dataframes.
+You can clean up column names to make them easier to work with if you like, and should ensure that any date columns are actually date formatted.
 
 ```{r}
+# load the data
+
 ```
 
 ## Questions
@@ -40,9 +44,10 @@ You may want to clean up the column names and standardize the names of counties 
 -   Good labels for the x & y axis and a caption for the source, which is the Maryland State Board of Elections
 -   Readable bars - the values shouldn't be overlapping
 
-**A1.**
+**A1.** 
 
 ```{r}
+
 ```
 
 **Q2.** What are the top 10 counties with the lowest percentage of ballots returned by Democratic voters, and what is the difference between the percentage returned for Democrats and Republicans in those counties? You MUST do the following things when answering this question:
@@ -55,9 +60,17 @@ You may want to clean up the column names and standardize the names of counties 
 **A2.**
 
 ```{r}
+
+```
+**Q3** Let's make a line chart using the second set of absentee ballot data - this one tracking returns by date. We want to see received ballots for Frederick County for Democrats, Republicans and Others, so you'll make a chart with three lines, adding color to each one (you can choose, but choose sensibly). Give the chart a title and good labels. What's the story that this line chart tells? Compare and contrast the three lines. Does it match what you know about absentee voting habits?
+
+**A3** 
+
+```{r}
+
 ```
 
-**Q3.** A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis. For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid.
+**Q4.** A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis. For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid.
 
 Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable. A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html). The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
 
@@ -65,21 +78,16 @@ Statisticians use scatterplots to show graphically whether one variable is corre
 knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
 ```
 
-We're going to use a scatterplot a little differently, to get a visual sense of two key variables:
+We're going to use a scatterplot to get a visual sense of two key variables: ballots sent and ballots returned. We want to plot both of those for each county in Maryland. Follow these steps:
 
-Our questions include: Does the percentage of returned ballots by younger voters vary depending on the percentage of younger residents? Are there differences in party and gender? Do certain counties have a higher number of younger voters casting ballots early?
+1. Using the first dataframe (the one without dates), make a scatterplot showing the number of ballots sent on one axis and the number received on the other axis. The pre_lab didn't show you how to do this, so look it up! https://ggplot2.tidyverse.org/reference/geom_point.html?q=geom_point#aesthetics is a good start.
+2. Give it an appropriate title, source, and x and y axis titles.
+3. Try to add a label for each point that shows the name of the county using geom_text(). You might need to find alternative ways to do this to make them readable.
+4. Add a line of fit to the plot using geom_smooth (https://ggplot2.tidyverse.org/reference/geom_smooth.html#ref-examples). Specify the method as lm.
+5. In the answer space below, describe what you see. In a general sense, how would you report out the main point(s) of this chart? Are there counties that seem to be over or under-performing in relation to the overall trend?
 
-To answer those questions, do the following:
-
-1.  Load in the early voting data here: <https://elections.maryland.gov/press_room/2022_stats/GG22/EarlyVoting%20RAW%20data.csv> and isolate the 18-24 age group.
-2.  Create a dataframe adding up the total number of early votes cast, grouping by GEOID, county name and gender among 18-24 year-olds. To do this, you will need to make sure that all of the early voting totals for Days 1-6 DO NOT have NA values. You should change those values to 0 and exclude Day 7 and Day 8 entirely.
-3.  Replace that dataframe with a version that uses `pivot_wider` to turn the gender values into columns (<https://tidyr.tidyverse.org/reference/pivot_wider.html#ref-examples>), rename the NA column to "UNK" and then replace any NAs in the gender columns with 0s using the same approach you used in step 2. Finally, calculate the total number of votes cast and the percentage of male and female early voters for each county.
-4.  Make a scatterplot showing the percentage of early votes cast by gender in each county, with male and female on separate axes. I didn't show you how to do this, so look it up! Googling "ggplot scatterplot" is a good start.
-5.  Give it an appropriate title, source, and x and y axis titles.
-6.  Add a label for each point that shows the name of the county using geom_text(). Try to make the names as easy to read as possible -
-7.  In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
-
-**A3.**
+**A4.** 
 
 ```{r}
+
 ```
