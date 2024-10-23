@@ -33,7 +33,6 @@ You can clean up column names to make them easier to work with if you like, and 
 
 ```{r}
 # load the data
-
 ```
 
 ## Questions
@@ -78,7 +77,9 @@ Statisticians use scatterplots to show graphically whether one variable is corre
 knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
 ```
 
-We're going to use a scatterplot to get a visual sense of two key variables: ballots sent and ballots returned. We want to plot both of those for each county in Maryland. Follow these steps:
+We're going to use a scatterplot to get a visual sense of two key variables: ballots sent and ballots returned. We want to plot both of those for each county in Maryland. IMPORTANT: you need to choose whether you use total ballots or one of the parties.
+
+Follow these steps:
 
 1. Using the first dataframe (the one without dates), make a scatterplot showing the number of ballots sent on one axis and the number received on the other axis. The pre_lab didn't show you how to do this, so look it up! https://ggplot2.tidyverse.org/reference/geom_point.html?q=geom_point#aesthetics is a good start.
 2. Give it an appropriate title, source, and x and y axis titles.
@@ -90,4 +91,5 @@ We're going to use a scatterplot to get a visual sense of two key variables: bal
 
 ```{r}
 
+  
 ```
