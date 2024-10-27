@@ -1,7 +1,7 @@
- ---
+---
 title: "pre_lab_09.Rmd"
-author: "derek willis"
-date: "2024-08-14"
+author: "Derek Willis"
+date: "2024-10-27"
 output: html_document
 ---
 
@@ -108,7 +108,7 @@ md_gov_county <- read_csv("data/md_gov_county.csv")
 
 In order to make a map, we need to be able to tell Datawrapper that a certain column contains geographic information (besides the name of the county). The easiest way to do that for U.S. maps is to use something called a [FIPS Code](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You should read about them so you understand what they are, and think of them as a unique identifier for some geographical entity like a state or county. Our md_gov_county dataframe has a FIPS code for each county, but if you ever need one for a county, this is a solved problem thanks to the Tigris library that we used in pre_lab 9.
 
-**Task** Write code to add columns showing the total number of votes for each county and the percentage of votes received by Wes Moore in each county (you did this in Lab 9!), then replace the CSV file in the data folder with it.
+**Task** Write code to add columns showing the total number of votes for each county and the percentage of votes received by Wes Moore in each county, then replace the CSV file in the data folder with it.
 
 ```{r}
 
