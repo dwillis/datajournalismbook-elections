@@ -1,7 +1,7 @@
 ---
-title: "lab_10.Rmd"
+title: "lab_09.Rmd"
 author: "derek willis"
-date: "11/10/2022"
+date: "2024-10-27"
 output: html_document
 ---
 
@@ -11,8 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* A Datawrapper account
-* Election data in CSV files in the `data` folder
+-   A Datawrapper account
+-   Election data in CSV files in the `data` folder
 
 ## Load libraries and establish settings
 
@@ -24,45 +24,53 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Questions
 
-**Q1.** In the previous lab, you made a map showing the difference between the electoral performances of Dan Cox in 2022 and Larry Hogan in 2018. Except a map is probably not the best way to show that. Let's make a chart instead, and the type is up to you, but the goal is to clearly show the differences between the two.
-
-You MUST do the following things when answering this question:
-* Load the `md_county_gov.csv` and `md_county_gov_18.csv` files in the data folder
-* Join those dataframes, specifying the join column. You should add columns to generate percentages for Cox and Hogan.
-* Export that joined dataframe to a CSV file using `write_csv`.
-* Using that exported CSV, make a chart with Datawrapper. What kind of chart is up to you, so experiment with a few kinds of charts to see what answers the question above in the clearest way. Your chart MUST:
-  * Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
-  * Easily readable labels and values
-* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this)
-* Put the answer below along with the URL of your chart.
-
-**A1.** 
-
-```{r}
-```
-
-**Q2.** You're interested in seeing how the methods of voting have changed in Maryland since 2018. Using the `md_votes_by_type.csv` that has data from the top of the ticket (governor in 2018 and 2022, president in 2020), make a chart showing the percentage of votes cast in each category - early voting, election day and mail - over the three years. You'll need to make those percentages in R and then export the CSV using `write_csv`, then make the chart in Datawrapper. Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+**Q1.** You're interested in seeing how the methods of voting have changed in Maryland since 2018. Using the `md_votes_by_type.csv` that has data from the top of the ticket (governor in 2018 and 2022, president in 2020), make a chart showing the percentage of votes cast in each category - early voting, election day and mail - over the three years. You'll need to make those percentages in R and then export the CSV using `write_csv`, then make the chart in Datawrapper. Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
 
 HINT: In Datawrapper's "Check and Describe" tab, you can click on a column to get the option of "hiding" it in any visualization.
 
 What do you think the story here is? Put the answer below along with the URL of your chart.
 
-**A2.** 
+**A1.**
 
 ```{r}
 ```
 
+**Q2.** You've been assigned to track early-voting turnout in Maryland at the county level. To do that, you'll create a dataframe using [the data available at this URL](https://elections.maryland.gov/press_room/2024_stats/PG24/EarlyVoting%20RAW%20data.csv). The question the chart should answer is also up to you, but must focus on at least one of the following columns: GENDER_CODE, AgeGroup, PARTY_CODE This data is at the precinct level, so after loading it, you will need to remove the `Day` columns AFTER the 6th day and write code to group by county and at least one of the columns above, and then generate a total number of votes per county.
 
-**Q3.** You want to know the geography of ActBlue donors who live in Maryland, so load in the `md_actblue_zip.csv` file in the data folder and calculate a grand total of the totals for each zip code in the dataframe. Using that total, calculate a percentage of the total for each zip code (you can hard code that number). The export the dataframe using `write_csv` and make a choropleth map in Datawrapper. You will need to:
+What kind of chart is up to you, so experiment with a few kinds of charts to see what works best. You might end up rewriting code and re-exporting the CSV.
 
-* Search for Maryland zip codes (use the 2020 data) as the base map
-* Upload the CSV file
-* Change the tooltip to show both the amount and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
-* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect.
+You MUST do the following things when answering this question: 
 
-What do you think the story here is, and what would you want to know more about? Put the answer below along with the URL of your chart.
+\* Export that dataframe to a CSV file using `write_csv`. 
+\* Using that exported CSV, make a chart with Datawrapper. 
 
-**A3.** 
+Your chart MUST: 
+
+\* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect. 
+\* Easily readable labels and values 
+\* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this) 
+\* Put the question you chose to answer below along, with the URL of your chart.
+
+**A2.** 
+
+```{r}
+
+```
+
+**Q3.** After reading the recent CNN story about fundraising called "[How elderly dementia patients are unwittingly fueling political campaigns](https://www.cnn.com/interactive/2024/10/politics/political-fundraising-elderly-election-invs-dg/)," you decide to dig into the habits of Maryland political donors who give money via ActBlue and WinRed.
+
+You want to know about their political geography - where they live - and the frequency of donations, among other things. To do that, you'll load in two CSV files: `md_winred_zip_totals.csv` and `md_actblue_zip_totals.csv` and calculate a grand total of the totals for each zip code in each dataframe. 
+
+Using that total, calculate a percentage of the total for every zip code (you can hard code that number) in each dataframe. The export each dataframe using `write_csv` and make two (2) choropleth maps in Datawrapper. For each map, you will need to:
+
+-   Search for Maryland zip codes (use the 2020 data) as the base map
+-   Upload the CSV file
+-   Change the tooltip to show both the number of donations and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
+-   Have a title, description and source that tells readers about the data (the source is the Federal Election Commission, and the data covers Jan. 1, 2023 through Oct. 16, 2024). The title and description should highlight the most newsworthy or important aspect.
+
+What do you think are the most interesting ideas in both maps, and what would you want to know more about? Put the answer below along with the URLs of your maps.
+
+**A3.**
 
 ```{r}
 ```
