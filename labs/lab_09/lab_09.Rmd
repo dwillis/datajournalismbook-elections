@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   A Datawrapper account
 -   Election data in CSV files in the `data` folder
+-   Tidycensus
 
 ## Load libraries and establish settings
 
@@ -35,42 +36,47 @@ What do you think the story here is? Put the answer below along with the URL of 
 ```{r}
 ```
 
-**Q2.** You've been assigned to track early-voting turnout in Maryland at the county level. To do that, you'll create a dataframe using [the data available at this URL](https://elections.maryland.gov/press_room/2024_stats/PG24/EarlyVoting%20RAW%20data.csv). The question the chart should answer is also up to you, but must focus on at least one of the following columns: GENDER_CODE, AgeGroup, PARTY_CODE This data is at the precinct level, so after loading it, you will need to remove the `Day` columns AFTER the 6th day and write code to group by county and at least one of the columns above, and then generate a total number of votes per county.
+**Q2.** You've been assigned to track early-voting turnout in Maryland at the county level. To do that, use [data from the state](https://elections.maryland.gov/press_room/2024_stats/PG24/EarlyVoting%20RAW%20data.csv). YOU DO NOT NEED TO LOAD THIS FILE. I've created several CSV files; each has a row for each day, with the counties as columns, so you can track early voting turnout in certain categories. The available files are:
 
-What kind of chart is up to you, so experiment with a few kinds of charts to see what works best. You might end up rewriting code and re-exporting the CSV.
+* ev_totals_18_24.csv - early voting turnout by the 18-24 age group
+* ev_totals_65_up.csv - early voting turnout by the 65+ age group
+* ev_totals_rep.csv - early voting turnout by Republicans
+* ev_totals_dem.csv - early voting turnout by Democrats
+* ev_totals_women.csv - early voting turnout by women
+* ev_totals_men.csv - early voting turnout by men
 
-You MUST do the following things when answering this question: 
-
-\* Export that dataframe to a CSV file using `write_csv`. 
-\* Using that exported CSV, make a chart with Datawrapper. 
+Which file you use to make your chart, and what kind of chart is up to you (but it MUST be a chart, not a map or table), so experiment to see what works best. Since we have data over time, you might start with a line chart, but you might not end up there. You can display all counties, or just some of them - to limit the number of counties, you'll need to write code to select only the columns that you need and then use `write_csv()` to export the dataframe to a CSV file that you'll use in Datawrapper.
 
 Your chart MUST: 
 
 \* Have a title, description and source that tells readers about the data. The title and description should highlight the most newsworthy or important aspect. 
 \* Easily readable labels and values 
-\* Publish your chart (you may need to confirm your Datawrapper account if you haven't already in order to do this) 
+\* Be published
 \* Put the question you chose to answer below along, with the URL of your chart.
 
 **A2.** 
 
 ```{r}
-
 ```
 
 **Q3.** After reading the recent CNN story about fundraising called "[How elderly dementia patients are unwittingly fueling political campaigns](https://www.cnn.com/interactive/2024/10/politics/political-fundraising-elderly-election-invs-dg/)," you decide to dig into the habits of Maryland political donors who give money via ActBlue and WinRed.
 
-You want to know about their political geography - where they live - and the frequency of donations, among other things. To do that, you'll load in two CSV files: `md_winred_zip_totals.csv` and `md_actblue_zip_totals.csv` and calculate a grand total of the totals for each zip code in each dataframe. 
+You want to show Maryland's political geography - where those donors live - and the frequency of donations. To do that, you'll load in two CSV files: `md_winred_zip_totals.csv` and `md_actblue_zip_totals.csv`.
 
-Using that total, calculate a percentage of the total for every zip code (you can hard code that number) in each dataframe. The export each dataframe using `write_csv` and make two (2) choropleth maps in Datawrapper. For each map, you will need to:
+You also will need to get population by zip code for Maryland - we did a similar thing in a previous lab, but this time you want the total population as your variable. Use tidycensus to do that, and save that dataframe, then join it to each of your contribution dataframes - you will need to make sure that the zip codes you're joining on are the same datatype.
+
+In each dataframe, use the _number of donations_ to calculate a per capita rate of the number of donations per 1,000 population for each zip code using `mutate()`. Calculating a rate works like this: it's the thing you're counting divided by the population times the "per" number.
+
+Then export each dataframe using `write_csv` and make two (2) choropleth maps in Datawrapper. For each map, you will need to:
 
 -   Search for Maryland zip codes (use the 2020 data) as the base map
 -   Upload the CSV file
--   Change the tooltip to show both the number of donations and the percentage (you can put them side by side or put one under the other). Make sure to properly format both numbers to make them readable.
+-   Change the tooltip to show both the rate of donations and the total amount (you can put them side by side or put one under the other, as we did in the pre_lab). Make sure to properly format both numbers to make them readable.
 -   Have a title, description and source that tells readers about the data (the source is the Federal Election Commission, and the data covers Jan. 1, 2023 through Oct. 16, 2024). The title and description should highlight the most newsworthy or important aspect.
 
-What do you think are the most interesting ideas in both maps, and what would you want to know more about? Put the answer below along with the URLs of your maps.
+Compare the two maps. What do you think are the most interesting story ideas in both, and what would you want to know more about? Put the answer below along with the URLs of your maps.
 
-**A3.**
+**A3.** 
 
 ```{r}
 ```
