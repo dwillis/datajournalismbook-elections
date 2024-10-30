@@ -36,12 +36,13 @@ What do you think the story here is? Put the answer below along with the URL of 
 ```{r}
 ```
 
-**Q2.** You've been assigned to track early-voting turnout in Maryland at the county level. To do that, use [data from the state](https://elections.maryland.gov/press_room/2024_stats/PG24/EarlyVoting%20RAW%20data.csv). YOU DO NOT NEED TO LOAD THIS FILE. I've created several CSV files; each has a row for each day, with the counties as columns, so you can track early voting turnout in certain categories. The available files are:
+**Q2.** You've been assigned to track early-voting turnout in Maryland at the county level. To do that, use [data from the state](https://elections.maryland.gov/press_room/2024_stats/PG24/EarlyVoting%20RAW%20data.csv). YOU DO NOT NEED TO LOAD THIS FILE. I've created several CSV files from it; each has a row for each day, with the counties as columns, so you can track early voting turnout in certain categories. The available files in the data folder are:
 
 * ev_totals_18_24.csv - early voting turnout by the 18-24 age group
 * ev_totals_65_up.csv - early voting turnout by the 65+ age group
 * ev_totals_rep.csv - early voting turnout by Republicans
 * ev_totals_dem.csv - early voting turnout by Democrats
+* ev_totals_una.csv - early voting turnout by unaffiliated voters
 * ev_totals_women.csv - early voting turnout by women
 * ev_totals_men.csv - early voting turnout by men
 
@@ -53,6 +54,8 @@ Your chart MUST:
 \* Easily readable labels and values 
 \* Be published
 \* Put the question you chose to answer below along, with the URL of your chart.
+
+Tell me below why you picked the CSV you did. If you made any changes to the data, put that code below.
 
 **A2.** 
 
