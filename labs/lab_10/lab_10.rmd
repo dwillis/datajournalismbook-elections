@@ -1,7 +1,7 @@
 ---
-title: "lab_09"
+title: "lab_10"
 author: "Derek Willis"
-date: "11/09/2022"
+date: "2024-10-29"
 output: html_document
 ---
 
@@ -11,8 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* the tidyverse, janitor and tigris libraries
-* you might choose to use the tidycensus library for Q3
+-   the tidyverse, janitor and tigris libraries
+-   you might choose to use the tidycensus library for Q3
 
 ## Load libraries and establish settings
 
@@ -26,36 +26,36 @@ options(scipen=999)
 
 ```
 
-Let's explore the election results from last night and make some maps! 
+Let's explore the election results from last night and make some maps!
 
-## Questions 
+## Questions
 
-**Q1.** Make a county-level map of Maryland's results for governor using `md_gov_county.csv` in the data folder, calculating the difference between Wes Moore's percentage of the total votes and Dan Cox's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
+**Q1.** Make a county-level map of Maryland's results for president using `md_pres_county.csv` in the data folder, calculating the difference between Kamala Harris's percentage of the total votes and Donald Trump's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
 
-**A1.**  
+**A1.**
 
 ```{r}
 ```
 
-**Q2.** Make another map showing the difference between Dan Cox's county-level performance in 2022 and Larry Hogan's in 2018, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2018 governor results in the data folder and join them to it before proceeding. Are there any counties where Cox got a higher percentage than Hogan? How would you describe the map showing the Hogan-Cox difference?
+**Q2.** Make another map showing the difference between Donald Trump's county-level performance this year and Larry Hogan's, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2024 U.S. Senate results in the data folder and join them to it before proceeding. Are there any counties where Trump got a higher percentage than Hogan? How would you describe the map showing the Trump-Hogan difference?
 
 Also answer this: is a map the best way to present this data? What else could you make that might convey more information?
 
-**A2.** 
+**A2.**
 
 ```{r}
 ```
 
-**Q3** Which county has the highest percentage of mail ballots remaining to be counted? Using the `mail_remaining.csv` file in the data folder, calculate the percentage of mail ballots remaining, then map a county map of those percentages. Looking at both the map and the data, are there counties where the candidate currently leading the governor's race could, in theory, change?
+**Q3** Which county has the highest percentage of mail ballots remaining to be counted? Using the `mail_remaining.csv` file in the data folder, calculate the percentage of mail ballots remaining, then map a county map of those percentages. Looking at both the map and the data, are there counties where the candidate currently leading the U.S. Senate race could, in theory, change?
 
-**A3** 
+**A3**
 
+**Q4.** Choose your own map adventure! In the data folder I've included county-level results for several other 2024 contests, including U.S. House races and the constitutional amendment on abortion. I've also added the 2020 presidential results by county and 2018 governor's results by county. Using one of the races that we haven't already used and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
 
-**Q4.** Choose your own map adventure! In the data folder I've included county-level results for several other 2022 contests, including the Comptroller, Attorney General and the marijuana legalization amendment. I've also added the 2020 presidential results by county. Using one of the 2022 races that we haven't already used and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
-
-**A4.**  
+**A4.**
 
 ```{r}
 
 ```
+
 -30-
