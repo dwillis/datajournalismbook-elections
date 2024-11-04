@@ -269,6 +269,7 @@ Ultimately, we're going to join this county population table with our voters by 
 md_county_population <- get_acs(geography = "county",
               variables = c(population = "B01001_001"),
               state = "MD",
+              year = 2022,
               geometry = TRUE)
 
 md_county_population
