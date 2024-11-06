@@ -1,7 +1,7 @@
 ---
 title: "lab_10"
 author: "Derek Willis"
-date: "2024-10-29"
+date: "2024-11-06"
 output: html_document
 ---
 
@@ -30,14 +30,14 @@ Let's explore the election results from last night and make some maps!
 
 ## Questions
 
-**Q1.** Make a county-level map of Maryland's results for president using `md_pres_county.csv` in the data folder, calculating the difference between Kamala Harris's percentage of the total votes and Donald Trump's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
+**Q1.** Make a county-level map of Maryland's results for U.S. Senate using `md_senate_county_24.csv` in the data folder, calculating the difference between Angela Alsobrooks's percentage of the total votes and Larry Hogan's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
 
 **A1.**
 
 ```{r}
 ```
 
-**Q2.** Make another map showing the difference between Donald Trump's county-level performance this year and Larry Hogan's, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2024 U.S. Senate results in the data folder and join them to it before proceeding. Are there any counties where Trump got a higher percentage than Hogan? How would you describe the map showing the Trump-Hogan difference?
+**Q2.** Make a county-level map showing the difference between Donald Trump's county-level performance this year and Larry Hogan's, using percentages to compare the two as you did in Q1. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2024 presidential results in the data folder and join them to it before proceeding. Are there any counties where Trump got a higher percentage than Hogan? How would you describe the map showing the Trump-Hogan difference?
 
 Also answer this: is a map the best way to present this data? What else could you make that might convey more information?
 
@@ -46,11 +46,14 @@ Also answer this: is a map the best way to present this data? What else could yo
 ```{r}
 ```
 
-**Q3** Which county has the highest percentage of mail ballots remaining to be counted? Using the `mail_remaining.csv` file in the data folder, calculate the percentage of mail ballots remaining, then map a county map of those percentages. Looking at both the map and the data, are there counties where the candidate currently leading the U.S. Senate race could, in theory, change?
+**Q3** Make another map showing the difference between Larry Hogan's county-level performance this year and from his governor race in 2018, using percentages to compare the two as you did in Q2. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2018 governor results in the data folder and join them to it before proceeding. Are there any counties where Hogan did better this year? How would you describe the map showing the difference?
 
 **A3**
 
-**Q4.** Choose your own map adventure! In the data folder I've included county-level results for several other 2024 contests, including U.S. House races and the constitutional amendment on abortion. I've also added the 2020 presidential results by county and 2018 governor's results by county. Using one of the races that we haven't already used and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
+```{r}
+```
+
+**Q4.** Choose your own map adventure! In the data folder I've included Maryland county-level results for the abortion rights amendment vote this year, plus the 2020 presidential results by county and 2022 governor's results by county. Using one of those and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
 
 **A4.**
 
