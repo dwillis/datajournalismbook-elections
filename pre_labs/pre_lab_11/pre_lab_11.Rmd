@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_11.Rmd"
 author: "derek willis"
-date: "2024-08-14"
+date: "2024-11-07"
 output: html_document
 ---
 
@@ -38,9 +38,9 @@ library(tidyverse)
 library(janitor)
 ```
 
-For this example, we're going to work on loading a simple table of data from the Maryland State Board of Elections. This is a table of unofficial county-level election results for the Attorney General's race from the November general election.
+For this example, we're going to work on loading a simple table of data from the Maryland State Board of Elections. This is a table of unofficial county-level election results for the Presidential race from the November general election.
 
-Let's suppose we can't find a table like that for download, but we do see a version on the SBOE website at this URL: <https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html>.
+Let's suppose we can't find a table like that for download, but we do see a version on the SBOE website at this URL: <https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html>.
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/rvest1.png"))
@@ -57,21 +57,21 @@ Why would we ever write code to grab a single table? There's several reasons:
 3.  If we're doing it manually, we're more likely to make a mistake, like maybe failing to copy every row from the whole table.
 4.  It's good practice to prepare us to do more complex scraping jobs. As we'll see in the next chapter, if we ever want to grab the same table from hundreds of pages, writing code is much faster and easier than going to a hundred different pages ourselves and downloading data.
 
-So, to scrape, the first thing we need to do is start with the URL. Let's store it as an object called ag_url.
+So, to scrape, the first thing we need to do is start with the URL. Let's store it as an object called pres_url.
 
 ### Task 2: Save the URL as a variable
 
 **Task** Run the following code in the gray-colored codeblock below to save the URL
 
 ```{r}
-ag_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html"
+pres_url <- "https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html"
 ```
 
 When we go to the web page, we can see a nicely-designed page that contains our information.
 
 But what we really care about, for our purposes, is the html code that creates that page.
 
-In our web browser, if we right-click anywhere on the page and select "view source" from the popup menu, we can see the source code. Or you can just copy this into Google Chrome: <view-source:https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_3_1.html>.
+In our web browser, if we right-click anywhere on the page and select "view source" from the popup menu, we can see the source code. Or you can just copy this into Google Chrome: <view-source:https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html>.
 
 Here's a picture of what some of the source code looks like.
 
@@ -91,7 +91,7 @@ Let's write a bit of code to tell R to go to the URL for the page and ingest all
 
 ```{r}
 # read in the html
-results <- ag_url |>
+results <- pres_url |>
   read_html()
 
 # display the html below
@@ -129,7 +129,7 @@ Because it's inside of a table, and not some other kind of element (like a `<div
 
 ```{r}
 # read in the html and extract all the tables
-results <- ag_url |>
+results <- pres_url |>
   read_html() |>
   html_table()
 
@@ -150,7 +150,7 @@ So, all we need to do now is to store that single dataframe as an object. We can
 
 ```{r}
 # Read in all html from table, store all tables on page as nested list of dataframes.
-results <- ag_url |>
+results <- pres_url |>
   read_html() |>
   html_table()
 
@@ -171,11 +171,11 @@ Then let's use slice() to remove the last row -- row number 25 -- which contains
 
 ### Task 6: Clean up the data
 
-**Task** Run the following code to extract the table we want, clean up the names and remove the total row. Look at the rename() function - what do you think the numbers 2, 3 and 4 are referring to? **Answer**
+**Task** Run the following code to extract the table we want, clean up the names and remove the total row. Look at the rename() function - what do you think the numbers 2 through 6 are referring to? **Answer**
 
 ```{r}
 # Read in all html from table, get the HTML table.
-results <- ag_url |>
+results <- pres_url |>
   read_html() |>
   html_table()
 
@@ -183,18 +183,21 @@ results <- ag_url |>
 
 results <- results[[1]] |>
   clean_names() |>
-  rename(peroutka = 2, brown = 3, write_ins = 4) |>
+  rename(harris = 2, trump = 3, oliver = 4, stein = 5, kennedy = 6) |>
   slice(-25) |>
-  mutate(peroutka = as.numeric(gsub(",","", peroutka))) |>
-  mutate(brown = as.numeric(gsub(",","", brown))) |>
-  mutate(write_ins = as.numeric(gsub(",","", write_ins)))
+  mutate(harris = as.numeric(gsub(",","", harris))) |>
+  mutate(trump = as.numeric(gsub(",","", trump))) |>
+  mutate(oliver = as.numeric(gsub(",","", oliver))) |> 
+  mutate(stein = as.numeric(gsub(",","", stein))) |> 
+  mutate(kennedy = as.numeric(gsub(",","", kennedy))) |> 
+  select(-sharon_e_harris_write_in_democratic)
 
 # show the dataframe
 results
 
 ```
 
-And there we go. We now have a nice tidy dataframe of Maryland attorney general election results that we could ask some questions of.
+And there we go. We now have a nice tidy dataframe of Maryland presidential election results that we could ask some questions of.
 
 What about HTML that doesn't have a table? Well, that's where things get a bit more complicated, and rely on your ability to read HTML and identify particular elements of it.
 
