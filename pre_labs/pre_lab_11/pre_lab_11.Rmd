@@ -215,15 +215,7 @@ The next step is similar to before, too, except this time we're not going to cal
 
 ### Task 8: Inspect the HTML elements
 
-**Task** Right-click on the first red dot next to "Agriculture" and choose "Inspect". You should see multiple
-
-<li>
-
-tags inside a
-
-<ul>
-
-tag.
+**Task** Right-click on the first red dot next to "Agriculture" and choose "Inspect". You should see multiple <li> tags inside a <ul> tag.
 
 One reason that we use HTML elements like ul and li is to help organize the code and make it easier to maintain. But it also helps with scraping, because we can zero in on the elements we want. Let's start by reading it in:
 
@@ -243,65 +235,47 @@ Once again we get a list of two as our result. In this case, we don't want to is
 
 ### Task 10: Isolate the list of `li` tags inside the HTML using `html_elements`
 
-**Task** Run the following code in the gray-colored codeblock below to find the
-
-<li>
-
-tags. What does the output suggest about how many
-
-<ul>
-
-tags there are in the HTML source? **Answer**
+**Task** Run the following code in the gray-colored codeblock below to find the <li> tags. What does the output suggest about how many <ul> tags there are in the HTML source? **Answer**
 
 ```{r}
 cmte_results |> html_elements('li')
 ```
 
-Good news and bad news here: we have all of the
-
-<li>
-
-tags, but we have lots of them, and it's hard to see any of the committees. Let's see what we're dealing with and just look at the text *inside* the
-
-<li>
+Good news and bad news here: we have all of the <li> tags, but we have lots of them, and it's hard to see any of the committees. Let's see what we're dealing with and just look at the text *inside* the <li>
 
 tags. To do that, we add `html_text()` to the end of the last code block:
 
 ### Task 10: Isolate the text of `li` tags inside the HTML using `html_text`
 
-**Task** Run the following code in the gray-colored codeblock below to find the text inside
-
-<li>
-
-tags. Describe the output: **Answer**
+**Task** Run the following code in the gray-colored codeblock below to find the text inside <li> tags. Describe the output: **Answer**
 
 ```{r}
 cmte_results |> html_elements('li') |> html_text()
 ```
 
-Ok, so now we can see the committee names. But they are surrounded by a bunch of things we don't want, and this *still* isn't a dataframe. Let's solve the second problem first with the `as_tibble()` function:
+Ok, so now we can see the committee names. But they are surrounded by a bunch of things we don't want, and this *still* isn't a dataframe. Let's solve the second problem first with the `tibble()` function, and use `html_attr` to look for the 'href' value inside the `a` tags.
 
-\### Task 11: Turn the contents of the
-
-<li>
-
-tags into a dataframe **Task** Run the following code in the gray-colored codeblock below to make a dataframe. Describe the output: **Answer**
+### Task 11: Turn the contents of the <li> and <a> tags into a dataframe **Task** Run the following code in the gray-colored codeblock below to make a dataframe. Describe the output: **Answer**
 
 ```{r}
-committees <- cmte_results |> html_elements('li') |> html_text() |> as_tibble()
+committees <- cmte_results |> html_elements("li a")
+
+committees_with_urls <- tibble(
+  name = committees %>% html_text(trim = TRUE),
+  url = committees %>% html_attr("href")
+)
 ```
 
-Now we're getting closer. The rows in this dataframe we don't want begin with a newline character `\n`. Let's get rid of those using `filter()` and rename our single column:
+Now we're getting closer. The rows in this dataframe we don't want begin with a backslash. Let's get rid of those using `filter()`:
 
 ### Task 12: Remove the rows we don't need from our dataframe
 
 **Task** Run the following code in the gray-colored codeblock below to remove the unwanted rows from our dataframe:
 
 ```{r}
-committees <- committees |> 
-  # filter out rows that begin with a newline character
-  filter(!str_detect(value, "^\n")) |> 
-  rename(name = value)
+committees_with_urls <- committees_with_urls |> 
+  # filter out rows that begin with a backslash character
+  filter(!str_detect(url, "^/"))
 ```
 
-And now you have the data.
+And now you have the committee names and urls.
