@@ -21,12 +21,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-
-Let's get to scraping. We'll be working on collecting information about Maryland election results, and then we'll grab some congressional press releases. For Maryland races, we'll focus on Board of Education races using this CNS story as a guide: https://cnsmaryland.org/2024/11/08/md-conservatives-make-gains-in-school-board-races/. You should read it.
+Let's get to scraping. We'll be working on collecting information about Maryland election results, and then we'll grab some congressional press releases. For Maryland races, we'll focus on Board of Education races using this CNS story as a guide: <https://cnsmaryland.org/2024/11/08/md-conservatives-make-gains-in-school-board-races/>. You should read it.
 
 ## Questions
 
-**Q1**. Write code to scrape the table of unofficial results from Frederick County's Board of Education races (https://elections.maryland.gov/elections/2024/general_Results/gen_results_2024_by_county_11.html), producing a dataframe that contains the results of that race for each candidate and removing the total. You'll need to identify which table on the page contains the BOE results. All numbers should actually be numbers, including the percentage. Then make a bar chart of the results, noting that the top 3 candidates win.
+**Q1**. Write code to scrape the table of unofficial results from Frederick County's Board of Education races (<https://elections.maryland.gov/elections/2024/general_Results/gen_results_2024_by_county_11.html>), producing a dataframe that contains the results of that race for each candidate and removing the total. You'll need to identify which table on the page contains the BOE results. All numbers should actually be numbers, including the percentage. Then make a bar chart of the results, noting that the top 3 candidates win.
 
 **A1**
 
@@ -34,13 +33,13 @@ Let's get to scraping. We'll be working on collecting information about Maryland
 
 ```
 
-**Q2** Next, let's scrape the list of press releases from Maryland's Office of the Public Defender, <https://www.opd.state.md.us/press-releases>. This isn't a table, so you'll need to use `html_elements()` and your browser's inspector and do some clean up on the results. The result should be a dataframe with three columns: title, url and date. HINT: you can extract the date from the title using lubridate OR you can use the `separate` function.
+**Q2** Next, let's scrape the list of press releases from Maryland's Office of the State Prosecutor, <https://osp.maryland.gov/category/press-releases/>. This isn't a table, so you'll need to use `html_elements()` and your browser's inspector and do some clean up on the results. The result should be a dataframe with three columns: title, url and date. HINT: you can extract the date from the title using lubridate OR you can use the `separate` function.
 
 You should have 10 releases when finished, not 20.
 
 Then, write code that finds the most recent release with the word "Campaign" in the title. What election does it refer to?
 
-**A2** 
+**A2**
 
 ```{r}
 
@@ -56,9 +55,8 @@ When you're done, rename the columns so they make sense, then make sure the date
 
 Finally, tell me what questions you could ask of this data, and what other information about it would be useful to have. Be creative.
 
-**A3** 
+**A3**
 
 ```{r}
 
 ```
-
