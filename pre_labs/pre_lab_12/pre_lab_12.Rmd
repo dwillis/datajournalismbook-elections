@@ -267,15 +267,67 @@ releases |>
   mutate(percent = (n/sum(n))*100) |>
   top_n(10)
 ```
+
 No more "covid 19", for one, but not a lot of changes otherwise. You'll notice that the percentages are very small; that's not irrelevant but in some cases it's the differences in patterns that's more important.
 
 There are some potential challenges to doing an analysis. For one, there are variations of words that could probably be standardized - maybe using OpenRefine - that would give us cleaner results. There might be some words among our list of stop words that actually are meaningful in this context.
 
+Or..... we could have R tackle this.
+
+### Task 14: Install a package for stemming and lemmatizing words
+
+**Task** Run the following code.
+
+```{r}
+install.packages("pacman") # comment this line out after you run it the first time
+pacman::p_load_gh("trinker/textstem")
+library(textstem)
+```
+
+[textstem](https://github.com/trinker/textstem) is a library that has two functions: stemming and lemmatization. What are they? Both of them convert a set of words or phrases into different forms, but the differences are worth seeing:
+
+### Task 15: Stemming vs. Lemmatization
+
+**Task** Run the following code and describe the differences between the two results. Which one might be more useful for the press release data? **Answer**
+
+```{r}
+dw <- c('driver', 'drive', 'drove', 'driven', 'drives', 'driving')
+
+stem_words(dw)
+
+lemmatize_words(dw)
+
+```
+
+Let's try lemmatization on the 2024 unique words, and then compare the top ten to the original top ten from Task 11:
+
+### Task 16: Lemmatization vs. Words
+
+**Task** Run the following code and describe the differences between the two results. Which one is more useful? **Answer**
+
+```{r}
+unique_words_2024_lemma <- lemmatize_words(unique_words_2024$word) |> as_tibble() |> rename(word = value)
+
+unique_words_2024_lemma |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+
+unique_words_2024 |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+
+```
 ## Sentiment Analysis
 
 Another popular use of text analysis is to measure the sentiment of a word - whether it expresses a positive or negative idea - and tidytext has built-in tools to make that possible. We use word counts like we've already calculated and bring in a dataframe of words (called a lexicon) along with their sentiments using a function called `get_sentiments`. The most common dataframe is called "bing" which has nothing to do with the Microsoft search engine. Let's load it:
 
-### Task 14: Load the bing lexicon and produce sentiments for our 2022 and 2024 unique words
+### Task 17: Load the bing lexicon and produce sentiments for our 2022 and 2024 unique words
 
 **Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive? **Answer**
 
