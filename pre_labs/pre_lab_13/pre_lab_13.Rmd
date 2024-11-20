@@ -26,8 +26,9 @@ But they are - mostly - very useful for people who write code and for those tryi
 We'll be using a service called Groq for the examples here. You should [sign up for a free account](https://www.groq.com) and [create an API key](https://console.groq.com/docs/quickstart). Make sure you copy that key. We'll also need to install an R package to handle the responses:
 
 ```{r}
-install.packages("devtools")
+library(devtools)
 devtools::install_github("heurekalabsco/axolotr")
+library(axolotr)
 ```
 
 Then we can load that library and, using your API key, setup your credentials:
@@ -35,8 +36,6 @@ Then we can load that library and, using your API key, setup your credentials:
 **Task** Run the following code, then restart R using the "Session" drop-down menu:
 
 ```{r}
-library(axolotr)
-
 create_credentials(GROQ_API_KEY = "YOUR API KEY HERE")
 ```
 
