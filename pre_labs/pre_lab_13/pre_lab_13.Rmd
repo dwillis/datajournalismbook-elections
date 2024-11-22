@@ -47,8 +47,7 @@ Let's make sure that worked. We'll be using the [Llama 3.1 model released by Met
 
 **Task** Run the following code in the gray-colored codeblock below, and tell me what you think the difference between the first 10 names and the second 10 names is, if any.
 
-**Answer** 
-
+**Answer**
 
 ```{r}
 groq_response <- axolotr::ask(
@@ -87,7 +86,7 @@ What if we could extract those highlighted portions of the text into, say, a CSV
 
 **Task** Run the following code that uses Llama to extract elements from the wedding announcement into a CSV file. Did Llama get it right?
 
-**Answer** 
+**Answer**
 
 ```{r}
 text = "Gabriela Nunes Herman and Tyson Charles Evans were married Saturday at the home of their friends Marcy Gringlas and Joel Greenberg in Chilmark, Mass. Rachel Been, a friend of the couple who received a one-day solemnization certificate from Massachusetts, officiated. The bride, 33, will continue to use her name professionally. She is a Brooklyn-based freelance photographer for magazines and newspapers. She graduated from Wesleyan University in Middletown, Conn. She is a daughter of Dr. Talia N. Herman of Brookline, Mass., and Jeffrey N. Herman of Cambridge, Mass. The bride’s father is a lawyer and the executive vice president of DecisionQuest, a national trial consulting firm in Boston. Her mother is a senior primary care internist at Harvard Vanguard Medical Associates, a practice in Boston. The groom, 31, is a deputy editor of interactive news at The New York Times and an adjunct professor at the Columbia University Graduate School of Journalism. He graduated from the University of California, Los Angeles. He is the son of Carmen K. Evans of Climax Springs, Mo., and Frank J. Evans of St. Joseph, Mo. The groom’s father retired as the president of UPCO, a national retailer of pet supplies in St. Joseph."
@@ -104,21 +103,58 @@ A brief word about that "no yapping" bit; it's a way to tell your friendly LLM t
 
 Here's another example: congressional job listings.
 
+### Task 4: Extracting more data from text
+
+**Task** Run the following code that uses Llama to extract elements from a congressional job listing into a CSV file. Did Llama get it right? What would you change about the prompt, given the text?
+
+**Answer**
 
 ```{r}
+text = "Congressman Dan Crenshaw (R-TX-02) seeks a highly motivated, hard-working Legislative
+Assistant (LA), based in our Washington, D.C. oDice. This position reports to the Legislative
+Director. The LA will handle an economic facing portfolio, including Budget and
+Appropriations, Financial Services, and Tax, with other issues to follow.
+Key duties include:
+• Communicating clearly and consistently with the Member, Legislative Director, and
+legislative, communications, and district teams on legislative updates
+• Preparing and staDing the Member for meetings, and assisting in the drafting of remarks,
+as needed
+• Meeting with constituents, stakeholders, and advocacy groups within the portfolio of
+issue areas Working with external stakeholders, Congressional Research Service (CRS),
+Legislative Counsel, and committee staD to draft legislation based on the Member’s
+priorities
+• Ideal candidates will have strong written and oral communications skills and be detailoriented, organized, and creative. They must be able to quickly learn the member’s voice
+and think in a proactive, communications-focused manner.
+Other key qualities include:
+• Commitment to a collaborative work environment
+• Ability to work in a fast-paced environment and manage competing priorities
+• Ability to communicate up and down within the team
+• Ability to learn the Congressman’s voice and legislative priorities
+• Interest in identifying and pursuing new opportunities and the ability to anticipate and
+adapt to challenges
+Hill experience is required. Compensation is competitive and commensurate with level of
+experience. Qualiﬁed applicants should submit a resume and writing sample (no more
+than 3 pages) as one combined PDF to Kenneth.Depew@mail.house.gov. Include
+“Legislative Assistant – [Full Name]” in the subject line. Applications will be considered on
+a rolling basis as received. No phone calls or drop-ins please."
 
+housejob_response <- axolotr::ask(
+  prompt = paste("Given the following text, extract information into a CSV file with the following structure with no yapping: member,party,state,district,job_title,location,hill_experience,portfolio", text),
+  model = "llama-3.1-8b-instant"
+)
+
+cat(housejob_response)
 ```
-
 
 ### Helping with Code Debugging and Explanation
 
 When you're writing code and run into error messages, you should read them. But if they do not make sense to you, you can ask an LLM to do some translation, which is another great use case for AI. As with any debugging exercise, you should provide some context, things like "Using R and the tidyverse ... " and describing what you're trying to do, but you also can ask LLMs to explain an error message in a different way. Here's an example:
 
-### Task 4: Help me, Llama!
+### Task 5: Help me, Llama!
 
 **Task** Run the following code. Does the response make sense? Why or why not?
 
-**Answer** 
+**Answer**
 
 ```{r}
 debug_response <- axolotr::ask(
@@ -135,11 +171,11 @@ The trouble is that if you run that several times, it will give you slightly dif
 
 Let's say that you have some data that you want to interview, but aren't sure how to proceed. LLMs can provide some direction, but you may not want to follow their directions exactly. You shouldn't accept their judgments uncritically; you'll still need to think for yourself. Here's an example of how that might go.
 
-### Task 5: Help Me Brainstorm, Llama!
+### Task 6: Help Me Brainstorm, Llama!
 
 **Task** Run the following code. Does the output make sense? Would it help you to understand the data? Does it make any assumptions about what the data looks like that seem incorrect?
 
-**Answer** 
+**Answer**
 
 ```{r}
 idea_response <- axolotr::ask(
@@ -152,4 +188,53 @@ cat(idea_response)
 
 Note that the column names may not match your data; the LLM is making predictions about your data, so you could provide the column names. As [this story from The Pudding](https://pudding.cool/2024/07/ai/) makes clear, the potential for using LLMs to not just assist with but perform data analysis is real. What will make the difference is how much context you can provide and how clear your ideas and questions are. You still have to do the work.
 
+But text isn't the only thing that LLMs can help extract data from. Images, audio and video all are filled with information that can become data. Let's take a look at an example using an image.
 
+### Task 7: What's in this picture?
+
+Log into <https://console.groq.com/>, then switch the model to llama-3.2-11b-vision-preview:
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/groq_llama32_vision.png"))
+```
+
+**Task** Follow the instructions below, then evaluate the LLM's response. Did it do well? What would you change?
+
+Then click on the image icon next to the "Submit" button and choose the "fundraising_email.png" file from the images folder, and add it. Then, add this as the prompt: "Describe the things in this image, being as specific as possible."
+
+**Answer**
+
+### Task 8: Run a model on your laptop!
+
+Go to <https://ollama.com/> and download and install the Ollama software. Then, in the Terminal (Mac) or PowerShell (Windows), type the following: ollama run llama3.2
+
+This will take a few minutes, so take the time to read more about it: <https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/>
+
+Now switch back to RStudio, and install the `mall` package:
+
+**Task** Install the mall package by running this code, and then comment out the install.packages line. We'll tell the `mall` package to use the llama3.2 model via ollama.
+
+```{r}
+install.packages("mall")
+library(mall)
+llm_use("ollama", "llama3.2", seed = 100, temperature = 0)
+```
+
+Now we'll load some fundraising emails to work with. Our goal will be to extract any merchandise mentioned in the body of the emails (as an inducement to give money).
+
+**Task** Load a CSV file of fundraising emails.
+
+```{r}
+emails <- read_csv("data/emails.csv")
+```
+
+Here we can use LLMs in a tidy manner, by starting with the dataframe and calling functions like we do in other instances. Let's try it out:
+
+**Task** Run the following code and look at the .extract column. How did it do? Do the results make sense, and why or why not? 
+
+**Answer** 
+
+```{r}
+emails |>
+  llm_extract(body, "merchandise that can be won")
+```
