@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_01.Rmd"
-author: "Derek Willis"
-date: "2024-08-01"
+author: "Derek Willis, Adapted by Aidan Hughes"
+date: "2026-08-25"
 output: html_document
 ---
 
@@ -12,7 +12,7 @@ options(scipen=999)
 
 ## About this notebook
 
-This notebook contains code and explanatory text that your should review and run as you read through chapters 1 - 5 of the course textbook, "Data Journalism with R and the Tidyverse". Answer questions and edit the document as directed.
+This notebook contains code and explanatory text that you should review and run as you read through chapters 1 - 5 of the course textbook, "Data Journalism with R and the Tidyverse". Answer questions and edit the document as directed.
 
 Running this notebook will help you understand key data analysis methods and concepts that you will put into practice during this week's lab. When you come across a new command or verb in R, you should add it to your class reference notebook file along with what it's used for.
 
@@ -58,7 +58,7 @@ What does it return? Type your answer below:
 install.packages('tidyverse')
 ```
 
-**Task** Add that
+**Task**
 
 Then run the following code to install the rmarkdown library
 
@@ -70,11 +70,11 @@ install.packages('rmarkdown')
 
 ### Task 1: Load libraries
 
-**Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
+**Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
 
 ```{r}
 # This is a comment inside of a codeblock. Comments doesn't run when we run the codeblock.
-# Adding this command is a good way to start your class reference notebook.
+# Adding this is a good way to start your class reference notebook.
 library(tidyverse)
 ```
 
@@ -98,7 +98,9 @@ Once it loads, look at the environment window at right in RStudio for maryland_w
 glimpse(maryland_winred_contributions)
 ```
 
-In the space below, write the data type for the "last_name" column and the "amount" columns (it's in light gray, offset by \< \>). Also offer your best guess as to what the "last_name" column and the "amount" column represent. **Answer**
+In the space below, write the data type for the "last_name" column and the "amount" columns (it's in light gray, offset by \< \>). Also offer your best guess as to what the "last_name" column and the "amount" column represent.
+
+**Answer**
 
 ### Task 4: Examine data "head"
 
@@ -221,3 +223,34 @@ maryland_winred_contributions |>
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? **Answer**
+
+
+### Final note
+
+Remember how we saved a single number, and then a data set, inside variables that we named? Well, we can also do that with the results of the analysis we were doing above.
+
+Let's take all the code we just ran, and store the results inside the new variable maryland_contribs_summarized
+
+```{r}
+maryland_contribs_summarized <- maryland_winred_contributions |>
+  group_by(city) |>
+  summarise(
+    count_contribs = n(),
+    total_amount = sum(amount),
+    mean_amount = mean(amount),
+    median_amount = median(amount),
+    min_amount = min(amount),
+    max_amount = max(amount)
+  ) |>
+  arrange(desc(total_amount))
+```
+
+Unlike last time, we don't see the results of our code right away when we save the output in a variable.
+
+What happens when we just run the name of the variable, though?
+
+```{r}
+maryland_contribs_summarized
+```
+
+

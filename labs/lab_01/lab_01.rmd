@@ -1,7 +1,7 @@
 ---
 title: "lab_01"
-author: "Derek Willis"
-date: "2024-08-01"
+author: "Derek Willis, adapted by Aidan Hughes"
+date: "2026-08-25"
 output: html_document
 ---
 
@@ -40,24 +40,31 @@ We're going to load the slice of WinRed contribution data from West Virginia, wh
 
 **Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
 
+```{r}
+# put the name of your data set, which you named in the last step, inside the () below
+glimpse()
+```
+
+
 **Q1** How many rows and columns does this dataframe have?
+
 
 **A1**
 
-```{r}
-
-```
 
 ## Answer questions
 
 **Q2** Which West Virginia city provided the largest number of contributions? How many?
 
+Hint: you'll need to use group_by() |> summarise() here. What column are we grouping by? Then, what should go inside the summarise() part? Then, rather than clicking through the 500+ cities to find the largest one, use the same function we used in our pre-lab to sort the data from largest number to the smallest.
+
 **A2**
 
 ```{r}
+
 ```
 
-**Q3** Which West Virginia cities accounted for the fewest contributions? How many of them, roughly speaking?
+**Q3** Which West Virginia cities accounted for the fewest contributions? You don't have to name all of them, but list a few. How many of those cities are there, roughly speaking?
 
 **A3**
 
@@ -68,16 +75,23 @@ We're going to load the slice of WinRed contribution data from West Virginia, wh
 
 **A4**
 
-**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation?
+**Q5** What recipient got the largest total amount of money? How many contributions did it receive? And what was the average donation it received?
+
+Hint: Since there three distinct questions here, you'll need to do multiple things inside summarise() this time.
+
+Hint 2: "aggregate_amount" is NOT the column you want to use here.
 
 **A5**
 
 ```{r}
+
 ```
 
 **Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set. You do not need to write any code for this question, so no codeblock is provided.
 
 **A6**
+
+**BONUS POINTS (do this last / only if you have time at the end)** you might notice that a lot of the top recipient committees seem to be tied to the same person, and some even have nearly-identical committee names. What might be going on here? (You don't need to get this RIGHT, just give me an educated guess or two.)
 
 **Q7**. Using the answer from A5 as a starting point, produce a summary table that has the following information for each recipient: \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
 
