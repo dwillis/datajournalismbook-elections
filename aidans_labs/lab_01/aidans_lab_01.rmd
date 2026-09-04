@@ -1,0 +1,151 @@
+---
+title: "lab_01"
+author: "Derek Willis, adapted by Aidan Hughes"
+date: "2026-08-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Turn off scientific notation
+options(scipen=999)
+```
+
+## About this lab
+
+To complete this lab, you need to: \* run existing code as directed (look for **Task**). \* modify existing code as directed (look for **Task**). \* write code in empty codeblocks provided to answer questions included (look for **Q**). \* write out the answer in the form of a complete sentence in the space given (look for **A**). When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+Remember to add any new verbs or concepts to your reference notebook!
+
+## Load libraries and establish settings
+
+**Task** Run the codeblock below to load the Tidyverse. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
+
+```{r}
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
+library(tidyverse)
+```
+
+## Load Data
+
+We're going to load the slice of WinRed contribution data from West Virginia, which is in a file called `lab_01.rds`
+
+**Task** Using the example from the pre_lab, write code to load the RDS file and assign it to a good variable name.
+
+```{r}
+wv_winred_contribs <- read_rds("lab_01.rds")
+```
+
+## Examine Data
+
+**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
+
+```{r}
+# put the name of your data set, which you named in the last step, inside the () below
+glimpse(wv_winred_contribs)
+```
+
+**Q1** How many rows and columns does this dataframe have?
+
+
+**A1**
+
+40,441 Rows
+24 Columns
+
+## Answer questions
+
+**Q2** Which West Virginia city provided the largest number of contributions? How many?
+
+Hint: you'll need to use group_by() |> summarise() here. What column are we grouping by? Then, what should go inside the summarise() part? Then, rather than clicking through the 500+ cities to find the largest one, use the same function we used in our pre-lab to sort the data from largest number to the smallest.
+
+**A2**
+
+```{r}
+wv_winred_contribs |> 
+  group_by(city) |> 
+  summarise(number_of_contribs = n()) |> 
+  arrange(desc(number_of_contribs))
+```
+
+**Q3** Which West Virginia cities accounted for the fewest contributions? You don't have to name all of them, but list a few. How many of those cities are there, roughly speaking?
+
+**A3**
+
+```{r}
+wv_winred_contribs |> 
+  group_by(city) |> 
+  summarise(number_of_contribs = n()) |> 
+  arrange(number_of_contribs)
+```
+
+**Q4** What's your best educated guess to explain why the city identified in question 2 had more contributions compared to the cities identified in question 3? Hint: you won't find the answer in the data, you'll need to do some quick web research. You do not need to write any code for this question, so no codeblock is provided.
+
+**A4**
+
+Charleston is the largest city in WV! The cities on the other end of the spectrum are TINY. For example, Bloomingrose has a population of only a few hundred people, and Ireland is similarly tiny.
+
+**Q5** What recipient got the largest total amount of money? How many contributions did it receive? And what was the average donation it received?
+
+Hint: Since there three distinct questions here, you'll need to do multiple things inside summarise() this time.
+
+Hint 2: "aggregate_amount" is NOT the column you want to use here.
+
+**A5**
+
+```{r}
+wv_winred_contribs |>
+  group_by(memo_text) |>
+  summarise(total_money = sum(amount),
+            num_contribs = n(),
+            avg_contrib = mean(amount)) |>
+  arrange(desc(total_money))
+  
+```
+
+**Q6** What is that top recipient and what explains its popularity? Hint: this will require web research and some intuition, you won't be able to answer this purely from the data set. You do not need to write any code for this question, so no codeblock is provided.
+
+**A6**
+
+The top recipient by far is the TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893). It's something called a "joint fundraising committee" that allows for, well, joint fundraising between a PAC aligned with Donald Trump ("Never Surrender, Inc") and the RNC (Republican National Committee), the GOP's main campaign committee.
+
+Some additional context: both Trump and the RNC were in pretty dire straits financially when TRUMP NATIONAL COMMITTEE JFC was formed in early 2024. Just before the JFC was formed, Trump's daughter in law and another ally took control of the RNC and vowed the RNC would help pay for Trump's significant legal fees. https://www.newsweek.com/donald-trump-launches-fundraising-republican-national-committee-1881663
+
+**BONUS POINTS (do this last / only if you have time at the end)** you might notice that a lot of the top recipient committees seem to be tied to the same person, and some even have nearly-identical committee names. What might be going on here? (You don't need to get this RIGHT, just give me an educated guess or two.)
+
+1. A candidate can have multiple, even many, political committees for various purposes!
+
+TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893) allowed for joint fundraising between a PAC aligned with Donald Trump ("Never Surrender, Inc") and the RNC (Republican National Committee).
+
+TRUMP SAVE AMERICA JOINT FUNDRAISING COMMITTEE (C00770941) on the other hand, was the primary fundraising vehicle for Trump's 2024 campaign at the time, but also raised money for Trump's leadership PAC, something that allows a candidate to send money to other candidates they like.
+
+2. Much more simply, it also looks like we have multiple values that actually represent the same real-world entities. For example, TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893) appears in our analysis as the top recipient with 463944.40 in contributions. But there's also TRUMP NATIONAL COMMITTEE JFC (C00873893) which has the exact same committee number, just missing the ", INC." in the memo text. That has another 37576.47 in contributions. These are actually the same committee.
+
+This represents a real problem for the accuracy of our reporting. If we had just reported the 463944.40 number for that committee in a story, we'd be wrong. Are there even more names/values that represent this same committee, but appear as distinct committees because of small variations in the memo text? We won't know unless we manually check all the other values in our data, or we find another solution.
+
+A little later in this course, we'll learn how do identify, and fix, potential issues like this.
+
+
+**Q7**. Using the answer from A5 as a starting point, produce a summary table that has the following information for each recipient: \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
+
+Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
+
+**A7**.
+
+```{r}
+wv_summary <- wv_winred_contribs |>
+  group_by(memo_text) |>
+  summarise(total_money = sum(amount),
+            num_contribs = n(),
+            avg_contrib = mean(amount),
+            median_contrib = median(amount),
+            min_contrib = min(amount),
+            max_contrib = max(amount)
+            ) |>
+  arrange(desc(total_money))
+```
+
+Although some of the largest recipients by total money raised are linked to WV-based candidates (aside from Trump and party committees), if you sort the data by number of distinct contributions instead, we can see that out-of-state politicians actually seem to receive the most support from a larger number of small, grassroots donations. TEAM SCALISE (tied to Louisiana Rep. Steve Scalise), TEAM ELISE (tied to NY Rep. Elise Stefanik), and MIKE JOHNSON FOR LOUISIANA all top the list after Trump and national party committees. That makes sense to some degree because those three were all in leadership positions within the party, but even after that you get Ted Cruz (Texas), CHAMPION AMERICAN VALUES (tied to former Sec. of State Mike Pompeo), and BLACKBURN TENNESSEE VICTORY FUND before you get any strictly-West Virginia based recipients. There might be a good story there: at the time, it looks like some WV candidates did fairly well with small handfuls of larger donors, but struggled to gain financial support from small/grassroots donors, especially compared to other politicians eager to scoop up donations from WV voters. What might be the cause of that?
+
+Separately: there were 860 contributions for Team Scalise, a joint fundraising committee for the main campaign committee of House Majority Leader Steve Scalise and his incredibly named politcal action committee, the Eye of the Tiger PAC. There's also a "Hellfire PAC" in there. This isn't exactly hard hitting journalism, but you could write a whole story just on some of the names. In fact, Roll Call already did: https://rollcall.com/2011/10/31/eye-of-the-tiger-some-pac-names-pack-punch/

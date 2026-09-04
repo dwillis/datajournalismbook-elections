@@ -1,6 +1,6 @@
 ---
 title: "pre_lab_02.Rmd"
-author: "Derek Willis"
+author: "Derek Willis, adapted by Aidan Hughes"
 date: "2024-08-01"
 output: html_document
 ---
@@ -29,6 +29,12 @@ library(lubridate) # look up lubridate and describe its uses in your reference n
 ### Task 2: Load data
 
 **Task** Load the Maryland 2024 Primary Election county results dataset by running the following codeblock.
+
+A couple things to note here:
+
+- the data we'll be working with this time (and in most classes going forward) is in a csv file, which stands for "comma separated values." It's named that because if you look at the raw file, the file distinguishes which values should go in separate columns using a ","
+
+- maryland_primary_2024.csv isn't in the exact same location as our notebook; it's within a subfolder called "data". So we need to tell R to look for the file in that folder. we do this by adding "data/" before the filename. 
 
 ```{r}
 primary_24 <- read_csv('data/maryland_primary_2024.csv')

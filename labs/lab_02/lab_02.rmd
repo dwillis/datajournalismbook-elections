@@ -1,6 +1,6 @@
 ---
 title: "lab_02"
-author: "derek willis"
+author: "Derek Willis, adapted by Aidan Hughes"
 date: "2024-08-16"
 output: html_document
 ---
@@ -35,7 +35,9 @@ Take a look at the data, getting familiar with what it contains. Most of the col
 
 ## Answer questions
 
-**Q1** How many voters appear to be *new* registrants since July 21, when President Joe Biden announced he would leave the race, based on the information above? Create a dataframe to hold the only those voters. Which counties have seen the most? Take a look at county population figures here and compare the two in your answer: https://worldpopulationreview.com/us-counties/maryland.
+**Q1** How many voters appear to be *new* registrants since July 21, when President Joe Biden announced he would leave the race, based on the information above? Create a dataframe to hold the only those voters.
+
+Which counties have seen the most? Take a look at county population figures here and compare that list with your data findings in your answer: https://worldpopulationreview.com/us-counties/maryland.
 
 **A1**
 
@@ -56,7 +58,9 @@ Take a look at the data, getting familiar with what it contains. Most of the col
 
 ```
 
-**Q4** Maryland has, officially, five regions: https://www.visitmaryland.org/article/maryland-regions. Modify the original dataframe again to add a `region` column based on the `COUNTY` value using case_when. Are you going to have to do this for every Maryland county plus Baltimore City? Yes, you are. Which regions and parties account for the most new voters?
+**Q4** Maryland has, officially, five regions: https://www.visitmaryland.org/article/maryland-regions. Modify the original dataframe again to add a `region` column based on the `COUNTY` value using case_when. Are you going to have to do this for every Maryland county plus Baltimore City? Yes, you are.
+
+Which regions and parties account for the most new voters?
 
 **A4** 
 
