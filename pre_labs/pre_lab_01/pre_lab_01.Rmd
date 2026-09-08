@@ -102,6 +102,8 @@ In the space below, write the data type for the "last_name" column and the "amou
 
 **Answer**
 
+This answer is the best answer that's ever been answered
+
 ### Task 4: Examine data "head"
 
 **Task** Run the following codeblock to use head() to examine the first six rows of data. Explore the data by clicking the black arrow on the right side of the output table, allowing you to examine additional columns.
