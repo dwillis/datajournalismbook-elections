@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Task 1: Load libraries
 
-**Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
+TASK: Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
 
 ```{r}
 # turn off sci notation
@@ -28,7 +28,7 @@ library(lubridate) # look up lubridate and describe its uses in your reference n
 
 ### Task 2: Load data
 
-**Task** Load the Maryland 2024 Primary Election county results dataset by running the following codeblock.
+TASK: Load the Maryland 2024 Primary Election county results dataset by running the following codeblock.
 
 A couple things to note here:
 
@@ -42,7 +42,7 @@ primary_24 <- read_csv('data/maryland_primary_2024.csv')
 
 ### Task 3: Glimpse data
 
-**Task** Run the following codeblock to use head(), summary(), colnames() and glimpse() to get a sense of the data, some of the values in each field/variable/column, and the data types of each field/variable/column. Add a description of what these do to your reference notebook.
+TASK: Run the following codeblock to use head(), summary(), colnames() and glimpse() to get a sense of the data, some of the values in each field/variable/column, and the data types of each field/variable/column. Add a description of what these do to your reference notebook.
 
 ```{r}
 head(primary_24)
@@ -53,7 +53,7 @@ glimpse(primary_24)
 
 ### Task 4: Mutate
 
-**Task** Let's add a new column based on an existing column. Run the following code to create a new column called `percent_election_day` based on a calculation using two existing columns.
+TASK: Let's add a new column based on an existing column. Run the following code to create a new column called `percent_election_day` based on a calculation using two existing columns.
 
 ```{r}
 primary_24 |>
@@ -65,11 +65,11 @@ primary_24 |>
 
 Describe what you think this code is doing below.
 
-**Answer**
+**ANSWER**
 
 ### Task 5: Better percentage calculation
 
-**Task** Run the following code to make our new column called `percent_election_day` show a percentage instead of a decimal.
+TASK: Run the following code to make our new column called `percent_election_day` show a percentage instead of a decimal.
 
 ```{r}
 # make it a percentage
@@ -82,7 +82,7 @@ primary_24 |>
 
 ### Task 6: Mutate with ordering
 
-**Task** Run the following code to order by our new column. Add a description of what this code does to your reference notebook.
+TASK: Run the following code to order by our new column. Add a description of what this code does to your reference notebook.
 
 ```{r}
 # better ordering?
@@ -96,11 +96,11 @@ primary_24 |>
 
 How did the results change from the previous task, and why?
 
-**Answer**
+**ANSWER**
 
 ### Task 7: Mutate with ordering, part 2
 
-**Task** Run the following code to order by our new column, but in ascending order
+TASK: Run the following code to order by our new column, but in ascending order
 
 ```{r}
 # better ordering?
@@ -114,7 +114,7 @@ primary_24 |>
 
 Is this a more interesting or useful answer? Why?
 
-**Answer**
+**ANSWER**
 
 ### Task 8: Standardize existing data using mutate
 
@@ -133,7 +133,7 @@ So how can we fix that? Mutate - it's not just for math! And a function called `
 
 IMPORTANT: Notice that we created a new dataframe - standardized_maryland_cities - that has our upper_city column. Unlike the previous changes, we saved this one. If you don't assign the results of a mutate() function to a variable, those changes aren't permanent.
 
-**Task** Run the following code:
+TASK: Run the following code:
 
 ```{r}
 standardized_maryland_cities <- maryland_cities |>
@@ -142,9 +142,9 @@ standardized_maryland_cities <- maryland_cities |>
 )
 ```
 
-**Task** Search the Internet for tidyverse functions similar to str_to_upper. Name at least two and describe what they do.
+TASK: Search the Internet for tidyverse functions similar to str_to_upper. Name at least two and describe what they do.
 
-**Answer**
+**ANSWER**
 
 There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
@@ -160,7 +160,7 @@ Mutate is even more useful when combined with some additional functions. Let's f
 
 Mutate can make that happen by creating a new column and putting in a category value *based on the amount* of each record. First, let's load some individual contributions:
 
-**Task** Run the following code to load the data and inspect it.
+TASK: Run the following code to load the data and inspect it.
 
 ```{r}
 maryland_winred_contributions <- read_rds("data/maryland_winred.rds")
@@ -170,9 +170,9 @@ head(maryland_winred_contributions)
 
 Now that we've gotten a look, we can use `case_when` to give our new category column a value using some standard numeric logic.
 
-**Task** Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
+TASK: Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
 
-**Answer**
+**ANSWER**
 
 ```{r}
 maryland_winred_categories <- maryland_winred_contributions |>
@@ -192,7 +192,7 @@ There's a lot going on here, so let's unpack it. It starts out as a typical muta
 
 We can then use our new `amount_category` column in group_by statements to make summarizing easier.
 
-**Task** Run the following code.
+TASK: Run the following code.
 
 ```{r}
 maryland_winred_categories |> 
@@ -203,15 +203,15 @@ maryland_winred_categories |>
 
 What's the largest category in terms of dollar amount?
 
-**Answer**
+**ANSWER**
 
-Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
+
 
 ## Filter and Select
 
 More often than not, we have more data than we want. Sometimes we need to be rid of that data. In the tidyverse, there's two ways to go about this: filtering and selecting.
 
-**Filtering creates a subset of the data based on criteria**. All records where the amount is greater than 150,000. All records that match "College Park". Something like that. **Filtering works with rows -- when we filter, we get fewer rows back than we start with.**
+**Filtering creates a subset of the data based on criteria**. For example: All records where the amount is greater than 150,000. All records that match "College Park". Something like that. **Filtering works with rows -- when we filter, we get fewer rows back than we start with.**
 
 **Selecting simply returns only the fields named**. So if you only want to see city and amount, you select those fields. When you look at your data again, you'll have two columns. If you try to use one of your columns that you had before you used select, you'll get an error. **Selecting works with columns. You will have the same number of records when you are done, but fewer columns of data to work with.**
 
@@ -223,10 +223,11 @@ The data we want to filter on is in `county_name`. So we're going to use filter 
 
 ### Task 10: Filter by county
 
-**Task** Run the following code to limit our 2018 primary results data to Prince George's County.
+TASK: Run the following code to limit our 2018 primary results data to Prince George's County.
 
 ```{r}
-prince_georges <- primary_24 |> filter(county_name == "Prince George's County")
+prince_georges <- primary_24 |>
+  filter(county_name == "Prince George's County")
 
 head(prince_georges)
 ```
@@ -239,10 +240,11 @@ We also have more data than we might want. For example, we may only want to work
 
 To simplify our dataset, we can use select.
 
-**Task** Run the following code.
+TASK: Run the following code.
 
 ```{r}
-selected_prince_georges <- prince_georges |> select(office_name, office_district, candidate_name, party, votes)
+selected_prince_georges <- prince_georges |>
+  select(office_name, office_district, candidate_name, party, votes)
 
 head(selected_prince_georges)
 ```
@@ -251,36 +253,40 @@ And now we only have five columns of data for whatever analysis we might want to
 
 Notice that we made a new variable to hold the result. Why is that important?
 
-**Answer**
+**ANSWER**
 
 ### Task 12: Combining filters
 
 So let's say we wanted to see all the candidates for governor and the number of votes each received in Prince George's County. We can do this a number of ways. The first is we can chain together a whole lot of filters.
 
-**Task** Run the following code
+TASK: Run the following code
 
 ```{r}
-prince_georges_senate <- primary_24 |> filter(county_name == "Prince George's County") |> filter(office_name == "U.S. Senator")
+prince_georges_senate <- primary_24 |>
+  filter(county_name == "Prince George's County") |>
+  filter(office_name == "U.S. Senator")
 
 nrow(prince_georges_senate)
 ```
 
 That gives us 17 candidates. But the code is repetitive, no? We can do better using boolean operators -- AND and OR. In this case, AND is `&` and OR is `|`.
 
-**Task** Run the following code
+TASK: Run the following code
 
 ```{r}
-and_prince_georges <- primary_24 |> filter(county_name == "Prince George's County" & office_name == "U.S. Senator")
+and_prince_georges <- primary_24 |>
+  filter(county_name == "Prince George's County" & office_name == "U.S. Senator")
 
 nrow(and_prince_georges)
 ```
 
 So AND gives us the same answer we got before. What does using the OR operator give us?
 
-**Task** Run the following code
+TASK: Run the following code
 
 ```{r}
-or_prince_georges <- primary_24 |> filter(county_name == "Prince George's County" | office_name == "U.S. Senator")
+or_prince_georges <- primary_24 |>
+  filter(county_name == "Prince George's County" | office_name == "U.S. Senator")
 
 nrow(or_prince_georges)
 ```
@@ -305,15 +311,16 @@ Take a look at that first column, expenditure_date. It *looks* like a date, but 
 
 ### Task 12: Turning a character date into a real date
 
-**Task** Run the following code and describe the change in the expenditure_date column.
+TASK: Run the following code and describe the change in the expenditure_date column.
 
 ```{r}
-maryland_expenses <- maryland_expenses |> mutate(expenditure_date=mdy(expenditure_date))
+maryland_expenses <- maryland_expenses |>
+  mutate(expenditure_date=mdy(expenditure_date))
 
 head(maryland_expenses)
 ```
 
-**Answer:**
+**ANSWER**
 
 Lubridate has functions for basically any type of character date format: mdy, ymd, even datetimes like ymd_hms.
 
@@ -335,7 +342,7 @@ We could use formatting to create a Month field but that would group all the Apr
 
 So to follow along here, we're going to use mutate to create a month field, group by to lump them together, summarize to count them up and arrange to order them. We're just chaining things together.
 
-**Task** Run the following code
+TASK: Run the following code
 
 ```{r}
 maryland_expenses |>
@@ -349,4 +356,4 @@ So the month of June 2022 had the most expenditures by far in this data. We'll b
 
 Describe the values in the new `month` column - what do you think the data is showing here?
 
-**Answer**
+**ANSWER**
