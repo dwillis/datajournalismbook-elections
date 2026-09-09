@@ -62,6 +62,8 @@ Hint: you'll need to use group_by() |> summarise() here. What column are we grou
 
 **A2**
 
+Charleston with 3226 contributions
+
 ```{r}
 wv_winred_contribs |> 
   group_by(city) |> 
@@ -72,6 +74,8 @@ wv_winred_contribs |>
 **Q3** Which West Virginia cities accounted for the fewest contributions? You don't have to name all of them, but list a few. How many of those cities are there, roughly speaking?
 
 **A3**
+
+There are over 60 cities that have only 1 contribution. Allen Junction, Alum Bridge, and BRIDGEPORT are a few examples
 
 ```{r}
 wv_winred_contribs |> 
@@ -84,7 +88,7 @@ wv_winred_contribs |>
 
 **A4**
 
-Charleston is the largest city in WV! The cities on the other end of the spectrum are TINY. For example, Bloomingrose has a population of only a few hundred people, and Ireland is similarly tiny.
+Charleston is the largest city in WV! The cities on the other end of the spectrum are TINY. For example, Bloomingrose has a population of only a few hundred people, and Ireland (the city, not the country) is similarly tiny.
 
 **Q5** What recipient got the largest total amount of money? How many contributions did it receive? And what was the average donation it received?
 
@@ -93,6 +97,8 @@ Hint: Since there three distinct questions here, you'll need to do multiple thin
 Hint 2: "aggregate_amount" is NOT the column you want to use here.
 
 **A5**
+
+TRUMP NATIONAL COMMITTEE JFC, INC. received the most, totaling nearly 464,000 with an average contribution of about 33 dollars
 
 ```{r}
 wv_winred_contribs |>
@@ -108,7 +114,7 @@ wv_winred_contribs |>
 
 **A6**
 
-The top recipient by far is the TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893). It's something called a "joint fundraising committee" that allows for, well, joint fundraising between a PAC aligned with Donald Trump ("Never Surrender, Inc") and the RNC (Republican National Committee), the GOP's main campaign committee.
+It's something called a "joint fundraising committee" that allows for, well, joint fundraising between a PAC aligned with Donald Trump ("Never Surrender, Inc") and the RNC (Republican National Committee), the GOP's main campaign committee.
 
 Some additional context: both Trump and the RNC were in pretty dire straits financially when TRUMP NATIONAL COMMITTEE JFC was formed in early 2024. Just before the JFC was formed, Trump's daughter in law and another ally took control of the RNC and vowed the RNC would help pay for Trump's significant legal fees. https://www.newsweek.com/donald-trump-launches-fundraising-republican-national-committee-1881663
 
