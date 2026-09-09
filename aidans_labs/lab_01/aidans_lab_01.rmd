@@ -98,14 +98,14 @@ Hint 2: "aggregate_amount" is NOT the column you want to use here.
 
 **A5**
 
-TRUMP NATIONAL COMMITTEE JFC, INC. received the most, totaling nearly 464,000 with an average contribution of about 33 dollars
+TRUMP NATIONAL COMMITTEE JFC, INC. received the most, totaling nearly 464,000 across 14,000 contributions, with an average contribution of about 33 dollars
 
 ```{r}
 wv_winred_contribs |>
   group_by(memo_text) |>
   summarise(total_money = sum(amount),
             num_contribs = n(),
-            avg_contrib = mean(amount)) |>
+            mean_contrib = mean(amount)) |>
   arrange(desc(total_money))
   
 ```
@@ -144,7 +144,7 @@ wv_summary <- wv_winred_contribs |>
   group_by(memo_text) |>
   summarise(total_money = sum(amount),
             num_contribs = n(),
-            avg_contrib = mean(amount),
+            mean_contrib = mean(amount),
             median_contrib = median(amount),
             min_contrib = min(amount),
             max_contrib = max(amount)
@@ -152,6 +152,6 @@ wv_summary <- wv_winred_contribs |>
   arrange(desc(total_money))
 ```
 
-Although some of the largest recipients by total money raised are linked to WV-based candidates (aside from Trump and party committees), if you sort the data by number of distinct contributions instead, we can see that out-of-state politicians actually seem to receive the most support from a larger number of small, grassroots donations. TEAM SCALISE (tied to Louisiana Rep. Steve Scalise), TEAM ELISE (tied to NY Rep. Elise Stefanik), and MIKE JOHNSON FOR LOUISIANA all top the list after Trump and national party committees. That makes sense to some degree because those three were all in leadership positions within the party, but even after that you get Ted Cruz (Texas), CHAMPION AMERICAN VALUES (tied to former Sec. of State Mike Pompeo), and BLACKBURN TENNESSEE VICTORY FUND before you get any strictly-West Virginia based recipients. There might be a good story there: at the time, it looks like some WV candidates did fairly well with small handfuls of larger donors, but struggled to gain financial support from small/grassroots donors, especially compared to other politicians eager to scoop up donations from WV voters. What might be the cause of that?
+Although some of the largest recipients by total money raised are linked to WV-based candidates (aside from Trump and party committees), if you sort the data by number of distinct contributions instead, we can see that out-of-state politicians actually seem to receive the most support from a larger number of small, grassroots donations. TEAM SCALISE (tied to Louisiana Rep. Steve Scalise), TEAM ELISE (tied to NY Rep. Elise Stefanik), and MIKE JOHNSON FOR LOUISIANA all top the list after Trump and national party committees. That makes sense to some degree because those three were all in leadership positions within the party, but even after that you get Ted Cruz (Texas), CHAMPION AMERICAN VALUES (tied to former Sec. of State Mike Pompeo), and BLACKBURN TENNESSEE VICTORY FUND before you get any strictly West Virginia based recipients. There might be a good story there: at the time, it looks like some WV candidates did fairly well with small handfuls of larger donors, but struggled to gain financial support from small/grassroots donors, especially compared to other politicians eager to scoop up donations from WV voters. What might be the cause of that?
 
 Separately: there were 860 contributions for Team Scalise, a joint fundraising committee for the main campaign committee of House Majority Leader Steve Scalise and his incredibly named politcal action committee, the Eye of the Tiger PAC. There's also a "Hellfire PAC" in there. This isn't exactly hard hitting journalism, but you could write a whole story just on some of the names. In fact, Roll Call already did: https://rollcall.com/2011/10/31/eye-of-the-tiger-some-pac-names-pack-punch/
