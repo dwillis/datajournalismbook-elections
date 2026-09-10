@@ -185,7 +185,7 @@ maryland_winred_categories <- maryland_winred_contributions |>
   mutate(
     #... called amount_category, and what goes in that is...
     amount_category = case_when(
-      # when the value in the amount column is less that 100, make the value in our new amount_category column "Less that $100"
+      # when the value in the amount column is less that 100, make the value in our new amount_category column "Less than $100"
         amount < 100 ~ "Less than $100",
         amount >= 100 & amount < 500 ~ "Between $100 and $499",
         amount >= 500 & amount < 1500 ~ "Between $500 and $1499",
