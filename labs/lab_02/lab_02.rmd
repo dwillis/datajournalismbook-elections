@@ -67,6 +67,40 @@ Which regions and parties account for the most new voters?
 ```{r}
 ```
 
-**Q5** What's an additional question you could ask of this data?
 
-**A5** 
+**Q5** Filter md_voters_2024 to only include voters from the Capital region or the Western region. Save the data in a new variable/data set named capital_or_western.
+
+How many voters are in the new data set?
+
+```{r}
+
+```
+
+
+**Q6** Finally, filter md_voters_2024 to only include voters who meet BOTH of these conditions:
+
+1) they are from the Eastern Shore region or Western region
+2) their party affiliation is DEM and their Gender is F
+
+Hint: you can accomplish this with two filters
+
+Save the data in a new variable/data set named final_filter.
+
+How many voters are in the new data set?
+
+```{r}
+
+```
+
+
+
+
+**BONUS QUESTION** What's an additional journalistic question you could ask of this data? Show me the code you'd use to do it below, or at least describe the logic step-by-step in English if you're not sure how to write the code for it yet.
+
+
+**A** 
+
+```{r}
+
+```
+
