@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_08.Rmd"
-author: "Derek Willis"
-date: "2024-10-16"
+author: "Derek Willis, updated by Aidan Hughes"
+date: "2026-10-22"
 output: html_document
 ---
 
@@ -69,11 +69,9 @@ maryland_top_counties
 
 Now let's create a bar chart using ggplot.
 
-With ggplot, the first thing we'll always do is draw a blank canvas that will contain our chart. We start with our dataframe name, and then (%\>%) we invoke the ggplot() function to make that blank canvas. All this does is make a gray box, the blank canvas that will hold our chart.
+With ggplot, the first thing we'll always do is draw a blank canvas that will contain our chart. We start with our dataframe name, and then we invoke the ggplot() function to make that blank canvas. All this does is make a gray box, the blank canvas that will hold our chart.
 
 ### Task 4: Create an empty ggplot container
-
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
 ```{r}
 maryland_top_counties |>
@@ -96,15 +94,13 @@ Using geom_bar() -- as opposed to geom_line() -- says we're making a bar chart.
 
 Inside of that function, the aesthetic, aes, says which columns to use in drawing the chart.
 
-We're setting the values on the x axis (horizontal) to be the name of the county. We set weight to total loans, and it uses that value to "weight" or set the height of each bar.
+We're setting the values on the x axis (horizontal) to be the name of the county. We set weight to the value in UNAF_DIFF, and it uses that value to "weight" or set the height of each bar. (Without it, geom_bar would count the number of **rows** for each value in the County column instead)
 
 One quirk here with ggplot.
 
-After we've invoked the ggplot() function, you'll notice we're using a + symbol. It means the same thing as %\>% -- "and then do this". It's just a quirk of ggplot() that after you invoke the ggplot() function, you use + instead of %\>%. It makes no sense to me either, just something to live with.
+After we've invoked the ggplot() function, you'll notice we're using a + symbol. It means the same thing as |> ("and then do this"). It's just a quirk of ggplot() that after you invoke the ggplot() function, you use + instead of |> . It makes no sense to me either, just something to live with.
 
 ### Task 5: Run the following code
-
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
 ```{r}
 maryland_top_counties |>
@@ -116,8 +112,6 @@ This is a very basic chart. But it's hard to derive much meaning from this chart
 
 ### Task 6: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
-
 ```{r}
 maryland_top_counties |>
   ggplot() +
@@ -127,8 +121,6 @@ maryland_top_counties |>
 This is a little more useful. But the bottom is kind of a mess, with overlapping names. We can fix that by flipping it from a vertical bar chart (also called a column chart) to a horizontal one. coord_flip() does that for you.
 
 ### Task 7: Run the following code
-
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
 
 ```{r}
 maryland_top_counties |>
@@ -147,8 +139,6 @@ It's kind of like applying CSS to html. Here I'm changing the theme slightly to 
 
 ### Task 8: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
-
 ```{r}
 maryland_top_counties |>
   ggplot() +
@@ -163,8 +153,6 @@ First, you have to install and load a package that contains lots of extra themes
 
 ### Task 9: Run the following code
 
-**Task** Run the following code. **Answer**
-
 ```{r}
 install.packages('ggthemes')
 library(ggthemes)
@@ -173,8 +161,6 @@ library(ggthemes)
 And now we'll apply the economist theme from that package with theme_economist()
 
 ### Task 10: Run the following code
-
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last version of the chart? **Answer**
 
 ```{r}
 maryland_top_counties |>
@@ -187,8 +173,6 @@ maryland_top_counties |>
 Those axis titles are kind of a mess. Let's change "count" on the x axis to "net change" and change "reorder(County,TOTAL_DIFF)" to "county". And while we're at it, let's add a basic title and a source as a caption. We'll use a new function, labs(), which is short for labels.
 
 ### Task 11: Run the following code
-
-**Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
 
 ```{r}
 maryland_top_counties |>
@@ -223,7 +207,7 @@ So, let's load some WinRed contribution data we've previously used and create a 
 md_winred <- read_rds("data/maryland_winred.rds")
 ```
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code.
 
 ```{r}
 
@@ -242,7 +226,7 @@ We'll put the date on the x axis and total contributions on the y axis.
 
 ### Task 13: Run the following code
 
-**Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
+**Task** Run the following code.
 
 ```{r}
 md_winred_by_date |>
@@ -252,7 +236,7 @@ md_winred_by_date |>
 
 ```
 
-It's not super pretty, but there's a pattern here: the number of contributions fluctuates between 400 and 800 a day for most of this period, and then jumps way up at the end of June. We've learned that the end of June is the end of a reporting period, and donors respond to deadlines.
+It's not super pretty, but there's a pattern here: the number of contributions fluctuates between 400 and 800 a day for most of this period, and then jumps way up at the end of June. Here's the reason: the end of June is the end of a campaign finance reporting period, and donors respond to deadlines. (Have you ever gotten an instagram ad from a politician along the lines of "WE NEED X MORE MONEY BEFORE OUR FUNDRAISING DEADLINE TO BEAT MAGA/THE RADICAL LEFT"?)
 
 Right now, it's kind of hard to see specifics, though. When did some of those smaller spikes and troughs happen?
 
