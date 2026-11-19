@@ -67,29 +67,38 @@ glimpse(texas_precinct_20)
 
 Things that should be characters -- like county, precinct, candidate -- are characters (chr). Things that should be numbers (dbl) -- like votes -- are numbers.
 
-There are some minor problems. The election_day column is a good example. It read in as a number (chr), even though there clearly are numbers in it judging from our initial inspection. Here's why: the original file has a single value in that column that is "5+".
+There are some minor problems. The election_day column is a good example. It read in as a character (chr), even though there clearly are numbers in it judging from our initial inspection. Here's why: the original file has a single value in that column that is "5+".
 
 ```{r}
-texas_precinct_20 |> filter(election_day == "5+")
+texas_precinct_20 |>
+  filter(election_day == "5+")
 ```
 
-Because this is just one result that's weird, we can fix it by comparing the other votes Castaneda received in Anderson to the county totals for her. The difference should be what that "5+" value should be. I've done those calculations and it turns out that 49 is the actual likely value.
+Because this is just one result that's weird, we can fix it by comparing the other votes Castaneda received in Anderson to the county totals for her. The difference should be what that "5+" value should be. Let's say that we did our research and confirmed that just a plain old 5 is the actual likely value.
 
-We can fix that pretty easily, by changing that value to "49" using `case_when` and then using `mutate` to make the entire column numeric.
+We can fix that pretty easily, by changing that value to "5" using `case_when` and then using `mutate` to make the entire column numeric.
 
 ### Task 6: Fix that "election_day" value and change the "election_day" field data type
 
 **Task** Run the following codeblock to update that single row's election day votes to 49 (".default = election_day leaves all the others unchanged), change the data type of the "election_day" field from a character (chr) to a number, and then glimpse the data, to see the change. Add a description of what the mutate code does to your reference notebook.
 
+Note: out in the wild, you might also see ".default =" in a case_when replaced with "TRUE ~" which is just another way to do the same thing (so long as it's at the very end of your case_when.) That's typically what I use, but ".default =" is probably the more intuitive version.
+
 ```{r}
 texas_precinct_20 <- texas_precinct_20 |>
   mutate(election_day = case_when(
-    election_day == '5+' ~ '49',
+    election_day == '5+' ~ '5',
     .default = election_day
   ))
+```
 
-texas_precinct_20 <- texas_precinct_20 |> mutate(election_day = as.numeric(election_day))
+```{r}
+texas_precinct_20 <- texas_precinct_20 |>
+  mutate(election_day = as.numeric(election_day))
+```
 
+
+```{r}
 glimpse(texas_precinct_20)
 ```
 
@@ -107,15 +116,6 @@ texas_precinct_20 |>
   arrange(desc(count))
 ```
 
-### Task 8: Install lubridate (if you haven't already)
-
-**Task** Run the following codeblock to install the lubridate package.
-
-```{r}
-# skip this if you already have it installed.
-# install.packages('lubridate')
-```
-
 ### Task 9: Load lubridate
 
 **Task** Run the following code to load the lubridate library.
@@ -126,11 +126,24 @@ library(lubridate)
 
 ### Task 10: Load Yadkin voter data
 
-**Task** Run the following codeblock to load data on registered voters in Yadkin County, North Carolina.
+**Task** Run the following codeblock to load data on registered voters in the wonderfully names Yadkin County, North Carolina.
 
 ```{r}
 yadkin_voters <- read_csv("data/yadkin_voters.csv")
 ```
+
+We've got some problems again. what are they?
+
+```{r}
+problems(yadkin_voters)
+```
+
+looks like it's the same issue as before, so we'll apply the same solution.
+
+```{r}
+yadkin_voters <- read_csv("data/yadkin_voters.csv", guess_max = 28456)
+```
+
 
 ### Task 11: Look for date gaps in data
 
@@ -176,7 +189,7 @@ library(tidyverse)
 library(janitor)
 ```
 
-### Task 3: Load Arnold, Maryland demonstration data
+### Task 3: Load Maryland demonstration data
 
 **Task** Run the following codeblock to load a demonstration slice of the WinRed contribution data from Conowingo, Maryland. How many rows are in this demonstration data set?
 
@@ -198,7 +211,7 @@ And let's examine the full data set.
 
 ### Task 5: Examine the data table
 
-**Task** Run the following codeblock to examine the data. Name three problems the book chapter says exist in this data set that could prevent us from answering questions?
+**Task** Run the following codeblock to examine the data. What are three problems that exist in this data set that could prevent us from answering questions, or at least make it harder?
 
 **Answer**
 
@@ -316,9 +329,12 @@ cleaned_conowingo
 # cleaning function
 cleaned_conowingo <- conowingo |>
   clean_names() |> 
-  rename(linenumber = x1_linenumber) |> 
+  rename(linenumber = x1_linenumber) |>
+  # use mutate to update the existing amount column. use as.numeric to turn the values in the existing amount column into actual numbers
   mutate(amount = as.numeric(amount)) |> 
   distinct() |>
+  # use mutate to update the values in the zip column, then use str_sub to only keep the first through fifth characters in each value.
+  # the way str_sub works is this: str_sub(name_of_column, start=starting_point_in_value, end=ending_point_in_value)
   mutate(zip = str_sub(zip, start=1L, end=5L))
   
 
@@ -329,7 +345,7 @@ cleaned_conowingo
 
 ### Task 14: Clean up city field
 
-**Task** Run the following codeblock to use str_tot_title() to standarize capitalization in the "city" field. How many mispellings of Conowingo remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
+**Task** Run the following codeblock to use str_to_title() to standarize capitalization in the "city" field. How many mispellings of Conowingo remain after running this code? Answer below. Add a description of what this code does to your reference notebook.
 
 ```{r}
 # cleaning function

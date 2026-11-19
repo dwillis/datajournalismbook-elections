@@ -1,0 +1,251 @@
+---
+title: "lab_12"
+author: "Derek Willis, updated by Aidan Hughes"
+date: "2026-11-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+* rvest, tidytext, textstem and our usual libraries
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+library(rvest)
+library(tidyverse)
+library(tidytext)
+library(textstem)
+```
+
+This lab combines the two skills we've picked up in the last two pre-labs: scraping a page with `rvest` (pre_lab_11) and analyzing a body of text with `tidytext` (pre_lab_12). Instead of starting from a CSV, you're going to scrape your own two bodies of text to compare -- the same idea as the Republican/Democratic platform comparison in pre_lab_12, but now you're collecting the text yourself.
+
+We'll scrape press releases from two members of Maryland's congressional delegation from opposite parties: Rep. Andy Harris (R, MD-01) and Rep. Steny Hoyer (D, MD-05). Both of their House websites are built on the same underlying template, so the same scraping code works on both -- you'll just swap the URL, the same way pre_lab_12 reused one block of analysis code for both party platforms.
+
+(Note: these pages update as new releases are published, so if you run this weeks from now, you'll be looking at different releases than the ones described in the answers below. That's fine -- the code should still work the same way.)
+
+## Questions
+
+**Q1.** Scrape the 10 most recent press releases from each member's site -- <https://harris.house.gov/media/press-releases> and <https://hoyer.house.gov/media/press-releases> -- into dataframes with five columns: `member`, `date`, `title`, `url` and `body`. Then combine them into a single dataframe, the same way `bind_rows()` combined rows in lab_11.
+
+On these pages, each release is contained in a `<div>` with the class `views-row`. Use `html_elements(".views-row")` to grab all of them, then `html_element()` -- the singular version pre_lab_11 mentioned but didn't use -- to pull one date, one headline/link and one body paragraph out of *each* row, using the classes `.row .col-auto` (date), `.h3 a` (headline and url) and `.evo-press-release__body` (body text). A few rows at the bottom of each page aren't actual press releases (they're page-navigation elements that happen to share the same class), so filter out any row with a missing title and keep just the first 10.
+
+Then, following the example in the pre_lab, make a list of unique words from the combined `body` column and remove the standard tidytext stop words. Look at what's left over -- you should notice a handful of words that aren't in the stop words list but show up constantly anyway, because they're part of how these press releases identify the member and the dateline, not because they're meaningful content. Add those as custom stop words, the same way the pre_lab added "united" and "america" for the party platforms. Finally, produce a top 10 list of words (combining both members) with their percentages. What's the leading word, and what does it tell you -- or not tell you -- about the differences between the two members?
+
+**A1.** The leading word is "chairman" (6 times, 2% of all non-stop words), followed by "agriculture," "announced," "appropriations," "federal," "funding," "million" and "u.s." Before adding custom stop words, the list was dominated by each member's own name and title ("harris," "andy," "hoyer," "steny," "congressman") and dateline boilerplate ("dc," "d.c," "m.d," "washington," "md"), plus "released" and "statement," which show up in nearly every one of Hoyer's releases because his are almost all framed as "Hoyer Statement on..." Once those were filtered out, the combined top 10 didn't actually tell us much about the *differences* between the two members -- it's dominated by generic congressional-press-release vocabulary ("federal," "million," "funding") that could show up in either member's releases. That's the limit of combining the two bodies together; we need to split them apart to see real differences, which is what Q2 does.
+
+```{r}
+harris_url <- "https://harris.house.gov/media/press-releases"
+
+harris_page <- harris_url |>
+  read_html()
+
+# html_elements() grabs every press release container on the page.
+# html_element() (singular) then pulls one matching tag out of EACH row,
+# instead of flattening every match on the page into one long list.
+harris_rows <- harris_page |> html_elements(".views-row")
+
+harris <- tibble(
+  member = "Harris (R)",
+  date = harris_rows |> html_element(".row .col-auto") |> html_text(trim = TRUE),
+  title = harris_rows |> html_element(".h3 a") |> html_text(trim = TRUE),
+  url = harris_rows |> html_element(".h3 a") |> html_attr("href"),
+  body = harris_rows |> html_element(".evo-press-release__body") |> html_text(trim = TRUE)
+) |>
+  # a few rows at the bottom of the page are page-navigation elements, not
+  # actual press releases -- they show up with no title
+  filter(!is.na(title)) |>
+  slice_head(n = 10)
+
+harris
+```
+
+```{r}
+hoyer_url <- "https://hoyer.house.gov/media/press-releases"
+
+hoyer_page <- hoyer_url |>
+  read_html()
+
+hoyer_rows <- hoyer_page |> html_elements(".views-row")
+
+hoyer <- tibble(
+  member = "Hoyer (D)",
+  date = hoyer_rows |> html_element(".row .col-auto") |> html_text(trim = TRUE),
+  title = hoyer_rows |> html_element(".h3 a") |> html_text(trim = TRUE),
+  url = hoyer_rows |> html_element(".h3 a") |> html_attr("href"),
+  body = hoyer_rows |> html_element(".evo-press-release__body") |> html_text(trim = TRUE)
+) |>
+  filter(!is.na(title)) |>
+  slice_head(n = 10)
+
+hoyer
+```
+
+```{r}
+releases <- bind_rows(harris, hoyer)
+
+releases
+```
+
+```{r}
+unique_words <- releases |> select(member, body) |>
+  unnest_tokens(word, body)
+
+data("stop_words")
+
+# These show up constantly because they're how each release identifies the
+# member and the dateline ("WASHINGTON, DC -- Today, Congressman Andy
+# Harris, M.D. (MD-01)...", "Hoyer Statement on...released the following
+# statement..."), not because they're meaningful content.
+stop_words <- stop_words |>
+  add_row(word = "harris") |>
+  add_row(word = "andy") |>
+  add_row(word = "hoyer") |>
+  add_row(word = "steny") |>
+  add_row(word = "congressman") |>
+  add_row(word = "maryland") |>
+  add_row(word = "washington") |>
+  add_row(word = "md") |>
+  add_row(word = "dc") |>
+  add_row(word = "d.c") |>
+  add_row(word = "m.d") |>
+  add_row(word = "released") |>
+  add_row(word = "statement")
+
+unique_words <- unique_words |>
+  anti_join(stop_words) |>
+  # drop stray numbers like district numbers ("01", "05") that aren't words
+  filter(!str_detect(word, "^[0-9]+$"))
+
+unique_words |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+**Q2.** Now split `unique_words` into two dataframes, one per member, the same way pre_lab_12 split the platforms into `unique_words_rep` and `unique_words_dem`. Produce a top 10 list of words for each member. What do the two lists suggest about how each member uses his press releases?
+
+**A2.** Harris's top words -- "chairman," "agriculture," "appropriations," "federal," "funding," "million," "army," "corps," "development," "drug" -- read like a running list of grant announcements. That's not a coincidence: Harris chairs the House Appropriations Subcommittee on Agriculture, Rural Development, Food and Drug Administration, and Related Agencies, and most of his releases announce funding his subcommittee controls. Hoyer's top words -- "defense," "house," "u.s.," "act," "armed," "assistance," "chairman" (referring to *other* committee chairmen, not himself), "committee," "congress," "immigration," "letter," "senate," "services" -- point to something very different: national and foreign-policy commentary (Ukraine assistance, the Armed Services Committee, immigration enforcement) delivered as reactions to news, not funding he's personally directing to the district.
+
+```{r}
+unique_words_harris <- unique_words |> filter(member == "Harris (R)")
+
+unique_words_hoyer <- unique_words |> filter(member == "Hoyer (D)")
+```
+
+```{r}
+unique_words_harris |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+
+unique_words_hoyer |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+**Q3.** Using the `releases` dataframe, make a list of the top 10 bigrams for each member separately, following the same `separate()`/`anti_join()` approach from pre_lab_12. What's the top bigram for each member, and what does the overall shape of each list tell you about how each member writes his releases?
+
+**A3.** Harris's bigrams -- "agriculture rural," "rural development," "development food," "drug administration" -- aren't separate phrases at all once you read them in order; strung together they spell out "Agriculture, Rural Development, Food and Drug Administration," the formal name of the subcommittee he chairs. It shows up because he (or his staff) uses that exact phrase over and over across his releases. Hoyer's list looks completely different: only "armed services" and "services chairman" repeat (twice, both from the same letter about Ukraine), and the other dozens of bigrams tied at a single occurrence each are specific one-off references -- "angela alsobrooks," "chris van" (Hollen), "ceo elon" (Musk), "civil rights," "accountability office." The contrast itself is the finding: Harris's releases are a template he fills in with new grant amounts, so the same institutional phrases repeat constantly, while Hoyer's are one-off reactions to whatever happened in the news that week, so almost nothing repeats.
+
+```{r}
+releases |>
+  filter(member == "Harris (R)") |>
+  unnest_tokens(bigram, body, token = "ngrams", n = 2) |>
+  # separate() splits the "bigram" column into two new columns, "word1" and "word2",
+  # using the space between the two words (sep = " ") as the dividing point
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  anti_join(stop_words, by = c("word1" = "word")) |>
+  anti_join(stop_words, by = c("word2" = "word")) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+```{r}
+releases |>
+  filter(member == "Hoyer (D)") |>
+  unnest_tokens(bigram, body, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  anti_join(stop_words, by = c("word1" = "word")) |>
+  anti_join(stop_words, by = c("word2" = "word")) |>
+  mutate(bigram = paste(word1, word2, sep=" ")) |>
+  group_by(bigram) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+**Q4.** Using `unique_words_harris` from Q2, compare the top 10 words you get from the original words, the stemmed words, and the lemmatized words (the same three-way comparison pre_lab_12 walked through for the party platforms). What differences do you notice?
+
+**A4.** Stemming produces the usual crude truncations -- "agriculture" becomes "agricultur," "federal" becomes "feder," "army" becomes "armi" -- and in one case it's a little *too* aggressive: "u.s" gets stemmed all the way down to "u.", which barely looks like a word at all anymore. Lemmatization stays readable and even cleans things up a bit: "announced" moves from 4 occurrences to 5 because it absorbs a variant like "announces" into one consistent form, which is exactly the kind of word-variation fix lemmatization is good for.
+
+```{r}
+unique_words_harris |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+```{r}
+unique_words_harris_stem <- stem_words(unique_words_harris$word) |> as_tibble() |> rename(word = value)
+
+unique_words_harris_stem |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+```{r}
+unique_words_harris_lemma <- lemmatize_words(unique_words_harris$word) |> as_tibble() |> rename(word = value)
+
+unique_words_harris_lemma |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  summarize(n = n()) |>
+  arrange(desc(n)) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
+```
+
+**Q5.** Finally, run a sentiment analysis on `unique_words_harris` and `unique_words_hoyer` separately using the "bing" lexicon, the same way pre_lab_12 did for the party platforms. How does the positive/negative balance compare between the two members, and is there anything that looks miscategorized in either list?
+
+**A5.** Harris's words lean slightly positive (8 positive to 6 negative): the positive words come from grant-announcement language ("relief," "approval," "helped," "awarded," "protect"), while the negative words come from the subject matter of specific releases, like invasive catfish and illicit vapes ("invasive," "illicit," "dangerous," "severe," "wild"). Hoyer's words lean more clearly positive (4 to 1), though his sample is much smaller. The one miscategorized word shows up in *both* lists: "trump" gets tagged as a positive-sentiment word by the bing lexicon in both Harris's and Hoyer's releases, almost certainly because "trump" can mean "to beat" or "outdo" as an ordinary verb -- the lexicon has no way to know it's being used as a proper name here, not as that verb. It's the same lesson pre_lab_12 raised about word-level sentiment: it matches spellings, not meaning in context.
+
+```{r}
+bing <- get_sentiments("bing")
+
+unique_words_harris |>
+  inner_join(bing, by = "word") |>
+  group_by(word, sentiment) |>
+  summarize(n = n()) |>
+  arrange(desc(n))
+
+unique_words_hoyer |>
+  inner_join(bing, by = "word") |>
+  group_by(word, sentiment) |>
+  summarize(n = n()) |>
+  arrange(desc(n))
+```

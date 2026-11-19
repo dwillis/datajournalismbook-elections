@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_09.Rmd"
-author: "Derek Willis"
-date: "2024-10-27"
+author: "Derek Willis, updated by Aidan Hughes"
+date: "2026-10-27"
 output: html_document
 ---
 
@@ -36,10 +36,6 @@ dem_cands <- read_csv("data/md_dem_cands.csv")
 
 **Task** Log into [datawrapper.de](https://www.datawrapper.de/). Once logged in, you'll click on New Chart.
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/datawrapper1.png")
-```
-
 ### Task 4: Upload the CSV File
 
 The first thing we'll do is upload the pg_cands.csv file that's in the pre_lab_10/data folder.
@@ -52,7 +48,7 @@ knitr::include_graphics("images/datawrapper2.png")
 
 ### Task 5: Inspect the Data
 
-Next up is to check and see what Datawrappper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly.
+Next up is to check and see what Datawrapper did with our data when we uploaded it. As you can see from the text on the left, if it's blue, it's a number. If it's green, it's a date. If it's black, it's text. Red means there's a problem. This data is very clean, so it imports cleanly.
 
 **Task** Look at the uploaded data, then click on the "Proceed" button.
 
@@ -113,6 +109,10 @@ In order to make a map, we need to be able to tell Datawrapper that a certain co
 ```{r}
 
 # calculate the total number of votes and Moore's percentage, saving it back to the md_gov_county dataframe
+
+md_gov_county <- md_gov_county |>
+  clean_names() |>
+  mutate(pct_moore = moore / (cox + moore + lashar + wallace + harding + write_ins) * 100)
 
 write_csv(md_gov_county, "data/md_gov_county.csv")
 ```

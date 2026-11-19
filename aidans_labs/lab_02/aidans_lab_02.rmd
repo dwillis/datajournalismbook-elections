@@ -41,15 +41,20 @@ Which counties have seen the most? Take a look at county population figures here
 
 **A1**
 
+If you interpreted "since July 21" to mean including that date, you would use >= and get an answer of
+
+If you interpreted it to mean NOT including that date, you would use > and get an answer of 17,076 total new voters
+
+
 ```{r}
 new_voters_post_biden <- md_voters_2024 |>
   filter(STATE_REGISTRATION_DATE == COUNTY_REGISTRATION_DATE) |>
-  filter(STATE_REGISTRATION_DATE > "2024-07-21")
+  filter(STATE_REGISTRATION_DATE > mdy("7/21/2024"))
+  # alternative solution:
+  # filter(STATE_REGISTRATION_DATE == COUNTY_REGISTRATION_DATE & STATE_REGISTRATION_DATE > "2024-07-21")
 
 new_voters_post_biden
 ```
-
-Over 17,000 newly registered voters after Biden dropped out.
 
 
 ```{r}
@@ -66,6 +71,7 @@ Montgomery, Baltimore City, Baltimore County, Prince George's, and Anne Arundel 
 
 **A2**
 
+
 ```{r}
 md_voters_2024 <- md_voters_2024 |>
   mutate(week_registered = week(STATE_REGISTRATION_DATE))
@@ -81,7 +87,15 @@ new_voters_weekly <- md_voters_2024 |>
 new_voters_weekly
 ```
 
-Those two weeks after Biden stepped back saw the 2nd and 3rd largest number of new registrations of any week in our data. However, another week--week 24, ending around June 14--saw an even higher number.
+Those two weeks after Biden stepped back saw the 2nd and 3rd largest number of new registrations of any week in our data. Week 32 initially appears to be much lower than other weeks, but if we look carefully at our data, we can see that it's actually because our data stops partway through week 32, so we don't have the full total for that week 
+
+
+```{r}
+md_voters_2024 |>
+  filter(week_registered == 32) |>
+  arrange(desc(COUNTY_REGISTRATION_DATE))
+```
+
 
 
 **Q3** Using lubridate, show which month saw the largest number of registrations. Does the answer help shed more light on Q2?
@@ -110,7 +124,10 @@ Which regions and parties account for the most new voters?
 **A4**
 
 ```{r}
-md_voters_2024 <- md_voters_2024 |> 
+new_voters_post_biden <- new_voters_post_biden |> 
+  # create a new column with mutate that has the names of regions in it.
+  # the name of the region should come from the COUNTY column.
+  # When COUNTY is Allegany, the region column should say "western", etc.
   mutate(region = case_when(
     COUNTY == 'Allegany' ~ 'Western',
     COUNTY == 'Garrett' ~ 'Western',
@@ -148,13 +165,13 @@ you could do the next part in either two ways based on how you interpreted the q
 here's number 1):
 
 ```{r}
-md_voters_2024 |>
+new_voters_post_biden |>
   group_by(region) |>
   summarise(count = n()) |>
   arrange(desc(count))
 ```
 ```{r}
-md_voters_2024 |>
+new_voters_post_biden |>
   group_by(PARTY) |>
   summarise(count = n()) |>
   arrange(desc(count))
@@ -163,14 +180,103 @@ md_voters_2024 |>
 Here's number 2):
 
 ```{r}
-md_voters_2024 |>
+new_voters_post_biden |>
   group_by(PARTY, region) |>
   summarise(count = n()) |>
   arrange(desc(count))
 ```
 
 
-**Q5** What's an additional question you could ask of this data?
+**Q5** Filter md_voters_2024 to only include voters from the Capital region or the Western region. Save the data in a new variable/data set named capital_or_western.
+
+How many voters are in the new data set?
+
+```{r}
+capital_or_western <- md_voters_2024 |>
+  # us mutate to create a new column called region. the values that goes inside it are...
+  mutate(region = case_when(
+    # when the value in county is "allegany", make the new value in our new region column "Western"
+    COUNTY == 'Allegany' ~ 'Western',
+    COUNTY == 'Garrett' ~ 'Western',
+    COUNTY == 'Washington' ~ 'Western',
+    COUNTY == 'Frederick' ~ 'Capital',
+    COUNTY == 'Montgomery' ~ 'Capital',
+    COUNTY == "Prince George's" ~ 'Capital',
+    COUNTY == 'Anne Arundel' ~ 'Central',
+    COUNTY == 'Baltimore City' ~ 'Central',
+    COUNTY == 'Baltimore County' ~ 'Central',
+    COUNTY == 'Carroll' ~ 'Central',
+    COUNTY == 'Harford' ~ 'Central',
+    COUNTY == 'Howard' ~ 'Central',
+    COUNTY == 'Calvert' ~ 'Southern',
+    COUNTY == 'Charles' ~ 'Southern',
+    COUNTY == "Saint Mary's" ~ 'Southern',
+    COUNTY == 'Kent' ~ 'Eastern Shore',
+    COUNTY == "Queen Anne's" ~ 'Eastern Shore',
+    COUNTY == 'Talbot' ~ 'Eastern Shore',
+    COUNTY == 'Caroline' ~ 'Eastern Shore',
+    COUNTY == 'Dorchester' ~ 'Eastern Shore',
+    COUNTY == 'Wicomico' ~ 'Eastern Shore',
+    COUNTY == 'Somerset' ~ 'Eastern Shore',
+    COUNTY == 'Worcester' ~ 'Eastern Shore',
+    COUNTY == 'Cecil' ~ 'Eastern Shore')) |>
+  filter(region == "Capital" | region == "Western")
+
+nrow(capital_or_western)
+
+```
 
 
-**A5** 
+**Q6** Finally, filter md_voters_2024 to only include voters who meet BOTH of these conditions:
+
+1) they are from the Eastern Shore region or Western region
+2) their party affiliation is DEM and their Gender is F
+
+Hint: you can accomplish this with two filters
+
+Save the data in a new variable/data set named final_filter.
+
+How many voters are in the new data set?
+
+```{r}
+final_filter <- md_voters_2024 |>
+  mutate(region = case_when(
+    COUNTY == 'Allegany' ~ 'Western',
+    COUNTY == 'Garrett' ~ 'Western',
+    COUNTY == 'Washington' ~ 'Western',
+    COUNTY == 'Frederick' ~ 'Capital',
+    COUNTY == 'Montgomery' ~ 'Capital',
+    COUNTY == "Prince George's" ~ 'Capital',
+    COUNTY == 'Anne Arundel' ~ 'Central',
+    COUNTY == 'Baltimore City' ~ 'Central',
+    COUNTY == 'Baltimore County' ~ 'Central',
+    COUNTY == 'Carroll' ~ 'Central',
+    COUNTY == 'Harford' ~ 'Central',
+    COUNTY == 'Howard' ~ 'Central',
+    COUNTY == 'Calvert' ~ 'Southern',
+    COUNTY == 'Charles' ~ 'Southern',
+    COUNTY == "Saint Mary's" ~ 'Southern',
+    COUNTY == 'Kent' ~ 'Eastern Shore',
+    COUNTY == "Queen Anne's" ~ 'Eastern Shore',
+    COUNTY == 'Talbot' ~ 'Eastern Shore',
+    COUNTY == 'Caroline' ~ 'Eastern Shore',
+    COUNTY == 'Dorchester' ~ 'Eastern Shore',
+    COUNTY == 'Wicomico' ~ 'Eastern Shore',
+    COUNTY == 'Somerset' ~ 'Eastern Shore',
+    COUNTY == 'Worcester' ~ 'Eastern Shore',
+    COUNTY == 'Cecil' ~ 'Eastern Shore')) |>
+  filter(region == "Eastern Shore" | region == "Western") |>
+  filter(PARTY == "DEM" & GENDER == "F")
+
+nrow(final_filter)
+```
+
+
+**BONUS QUESTION** What's an additional journalistic question you could ask of this data? Show me the code you'd use to do it below, or at least describe the logic step-by-step in English if you're not sure how to write the code for it yet.
+
+
+**A** 
+
+```{r}
+
+```

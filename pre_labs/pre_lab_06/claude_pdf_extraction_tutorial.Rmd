@@ -1,0 +1,486 @@
+---
+title: "Extracting Structured Data from a PDF with the Claude API in R"
+author: "Aidan Hughes and our friend Claude"
+date: "10-15-2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What's on tap
+
+In today's pre-lab, we'll be reviewing how to extract structured data from PDFs and other data files using AI. In the olden days (i.e. like 1-2 years ago) we'd use software called Tabula to pull tables out of PDFs. The software still exist, but the simple fact is that we can do way more, with far greater ease, and greater flexibility using modern AI / LLM tools.
+
+Here are a few reasons:
+
+1) Tabula needs an embedded text layer in the PDF/file to be able to extract the data. Not all PDFs/files actually contain that. For example, a PDF might have a screenshot or image of something with text/data in it instead of the actual text. This might sound silly, but in your reporting careers it'll happen *way more* than you'd expect. It's a problem I've run into myself when dealing with some public filings under the Foreign Agent Registration Act. Here's the test: if you can't click and highlight the text in the file, you probably need AI to extract the data.
+
+2) Tabula only works when the data is already in structured / table format in the document, and it generally relies on that formatting to be pretty clean.
+
+3) Even then, Tabula requires you to literally show it where the boundaries of the data / tables are for every page. If the format and location of every page and every table is EXACTLY the same, then there's an easy button that let's you set it once manually and then auto-apply it to all the other pages. Otherwise, you have to manually adjust and set the boundaries on all the other pages, too. Sometimes that becomes unfeasible due to time and effort.
+
+4) You can just do MORE with AI than you can with Tabula. Want to add a step or column that summarizes something in the data? Boom. Need to contextualize some of the data? Boom. Need to classify whether something does or doesn't exist in the data? Boom. We'll cover how to do those in future classes, but what's important is that once you have a pipeline to feed the document into Claude, you can (somewhat) easily add additional steps to the pipeline to do more with the data.
+
+That's not to say there isn't still a place for Tabula. For example, if you're dealing with highly sensitive documents, Tabula's probably the way to go since it runs locally on your laptop rather than sending data to an AI company's servers.
+
+But in a lot of instances, there's really no escaping that AI extraction is simply the best option we have available to us.
+
+I know some of you have deep moral opposition to AI. I'm not asking you to change that. But I do need you to at least be aware of this tool that exists, and understand how it's used. What's that saying about keeping your enemies close?...
+
+# The data we're working with today:
+
+For the first example document we use a **real, official NFL "Game Book" PDF**.
+The league publishes one of these for every game, as a PDF, for media use.
+
+We're using the gamebook for **Super Bowl LX** (Seattle Seahawks at New England Patriots, 2/8/2026),
+fetched directly from the NFL's own CDN. It's a
+realistic test case: 19 pages, mixed layout (lineups, scoring summary,
+play-by-play, multiple stat tables per page) — much closer to what you'll
+actually deal with than a clean one-page synthetic example.
+
+The pipeline:
+
+1. Download the real PDF from the NFL's public URL.
+2. Upload it once to Claude's **Files API**, which hands back a `file_id`.
+3. Reference that `file_id` in a `document` content block and ask Claude to
+   find one specific table in the document — the **Pass Receiving** stats on
+   the "Final Individual Statistics" page — and return it as JSON.
+4. Parse that JSON back into a tidy R data frame.
+5. Check the result against the real numbers (transcribed by hand below) to
+   see how accurate the extraction is.
+
+We're using the Files API here rather than embedding the PDF as base64 text
+directly in the request. Base64 works too (and is the only option on some
+platforms, like Amazon Bedrock or Google Vertex AI), but it inflates the
+file size by about a third on *every single request*, and there's no way to
+reuse an already-sent file — you resend the whole thing each time. The Files
+API uploads the raw bytes once, and every request after that just points at
+the `file_id` — cheaper to transmit, and reusable across as many requests as
+you want.
+
+## Packages
+
+```{r packages, message=FALSE}
+# install.packages(c("httr2", "jsonlite", "curl", "knitr", "pdftools"))
+library(httr2)
+library(jsonlite)
+library(curl)
+library(pdftools)
+```
+
+## API KEY SETUP
+
+Store your key as an environment variable rather than pasting it into the
+script — that way it never ends up visible in your code, and never gets
+accidentally committed to GitHub or shared when you send someone your `.Rmd`
+file. We'll use a special file called `.Renviron`, which R automatically
+reads every time it starts up.
+
+### Step 1: Open (or create) your `.Renviron` file
+
+`.Renviron` lives in your home directory and starts with a dot, which means
+it's a *hidden file* — it won't show up in Finder/File Explorer by default,
+and if it doesn't exist yet, you have to create it in exactly the right
+place. The easiest way to sidestep both problems is to let R open it for
+you. In the RStudio **Console** (bottom-left pane), run:
+
+```{r edit-renviron, eval=FALSE}
+# install.packages("usethis")  # skip if you already have it
+usethis::edit_r_environ()
+```
+
+
+### Step 2: Add your key
+
+IMPORTANT: DO NOT PASTE THE KEY ANYWHERE EXCEPT YOUR .Renviron FILE!!!
+
+In the editor tab that just opened, add one line (replace the placeholder
+with your actual key from the [Anthropic Console](https://console.anthropic.com/)):
+
+```
+ANTHROPIC_API_KEY="your-actual-key-here"
+```
+
+A few things that trip people up here:
+
+- Make sure the file ends with a blank line after your last entry (just
+  press Enter once after typing the line above) — R can silently ignore the
+  last line if the file doesn't end in a newline.
+- If `.Renviron` already has other lines in it from a previous class or
+  project, leave them alone — just add your new line underneath.
+
+Then save the file (**Cmd/Ctrl + S**) and close the tab.
+
+### Step 3: Make R pick up the change
+
+`.Renviron` is only read when an R session *starts*, so a file you just
+edited won't take effect in a session that's already running. Restart R via
+the RStudio menu: **Session → Restart R** . This does not close RStudio or your script —
+it just restarts the R engine underneath it, which takes a couple of
+seconds.
+
+### Step 4: Check it worked
+
+```{r key}
+api_key <- Sys.getenv("ANTHROPIC_API_KEY")
+
+# Should print TRUE. If it prints FALSE, the key wasn't found — double-check
+# steps 1-3 above (a common culprit: forgetting to restart R).
+nzchar(api_key)
+```
+
+Never print `api_key` itself anywhere you might share the output (console,
+knitted HTML, Slack, a screenshot) — that defeats the whole point of keeping
+it out of the script in the first place.
+
+### LET'S GET ROLLING
+
+## Step 1 — Download a real sports PDF
+
+```{r download}
+pdf_url  <- "https://static.www.nfl.com/image/upload/v1770635082/gamecenter/404ef5b1-fa62-11f0-9442-5911216651e2.pdf"
+pdf_path <- "sb_lx_gamebook.pdf"
+
+download.file(pdf_url, pdf_path, mode = "wb", quiet = TRUE)
+```
+
+## Step 2 — Upload the PDF to the Claude Files API
+
+```{r upload, eval=has_key}
+# 1. Describe the request: where it's going, who we are, and the file
+#    itself attached as a multipart form field (the same mechanism a
+#    website uses when you click "choose file" and upload something).
+
+upload_req <- request("https://api.anthropic.com/v1/files") |>
+  req_headers(
+    "x-api-key"         = api_key,      # your API key, proving who's asking
+    "anthropic-version" = "2023-06-01"  # which version of the API to speak
+  ) |>
+  req_body_multipart(file = curl::form_file(pdf_path, type = "application/pdf"))
+```
+
+```{r}
+# 2. Actually send it over the internet.
+upload_resp <- req_perform(upload_req)
+```
+
+Let's look at what we got back from the Claude Files API after we sent it the file. Click the upload_resp variable on the right and click around a little bit.
+
+Then, move to the next step.
+
+```{r}
+# 3. Turn it into a regular R list.
+uploaded <- resp_body_json(upload_resp)
+
+uploaded
+```
+
+```{r}
+# 4. Pull out the one piece of it we actually need going forward.
+
+# The $ symbol lets you refer to one specific part of the List and deal with just that value
+
+file_id <- uploaded$id
+
+file_id
+```
+
+
+File uploads, downloads, and deletes are all free — you're only billed for
+input tokens when a file is actually *used*
+
+## Step 2.5 — Quick sanity check: can Claude hear us?
+
+Before we build the more complicated request that references our uploaded
+PDF, let's send Claude the simplest possible message — just plain text, no
+file attached — purely to confirm our API key and internet connection are
+actually working. If something's going to go wrong with your `.Renviron`
+setup, better to find out here than three steps from now.
+
+```{r hello-claude, eval=has_key}
+hello_req <- request("https://api.anthropic.com/v1/messages") |>
+  req_headers(
+    "x-api-key"         = api_key,
+    "anthropic-version" = "2023-06-01",
+    "content-type"      = "application/json"
+  ) |>
+  req_body_json(list(
+    model      = "claude-haiku-4-5",
+    max_tokens = 100,
+    messages = list(
+      list(role = "user", content = "Hi Claude, can you hear me? Are you having a nice day, or at least as nice of a day as a non-sentient (for now) being can have?")
+    )
+  ))
+
+hello_resp   <- req_perform(hello_req)
+hello_result <- resp_body_json(hello_resp)
+
+hello_result$content[[1]]$text
+```
+
+If you got a reply back above (something like "Yes, I can hear you!"), your
+key and connection are both good, and you're ready to move on.
+
+## Step 3 — Build the request
+
+We send one user turn containing two content blocks: the PDF document
+(referenced by `file_id` instead of inline bytes), and a text instruction
+telling Claude exactly what we want back. Because this is a multi-page
+document with several different stat tables, we're specific about *which*
+table to pull from — Claude locates it within the PDF itself, we don't need
+to tell it a page number.
+
+```{r prompt}
+extraction_prompt <- paste(
+  "This PDF is the NFL's official game book for one game.",
+  "On the 'Final Individual Statistics' page, find the 'PASS RECEIVING' table",
+  "for both teams (ignore the rushing, passing, punting, and return tables).",
+  "Extract every player row for both teams, skipping each table's 'Total' row.",
+  "Return ONLY a JSON array — no markdown code fences, no commentary before or after it.",
+  "Each element must have exactly these fields:",
+  '"team" (string, full team name), "player" (string), "targets" (integer),',
+  '"receptions" (integer), "yards" (integer), "avg" (number), "long" (integer), "td" (integer).'
+)
+```
+
+Now we pack everything up and address it to Claude. Think of this next chunk
+like filling out a shipping label and packing a box. It might look intimidating at first glance, but when we break it down line by line, it's actually pretty straightforward.
+
+- The **headers** in req_headers are the label on the outside of the box: your API key (so
+  Claude knows who's asking), which version of the API we're speaking, and a
+  note that what's inside is JSON — a plain-text format computers use to pass
+  structured information back and forth.
+  
+- The **message** is what's inside the box: one message "from the user"
+  (that's us) containing two things — the PDF we uploaded in Step 2
+  (pointed to by its `file_id`, not the actual file bytes) and the
+  instructions we just wrote in `extraction_prompt` above.
+  
+The request_body_json function turns all the following instructions we're sending Claude into a format it'll understand JSON.
+
+Inside those instructions we have a number of different pieces of information to tell Claude:
+
+Inside those instructions we have a number of different pieces of information to tell Claude:
+
+model — which “version” of Claude to use. Think of this like choosing which reporter you’re assigning the story to; different models have different levels of capability, speed, and cost. We’re using "claude-haiku-4-5", Anthropic’s fastest and cheapest current model — plenty capable for pulling values out of a table like this one, where we’re not asking Claude to reason hard about anything, just read and transcribe.
+
+max_tokens — a cap on how long of a reply we’re willing to accept back. “Tokens” are roughly chunks of words (not quite the same as words, but close enough for now). We’re not trying to limit Claude’s thinking here — we’re just putting a reasonable ceiling on the response so a request can’t run away and get enormous (and expensive) by accident. 4096 is plenty of room for a JSON table of player stats.
+
+messages — this kicks off the actual conversation we’re having with Claude.
+
+role — who’s “speaking”. We set it to "user", because we’re the ones sending something to Claude (as opposed to "assistant", which would be Claude’s reply coming back).
+
+content — what we’re actually saying to Claude. Notice this is itself a list with two items in it — because we’re handing Claude two different kinds of things at once:
+A document block — telling Claude “go look at the file I already dropped off” in our prior steps
+
+A text block — this is just our plain-English instructions, stored earlier in extraction_prompt, telling Claude exactly which table to find and what shape we want the answer in.
+
+Put together, this one request says: “Hey Claude (model), here’s a document I already gave you (file_id) and here’s what I want you to do with it (extraction_prompt) — keep your answer under a reasonable length (max_tokens).” 
+
+Everything after that — headers included — is really just this one idea, written in the specific format the API expects.
+
+
+
+```{r request, eval=has_key}
+req <- request("https://api.anthropic.com/v1/messages") |>
+  req_headers(
+    "x-api-key"         = api_key,
+    "anthropic-version" = "2023-06-01",
+    "content-type"      = "application/json"
+  ) |>
+  req_body_json(list(
+    model      = "claude-haiku-4-5",
+    max_tokens = 4096,
+    messages = list(
+      list(
+        role = "user",
+        content = list(
+          list(
+            type = "document",
+            source = list(
+              type    = "file",
+              file_id = file_id
+            )
+          ),
+          list(type = "text", text = extraction_prompt)
+        )
+      )
+    )
+  ))
+```
+
+## Step 4 — Send it and read the response
+
+```{r perform, eval=has_key}
+resp <- req_perform(req)
+```
+
+Let's translate it into a List that R will understand again
+
+```{r}
+result <- resp_body_json(resp)
+```
+
+If we look at result, we can see that Claude's response (the table we're looking for! but not yet in table format) is in content -> the first (and only) element in content -> text
+
+```{r}
+raw_text <- result$content[[1]]$text
+cat(raw_text)
+```
+
+## Step 5 — Parse the JSON into a data frame
+
+Even when asked for JSON-only, it's good practice to defensively strip any
+stray markdown fences before parsing.
+
+```{r parse, eval=has_key}
+strip_fences <- function(x) {
+  x <- trimws(x)
+  x <- sub("^```(json)?", "", x)
+  x <- sub("```$", "", x)
+  trimws(x)
+}
+
+extracted <- fromJSON(strip_fences(raw_text))
+
+extracted
+```
+
+```{r token-usage, eval=has_key}
+# Good habit: keep an eye on token spend
+result$usage
+```
+
+## Check it against the real numbers
+
+Let's look at the values Claude pulled out vs the real values in the PDF. How did it do?
+
+## One more example
+
+That was a lot, and it might feel overwhelming. But the good news is, you really don't have to change much to apply this to other documents, or fully understand 100% of what's going on underneath the hood.
+
+Let's do one more example using a PDF derived from an image of multiple receipts. We'll try to generate a table with 1) each item purchased, and 2) the cost of each item.
+
+### The PDF
+
+This one is a scan — literally a photo of several paper receipts, saved as a
+single-page PDF. That makes it a perfect example of the very first point
+from the intro: there's no selectable text in this file at all. Let's prove
+that before we do anything else:
+
+```{r receipts-no-text-layer}
+receipts_path <- "receipts.pdf"
+
+# pdf_text() pulls out whatever selectable text layer a PDF has.
+# If there isn't one — like here — you get back an empty string.
+nchar(trimws(pdf_text(receipts_path)))
+```
+
+That `0` means Tabula (or any tool that only reads a text layer) would come
+back completely empty-handed here. Claude doesn't have that problem, because
+it can also "look at" PDF pages the way you'd look at a photo.
+
+### Upload it
+
+Exact same move as before — upload the file, get back a `file_id`.
+
+```{r receipts-upload, eval=has_key}
+receipts_upload_req <- request("https://api.anthropic.com/v1/files") |>
+  req_headers(
+    "x-api-key"         = api_key,
+    "anthropic-version" = "2023-06-01"
+  ) |>
+  req_body_multipart(file = curl::form_file(receipts_path, type = "application/pdf"))
+
+receipts_uploaded <- req_perform(receipts_upload_req) |> resp_body_json()
+receipts_file_id  <- receipts_uploaded$id
+
+receipts_file_id
+```
+
+### Write the prompt and build the request
+
+This image actually has *several* separate receipts laid out on one page,
+in a few different formats (some list quantity and cost, some just list a
+cost, one is a hotel folio). So we're a little more specific in the prompt
+this time, and we add a `receipt` field so items from different receipts
+don't get jumbled together in one list.
+
+```{r receipts-prompt}
+items_prompt <- paste(
+  "This PDF is a single scanned image containing several different store",
+  "and hotel receipts laid out on one page. There is no selectable text —",
+  "read the receipts the way you would look at a photo.",
+  "For every individual item or line charge listed on any receipt",
+  "(ignore subtotals, tax, totals, discounts, and marketing/survey text),",
+  "record which receipt it came from (use the shop or hotel name printed",
+  "on that receipt), the item's description, and its listed cost.",
+  "Return ONLY a JSON array — no markdown code fences, no commentary",
+  "before or after it. Each element must have exactly these fields:",
+  '"receipt" (string), "item" (string), "cost" (number).'
+)
+```
+
+```{r receipts-request, eval=has_key}
+receipts_req <- request("https://api.anthropic.com/v1/messages") |>
+  req_headers(
+    "x-api-key"         = api_key,
+    "anthropic-version" = "2023-06-01",
+    "content-type"      = "application/json"
+  ) |>
+  req_body_json(list(
+    model      = "claude-haiku-4-5",
+    max_tokens = 4096,
+    messages = list(
+      list(
+        role = "user",
+        content = list(
+          list(
+            type = "document",
+            source = list(
+              type    = "file",
+              file_id = receipts_file_id
+            )
+          ),
+          list(type = "text", text = items_prompt)
+        )
+      )
+    )
+  ))
+```
+
+### Send it, parse it, look at it
+
+Same `strip_fences()` helper from before — Claude sometimes wraps JSON in
+markdown fences even when asked not to, so it's worth keeping that
+safety net.
+
+```{r receipts-perform, eval=has_key}
+receipts_resp   <- req_perform(receipts_req)
+receipts_result <- resp_body_json(receipts_resp)
+receipts_raw    <- receipts_result$content[[1]]$text
+
+cat(receipts_raw)
+```
+
+```{r receipts-parse, eval=has_key}
+receipts_extracted <- fromJSON(strip_fences(receipts_raw))
+receipts_extracted
+```
+
+Open `receipts.pdf` yourself and compare a few rows against what Claude
+pulled out — with six-ish differently-formatted little receipts jammed onto
+one scanned page, this is a good test of whether it's actually reading
+carefully or just guessing.
+
+### ANSWER THIS:###
+In a couple sentences, tell me any of the following: have you run into any situations as a reporter where this type of extraction could have been useful? Are there any projects you haven't been able to do or might want to do in the future where this could be useful? If you hated this entire thing because you hate AI, is there any other way you might be able to accomplish the same tasks at scale in a feasible manner?
+
+
+

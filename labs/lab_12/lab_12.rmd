@@ -1,7 +1,7 @@
 ---
 title: "lab_12"
-author: "Derek Willis"
-date: "2024-11-15"
+author: "Derek Willis, updated by Aidan Hughes"
+date: "2026-11-18"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## You will need
 
-* tidytext and our usual libraries
+* rvest, tidytext, textstem and our usual libraries
 
 ## Load libraries and establish settings
 
@@ -21,58 +21,54 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
+This lab combines the two skills we've picked up in the last two pre-labs: scraping a page with `rvest` (pre_lab_11) and analyzing a body of text with `tidytext` (pre_lab_12). Instead of starting from a CSV, you're going to scrape your own two bodies of text to compare -- the same idea as the Republican/Democratic platform comparison in pre_lab_12, but now you're collecting the text yourself.
+
+We'll scrape press releases from two members of Maryland's congressional delegation from opposite parties: Rep. Andy Harris (R, MD-01) and Rep. Steny Hoyer (D, MD-05). Both of their House websites are built on the same underlying template, so the same scraping code works on both -- you'll just swap the URL, the same way pre_lab_12 reused one block of analysis code for both party platforms.
+
+(Note: these pages update as new releases are published, so if you run this weeks from now, you'll be looking at different releases than the ones we discussed in class. That's fine -- the code should still work the same way.)
+
 ## Questions
 
-**Q1.** You've been assigned to report a story about the leading reasons that Maryland attorneys get sanctioned by the state for misconduct. The state [publishes lists of sanctions](https://www.courts.state.md.us/attygrievance/sanctions) that contain a short text description about the situation. Load the CSV file in the data folder containing records from fiscal year 2011 onwards. Make a list of unique words from the text column, then following the example in the pre_lab, remove common "stop words" from that list and create a list of the top 25 words containing the percentage of occurrences each word represents. What's the leading word in that answer and, broadly, what do you think the top 25 words describe?
+**Q1.** Scrape the 10 most recent press releases from each member's site -- <https://harris.house.gov/media/press-releases> and <https://hoyer.house.gov/media/press-releases> -- into dataframes with five columns: `member`, `date`, `title`, `url` and `body`. Then combine them into a single dataframe, the same way `bind_rows()` combined rows in lab_11.
 
-**A1.** 
+On these pages, each release is contained in a `<div>` with the class `views-row`. Use `html_elements(".views-row")` to grab all of them, then `html_element()` -- the singular version pre_lab_11 mentioned but didn't use -- to pull one date, one headline/link and one body paragraph out of *each* row, using the classes `.row .col-auto` (date), `.h3 a` (headline and url) and `.evo-press-release__body` (body text). A few rows at the bottom of each page aren't actual press releases (they're page-navigation elements that happen to share the same class), so filter out any row with a missing title and keep just the first 10.
+
+Then, following the example in the pre_lab, make a list of unique words from the combined `body` column and remove the standard tidytext stop words. Look at what's left over -- you should notice a handful of words that aren't in the stop words list but show up constantly anyway, because they're part of how these press releases identify the member and the dateline, not because they're meaningful content. Add those as custom stop words, the same way the pre_lab added "united" and "america" for the party platforms. Finally, produce a top 10 list of words (combining both members) with their percentages. What's the leading word, and what does it tell you -- or not tell you -- about the differences between the two members?
+
+**A1.**
 
 ```{r}
-md_attorney_sanctions <- read_csv("data/md_attorney_sanctions.csv")
-
-unique_words <- md_attorney_sanctions |> select(text) |>
-  unnest_tokens(word, text)
-
-data("stop_words")
-
-unique_words |>
-  anti_join(stop_words) |>
-  group_by(word) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(25)
 
 ```
 
-**Q2.** Let's move beyond single words to phrases. Make a list of the top 10 three-word phrases, called trigrams, based on the example from the pre_lab (you'll need to modify the example code to do this). What's the top trigram and how often does it appear? What does that phrase mean in legal terms?
+**Q2.** Now split your unique-words dataframe into two dataframes, one per member, the same way pre_lab_12 split the platforms into `unique_words_rep` and `unique_words_dem`. Produce a top 10 list of words for each member. What do the two lists suggest about how each member uses his press releases?
 
-**A2.** The top phrase is "attorney trust account," which appears 343 times and represents 5.8 percent of all trigrams. Attorney trust accounts are bank accounts where clients place money that is held or controlled by the attorney, making it a possible vector for misuse.
+**A2.**
 
 ```{r}
-md_attorney_sanctions |>
-  unnest_tokens(fiver, text, token = "ngrams", n = 5) |>
-  separate(fiver, c("word1", "word2", "word3", "word4", "word5"), sep = " ") |>
-  filter(!word1 %in% stop_words$word) |>
-  filter(!word2 %in% stop_words$word) |>
-  filter(!word3 %in% stop_words$word) |>
-  filter(!word4 %in% stop_words$word) |>
-  filter(!word5 %in% stop_words$word) |>
-  mutate(fiver = paste(word1, word2, word3, word4, word5, sep=" ")) |>
-  group_by(fiver) |>
-  tally(sort=TRUE) |>
-  mutate(percent = (n/sum(n))*100) |>
-  top_n(10)
+
 ```
 
-**Q3.** Let's drop back down to more traditional analysis - take the top trigram from Q2 and write code to see how many times it occurs in the text column in each fiscal year. If you come across an error (you may not), google the error message and tack on "tidytext". What do you think the answer produced by your code suggests?
+**Q3.** Make a list of the top 10 bigrams for each member separately, following the same `separate()`/`anti_join()` approach from pre_lab_12. What's the top bigram for each member, and what does the overall shape of each list tell you about how each member writes his releases?
 
-**A3.** FY 2021 saw the most sanction actions mentioning "attorney trust account", with 37, slightly more than in 2022, which had 32. Since the start of the pandemic each year has seen totals that exceed any pre-pandemic year (and there are just three so far in FY 2023, which suggests that things are returning to a more normal level).
+**A3.**
 
 ```{r}
-md_attorney_sanctions |> 
-  filter(str_detect(text, "attorney trust account")) |> 
-  group_by(fiscal_year) |> 
-  tally(sort=TRUE)
 
+```
+
+**Q4.** Using one member's unique-words dataframe from Q2, compare the top 10 words you get from the original words, the stemmed words, and the lemmatized words (the same three-way comparison pre_lab_12 walked through for the party platforms). What differences do you notice?
+
+**A4.**
+
+```{r}
+
+```
+
+**Q5.** Finally, run a sentiment analysis on each member's unique-words dataframe separately using the "bing" lexicon, the same way pre_lab_12 did for the party platforms. How does the positive/negative balance compare between the two members, and is there anything that looks miscategorized in either list?
+
+**A5.**
+
+```{r}
 
 ```

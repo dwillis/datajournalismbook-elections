@@ -1,7 +1,7 @@
 ---
 title: "lab_05"
-author: "derek willis"
-date: "2024-09-27"
+author: "derek willis, updated by Aidan Hughes"
+date: "2026-10-01"
 output: html_document
 ---
 
@@ -17,23 +17,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Getting Started
 
-This week we'll be combining and joining data to make it more useful and to ask some questions about it. This week, we'll revisit our new Maryland voters data and try to join it with contributions to the Harris campaign from Maryland donors made via ActBlue. Can we find new voters who are not registered Democrats who gave to Harris after she became a presidential candidate on July 21? What, if anything, can we say about those people?
+This week we'll be combining and joining data to make it more useful and to ask some questions about it. We'll revisit our new Maryland voters data and try to join it with contributions to the Harris campaign from Maryland donors made via ActBlue. Can we find new voters who are not registered Democrats who gave to Harris after she became a presidential candidate on July 21? What, if anything, can we say about those people?
 
 We'll be doing something similar to what Ence Morse did for [this Washington Post story](https://www.washingtonpost.com/politics/2024/09/24/kamala-harris-younger-donors/?pwapi_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWFzb24iOiJnaWZ0IiwibmJmIjoxNzI3MzIzMjAwLCJpc3MiOiJzdWJzY3JpcHRpb25zIiwiZXhwIjoxNzI4NzA1NTk5LCJpYXQiOjE3MjczMjMyMDAsImp0aSI6ImIwYWMxNTk4LWMwMDgtNDE5Ny04MjAyLWVmMWNjZWFmYWZiMiIsInVybCI6Imh0dHBzOi8vd3d3Lndhc2hpbmd0b25wb3N0LmNvbS9wb2xpdGljcy8yMDI0LzA5LzI0L2thbWFsYS1oYXJyaXMteW91bmdlci1kb25vcnMvIn0.3-s0tBkMV7Y9DD21CBsKMlaliGlOKT2egCO-UFT735Y), just on a smaller scale.
 
-First, load two CSV contribution files in the `data` folder, one each for donations made in July and August, and then combine them into a single dataframe.
+## Tasks
+
+**First, load two CSV contribution files in the `data` folder, one each for donations made in July and August, and then combine them into a single dataframe.**
 
 ```{r}
 # load the Harris contribution data files and combine them
 ```
 
-Next, let's read in the new voters (people who registered in 2024):
+**Next, let's read in the new voters (people who registered in 2024):**
 
 ```{r}
 # load the new voters data
 ```
 
-Next join the Harris donations to the voter data. Remember, people's names are common, __so you'll want to use name columns and address information__. You'll need to figure out which columns to use from both dataframes. The new_voters data has both a single Address column and various parts of the address, such as HouseNumber. Make a plan for picking your join columns - try out some combinations - and save the results to a new dataframe.
+**Next join the Harris donations to the voter data. Remember, people's names are common, __so you'll want to use name columns and address information__. You'll need to figure out which columns to use from both dataframes.**
+
+The new_voters data has both a single Address column and various parts of the address, such as HouseNumber. Make a plan for picking your join columns - try out some combinations - and save the results to a new dataframe.
+
+Instead of a left_join, use the function inner_join this time. Unlike left_join or right_join, inner_join gets rid of any rows in BOTH data sets if there wasn't a match.
+
+Using multiple columns in your join_by just requires you to separate them with commas. It should look like this:
+
+join_by(column1,
+        column2,
+        column3)
+
+Note that you might get a "many to many" error when you run the code, depending on the columns you pick That's R letting you know that something in one data set matched with multiple rows in the other data set. That's something really important to keep your eye out for, since R will perform the match against all those rows, meaning you might wind up with multiple extra rows when you should only have one.
+
+You'll want to minimize the amount of rows that this is happening to by picking smart join columns, but we probably won't eliminate it completely. We won't deal with that for the purpose of this lab, but it's important to be aware of.
 
 ```{r}
 # join the combined Harris file to the new voters
@@ -42,25 +58,50 @@ Next join the Harris donations to the voter data. Remember, people's names are c
 
 ## Answer questions
 
-Q1. Explain why you used the columns you did to make the join, and why that result is better than other ways you tried. Are there any problems with the join you made, such as the possibility of false positives?
+
+**Q1. Explain why you used the columns you did to make the join, and why that result is better than other ways you tried. Are there any problems with the join you made, such as the possibility of false positives?**
+
 
 A1. 
 
-Q2. Based on your join, how many donations to Harris have come from people who registered this year? How many unique people does that represent, and which donors have given the largest _number_ of donations since July 20? 
 
-A2. 
+**Q2. Based on your join, how many donations to Harris have come from people who registered this year? How many unique people does that represent, and which donors have given the largest _number_ of donations since July 20?** 
+
+A2.
+
 
 ```{r}
 ```
 
-Q3. What are the party and gender breakdowns of those donors? How many donations has Harris gotten from non-Democrats?
 
-A3. 
+**Q3. What are the party and gender breakdowns of those donors? How many donations has Harris gotten from non-Democrats?**
+
+
+A3.
+
 
 ```{r}
 
 ```
 
-Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
+
+**Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris").**
+
+**First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.**
+
 
 A4:
+
+
+**BONUS QUESTION: What's another publicly available data set you could join with these to ask additional questions? You'll need to provide a link to the data, what question(s) it would allow you to ask, and briefly describe any issues that might prevent you from joining the data without additional cleaning or manipulation (2 points).**
+
+
+
+**Then, download the data and add it to the "data" folder of this lab. Write the code needed to perform the join. (4 points)**
+
+```{r}
+
+```
+
+
+

@@ -63,6 +63,8 @@ dc_food |>
   summarise(
     count=n()
   ) |>
+  # str_detect: any values that contain the text specified in your code
+  # ^w|^W "give me any values that START WITH (^) an undercase w OR an uppercase W"
   filter(str_detect(recipient_name, '^w|^W')) |> 
   arrange(recipient_name)
 ```
@@ -73,6 +75,7 @@ dc_food |>
 
 ```{r}
 cleaned_dc_food <- dc_food |>
+  # part that's new: key_collision_merge() from refinr
   mutate(recipient_clean=key_collision_merge(recipient_name)) |>
   select(recipient_name, recipient_clean, everything())
 
@@ -100,6 +103,7 @@ cleaned_dc_food |>
 
 ```{r}
 cleaned_dc_food <- dc_food |>
+  # new function: n_gram_merge()
   mutate(recipient_clean=n_gram_merge(recipient_name)) |>
   select(recipient_name, recipient_clean, everything())
 
@@ -116,6 +120,14 @@ cleaned_dc_food |>
 
 
 ```
+
+```{r}
+x <- c("Happy", "happy", "appy", "smile", "while", "wile")
+
+n_gram_merge(x)
+```
+
+
 
 ### Task 8: Follow the directions in the textbook to use Open Refine
 

@@ -1,0 +1,172 @@
+---
+title: "Post-Election Lab: The 2026 Texas U.S. Senate Race"
+author: "Aidan Hughes"
+date: "November 5, 2026"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+
+On November 3, 2026, Texans voted in an open U.S. Senate race between Democrat **James Talarico** and Republican **Ken Paxton**. In this lab, we'll analyze county-level results from that race, compare them to the 2024 Senate race (Colin Allred vs. Ted Cruz), and bring in Census Bureau data to see what demographic patterns line up with how counties voted.
+
+This lab uses **real, mostly-but-not-entirely-final results**. As of this data pull, the vast majority of Texas counties had more than 95% of precincts reporting, but a few had not. Keep that in mind as you interpret anything close.
+
+## You will need
+
+Our usual libraries for working with data, plus `tidycensus` for pulling in Census Bureau data. You'll need a free Census API key (sign up at https://api.census.gov/data/key_signup.html) and have it installed with `census_api_key("YOUR KEY HERE", install = TRUE)` if you haven't already done that on this machine.
+
+## The data
+
+`texas_senate_2026_county_results.csv` has one row per Texas county (254 rows) with these columns:
+
+* `county` - the county name, no "County" suffix
+* `dem_margin_2026` - the Democrat's (Talarico's) margin over the Republican (Paxton) in the 2026 Senate race, in percentage points. Positive means Talarico led; negative means Paxton led. For example, `28.6` means Talarico +28.6 points; `-5.8` means Paxton +5.8 points.
+* `votes_2026` - total votes cast for the Senate race in that county in 2026 (all candidates combined)
+* `reported` - the percentage of the vote reported as of this data pull (mostly `>95%`)
+* `dem_margin_2024` - the same margin convention, but for Allred vs. Cruz in the November 2024 Senate race
+
+**Important limitation:** this file only has *margins* and the total number of ballots for ALL candidates counted so far, not each candidate's raw vote total.
+
+## Load libraries and settings
+
+**Task** Create a codeblock and load the appropriate packages and settings for this lab.
+
+```{r}
+
+```
+
+## Load the data
+
+**Task** Read in `texas_senate_2026_county_results.csv` and take a look at it.
+
+```{r}
+
+```
+
+## Q 1: What was the average margin in counties that the Democratic candidate won? What about counties that the Republican candidate won?
+
+**Task** Create a column that labels whether the Democrat won the county or the Republican won the county in 2026.
+
+
+```{r}
+
+```
+
+**Task** Based on those categories, calculate the average margins in the counties that the Democrat won, and the average margin in the counties that the Republican won.
+
+```{r}
+
+```
+
+**Task** Repeat those steps for 2024
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+**Task** Explain: did the average margin in counties the Democrat won in 2026 differ from the margin in 2024?
+
+
+## Q 2: The biggest swings
+
+"Swing" here means how much more (or less) Democratic a county became between 2024 and 2026.
+
+**Task** Create a new column, `swing`, that shows the change in the margin in 2026 compared to 2024. Then find the counties with the largest swing TOWARDS the Democrats.
+
+
+```{r}
+
+```
+
+**Task** Did any counties swing AWAY from Democrats?
+
+```{r}
+
+```
+
+
+
+## Q 3: Votes cast per capita, by voting-age population
+
+We'll bring in Census Bureau population data with `tidycensus` to calculate a rough turnout measure: votes cast per adult (18+) resident.
+
+**Task** Make sure your Census API key is set, then use `get_acs()` to pull total population and population 18 and over for every Texas county, using the most recent 5-year American Community Survey (ACS5) data available: 2024.
+
+(To search for this variable, we're going to add /profile to the end of the load_variables call that we normally use, which will show us higher-level variables than the really granular ones we get without /profile. Then search for "18 years and over".)
+
+```{r}
+acs_vars_2024 <- load_variables(2024, "acs5/profile")
+```
+
+**Task** Clean up the county names in your Census dataframe so they match `tx_senate` (remove the " County, Texas" suffix), then join the two dataframes. (We did a version of this in this week's pre-lab!)
+
+```{r}
+
+```
+
+**Task** Create a `votes_per_capita` column showing the number of votes per 1,000 people, then find the 5 counties with the highest and the 5 with the lowest votes per capita.
+
+```{r}
+
+```
+
+***BONUS POINTS (2 Points)** Look closely at the counties with the *highest* votes-per-capita rate, especially the very top one. Does anything stand out? What might explain any unusually high rates (i.e., more votes cast than adult residents)?
+
+**Answer:**
+
+
+**BONUS POINTS: Make a map! (5 Points)** Decide whether you want to exclude any counties from the data based on the bonus question above, then decide on criteria for which counties should be excluded and write code to do so. Then, write the data a csv and create a choropleth map in Datawrapper showing the counties with the highest/lowest votes-per-capita in Texas. Provide a link to your map below:
+
+```{r}
+
+```
+
+
+**Answer:**
+
+
+
+## Q 4: Does a demographic variable line up with the vote?
+
+**Task** Take another look at what ACS5 variables are available for 2024
+
+```{r}
+acs_vars_2024
+```
+
+**Task** Pick one additional demographic variable you're curious about (income, race/ethnicity, education, age, housing, health insurance - whatever interests you) and pull it for every Texas county with `get_acs()`. Pick one that you think might have a relationship with how people voted. Note that there are variables that show raw numbers ("estimate") and those that show percents ("percent").
+
+```{r}
+
+```
+
+**Task** Join it to your combined dataframe, then write the dataframe to a csv.
+
+```{r}
+
+```
+
+**Task** Upload the csv to Datawrapper and make a SCATTERPLOT. Scatterplots are used to explore the relationship between two variables. In this case, you're going to explore the relationship between the Democratic margin in 2026 and the demographic variable you chose.
+
+
+**Task** Explain what the scatterplot shows you. Does it look like there's a meaningful relationship between the Democratic margin in 2026 and the demographic variable?
+
+**Answer:**
+
+
+**Task** Add a link to your datawrapper scatterplot here:
+
+**Answer**
+
+
+**Task** If there was a relationship between your demographic variable and how people voted, think critically about the relationship. Do you think the demographic variable you chose is the REASON why people voted (or didn't vote) a certain way? Or could that variable be related to a *different* characteristic about those people, which might have more to do with how they voted? Explain your thinking either way in a few sentences.
+
+If there WASN'T a relationship, tell me a) why you thought there would be a relationship, and b) what might explain why there doesn't seem to be a relationship after all.

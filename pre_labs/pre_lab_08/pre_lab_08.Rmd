@@ -57,7 +57,7 @@ First, we'll create a dataframe of those top 10, called maryland_top_counties.
 ```{r}
 
 md_voters <- md_voters |> 
-  mutate(UNAF_DIFF = ? - ?)
+  mutate(UNAF_DIFF = UNAF_2024 - UNAF_2022)
 
 maryland_top_counties <- md_voters |>
   arrange(desc(UNAF_DIFF)) |>

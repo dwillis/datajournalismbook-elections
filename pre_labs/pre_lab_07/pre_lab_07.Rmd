@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_07.Rmd"
-author: "derek willis"
-date: "10/18/2022"
+author: "derek willis, updated by Aidan Hughes"
+date: "10/6/2026"
 output: html_document
 ---
 
@@ -30,13 +30,23 @@ To use the API, you need to [an API key from the Census Bureau](https://api.cens
 
 ### Task 2: Sign up for an API Key and set it
 
-**Task** Replace YOUR KEY HERE in the codeblock below with your Census API Key (leave the quotemarks).
+**Task**
+Follow these steps IN ORDER. Do NOT paste your API key anywhere outside the console.
 
-```{r echo=FALSE}
-#census_api_key("YOUR KEY HERE", install=TRUE)
-```
+Copy and paste the code below into the CONSOLE (in the bottom left of your Rstudio window):
 
-The `install=TRUE` part saves your key for future use.
+census_api_key("YOUR KEY HERE", install=TRUE)
+
+Then, replace "YOUR KEY HERE" with your actual API key.
+
+
+Hit enter in the console.
+
+CLick the "Run" dropdown button near the top of the window, and click "Restart R and Clear Output"
+
+That's it!
+
+Note: The `install=TRUE` part saves your key for future use.
 
 So to give you some idea of how complicated the data is, let's pull up just one file from the decennial Census. We'll use Summary File 1, or SF1. That has the major population and housing stuff.
 
@@ -45,6 +55,8 @@ So to give you some idea of how complicated the data is, let's pull up just one 
 **Task** Run the following codeblock and look at the resulting variable.
 
 ```{r}
+
+# name a variable sf1, and inside of it load all the possible variables from the 2010 Summary File 1
 sf1 <- load_variables(2010, "sf1", cache = TRUE)
 View(sf1)
 ```
@@ -85,9 +97,13 @@ As you can see, we have a GEOID, NAME, then variable and value. Variable and val
 **Task** Run the following codeblock to rename the population total columns in each dataframe:
 
 ```{r}
-p10 |> select(GEOID, NAME, value) |> rename(Population2010=value) -> p10
+p10 <- p10 |>
+  select(GEOID, NAME, value) |>
+  rename(Population2010=value)
 
-p00 |> select(GEOID, NAME, value) |> rename(Population2000=value) -> p00
+p00 <- p00 |>
+  select(GEOID, NAME, value) |>
+  rename(Population2000=value)
 ```
 
 Now we join the data together.
@@ -95,22 +111,20 @@ Now we join the data together.
 **Task** Run the following codeblock to combine the two dataframes into a single variable called `alldata`:
 
 ```{r}
-alldata <- p00 |> inner_join(p10)
+alldata <- p00 |>
+  inner_join(p10)
 ```
 
 And now we calculate the percent change.
 
 **Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer**
 
-```{r}
-alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
-```
-
-You may be asking: hey, wasn't there a 2020 Census? Where's that data? The answer is that it's coming - the Census Bureau has a [schedule of releases](https://www.census.gov/programs-surveys/popest/about/schedule.html). There are some variables available:
+Percent Change = (the new value - the old value) / the old value * 100
 
 ```{r}
-pl <- load_variables(2020, "pl")
-View(pl)
+alldata |>
+  mutate(change = ((Population2010-Population2000)/Population2000)*100) |>
+  arrange(desc(change))
 ```
 
 ## The ACS
@@ -131,12 +145,13 @@ md <- get_acs(geography = "county",
               state = "MD",
               year = 2022)
 
-md <- md |> arrange(desc(estimate)) |> top_n(20, estimate)
+md <- md |>
+  arrange(desc(estimate)) |>
+  top_n(20, estimate)
 
 md
 ```
-
-What do the top counties all have in common? Lots of suburban flight from D.C and Baltimore. But do the margins of error let us say one county is richer than the other? We can find this out visually using error bars. Don't worry much about the code here -- we'll cover that soon enough.
+Do the margins of error let us say one county is richer than the other? We can find this out visually using error bars. Don't worry much about the code here -- we'll cover that soon enough.
 
 ### Task 6: Margins of Error
 
@@ -157,6 +172,7 @@ md |>
 As you can see, some of the error bars are quite wide. Some are narrow. But if the bars overlap, it means the difference between the two counties is within the margin of error, and the differences aren't statistically significant.
 
 Is the difference between Calvert and Montgomery significant? **Answer**
+
 
 Is the difference between Howard and everyone else significant? **Answer**
 
@@ -190,8 +206,13 @@ md10 |>
   inner_join(md22, join_by(GEOID, NAME)) |>
   # rename the first estimate to clarify that it's from 2010 and the second estimate to clarify that it's from 2020
   rename(estimate2010=estimate.x, estimate2022=estimate.y) |>
-  mutate(min2010 = estimate2010-moe.x, max2010 = estimate2010+moe.x, min2022 = estimate2022-moe.y, max2022 = estimate2022+moe.y) |>
-  select(-variable.x, -variable.y, -moe.x, -moe.y) |>
+  mutate(min2010 = estimate2010-moe.x,
+         max2010 = estimate2010+moe.x,
+         min2022 = estimate2022-moe.y,
+         max2022 = estimate2022+moe.y) |>
+  select(-variable.x,
+         -variable.y,
+         -moe.x, -moe.y) |>
   mutate(change = ((estimate2022-estimate2010)/estimate2010)*100) |>
   arrange(change)
 ```
@@ -228,8 +249,14 @@ Of the 20 zip codes with the largest amounts, which ones have estimated median h
 
 ```{r}
 md_zipcodes <- get_acs(geography="zcta", variables = "B19013_001", state='MD', year=2019)
-md_zips_with_acs <- top_zips |> left_join(md_zipcodes, join_by(zip5==GEOID))
-md_zips_with_acs <- md_zips_with_acs |> mutate(min=(estimate-moe), max=(estimate+moe))
+
+
+md_zips_with_acs <- top_zips |>
+  left_join(md_zipcodes, join_by(zip5==GEOID))
+
+
+md_zips_with_acs <- md_zips_with_acs |>
+  mutate(min=(estimate-moe), max=(estimate+moe))
 ```
 
 **Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes? **Answer**

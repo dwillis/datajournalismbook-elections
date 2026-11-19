@@ -15,7 +15,7 @@ Up to now, we've been looking at patterns in data for what is more than this, or
 
 Another way we can look at the data is geographically. Is there a spatial pattern to our data? Can we learn anything by using distance as a metric? What if we merge non-geographic data into geographic data?
 
-The bad news is that there isn't a One Library To Rule Them All when it comes to geo queries in R. But there's one emerging, called Simple Features, that is very good.
+The bad news is that there isn't a One Library To Rule Them All when it comes to geo queries in R. But there's one, called Simple Features, that is very good.
 
 Go to the console and install it with `install.packages("sf")`
 
@@ -171,7 +171,7 @@ ggplot() +
 
 Notice the subtle differences at the boundaries?
 
-Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July primary election. We can use [the state's data](<https://elections.maryland.gov/press_room/2024_stats/Official%20by%20Party%20and%20Precinct.csv> to determine this.
+Let's dive back into Prince George's precincts and see what more we can find out about them. It would be useful to know, for example, what turnout was like for the July 2024 primary election. We can use [the state's data](<https://elections.maryland.gov/press_room/2024_stats/Official%20by%20Party%20and%20Precinct.csv> to determine this.
 
 ### Task: Run code to load the turnout data from the May 2024 Primary election
 
@@ -194,7 +194,7 @@ Now we can join the precincts to the turnout data.
 **Task** Run the following code. Describe the output in the space below. **Answer**
 
 ```{r}
-pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
+pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, join_by("PRECINCT_ID"=="precinct"))
 ```
 
 Now we can use color to distinguish precincts from each other. Let's use the total eligible voters to start with:
@@ -212,9 +212,7 @@ ggplot() +
 
 With these changes, what else can we make out here? First, you can pretty easily spot our "ghost precincts" - they are the ones in white, where there are no eligible voters. But you also can see that there's some pretty big variation among the number of eligible voters per precinct across the county, with some very large ones in the middle.
 
-## Chapter 24
-
-In the previous chapter, we looked at election precincts in Prince George's County to show a bit of a pattern regarding concentration of the precincts with the most and 0 eligible voters. Let's go little further and look at voters statewide.
+Let's go little further and look at voters statewide.
 
 First, let's load the libraries we'll need. We're also going to load tidycensus and set an API key for tidycensus.
 
@@ -229,7 +227,7 @@ library(janitor)
 library(tidycensus)
 ```
 
-For the rest of this chapter, we're going to work on building a map that will help us gain insight into geographic patterns in voter registration by county in Maryland. Our question: by examining the number of Democrats/Republicans/Unaffiliated voters per 10,000 people in each county, what regional geographic patterns can we identify?
+We're going to work on building a map that will help us gain insight into geographic patterns in voter registration by county in Maryland. Our question: by examining the number of Democrats/Republicans/Unaffiliated voters per 10,000 people in each county, what regional geographic patterns can we identify?
 
 We've got voters by county, so let's load that from the data folder and take a look:
 
@@ -287,9 +285,12 @@ But there's a problem. The column in our population data that has county names i
 
 ```{r}
 md_county_population
+```
 
+```{r}
 voters_by_county
 ```
+
 
 If they're going to join properly, we need to clean one of them up to make it match the other.
 
@@ -301,13 +302,16 @@ Let's clean the population table. We're going to rename the "NAME" column to "Co
 
 ```{r}
 md_county_population <- md_county_population |>
+  # Rename the NAME column to something clearer
   rename(County = NAME) |>
-  mutate(County = str_to_title(str_remove_all(County,", Maryland|County"))) |>
-  mutate(County = str_trim(County,side="both")) |>
+  # Strip ", Maryland" or "County" from the names, then convert to title case
+  mutate(County = str_to_title(str_remove_all(County, ", Maryland|County"))) |>
+  # Remove leading/trailing whitespace left over after removing text
+  mutate(County = str_trim(County, side = "both")) |>
+  # Rename the estimate column to population
   rename(population = estimate) |>
+  # Keep only the county name, population, and map geometry columns
   select(County, population, geometry)
-
-md_county_population
 ```
 
 Now we can join them.
@@ -331,8 +335,8 @@ Hang on - there's at least one county with NA values - St. Mary's, which is spel
 
 ```{r}
 md_county_population <- md_county_population |>
-  mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) |> 
-  mutate(County = if_else(County == "Baltimore", "Baltimore County", County))
+  mutate(case_when(County == "St. Mary's" ~ "Saint Mary's",
+                   County == "Baltimore" ~ "Baltimore County"))
 ```
 
 Our final step before visualization, let's calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.

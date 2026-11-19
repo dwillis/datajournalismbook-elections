@@ -1,7 +1,7 @@
 ---
 title: "lab_07"
-author: "derek willis"
-date: "2024-08-07"
+author: "derek willis, updated by Aidan Hughes"
+date: "2026-10-08"
 output: html_document
 ---
 
@@ -32,11 +32,12 @@ library(tidycensus)
 
 You'll need your Census API Key:
 
-**Task** set your API Key *only* if you haven't already
+**Task** set your API Key *only* if you haven't already. Otherwise you can skip ahead to the next task.
 
-```{r echo=FALSE}
+In the console (in the bottom left of the R Studio window), paste the following code and replace "YOUR API KEY" with your API key. (But keep the quotation marks around the key!):
+
 census_api_key("YOUR API KEY", overwrite=TRUE)
-```
+
 
 ## Load and view ACS variables
 
@@ -49,7 +50,7 @@ You'll also need to load the list of American Community Survey variables from th
 
 ## Answer questions
 
-**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2022 5-year estimates? You will need to find the variable for median age first.
+**Q1** What is the Maryland county with the lowest median age, according to the ACS 2022 5-year estimates? You will need to find the variable for median age first.
 
 **A1**
 
@@ -77,6 +78,8 @@ Load the two CSV files in the `data` folder: one containing the ballot choices o
 
 **Q3** Let's answer some basic questions about ticket-splitting: how many voters voted for different parties in the governor and comptroller's race? How many voted for the same party in both races? What percentage of all voters split their tickets in those races? In how many cases did voters choose the same party in all five contests? What percentage of all voters does that represent?
 
+Note: we're used to using comparison operators like <, >=, and == . There's another operator used to say "x IS NOT y," and that operator is !=
+
 **A3**
 
 ```{r}
@@ -91,9 +94,29 @@ Load the two CSV files in the `data` folder: one containing the ballot choices o
 
 ```
 
-**Q5** Let's find out more about those zip codes from A4. Using tidycensus, get a dataframe of Maryland zip codes and their median ages, then join it to the dataframe you produced in A4. NOTE: you'll need to ensure that the two columns you use for the join are the same datatype. Summarize your findings; how would you describe the zip codes with more non-Cox Republicans compared to those with fewer? Where are those leading zip codes located?
+**Q5** Let's find out more about those zip codes from A4 using tidycensus.
+
+Unfortunately, The Census API stopped supporting state-level ZCTA queries after the 2019 ACS. We could get a list of all ZCTA's in the US and filter the list for only Maryland ZCTA's. But doing this efficiently is a little more complicated than what we've done together, so just pull ZCTA data for Maryland from 2019.
+
+Then, join it to the dataframe you produced in A4. NOTE: you'll need to ensure that the two columns you use for the join are the same datatype.
 
 **A5**
 
 ```{r}
 ```
+
+**BONUS QUESTION 1**
+
+Summarize your findings; how would you describe the zip codes with more non-Cox Republicans compared to those with fewer? Where are those leading zip codes located? (3 points)
+
+**BONUS QUESTION 2**
+
+What's another journalistic question you can ask from the newly joined data? This should be more than just something you could do with the data—the question should be clearly journalistic in nature, and it should be clear why you're asking the question (2 points)
+
+Then, write code to answer the question. If you aren't quite sure how to, give it your best shot and/or describe what you think you'd need to do. (3 points)
+
+
+```{r}
+
+```
+

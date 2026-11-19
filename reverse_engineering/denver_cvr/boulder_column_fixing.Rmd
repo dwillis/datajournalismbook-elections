@@ -1,0 +1,66 @@
+---
+title: "Untitled"
+author: "Aidan Hughes"
+date: "2026-11-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+f <- "Redacted-2023Coordinated-CVR.xlsx"
+
+# Read the three header rows (rows 2, 3 and 4); skip = 1 ignores only row 1
+hdr <- read_excel(f, skip = 1, n_max = 3, col_names = FALSE, col_types = "text")
+
+# Join: row 4 first, then row 2 (the contest), then row 3 (the choice)
+# hdr[1, ] is row 2, hdr[2, ] is row 3, hdr[3, ] is row 4
+new_names <- paste(hdr[3, ], hdr[1, ], hdr[2, ], sep = "_")
+
+# Delete the leftover "NA" pieces from empty cells
+new_names <- gsub("NA_|_NA", "", new_names)
+
+# Read the real data (row 5 onward) with the new names
+cvr <- read_excel(f, skip = 4, col_names = new_names)
+
+# Check the result
+names(cvr)
+```
+
+```{r}
+colnames(cvr)
+```
+
+```{r}
+cvr <- cvr |>
+  clean_names()
+
+colnames(cvr)
+```
+
+
+### 1.
+
+"According to the analysis by Boulder Reporting Lab, approximately 19% of voters cast their ballots for the entire Boulder Elevated slate, exclusively voting for its candidates."
+
+
+### 2. 
+
+"And about 29% of voters cast their ballots for the entire Boulder Progressive’s slate of candidates. Because Boulder Progressives only endorsed two city council candidates, this percentage includes ballots where voters supported any of the other candidates, including those endorsed by Boulder Elevated or those who were not endorsed by either of the two committees: Silas Atkins, Waylon Lewis, Aaron Gabriel Neyer, and Jacques Decalo."
+
+### 3. 
+
+“All the candidates who were endorsed by Boulder Progressives opposed the Safe Zones 4 Kids ballot measure. Even so, about 26% of voters who backed the Boulder Progressives’ slate of candidates also supported the Safe Zones 4 Kids ballot measure. By comparison, about 88% of voters who only supported the Boulder Elevated slate of candidates also voted for the Safe Zones 4 Kids measure. All the Boulder Elevated-endorsed candidates backed the measure.”
+
+### 4.
+
+“Two other unofficial candidate committees, meanwhile — Better Boulder and Sierra Club Indian Peaks — endorsed a different mix of candidates: Brockett for mayor and Adams, Schuchard, Winer and Lewis for city council. Less than 5% of voters voted for this exact slate of candidates.”
+
+### 5.
+
+“Separately, more than 2,600 City of Boulder ballots did not include a vote for any city council candidates. The fourth seat on the Boulder City Council was decided by 46 votes.”
+

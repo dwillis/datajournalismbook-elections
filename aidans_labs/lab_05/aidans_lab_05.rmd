@@ -1,0 +1,165 @@
+---
+title: "lab_05"
+author: "derek willis, updated by Aidan Hughes"
+date: "2026-10-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+
+```{r}
+# load the tidyverse
+library(tidyverse)
+```
+
+## Getting Started
+
+This week we'll be combining and joining data to make it more useful and to ask some questions about it. We'll revisit our new Maryland voters data and try to join it with contributions to the Harris campaign from Maryland donors made via ActBlue. Can we find new voters who are not registered Democrats who gave to Harris after she became a presidential candidate on July 21? What, if anything, can we say about those people?
+
+We'll be doing something similar to what Ence Morse did for [this Washington Post story](https://www.washingtonpost.com/politics/2024/09/24/kamala-harris-younger-donors/?pwapi_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWFzb24iOiJnaWZ0IiwibmJmIjoxNzI3MzIzMjAwLCJpc3MiOiJzdWJzY3JpcHRpb25zIiwiZXhwIjoxNzI4NzA1NTk5LCJpYXQiOjE3MjczMjMyMDAsImp0aSI6ImIwYWMxNTk4LWMwMDgtNDE5Ny04MjAyLWVmMWNjZWFmYWZiMiIsInVybCI6Imh0dHBzOi8vd3d3Lndhc2hpbmd0b25wb3N0LmNvbS9wb2xpdGljcy8yMDI0LzA5LzI0L2thbWFsYS1oYXJyaXMteW91bmdlci1kb25vcnMvIn0.3-s0tBkMV7Y9DD21CBsKMlaliGlOKT2egCO-UFT735Y), just on a smaller scale.
+
+## Tasks
+
+**First, load two CSV contribution files in the `data` folder, one each for donations made in July and August, and then combine them into a single dataframe.**
+
+```{r}
+# load the Harris contribution data files and combine them
+july_harris <- read_csv("data/july_harris.csv")
+august_harris <- read_csv("data/august_harris.csv")
+
+harris <- bind_rows(july_harris, august_harris)
+```
+
+**Next, let's read in the new voters (people who registered in 2024):**
+
+```{r}
+# load the new voters data
+new_voters <- read_csv('data/new_voters.csv')
+```
+
+**Next join the Harris donations to the voter data. Instead of a left_join, use the function inner_join this time. Unlike left_join or right_join, inner_join gets rid of any rows in BOTH data sets if there wasn't a match.**
+
+IMPORTANT: people's names are common, __so you'll want to use name columns and address information__. You'll need to figure out which columns to use from both dataframes.
+
+The new_voters data has both a single Address column and various parts of the address, such as HouseNumber. Make a plan for picking your join columns - try out some combinations - and save the results to a new dataframe.
+
+```{r}
+# join the combined Harris file to the new voters
+# you will need to determine what columns to use
+
+harris_donors_voters <- harris |>
+  inner_join(new_voters, join_by(last_name == LastName,
+                                 first_name == FirstName,
+                                 city == ResidentialCity,
+                                 address_one == Address))
+```
+
+## Answer questions
+
+
+**Q1. Explain why you used the columns you did to make the join, and why that result is better than other ways you tried. Are there any problems with the join you made, such as the possibility of false positives?**
+
+
+A1. 
+
+
+Using city and street address in addition to the name columns reduces the likelihood of false positives, because it's far less likely that there are multiple people with the same name living in the same house. However, it's still not impossible. One possibility that comes to mind is that sons named after their father may be listed without a "JR," "III," etc. to distinguish them. We might also be missing some matches if someone's married name differs from their maiden name across different rows in the data, or across the two data sets.
+
+
+**Q2. Based on your join, how many donations to Harris have come from people who registered this year? How many unique people does that represent, and which donors have given the largest _number_ of donations since July 20?** 
+
+A2. There are 326 contributions to Harris. They represent around 238 unique people. BRITTANY	MUSOLINO, ERIC	SNIPE, and SOPHIA	HOFFER-PERKINS gave the largest number of donations, at 7 each.
+
+
+
+```{r}
+nrow(harris_donors_voters)
+```
+
+```{r}
+unique_donors <- harris_donors_voters |>
+  # You don't need to group by Party and Gender to answer Q2, but I went back and added it during Q3 to answer those questions
+  group_by(first_name, last_name, city, address_one, Party, Gender) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+
+unique_donors
+```
+ 
+
+**Q3. What are the party and gender breakdowns of those donors? How many donations has Harris gotten from non-Democrats?**
+
+
+A3. Harris received donations from 208 Democrats, 22 unaffiliated (independents), 3 Republicans, and 5 third party voters. (Some of those donors donated multiple times, which is why the numbers here don't add up to 238).
+
+She received donations from 124 from women, 141 from men, and 12 from people whose gender is not listed.
+
+
+```{r}
+# Party:
+
+unique_donors |>
+  group_by(Party) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+
+```
+
+```{r}
+# Gender:
+
+unique_donors |>
+  group_by(Gender) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+```
+
+NOTE: although this wouldn't be precisely right since it doesn't show unique donors, I'll also accept answers stemming from the original joined data:
+
+```{r}
+harris_donors_voters |>
+  group_by(Party) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+```
+
+```{r}
+harris_donors_voters |>
+  group_by(Gender) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+```
+
+
+
+**Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris").**
+
+**First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.**
+
+
+A4: What were the top occupations listed in donations to the Harris campaign? Answer: The vast majority of donations are from people listed as not employed. After clicking through the data, it doesn't look like there's a "Retired" value, so my strong guess is that most (but not all) of those "Not Employed" values are retirees.
+
+```{r}
+harris_donors_voters |>
+  group_by(occupation) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+```
+
+
+**BONUS QUESTION: What's another publicly available data set you could join with these to ask additional questions? You'll need to provide a link to the data, what question(s) it would allow you to ask, and briefly describe any issues that might prevent you from joining the data without additional cleaning or manipulation (2 points).**
+
+
+
+**Then, download the data and add it to the "data" folder of this lab. Write the code needed to perform the join. (4 points)**
+
+```{r}
+
+```
+
+
+

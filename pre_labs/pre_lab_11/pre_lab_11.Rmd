@@ -27,6 +27,12 @@ We're going to use a library called `rvest`, which you can install it the same w
 
 Like so many R package names, rvest is a bad pun. You're supposed to read it to sound like "harvest", as in "harvesting" information from a website the same way you'd harvest crops in a field.
 
+### A note on AI:
+
+LLMs and associated coding tools have advanced to the point that AI is now very effective at writing scrapers. All of the scraping I do these days is aided by and/or significantly sped up by the use of Claude Code or other AI tools.
+
+That being said, these tools aren't perfect—and neither are our initial attempts to tell AI what exactly we're trying to do. As a result, this lesson emphasizes becoming familiar with some basic concepts behind the tools and methods we're about to review. Once you have an understanding of those basics and what information you'll need to know/understand yourself, you'll be in a much stronger position to more effectively tell AI what you're trying to accomplish, guide it through those tasks, and troubleshoot with it when things get screwy.
+
 ### Task 1: Load libraries and settings
 
 **Task** Run the following code in the gray-colored codeblock below to load the libraries we'll use
@@ -36,15 +42,14 @@ Like so many R package names, rvest is a bad pun. You're supposed to read it to 
 library(rvest)
 library(tidyverse)
 library(janitor)
+library(xml2)
 ```
 
 For this example, we're going to work on loading a simple table of data from the Maryland State Board of Elections. This is a table of unofficial county-level election results for the Presidential race from the November general election.
 
-Let's suppose we can't find a table like that for download, but we do see a version on the SBOE website at this URL: <https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html>.
+Let's suppose we can't find a table like that for download, but we do see a version on the SBOE website at this URL: <https://elections.maryland.gov/elections/archive/2024/General_Results/gen_detail_results_2024_1_1.html>.
 
-```{r, echo=FALSE}
-knitr::include_graphics(rep("images/rvest1.png"))
-```
+(Note: Maryland moves each election's results into an archive once a new election cycle starts, so the URL you'll find today lives under `/elections/archive/2024/...` rather than `/elections/2024/...`. If you're doing this exercise for a more recent election, go to <https://elections.maryland.gov/elections/> and navigate to Archive > the relevant year > General Election > Official Results > the race you want > County Break Down to find the current URL.)
 
 We could get this table into R with the following manual steps: highlighting the text, copying it into Excel, saving it as a csv, and reading it into R. Or, we could write a few lines of webscraping code to have R do that for us!
 
@@ -64,20 +69,14 @@ So, to scrape, the first thing we need to do is start with the URL. Let's store 
 **Task** Run the following code in the gray-colored codeblock below to save the URL
 
 ```{r}
-pres_url <- "https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html"
+pres_url <- "https://elections.maryland.gov/elections/archive/2024/General_Results/gen_detail_results_2024_1_1.html"
 ```
 
 When we go to the web page, we can see a nicely-designed page that contains our information.
 
 But what we really care about, for our purposes, is the html code that creates that page.
 
-In our web browser, if we right-click anywhere on the page and select "view source" from the popup menu, we can see the source code. Or you can just copy this into Google Chrome: <view-source:https://elections.maryland.gov/elections/2024/general_Results/gen_detail_results_2024_1_1.html>.
-
-Here's a picture of what some of the source code looks like.
-
-```{r, echo=FALSE}
-knitr::include_graphics("images/rvest2.png")
-```
+In our web browser, if we right-click anywhere on the page and select "view source" from the popup menu, we can see the source code.
 
 We'll use those HTML tags -- things like `<table>` and `<tr>` -- to grab the info we need.
 
@@ -105,6 +104,8 @@ This is not a dataframe, it's a different type of data structure a "nested list.
 
 If we click on the name "results" in our environment window, we can see that it's pulled in the html and shown us the general page structure. Nested within the `<html>` tag is the `<head>` and `<body>`, the two fundamental sections of most web pages. We're going to pull information out of the `<body>` tag in a bit.
 
+(Note: if you skipped loading the `xml2` package in Task 1, clicking on "results" may trigger a harmless warning like `could not find function "xml_child"`. That's just R Studio's environment viewer failing to render a preview -- your data is still fine. Loading `xml2` alongside `rvest` avoids it.)
+
 ```{r, echo=FALSE}
 knitr::include_graphics("images/rvest3.png")
 ```
@@ -121,7 +122,7 @@ knitr::include_graphics("images/rvest4.png")
 
 The entire table that we want of results is actually contained inside an html `<table>`. It has a `<tbody>` that contains one row `<tr>` per county.
 
-Because it's inside of a table, and not some other kind of element (like a `<div>`), rvest has a special function for easily extracting and converting html tables, called html_table(). This function extracts all the html tables on the page, but this page only has one so we're good.
+Because it's inside of a table, and not some other kind of element (like a `<div>`), rvest has a special function for easily extracting and converting html tables, called html_table(). This function extracts all the html tables on the page. For this particular race there are actually six tables on the page -- one for the major candidates we care about, and five more that break out the long list of write-in candidates -- but the one we want is always the first table on the page.
 
 ### Task 4: Extract tables from the HTML source
 
@@ -138,9 +139,9 @@ results <- pres_url |>
 results
 ```
 
-In the environment window at right, look at results Note that it's now a "list of 1".
+In the environment window at right, look at results. Note that it's now a "list of 6".
 
-This gets a little complicated, but what you're seeing here is a nested list that contains one data frame -- also called tibbles -- one for each table that exists on the web page we scraped.
+This gets a little complicated, but what you're seeing here is a nested list that contains one data frame -- also called tibbles -- one for each table that exists on the web page we scraped. Here, the first data frame has the candidates we care about, and the other five hold write-in candidates we don't need.
 
 So, all we need to do now is to store that single dataframe as an object. We can do that with this code, which says "keep only the first dataframe from our nested list."
 
@@ -185,6 +186,7 @@ results <- results[[1]] |>
   clean_names() |>
   rename(harris = 2, trump = 3, oliver = 4, stein = 5, kennedy = 6) |>
   slice(-25) |>
+  # update the column Harris. Use gsub to swap out any commas in the values (",") with NOTHING in the comma's place ("") from the values in Harris. Then turn those values into actual numbers instead of characters.
   mutate(harris = as.numeric(gsub(",","", harris))) |>
   mutate(trump = as.numeric(gsub(",","", trump))) |>
   mutate(oliver = as.numeric(gsub(",","", oliver))) |> 
@@ -261,8 +263,8 @@ Ok, so now we can see the committee names. But they are surrounded by a bunch of
 committees <- cmte_results |> html_elements("li a")
 
 committees_with_urls <- tibble(
-  name = committees %>% html_text(trim = TRUE),
-  url = committees %>% html_attr("href")
+  name = committees |> html_text(trim = TRUE),
+  url = committees |> html_attr("href")
 )
 ```
 

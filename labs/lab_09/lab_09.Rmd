@@ -1,7 +1,7 @@
 ---
 title: "lab_09.Rmd"
-author: "derek willis"
-date: "2024-10-27"
+author: "derek willis, updated by Aidan Hughes"
+date: "2026-10-29"
 output: html_document
 ---
 
@@ -14,6 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 -   A Datawrapper account
 -   Election data in CSV files in the `data` folder
 -   Tidycensus
+
+## Ground rules for AI:
+
+In this lab, you CAN use AI specifically to ask it how to do different things IN DATAWRAPPER (e.g. "How do I change the color of a chart in Datawrapper?"). If you do, you need to disclose what you asked AI and copy/paste the response you got back.
+
+You CANNOT use AI in any other way for this lab, including how to write any necessary code.
 
 ## Load libraries and establish settings
 

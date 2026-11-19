@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_05.Rmd"
-author: "derek willis"
-date: "2024-09-30"
+author: "derek willis, updated by Aidan Hughes"
+date: "2026-09-29"
 output: html_document
 ---
 
@@ -49,15 +49,14 @@ county_voters_2024 <- read_csv("data/county_voters_2024.csv")
 
 All of these datasets have the same number of columns, all with the same names, so if we want to merge them together to compare them over time, we need to stack them together. The verb here, in R, is bind_rows. You tell the function what you want to combine and it does it, assuming that you’ve got column names in common containing identically formatted data.
 
-Since we have five dataframes, we’re going to need to pass them as a list, meaning they’ll be enclosed inside the list function.
-
 ### Task 3: Using bind_rows
 
-**Task** Combine the three files into a single data frame using the bind_rows() function, along with list(). Add a description of what this code does to your reference notebook.
+**Task** Combine the three files into a single data frame using the bind_rows() function. Add a description of what this code does to your reference notebook.
 
 ```{r}
 # bind_rows with list
-county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018, county_voters_2020, county_voters_2022, county_voters_2024))
+county_voters_combined <- bind_rows(county_voters_2016, county_voters_2018, county_voters_2020, county_voters_2022, county_voters_2024)
+
 View(county_voters_combined)
 ```
 
@@ -79,7 +78,10 @@ maryland_population <- read_csv('data/maryland_population_2020.csv')
 
 One of the columns we have is called county, which is what we have in our county_voters_2020 dataframe.
 
-To put the Maryland population data and voter registration data together, we need to use something called a join. There are different kinds of joins. It’s better if you think of two tables sitting next to each other. A left_join takes all the records from the left table and only the records that match in the right one. A right_join does the same thing. An inner_join takes only the records where they are equal. There’s one other join – a full_join which returns all rows of both, regardless of if there’s a match – but I’ve never once had a use for a full join.
+To put the Maryland population data and voter registration data together, we need to use something called a join. There are different kinds of joins. It’s better if you think of two tables sitting next to each other. A left_join takes all the records from the left table and only the records that match in the right one. A right_join does the same thing. An inner_join takes only the records where they are equal. 
+
+There’s also a full_join which returns *all* rows of both, regardless of if there’s a match. Finally, outer_join returns *only* the rows that didn't match. We probably won't use those much, but it's good to know that they exist in case they do pop up.
+
 
 In the best-case scenario, the two tables we want to join share a common column. In this case, both of our tables have a column called county that has the same characteristics: values in both look identical, including how they distinguish Baltimore City from Baltimore County. This is important, because joins work on exact matches.
 
@@ -91,10 +93,8 @@ We can do this join multiple ways and get a similar result. We can put the popul
 
 ```{r}
 # with nrow included to show row total
-maryland_population |> left_join(county_voters_2020, join_by(COUNTY)) |> nrow()
+maryland_population |> left_join(county_voters_2020, join_by(COUNTY))
 ```
-
-Remove the nrow and run it again for yourself. By default, dplyr will do a “natural” join, where it’ll match all the matching columns in both tables. So if we take out the by, it’ll use all the common columns between the tables. That may not be right in every instance but let’s try it. If it works, we should get 24 rows.
 
 ### Task 6: Looking at Joined Data
 
@@ -169,7 +169,7 @@ maryland_population_with_voters_and_demographics |>
 
 ### Task 11: Fixing Join Problems
 
-Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types: joining a <chr> column to a <dbl> column, for example. Let's walk through an example of that using some demographic data by zip code.
+Sometimes joins look like they should work but don't. Often this is due to the two columns you're joining on having different data types, or because of other issues. Let's walk through an example of checking that the data matches up using some demographic data by zip code.
 
 **Task** Run the following code to load the Zip Code Tabulation Area data for Maryland. What's the datatype of the ZCTA5N? column? **Answer**
 
@@ -178,12 +178,18 @@ maryland_zcta <- read_csv('data/maryland_zcta.csv')
 glimpse(maryland_zcta)
 ```
 
-The column we're interested in, ZCTA5N, is a <dbl> column - it's a number. We want it to be a <chr> column - text - so we can use it in joins.
+The column we're interested in, ZCTA5N, is a <dbl> column - it's a number.
 
-**Task** Run the following code to change the datatype of ZCTA5N from numeric to character. What's the datatype of ZCTA5N now? **Answer**
+**Task** Let's download some other data that we could join with this to supplement the information we've currently got. We'll walk through the whole process together.
+
+https://opendata.maryland.gov/Administrative/Zip-Code-Lookup-Table/ryxx-aeaf/about_data
 
 ```{r}
-maryland_zcta <- maryland_zcta |> mutate(across(ZCTA5N, as.character))
+extra_data <- read_csv("data/extra_data.csv")
 ```
 
-Now we can join this dataframe to other zip code data where the zip code column is text, not numbers.
+```{r}
+combined_data <- maryland_zcta |>
+  left_join(extra_data, join_by(ZCTA5N == `Zip Code`))
+```
+
